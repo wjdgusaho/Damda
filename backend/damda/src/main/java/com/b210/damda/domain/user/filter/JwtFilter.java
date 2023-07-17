@@ -1,4 +1,4 @@
-package com.b210.damda.config;
+package com.b210.damda.domain.user.filter;
 
 import com.b210.damda.domain.user.service.UserService;
 import com.b210.damda.util.JwtUtil;
