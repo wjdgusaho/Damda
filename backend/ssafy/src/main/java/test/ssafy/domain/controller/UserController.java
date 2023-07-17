@@ -24,7 +24,7 @@ public class UserController {
     @PostMapping("regist")
     public ResponseEntity<?> regist(@RequestBody UserRegistDTO userRegistDTO){
         Long savedId = userService.regist(userRegistDTO);
-        System.out.println(savedId);
+//        System.out.println(savedId);
         return new ResponseEntity<>(savedId, HttpStatus.OK);
     }
 }
