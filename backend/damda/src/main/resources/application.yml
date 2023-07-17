@@ -25,8 +25,8 @@ logging:
   level:
     org.hibernate.SQL: debug
 
+# jwt 키값 설정(어느 정도 길이를 가져야 함)
 jwt:
-  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
-
+  secret: hihihellohello423hellohello3214321sadgfpods51akfopdskapohjpodsafjpods
 
 
