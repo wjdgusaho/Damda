@@ -25,5 +25,8 @@ logging:
   level:
     org.hibernate.SQL: debug
 
+jwt:
+  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+
 
 
