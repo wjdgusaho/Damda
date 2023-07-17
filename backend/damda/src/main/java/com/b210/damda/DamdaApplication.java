@@ -1,13 +1,13 @@
-package test.ssafy;
+package com.b210.damda;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SsafyApplication {
+public class DamdaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SsafyApplication.class, args);
+		SpringApplication.run(DamdaApplication.class, args);
 	}
 
 }
