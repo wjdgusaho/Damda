@@ -2,7 +2,7 @@
     "compilerOptions": {
       "jsx": "react",
       "lib": ["es6", "dom"],
-      "rootDir": "src",
+      "rootDir": ".",
       "module": "commonjs",
       "esModuleInterop": true,
       "target": "es5",
@@ -14,7 +14,8 @@
       "strictNullChecks": true
     },
     "include": [
-      "./src"
+      "./src",
+      "src/components"
     ],
     "exclude": [
       "node_modules",
