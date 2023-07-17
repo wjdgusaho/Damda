@@ -5,7 +5,6 @@ spring:
     username: ssafy
     password: ssafy
 
-
   jpa:
     open-in-view: true
     hibernate:
