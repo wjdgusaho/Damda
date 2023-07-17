@@ -17,7 +17,13 @@ spring:
       hibernate.format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
 
+  #Personal Information Management(.ignore)
+  profiles:
+    include: secret
 
 logging:
   level:
     org.hibernate.SQL: debug
+
+
+
