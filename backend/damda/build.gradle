@@ -39,6 +39,10 @@ dependencies {
 
 	//for WebClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	
+	// 스프링 시큐리티
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	
 
 }
 
