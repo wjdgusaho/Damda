@@ -18,6 +18,7 @@ const Navigation = function () {
             <Link to="/timecapsule">타임캡슐페이지</Link>
             <Link to="/card">카드페이지</Link>
             <Link to="/friend">친구페이지</Link>
+            <Link to="/login">로그인페이지</Link>
         </Navbar>
     )
 }
