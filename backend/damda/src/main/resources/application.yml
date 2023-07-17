@@ -1,11 +1,9 @@
-
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3308/test?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
+    url: jdbc:mysql://localhost:3306/damda?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ssafy
     password: ssafy
-
 
   jpa:
     open-in-view: true
@@ -19,7 +17,13 @@ spring:
       hibernate.format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
 
+  #Personal Information Management(.ignore)
+  profiles:
+    include: secret
 
 logging:
   level:
     org.hibernate.SQL: debug
+
+
+
