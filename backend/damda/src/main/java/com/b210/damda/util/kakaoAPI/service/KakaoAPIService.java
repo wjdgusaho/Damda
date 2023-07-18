@@ -6,5 +6,5 @@ import java.util.Map;
 public interface KakaoAPIService {
     public String getKakaoAccessToken(String authorize_code);
 
-    Map<String, String> getKakaoUserInfo(String access_token);
+    Map<String, Object> getKakaoUserInfo(String access_token);
 }

@@ -34,7 +34,8 @@ public class KakaoAPIController {
         System.out.println("#########" + code);
         String access_token = kakaoAPIService.getKakaoAccessToken(code);
         System.out.println("access_token Controller = "+ access_token);
-        Map<String, String> UserInfo =  kakaoAPIService.getKakaoUserInfo(access_token);
+        Map<String, Object> UserInfo =  kakaoAPIService.getKakaoUserInfo(access_token);
+
         return new ResponseEntity<>(UserInfo, HttpStatus.OK);
     }
 
