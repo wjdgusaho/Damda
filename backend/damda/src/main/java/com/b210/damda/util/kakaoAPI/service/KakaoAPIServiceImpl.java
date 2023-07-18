@@ -2,6 +2,9 @@ package com.b210.damda.util.kakaoAPI.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -11,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class KakaoAPIServiceImpl implements KakaoAPIService{
 
     public KakaoAPIServiceImpl(){}
@@ -42,7 +46,7 @@ public class KakaoAPIServiceImpl implements KakaoAPIService{
 
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
+            log.info("responseCode : " + responseCode);
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -53,7 +57,7 @@ public class KakaoAPIServiceImpl implements KakaoAPIService{
             while((line = br.readLine()) != null){
                 result += line;
             }
-            System.out.println("response body : " + result);
+            log.info("response body : " + result);
 
             // jackson objectmapper 객체 생성
             ObjectMapper objectMapper = new ObjectMapper();
@@ -67,7 +71,7 @@ public class KakaoAPIServiceImpl implements KakaoAPIService{
             refresh_Token = jsonMap.get("refresh_token").toString();
             br.close();
             bw.close();
-            System.out.println("access 토큰 = " + access_Token);
+            log.info("access 토큰 = " + access_Token);
         }
         catch(IOException e){
             e.printStackTrace();
@@ -78,10 +82,9 @@ public class KakaoAPIServiceImpl implements KakaoAPIService{
     }
 
     @Override
-    public Map<String, String> getKakaoUserInfo(String access_token){
-        System.out.println("테스트확인용");
+    public Map<String, Object> getKakaoUserInfo(String access_token){
         String reqUrl = "https://kapi.kakao.com/v2/user/me";
-        Map<String, String> userInfo = new HashMap<>();
+        Map<String, Object> userInfo = new HashMap<>();
 
         try{
             URL url = new URL(reqUrl);
@@ -91,25 +94,41 @@ public class KakaoAPIServiceImpl implements KakaoAPIService{
             urlConnection.setRequestMethod("GET");
 
             int responseCode = urlConnection.getResponseCode();
-            System.out.println("responseCode = " + responseCode);
+            log.info("responseCode = " + responseCode);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String line = "";
-            String res = "";
+            String result = "";
             while((line=br.readLine())!=null)
             {
-                res+=line;
+                result+=line;
             }
+            log.info("result = " + result);
 
-            System.out.println("res = " + res);
+            JSONParser parser = new JSONParser();
+            JSONObject obj = (JSONObject) parser.parse(result);
+            JSONObject kakao_account = (JSONObject) obj.get("kakao_account");
+            JSONObject properties = (JSONObject) obj.get("properties");
+            JSONObject has_email = (JSONObject) obj.get("has_email");
 
+            log.info("kakao_account = " + kakao_account);
+            log.info("properties = " + properties);
+            log.info("has_email = " + has_email);
+
+            String nickname = properties.get("nickname").toString();
+            String profile_image = properties.get("profile_image").toString();
+            String user_email = has_email.get("email").toString();
+            userInfo.put("nickname", nickname);
+            userInfo.put("profile_image", profile_image);
+            userInfo.put("user_email", user_email);
+
+            br.close();
         }
         catch (IOException e){
             e.printStackTrace();
         }
-
-        return userInfo;
-
-
+        finally{
+            return userInfo;
+        }
     }
 }
