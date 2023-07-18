@@ -19,8 +19,8 @@ import java.util.List;
 public class WeatherAPIController {
 
     private final WeatherAPIService weatherAPIService;
-    @GetMapping("/")
-    public Mono<String> getNowWeatherInfos() throws Exception {
-        return weatherAPIService.getNowWeatherInfos(37.309894444444, 127.644311111111);
+    @PostMapping("/get")
+    public Mono<String> getNowWeatherInfos(@RequestBody WeatherDTO weatherDTO) throws Exception {
+        return weatherAPIService.getNowWeatherInfos(weatherDTO);
     }
 }

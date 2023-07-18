@@ -5,7 +5,7 @@ package com.b210.damda.util.weatherAPI.service;
  *  위경도와 지도 격자 간 좌표를 변환하는 메서드입니다.
  *  mode = true일 경우 위경도 -> 격자값으로,
  *  false일 경우 반대 로직을 수행합니다.
- *  결과값은 LatXLngY의 내부 프로퍼티에 저장됩니다.
+ *  결과값은 LatXLngY 객체의 내부 프로퍼티에 저장됩니다.
  */
 public class ConvertGRID_GPS {
     static LatXLngY converting(boolean mode, double lat_X, double lng_Y)
@@ -82,6 +82,9 @@ public class ConvertGRID_GPS {
     }
 }
 
+/**
+ * 위경도값(lat,lan)과 grid 격자값(x,y)을 가진 객체
+ */
 class LatXLngY
 {
     public double lat;
