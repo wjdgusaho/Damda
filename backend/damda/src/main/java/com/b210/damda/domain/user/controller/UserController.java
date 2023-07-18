@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -35,14 +37,14 @@ public class UserController {
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody UserLoginDTO userLoginDTO){
-        String result = userService.login(userLoginDTO.getEmail(), userLoginDTO.getPassword());
+        Map<String, String> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getPassword());
 
-        if(result.equals("no email")){
+        if(loginUser.get("error") != null && loginUser.get("error").equals("no email")){ //
             return new ResponseEntity<>("no user", HttpStatus.OK);
-        }else if (result.equals("no password")){
+        }else if (loginUser.get("error") != null && loginUser.get("error").equals("no password")){
             return new ResponseEntity<>("fail password", HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return new ResponseEntity<>(loginUser, HttpStatus.OK);
         }
     }
 
