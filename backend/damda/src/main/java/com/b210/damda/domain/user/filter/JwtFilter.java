@@ -43,10 +43,14 @@ public class JwtFilter extends OncePerRequestFilter { // 모든 요청에 대해
         // 토큰 꺼내기(첫 번째가 토큰이다. bearer 제외)
         String token = authorization.split(" ")[1];
 
+        System.out.println(JwtUtil.isExpired(token, secretKey));
+        System.out.println(secretKey);
+
         // 토큰 만료됐는지 확인
         if(JwtUtil.isExpired(token, secretKey)){
+            System.out.println("토큰만료");
             log.error("토큰이 만료되었습니다.");
-            filterChain.doFilter(request, response); // 다음 필터로 전달함.
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
             return;
         }
 

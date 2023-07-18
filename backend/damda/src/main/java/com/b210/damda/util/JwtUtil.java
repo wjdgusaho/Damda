@@ -1,6 +1,7 @@
 package com.b210.damda.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -16,12 +17,16 @@ public class JwtUtil {
 
     // 토큰 만료 체크
     public static boolean isExpired(String token, String secretKey){
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
-                .getBody().getExpiration().before(new Date());
-        // 만료 기간이 지금 시간보다 전이면 만료가 된 상태이다.
+        try {
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return false;  // 토큰 파싱에 성공하면, 만료되지 않았으므로 false를 반환.
+        } catch (ExpiredJwtException e) {
+            // 만료된 토큰으로 인해 예외가 발생하면, 만료된 것으로 간주하고 true를 반환.
+            return true;
+        }
     }
 
-    public static String createJwt(String email, String secretKey, Long expiredMs){
+    public static String createAccessJwt(String email, String secretKey, Long expiredMs){
         Claims claims = Jwts.claims();
         claims.put("email", email);
 

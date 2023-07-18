@@ -9,6 +9,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -33,7 +35,8 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
     @Override
     public Mono<String> getNowWeatherInfos(WeatherDTO weatherDTO) throws Exception {
         //URL Encoding Issue로 인한 문자열 대체
-        String EncodeServiceKey = serviceKey.replace("+", "%2B");
+//        String EncodeServiceKey = serviceKey.replace("+", "%2B");
+        String EncodeServiceKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8.toString());
 
         String baseUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst";
         String pageNo = "1";
@@ -79,7 +82,7 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
                 .bodyToMono(String.class)
                 .doOnError(error -> log.info("Error occurred: {}", error.getMessage()));
 
-        log.info("res Url : {}", mainUrl);
+        log.info("현재 좌표 날씨 받아오는 중 . . . : {}", mainUrl);
 
         return response;
     }
