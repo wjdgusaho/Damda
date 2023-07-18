@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,7 +22,8 @@ public class UserService {
     @Value("${jwt.secret}")
     private String secretKey;
     public UserRepository userRepository;
-    private Long expiredMs = 1000 * 60 * 60L; // 토큰의 만료 시간
+    private Long acExpiredMs = 1000 * 60 * 60L; // 액세스 토큰의 만료 시간
+    private Long rfExpiredMs = 1000 * 60 * 60 * 24 * 14L; // 리프레쉬 토큰의 만료 시간
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -35,18 +38,28 @@ public class UserService {
 
     // 로그인
     @Transactional
-    public String login(String email, String password){
+    public Map<String, String> login(String email, String password){
         Optional<User> findUser = userRepository.findByEmail(email);
+        Map<String, String> tokens = new HashMap<>();
 
         // 유저의 이메일이 없음
         if(findUser.isEmpty()){
-            return "no email";
+            tokens.put("error", "no email");
+            return tokens;
         }
+
         // 로그인 성공
         if(findUser.get().getPassword().equals(password)){
-            return JwtUtil.createJwt(email, secretKey, expiredMs); // 토큰 발급해서 넘김
+            String jwtToken = JwtUtil.createJwt(email, secretKey, acExpiredMs); // 토큰 발급해서 넘김
+            String refreshToken = JwtUtil.createRefreshToken(secretKey, rfExpiredMs); // 리프레시 토큰 발급해서 넘김
+
+            tokens.put("accessToken", jwtToken);
+            tokens.put("refreshToken", refreshToken);
+
+            return tokens;
         }else{ // 비밀번호 틀림
-            return "no password";
+            tokens.put("error", "no password");
+            return tokens;
         }
     }
 
