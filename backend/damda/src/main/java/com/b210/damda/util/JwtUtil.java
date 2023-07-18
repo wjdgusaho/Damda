@@ -32,4 +32,15 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 뭐로 사인됐는지
                 .compact();
     }
+
+    public static String createRefreshToken(String secretKey, Long expiredMs){
+        Claims claims = Jwts.claims();
+
+        return Jwts.builder() // 토큰을 생성
+                .setClaims(claims) // claim은 비어있음
+                .setIssuedAt(new Date(System.currentTimeMillis())) // 현재 시간
+                .setExpiration(new Date(System.currentTimeMillis() + expiredMs)) // 언제까지
+                .signWith(SignatureAlgorithm.HS256, secretKey) // 어떤 키로 사인할지
+                .compact();
+    }
 }
