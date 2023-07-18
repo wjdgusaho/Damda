@@ -1,9 +1,7 @@
-package com.b210.damda.util.kakaoAPI.service;
+package com.b210.damda.util.kakaoapi.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.result.Output;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -62,7 +60,7 @@ public class KakaoAPIServiceImpl implements KakaoAPIService{
             // JSON String -> Map
             Map<String, Object> jsonMap = objectMapper.readValue(
                     result, new TypeReference<Map<String, Object>>() {
-            });
+                    });
 
             access_Token = jsonMap.get("access_token").toString();
             refresh_Token = jsonMap.get("refresh_token").toString();
