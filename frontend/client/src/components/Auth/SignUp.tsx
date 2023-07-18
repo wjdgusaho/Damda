@@ -62,7 +62,7 @@ export const SignUp = function () {
             method: "POST",
             url: serverUrl + "regist/",
             headers: {
-                "Content-Type": "application/json; charset=UTF-8"
+                'Content-Type': 'multipart/form-data'
             },
             data: {
                 'email': userdata.email,

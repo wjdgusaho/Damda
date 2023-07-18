@@ -14,10 +14,12 @@ const Form = styled.form`
     margin-left: auto;
     margin-right: auto;
 `
+const KakaoLink = styled(Form)``
 
 const Login = function () {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [userdataText, setUserdataText] = useState('')
     const size = {width: "400px", marginBottom: "10px"}
 
     const navigate = useNavigate()
@@ -42,9 +44,17 @@ const Login = function () {
             },
         })
         .then(response => {
-            console.log(response.data)
-            // setRefreshToken(response.data)
-            // dispatch(response.data)
+            if(response.data === 'no user'){
+                setUserdataText('아이디가 존재하지 않습니다.')
+            }
+            else if(response.data === 'fail password'){
+                setUserdataText('비밀번호가 일치하지 않습니다.')
+            }
+            else{
+                setRefreshToken(response.data.refreshToken)
+                dispatch(SET_TOKEN(response.data.accessToken))
+                navigate('/')
+            }
         })
         .catch(error => {
             console.error(error)
@@ -58,9 +68,10 @@ const Login = function () {
             <input id="email-input" type="text" value={email} onChange={inputEmail} style={size}/>
             <label htmlFor="password-input" style={size}>Password</label>
             <input id="password-input" type="password" value={password} onChange={inputPassword} style={size}/>
+            <p style={{color: 'red'}}>{userdataText}</p>
             <button>제출</button>
           </Form>
-          <a href={reqUrl}>카카오톡 로그인</a>
+          <KakaoLink as="a" href={reqUrl}>카카오톡 로그인</KakaoLink>
         </div>
     )
 }
