@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { styled } from "styled-components";
 import axios from 'axios'
+import {serverUrl} from '../../urls'
 
 const Form = styled.form`
     display: flex;
@@ -14,10 +15,12 @@ export const SignUp = function () {
     const [userdata, setUserdata] = useState({
         'email' : '',
         'password' : '',
+        'passwordCheck' : '',
         'nickname' : '',
         'profilePicture' : undefined,
         'recommendNickname' : ''
     })
+
     function handleChange (event:React.FormEvent<HTMLInputElement>) {
         setUserdata({
             ...userdata,
@@ -25,8 +28,16 @@ export const SignUp = function () {
         })
     }
 
-    function checkOverlap (event:React.MouseEvent<HTMLButtonElement>) {
+    function passwordCheck (event:React.FormEvent<HTMLInputElement>){
         
+    }
+
+    function checkEmailOverlap (event:React.MouseEvent<HTMLButtonElement>) {
+        axios.post(serverUrl+"user/register",{'email' : userdata.email})
+        .then(response => {
+            console.log(response)
+        })
+        .catch(error => console.error(error))
     }
 
     function handleSubmit (event:React.FormEvent<HTMLFormElement>){
@@ -38,10 +49,14 @@ export const SignUp = function () {
           <Form onSubmit={handleSubmit}>
             <label htmlFor="email">Email</label>
             <input name='email' type="email" value={userdata.email} onChange={handleChange}/>
-            <button onClick={checkOverlap}>중복체크</button>
+            <button onClick={checkEmailOverlap}>중복체크</button>
 
             <label htmlFor="password">Password</label>
             <input name='password' type="password" value={userdata.password} onChange={handleChange}/>
+
+            <label htmlFor="passwordCheck">Password Check</label>
+            <input name='passwordCheck' type="password" value={userdata.passwordCheck} onChange={handleChange}/>
+            <p onChange={passwordCheck}>비밀번호가 일치하지 않습니다.</p>
 
             <label htmlFor="nickname">Nickname</label>
             <input name='nickname' type="text" value={userdata.nickname} onChange={handleChange}/>
