@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { styled } from "styled-components";
 import axios from 'axios'
 import {serverUrl} from '../../urls'
@@ -20,6 +20,7 @@ export const SignUp = function () {
         'profilePicture' : undefined,
         'recommendNickname' : ''
     })
+    const [passwordMatch, setPasswordMatch] = useState('')
 
     function handleChange (event:React.FormEvent<HTMLInputElement>) {
         setUserdata({
@@ -28,12 +29,27 @@ export const SignUp = function () {
         })
     }
 
-    function passwordCheck (event:React.FormEvent<HTMLInputElement>){
-        
-    }
+    useEffect(() => {
+        if(userdata.password && userdata.passwordCheck){
+            if(userdata.password === userdata.passwordCheck){
+                setPasswordMatch('일치')
+            }
+            else {
+                setPasswordMatch('불일치')
+            }
+        }
+        else {
+            setPasswordMatch('')
+        }
+    }, [userdata.password, userdata.passwordCheck])
 
     function checkEmailOverlap (event:React.MouseEvent<HTMLButtonElement>) {
-        axios.post(serverUrl+"user/register",{'email' : userdata.email})
+        // 아직 안만듬.
+        axios({
+            method: "GET",
+            url : serverUrl + "몰라/",
+            data : {'email' : userdata.email}
+        })
         .then(response => {
             console.log(response)
         })
@@ -42,6 +58,23 @@ export const SignUp = function () {
 
     function handleSubmit (event:React.FormEvent<HTMLFormElement>){
         event.preventDefault()
+        axios({
+            method: "POST",
+            url: serverUrl + "regist/",
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8"
+            },
+            data: {
+                'email': userdata.email,
+                'password': userdata.password,
+                'nickname': userdata.nickname
+            }
+        })
+        .then(response => {
+            console.log(response)
+            
+        })
+        .catch(error => console.error(error))
     }
 
     return (
@@ -56,7 +89,7 @@ export const SignUp = function () {
 
             <label htmlFor="passwordCheck">Password Check</label>
             <input name='passwordCheck' type="password" value={userdata.passwordCheck} onChange={handleChange}/>
-            <p onChange={passwordCheck}>비밀번호가 일치하지 않습니다.</p>
+            <span>{passwordMatch}</span>
 
             <label htmlFor="nickname">Nickname</label>
             <input name='nickname' type="text" value={userdata.nickname} onChange={handleChange}/>
