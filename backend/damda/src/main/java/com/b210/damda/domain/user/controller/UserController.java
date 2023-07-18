@@ -2,14 +2,14 @@ package com.b210.damda.domain.user.controller;
 
 import com.b210.damda.domain.dto.UserLoginDTO;
 import com.b210.damda.domain.dto.UserRegistDTO;
-import com.b210.damda.domain.dto.UserUpdateDTO;
 import com.b210.damda.domain.user.service.UserService;
-import com.b210.damda.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
@@ -35,20 +35,13 @@ public class UserController {
 
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody UserLoginDTO userLoginDTO){
-        String result = userService.login(userLoginDTO.getEmail(), userLoginDTO.getPassword());
-
-        if(result.equals("no email")){
-            return new ResponseEntity<>("no user", HttpStatus.OK);
-        }else if (result.equals("no password")){
-            return new ResponseEntity<>("fail password", HttpStatus.OK);
+        String result = userService.login(userLoginDTO);
+        if(result.equals("noEmail")){
+            return new ResponseEntity<>("No User", HttpStatus.OK);
+        }else if(result.equals("ok")){
+            return new ResponseEntity<>("Ok", HttpStatus.OK);
         }else{
-            return new ResponseEntity<>(result, HttpStatus.OK);
+            return new ResponseEntity<>("fail password", HttpStatus.OK);
         }
-    }
-
-    @PatchMapping("update")
-    public ResponseEntity<?> update(@RequestHeader(value="Authorization") String token, @RequestBody UserUpdateDTO userUpdateDTO){
-        userService.update(userUpdateDTO, token);
-        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 }
