@@ -79,7 +79,7 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
                 .bodyToMono(String.class)
                 .doOnError(error -> log.info("Error occurred: {}", error.getMessage()));
 
-        log.info("res Url : {}", mainUrl);
+        log.info("현재 좌표 날씨 받아오는 중 . . . : {}", mainUrl);
 
         return response;
     }
