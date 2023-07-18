@@ -19,7 +19,7 @@ public class UserRegistDTO {
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .createDate(LocalDateTime.now())
+                .createDate(LocalDateTime.now().toString())
                 .build();
     }
 }
