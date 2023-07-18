@@ -1,5 +1,7 @@
 import React, {useState} from "react";
 import { styled } from "styled-components";
+import axios from "axios";
+import {serverUrl, reqUrl} from '../../urls'
 
 const Form = styled.form`
     display: flex;
@@ -23,6 +25,21 @@ const Login = function () {
 
     function formSubmit (e:React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
+        
+        axios({
+            method: "POST",
+            url: serverUrl + "user/login/",
+            data: {
+                'email' : email,
+                'password' : password
+            },
+        })
+        .then(response => {
+            console.log(response)
+        })
+        .catch(error => {
+            console.error(error)
+        })
     }
 
     return (
@@ -34,6 +51,7 @@ const Login = function () {
             <input id="password-input" type="password" value={password} onChange={inputPassword} style={size}/>
             <button>제출</button>
           </Form>
+          <a href={reqUrl}>카카오톡 로그인</a>
         </div>
     )
 }
