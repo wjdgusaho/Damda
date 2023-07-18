@@ -20,6 +20,7 @@ const Navigation = function () {
             <Link to="/friend">친구페이지</Link>
             <Link to="/login">로그인페이지</Link>
             <Link to="/signup">회원가입페이지</Link>
+            <Link to="/logout">로그아웃페이지</Link>
         </Navbar>
     )
 }
