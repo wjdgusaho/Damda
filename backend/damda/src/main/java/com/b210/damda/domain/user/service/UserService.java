@@ -22,7 +22,7 @@ public class UserService {
     @Value("${jwt.secret}")
     private String secretKey;
     public UserRepository userRepository;
-    private Long acExpiredMs = 1000 * 60 * 60L; // 액세스 토큰의 만료 시간
+    private Long acExpiredMs = 1000L; // 액세스 토큰의 만료 시간
     private Long rfExpiredMs = 1000 * 60 * 60 * 24 * 14L; // 리프레쉬 토큰의 만료 시간
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -50,8 +50,9 @@ public class UserService {
 
         // 로그인 성공
         if(findUser.get().getPassword().equals(password)){
-            String jwtToken = JwtUtil.createJwt(email, secretKey, acExpiredMs); // 토큰 발급해서 넘김
+            String jwtToken = JwtUtil.createAccessJwt(email, secretKey, acExpiredMs); // 토큰 발급해서 넘김
             String refreshToken = JwtUtil.createRefreshToken(secretKey, rfExpiredMs); // 리프레시 토큰 발급해서 넘김
+            String userEmail =
 
             tokens.put("accessToken", jwtToken);
             tokens.put("refreshToken", refreshToken);
