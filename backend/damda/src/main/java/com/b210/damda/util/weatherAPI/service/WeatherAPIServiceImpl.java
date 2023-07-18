@@ -1,5 +1,6 @@
 package com.b210.damda.util.weatherAPI.service;
 
+import com.b210.damda.domain.dto.WeatherDTO;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -24,25 +28,23 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
     @Value("${weather.apikey}")
     private String serviceKey;
 
-    //위도 경도 관련 변수
-    private float lan;
-    private float lat;
-
     public WeatherAPIServiceImpl() {
         this.WEBCLIENT = WebClient.create();
     }
 
     @Override
-    public List<Float> getWeatherInfos(@RequestBody List<Float> data) throws Exception {
-        //일단 확인용으로 하드코딩 해놨음
+    public Mono<String> getNowWeatherInfos(double lat, double lan) throws Exception {
+        //해당 class가 static class이기 때문에 인스턴스 객체 생성할 필요가 없음
+        LatXLngY latXLngY = ConvertGRID_GPS.converting(true, 37.309894444444, 127.644311111111);
+
         String baseUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst";
         String pageNo = "1";
         String numOfRows = "10";
         String dataType = "JSON";
-        String baseDate = "20230717";
-        String baseTime = "0630";
-        lan = 55;
-        lat = 127;
+        String baseDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String baseTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HHmm"));
+        String nx = Integer.toString((int)latXLngY.x);
+        String ny = Integer.toString((int)latXLngY.y);
 
         //URL Encoding Issue로 인한 문자열 대체
         String EncodeServiceKey = serviceKey.replace("+", "%2B");
@@ -55,21 +57,18 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
                 .queryParam("dataType", dataType)
                 .queryParam("base_date", baseDate)
                 .queryParam("base_time", baseTime)
-                .queryParam("nx", Float.toString(lan))
-                .queryParam("ny", Float.toString(lat))
+                .queryParam("nx", nx)
+                .queryParam("ny", ny)
                 .build().toUriString();
-
 
         Mono<String> response = WEBCLIENT.get()
                 .uri(mainUrl)
                 .retrieve()
                 .bodyToMono(String.class)
                 .doOnError(error -> log.info("Error occurred: {}", error.getMessage()));
-        log.info("res Url : {}", mainUrl);
-        log.info("json : {}", response);
-        //지금 float가 안 받아지는 것 같음(좌표)
 
-        //https://data.kma.go.kr/data/rmt/rmtList.do?code=400&pgmNo=570
-        return null;
+        log.info("res Url : {}", mainUrl);
+
+        return response;
     }
 }
