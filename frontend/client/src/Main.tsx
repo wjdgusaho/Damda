@@ -11,7 +11,6 @@ import TimecapsulePage from './components/TimecapsulePage'
 import Card from './components/Card'
 import Friend from './components/Friend'
 import Login from './components/Auth/Login'
-import {SignUp} from './components/Auth/SignUp'
 import Navigation from './Navigation'
 
 function Main() {
@@ -29,7 +28,6 @@ function Main() {
               <Route path='/card/' element={<Card/>}></Route>
               <Route path='/friend/' element={<Friend/>}></Route>
               <Route path='/login/' element={<Login/>}></Route>
-              <Route path='/signup/' element={<SignUp/>}></Route>
             </Routes>
           </BrowserRouter>
         </Provider>
