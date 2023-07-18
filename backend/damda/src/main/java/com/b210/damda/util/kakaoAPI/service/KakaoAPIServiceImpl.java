@@ -1,4 +1,4 @@
-package com.b210.damda.util.kakaoapi.service;
+package com.b210.damda.util.kakaoAPI.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
