@@ -23,8 +23,6 @@ export const SignUp = function () {
     const [passwordMatch, setPasswordMatch] = useState('')
 
     function handleChange (event:React.FormEvent<HTMLInputElement>) {
-        console.log(event);
-        
         setUserdata({
             ...userdata,
             [event.currentTarget.name] : event.currentTarget.value,
@@ -46,7 +44,12 @@ export const SignUp = function () {
     }, [userdata.password, userdata.passwordCheck])
 
     function checkEmailOverlap (event:React.MouseEvent<HTMLButtonElement>) {
-        axios.post(serverUrl+"user/register",{'email' : userdata.email})
+        // 아직 안만듬.
+        axios({
+            method: "GET",
+            url : serverUrl + "몰라/",
+            data : {'email' : userdata.email}
+        })
         .then(response => {
             console.log(response)
         })
@@ -55,6 +58,23 @@ export const SignUp = function () {
 
     function handleSubmit (event:React.FormEvent<HTMLFormElement>){
         event.preventDefault()
+        axios({
+            method: "POST",
+            url: serverUrl + "regist/",
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8"
+            },
+            data: {
+                'email': userdata.email,
+                'password': userdata.password,
+                'nickname': userdata.nickname
+            }
+        })
+        .then(response => {
+            console.log(response)
+            
+        })
+        .catch(error => console.error(error))
     }
 
     return (

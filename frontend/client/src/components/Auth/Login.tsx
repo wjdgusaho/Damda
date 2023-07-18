@@ -1,7 +1,11 @@
-import React, {useState} from "react";
+import React, {useState} from "react"
+import { useNavigate } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { styled } from "styled-components";
 import axios from "axios";
 import {serverUrl, reqUrl} from '../../urls'
+import {SET_TOKEN} from '../../store/Auth'
+import {setRefreshToken} from '../../store/Cookie'
 
 const Form = styled.form`
     display: flex;
@@ -16,6 +20,9 @@ const Login = function () {
     const [password, setPassword] = useState('')
     const size = {width: "400px", marginBottom: "10px"}
 
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
     function inputEmail (e:React.FormEvent<HTMLInputElement>) {
         setEmail(e.currentTarget.value)
     }
@@ -28,14 +35,16 @@ const Login = function () {
         
         axios({
             method: "POST",
-            url: serverUrl + "user/login/",
+            url: serverUrl + "login/",
             data: {
                 'email' : email,
                 'password' : password
             },
         })
         .then(response => {
-            console.log(response)
+            console.log(response.data)
+            // setRefreshToken(response.data)
+            // dispatch(response.data)
         })
         .catch(error => {
             console.error(error)
