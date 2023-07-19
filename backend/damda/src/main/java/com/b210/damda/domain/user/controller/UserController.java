@@ -3,6 +3,7 @@ package com.b210.damda.domain.user.controller;
 import com.b210.damda.domain.dto.UserLoginDTO;
 import com.b210.damda.domain.dto.UserRegistDTO;
 import com.b210.damda.domain.dto.UserUpdateDTO;
+import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.user.service.UserService;
 import com.b210.damda.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class UserController {
     // 회원가입 요청
     @PostMapping("regist")
     public ResponseEntity<?> regist(@RequestBody UserRegistDTO userRegistDTO){
-        Long savedId = userService.regist(userRegistDTO);
-        if(savedId != 0){
-            return new ResponseEntity<>(savedId, HttpStatus.OK);
+        User savedUser = userService.regist(userRegistDTO);
+        if(savedUser != null){
+            return new ResponseEntity<>(savedUser, HttpStatus.OK);
         }else {
             return new ResponseEntity<>("FAIL", HttpStatus.OK);
         }
@@ -51,7 +52,7 @@ public class UserController {
 
     @PatchMapping("update")
     public ResponseEntity<?> update(@RequestHeader(value="Authorization") String token, @RequestBody UserUpdateDTO userUpdateDTO){
-        userService.update(userUpdateDTO, token);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        User updateUser = userService.update(userUpdateDTO, token);
+        return new ResponseEntity<>(updateUser, HttpStatus.OK);
     }
 }
