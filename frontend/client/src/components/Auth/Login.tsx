@@ -71,7 +71,7 @@ const Login = function () {
             <p style={{color: 'red'}}>{userdataText}</p>
             <button>제출</button>
           </Form>
-          <KakaoLink as="a" href={reqUrl}>카카오톡 로그인</KakaoLink>
+          <KakaoLink as="a" href={reqUrl}><img src="kakao_login_medium_narrow1.png" alt="카카오톡 로그인" width="200px" height="50px"/></KakaoLink>
         </div>
     )
 }
