@@ -33,11 +33,11 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public Long regist(UserRegistDTO userRegistDTO){
+    public User regist(UserRegistDTO userRegistDTO){
         String encode = encoder.encode(userRegistDTO.getPassword());
         userRegistDTO.setPassword(encode);
         User savedUser = userRepository.save(userRegistDTO.toEntity());
-        return savedUser.getId();
+        return savedUser;
     }
 
     // 로그인
@@ -56,9 +56,10 @@ public class UserService {
             tokens.put("error", "no password");
             return tokens;
         }
+        User user = findUser.get();
 
         // 로그인 성공
-        String jwtToken = JwtUtil.createAccessJwt(email, secretKey); // 토큰 발급해서 넘김
+        String jwtToken = JwtUtil.createAccessJwt(user.getId(), secretKey); // 토큰 발급해서 넘김
         String refreshToken = JwtUtil.createRefreshToken(secretKey); // 리프레시 토큰 발급해서 넘김
 
         tokens.put("accessToken", jwtToken);
@@ -69,13 +70,13 @@ public class UserService {
 
     // 회원 정보 수정
     @Transactional
-    public Long update(UserUpdateDTO userUpdateDTO, String token){
+    public User update(UserUpdateDTO userUpdateDTO, String token){
 
-        // 토큰 꺼내기(첫 번째가 토큰이다. bearer 제외)
+        // 토큰 꺼내기(첫 번째가 토큰이다. Bearer 제외)
         String parsingToken = token.split(" ")[1];
 
-        String userEmail = JwtUtil.getUserEmail(parsingToken, secretKey);
-        Optional<User> user = userRepository.findByEmail(userEmail);
+        Long userId = JwtUtil.getUserNo(parsingToken, secretKey);
+        Optional<User> user = userRepository.findById(userId);
 
         if(user.isPresent()) {
             User findUser = user.get();
@@ -85,7 +86,7 @@ public class UserService {
             if(userUpdateDTO.getNickname() != null && !userUpdateDTO.getNickname().isEmpty()) {
                 findUser.updateNickname(userUpdateDTO.getNickname());
             }
-            return findUser.getId();
+            return findUser;
         } else {
             // 적절한 예외 처리를 해줍니다.
             throw new IllegalArgumentException("유효하지 않은 이메일입니다.");
