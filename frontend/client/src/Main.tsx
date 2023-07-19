@@ -13,6 +13,7 @@ import Friend from './components/Friend'
 import Login from './components/Auth/Login'
 import {SignUp} from './components/Auth/SignUp'
 import {Logout} from './components/Auth/Logout'
+import {LandingPage} from './components/LandingPage'
 import Navigation from './Navigation'
 
 function Main() {
@@ -21,7 +22,7 @@ function Main() {
       <CookiesProvider>
         <Provider store={Store}>
           <BrowserRouter>
-            <Navigation/>
+            {/* <Navigation/> */}
             <Routes>
               <Route path='/' element={<MainPage/>}></Route>
               <Route path='/user/' element={<MyPage/>}></Route>
@@ -32,6 +33,7 @@ function Main() {
               <Route path='/login/' element={<Login/>}></Route>
               <Route path='/signup/' element={<SignUp/>}></Route>
               <Route path='/logout/' element={<Logout/>}></Route>
+              <Route path='/landing/' element={<LandingPage/>}></Route>
             </Routes>
           </BrowserRouter>
         </Provider>

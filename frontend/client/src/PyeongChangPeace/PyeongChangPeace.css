@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'PyeongChangPeace';
+    src: local('PyeongChangPeace Bold'), url('./PyeongChangPeace-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'PyeongChangPeace';
+    src: local('PyeongChangPeace Light'), url('./PyeongChangPeace-Light.ttf');
+}
