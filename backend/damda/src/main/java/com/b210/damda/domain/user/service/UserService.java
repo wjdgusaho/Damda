@@ -8,6 +8,7 @@ import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,17 +22,20 @@ public class UserService {
 
     @Value("${jwt.secret}")
     private String secretKey;
-    public UserRepository userRepository;
-    private Long acExpiredMs = 1000L; // 액세스 토큰의 만료 시간
-    private Long rfExpiredMs = 1000 * 60 * 60 * 24 * 14L; // 리프레쉬 토큰의 만료 시간
+    private UserRepository userRepository;
+    private final BCryptPasswordEncoder encoder;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder encoder) {
         this.userRepository = userRepository;
+        this.encoder = encoder;
     }
 
     // 회원가입
     @Transactional
     public Long regist(UserRegistDTO userRegistDTO){
+        String encode = encoder.encode(userRegistDTO.getPassword());
+        userRegistDTO.setPassword(encode);
         User savedUser = userRepository.save(userRegistDTO.toEntity());
         return savedUser.getId();
     }
@@ -48,20 +52,19 @@ public class UserService {
             return tokens;
         }
 
-        // 로그인 성공
-        if(findUser.get().getPassword().equals(password)){
-            String jwtToken = JwtUtil.createAccessJwt(email, secretKey, acExpiredMs); // 토큰 발급해서 넘김
-            String refreshToken = JwtUtil.createRefreshToken(secretKey, rfExpiredMs); // 리프레시 토큰 발급해서 넘김
-            String userEmail =
-
-            tokens.put("accessToken", jwtToken);
-            tokens.put("refreshToken", refreshToken);
-
-            return tokens;
-        }else{ // 비밀번호 틀림
+        if(!encoder.matches(password, findUser.get().getPassword())){
             tokens.put("error", "no password");
             return tokens;
         }
+
+        // 로그인 성공
+        String jwtToken = JwtUtil.createAccessJwt(email, secretKey); // 토큰 발급해서 넘김
+        String refreshToken = JwtUtil.createRefreshToken(secretKey); // 리프레시 토큰 발급해서 넘김
+
+        tokens.put("accessToken", jwtToken);
+        tokens.put("refreshToken", refreshToken);
+
+        return tokens;
     }
 
     // 회원 정보 수정
@@ -73,12 +76,11 @@ public class UserService {
 
         String userEmail = JwtUtil.getUserEmail(parsingToken, secretKey);
         Optional<User> user = userRepository.findByEmail(userEmail);
-        System.out.println(user.get());
 
         if(user.isPresent()) {
             User findUser = user.get();
             if(userUpdateDTO.getPassword() != null && !userUpdateDTO.getPassword().isEmpty()) {
-                findUser.updatePassword(userUpdateDTO.getPassword());
+                findUser.updatePassword(encoder.encode(userUpdateDTO.getPassword()));
             }
             if(userUpdateDTO.getNickname() != null && !userUpdateDTO.getNickname().isEmpty()) {
                 findUser.updateNickname(userUpdateDTO.getNickname());
