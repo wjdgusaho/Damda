@@ -24,7 +24,7 @@ function Main() {
           <BrowserRouter>
             {/* <Navigation/> */}
             <Routes>
-              <Route path='/' element={<MainPage/>}></Route>
+              <Route path='/' element={<LandingPage/>}></Route>
               <Route path='/user/' element={<MyPage/>}></Route>
               <Route path='/shop/' element={<ShopPage/>}></Route>
               <Route path='/timecapsule/' element={<TimecapsulePage/>}></Route>
@@ -33,7 +33,7 @@ function Main() {
               <Route path='/login/' element={<Login/>}></Route>
               <Route path='/signup/' element={<SignUp/>}></Route>
               <Route path='/logout/' element={<Logout/>}></Route>
-              <Route path='/landing/' element={<LandingPage/>}></Route>
+              <Route path='/main/' element={<MainPage/>}></Route>
             </Routes>
           </BrowserRouter>
         </Provider>
