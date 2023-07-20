@@ -7,3 +7,5 @@ https://www.figma.com/file/L7u81s8wgD4zKkgXwAkprC/DAMDA?type=design&node-id=28%3
 
 - 권소정: 23/07/19 목업 추가 작업
 - 이지영: 23/07/19 목업 추가 작업
+
+- 권소정: 23/07/20 목업 추가 작업, 시퀀스 다이어그램 작성
