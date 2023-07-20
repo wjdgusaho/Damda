@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from 'styled-components';
+import {getCookieToken} from './store/Cookie'
 
 const Navbar = styled.nav`
     display: flex;
@@ -20,7 +21,7 @@ const Navigation = function () {
             <Link to="/friend">친구페이지</Link>
             <Link to="/login">로그인페이지</Link>
             <Link to="/signup">회원가입페이지</Link>
-            <Link to="/logout">로그아웃페이지</Link>
+            {getCookieToken() && <Link to="/logout">로그아웃페이지</Link>}
             <Link to="/landing">로딩페이지</Link>
         </Navbar>
     )
