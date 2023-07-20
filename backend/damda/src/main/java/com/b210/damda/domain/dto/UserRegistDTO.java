@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 public class UserRegistDTO {
@@ -19,7 +20,6 @@ public class UserRegistDTO {
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .createDate(LocalDateTime.now())
                 .build();
     }
 }
