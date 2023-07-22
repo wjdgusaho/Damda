@@ -7,43 +7,59 @@
     import org.springframework.data.annotation.CreatedDate;
     import org.springframework.data.annotation.LastModifiedDate;
     import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+    import reactor.util.annotation.Nullable;
 
     import javax.persistence.*;
+    import java.sql.Timestamp;
     import java.time.LocalDateTime;
 
     @Entity
     @Getter
     @ToString
     @Builder
-    @EntityListeners(AuditingEntityListener.class)
     public class User {
 
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+        private Long userNo;
+        @Column(nullable = false)
+        private String accountType;
+        @Column(nullable = false, unique = true)
         private String email;
-        private String password;
+        @Column(nullable = false)
+        private String userPw;
         private String nickname;
-        @Column(name = "create_date")
-        @CreatedDate // 생성일자 자동 생성
-        private LocalDateTime createDate;
-        @Column(name = "update_date")
-        @LastModifiedDate // 수정일자 자동 생성
-        private LocalDateTime updateDate;
+        private String profileImage;
+        @Column(nullable = false, columnDefinition = "integer default 0")
+        private int coin;
+        @Column(nullable = false, columnDefinition = "integer default 0")
+        private int nowThema;
+        @Column(nullable = false, columnDefinition = "timestamp default now()")
+        private LocalDateTime recentLogin;
+        @Column(nullable = false, columnDefinition = "integer default 5")
+        private int maxCapsuleCount;
+        @Column(nullable = false, columnDefinition = "integer default 0")
+        private int nowCapsuleCount;
+
 
         public User() {
         }
 
-        public User(Long id, String email, String password, String nickname, LocalDateTime createDate, LocalDateTime updateDate) {
-            this.id = id;
+        public User(Long userNo, String accountType, String email, String userPw, String nickname, String profileImage, int coin, int nowThema, LocalDateTime recentLogin, int maxCapsuleCount, int nowCapsuleCount) {
+            this.userNo = userNo;
+            this.accountType = accountType;
             this.email = email;
-            this.password = password;
+            this.userPw = userPw;
             this.nickname = nickname;
-            this.createDate = createDate;
-            this.updateDate = updateDate;
+            this.profileImage = profileImage;
+            this.coin = coin;
+            this.nowThema = nowThema;
+            this.recentLogin = recentLogin;
+            this.maxCapsuleCount = maxCapsuleCount;
+            this.nowCapsuleCount = nowCapsuleCount;
         }
 
-        public void updatePassword(String newPassword) {
-            this.password = newPassword;
+        public void updatePassword(String userPw) {
+            this.userPw = userPw;
         }
 
         public void updateNickname(String newNickname) {

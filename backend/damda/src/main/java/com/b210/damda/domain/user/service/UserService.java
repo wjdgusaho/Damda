@@ -34,8 +34,8 @@ public class UserService {
     // 회원가입
     @Transactional
     public User regist(UserRegistDTO userRegistDTO){
-        String encode = encoder.encode(userRegistDTO.getPassword());
-        userRegistDTO.setPassword(encode);
+        String encode = encoder.encode(userRegistDTO.getUserPw());
+        userRegistDTO.setUserPw(encode);
         User savedUser = userRepository.save(userRegistDTO.toEntity());
         return savedUser;
     }
@@ -52,14 +52,14 @@ public class UserService {
             return tokens;
         }
 
-        if(!encoder.matches(password, findUser.get().getPassword())){
+        if(!encoder.matches(password, findUser.get().getUserPw())){
             tokens.put("error", "no password");
             return tokens;
         }
         User user = findUser.get();
 
         // 로그인 성공
-        String jwtToken = JwtUtil.createAccessJwt(user.getId(), secretKey); // 토큰 발급해서 넘김
+        String jwtToken = JwtUtil.createAccessJwt(user.getUserNo(), secretKey); // 토큰 발급해서 넘김
         String refreshToken = JwtUtil.createRefreshToken(secretKey); // 리프레시 토큰 발급해서 넘김
 
         tokens.put("accessToken", jwtToken);

@@ -11,14 +11,14 @@ import java.time.format.DateTimeFormatter;
 public class UserRegistDTO {
 
     private String email;
-    private String password;
+    private String userPw;
     private String nickname;
 
 
     public User toEntity(){
         return User.builder()
                 .email(email)
-                .password(password)
+                .userPw(userPw)
                 .nickname(nickname)
                 .build();
     }
