@@ -1,9 +1,8 @@
     package com.b210.damda.domain.entity;
 
     import com.b210.damda.domain.dto.UserUpdateDTO;
-    import lombok.Builder;
-    import lombok.Getter;
-    import lombok.ToString;
+    import lombok.*;
+    import lombok.extern.slf4j.Slf4j;
     import org.springframework.data.annotation.CreatedDate;
     import org.springframework.data.annotation.LastModifiedDate;
     import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,10 +11,13 @@
     import javax.persistence.*;
     import java.sql.Timestamp;
     import java.time.LocalDateTime;
+    import java.util.ArrayList;
+    import java.util.List;
 
     @Entity
     @Getter
     @ToString
+    @EntityListeners(AuditingEntityListener.class)
     @Builder
     public class User {
 
@@ -29,22 +31,28 @@
         private String userPw;
         private String nickname;
         private String profileImage;
+        @Builder.Default
         @Column(nullable = false, columnDefinition = "integer default 0")
-        private int coin;
+        private int coin = 0;
+        @Builder.Default
         @Column(nullable = false, columnDefinition = "integer default 0")
-        private int nowThema;
-        @Column(nullable = false, columnDefinition = "timestamp default now()")
-        private LocalDateTime recentLogin;
+        private int nowThema = 0;
+        @CreatedDate
+        @Column(nullable = false)
+        private LocalDateTime registDate;
+        @Column(nullable = true)
+        private LocalDateTime deleteDate;
+        @Builder.Default
         @Column(nullable = false, columnDefinition = "integer default 5")
-        private int maxCapsuleCount;
+        private int maxCapsuleCount = 5;
+        @Builder.Default
         @Column(nullable = false, columnDefinition = "integer default 0")
-        private int nowCapsuleCount;
-
+        private int nowCapsuleCount = 0;
 
         public User() {
         }
 
-        public User(Long userNo, String accountType, String email, String userPw, String nickname, String profileImage, int coin, int nowThema, LocalDateTime recentLogin, int maxCapsuleCount, int nowCapsuleCount) {
+        public User(Long userNo, String accountType, String email, String userPw, String nickname, String profileImage, int coin, int nowThema, LocalDateTime registDate, LocalDateTime deleteDate, int maxCapsuleCount, int nowCapsuleCount) {
             this.userNo = userNo;
             this.accountType = accountType;
             this.email = email;
@@ -53,7 +61,8 @@
             this.profileImage = profileImage;
             this.coin = coin;
             this.nowThema = nowThema;
-            this.recentLogin = recentLogin;
+            this.registDate = registDate;
+            this.deleteDate = deleteDate;
             this.maxCapsuleCount = maxCapsuleCount;
             this.nowCapsuleCount = nowCapsuleCount;
         }

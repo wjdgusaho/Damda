@@ -1,13 +1,11 @@
 package com.b210.damda.domain.user.controller;
 
 import com.b210.damda.domain.dto.UserLoginDTO;
-import com.b210.damda.domain.dto.UserRegistDTO;
+import com.b210.damda.domain.dto.UserOriginRegistDTO;
 import com.b210.damda.domain.dto.UserUpdateDTO;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.user.service.UserService;
-import com.b210.damda.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +26,8 @@ public class UserController {
 
     // 회원가입 요청
     @PostMapping("regist")
-    public ResponseEntity<?> regist(@RequestBody UserRegistDTO userRegistDTO){
-        User savedUser = userService.regist(userRegistDTO);
+    public ResponseEntity<?> regist(@RequestBody UserOriginRegistDTO userOriginRegistDTO){
+        User savedUser = userService.regist(userOriginRegistDTO);
         if(savedUser != null){
             return new ResponseEntity<>(savedUser, HttpStatus.OK);
         }else {

@@ -1,9 +1,9 @@
 package com.b210.damda.domain.user.service;
 
-import com.b210.damda.domain.dto.UserLoginDTO;
-import com.b210.damda.domain.dto.UserRegistDTO;
+import com.b210.damda.domain.dto.UserOriginRegistDTO;
 import com.b210.damda.domain.dto.UserUpdateDTO;
 import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.entity.UserLog;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +32,13 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public User regist(UserRegistDTO userRegistDTO){
-        String encode = encoder.encode(userRegistDTO.getUserPw());
-        userRegistDTO.setUserPw(encode);
-        User savedUser = userRepository.save(userRegistDTO.toEntity());
+    public User regist(UserOriginRegistDTO userOriginRegistDTO){
+        String encode = encoder.encode(userOriginRegistDTO.getUserPw()); // 비밀번호 암호화
+        if(userOriginRegistDTO.getProfileImage().equals("")){
+            userOriginRegistDTO.setProfileImage("default");
+        }
+        userOriginRegistDTO.setUserPw(encode);
+        User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
         return savedUser;
     }
 
@@ -64,6 +66,9 @@ public class UserService {
 
         tokens.put("accessToken", jwtToken);
         tokens.put("refreshToken", refreshToken);
+
+        // 로그인 log 기록
+
 
         return tokens;
     }
