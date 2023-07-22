@@ -31,8 +31,8 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .antMatchers("/api/regist", "/api/login").permitAll() // 회원가입과 로그인은 언제나 가능
-                .antMatchers(HttpMethod.PATCH, "/api/update").authenticated() // 해당 요청을 인증 필수로 막아놓음.
+                .antMatchers("/user/regist", "/user/login").permitAll() // 회원가입과 로그인은 언제나 가능
+                .antMatchers(HttpMethod.PATCH, "/user/update").authenticated() // 해당 요청을 인증 필수로 막아놓음.
                 .anyRequest().permitAll() // 위 설정에 없는 모든 요청을 허가함.
                 .and()
                 .sessionManagement()

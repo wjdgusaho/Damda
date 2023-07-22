@@ -33,6 +33,7 @@ public class UserService {
         this.encoder = encoder;
     }
 
+
     // 회원가입
     @Transactional
     public User regist(UserOriginRegistDTO userOriginRegistDTO){
@@ -76,6 +77,14 @@ public class UserService {
         userLogRepository.save(userLog);
 
         return tokens;
+    }
+
+    // 유저 이메일 확인(이메일 존재하는지)
+    @Transactional
+    public User fineByUser(String email){
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        User user = byEmail.get();
+        return user;
     }
 
     // 회원 정보 수정
