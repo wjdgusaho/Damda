@@ -26,5 +26,7 @@ public class UserLog {
     @Column(nullable = false)
     private LocalDateTime recentLogin;
 
-
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

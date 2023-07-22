@@ -4,6 +4,7 @@ import com.b210.damda.domain.dto.UserOriginRegistDTO;
 import com.b210.damda.domain.dto.UserUpdateDTO;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.entity.UserLog;
+import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,13 @@ public class UserService {
     @Value("${jwt.secret}")
     private String secretKey;
     private UserRepository userRepository;
+    private UserLogRepository userLogRepository;
     private final BCryptPasswordEncoder encoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder encoder) {
+    public UserService(UserRepository userRepository, UserLogRepository userLogRepository, BCryptPasswordEncoder encoder) {
         this.userRepository = userRepository;
+        this.userLogRepository = userLogRepository;
         this.encoder = encoder;
     }
 
@@ -68,7 +71,9 @@ public class UserService {
         tokens.put("refreshToken", refreshToken);
 
         // 로그인 log 기록
-
+        UserLog userLog = new UserLog();
+        userLog.setUser(user);
+        userLogRepository.save(userLog);
 
         return tokens;
     }
