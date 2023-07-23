@@ -12,10 +12,11 @@ import java.time.LocalDateTime;
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 @Builder
+@AllArgsConstructor
 public class EmailSendLog {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long emailSendLogNo;
+    private Long emailSendLogNo;
     @ManyToOne
     @JoinColumn(name = "userNo", nullable = false)
     private User user;
@@ -28,17 +29,7 @@ public class EmailSendLog {
     private LocalDateTime createTime;
 
     public EmailSendLog() {
+
     }
 
-    public EmailSendLog(long emailSendLogNo, User user, String email, String verificationCode, LocalDateTime createTime) {
-        this.emailSendLogNo = emailSendLogNo;
-        this.user = user;
-        this.email = email;
-        this.verificationCode = verificationCode;
-        this.createTime = createTime;
-    }
-
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
 }

@@ -1,6 +1,5 @@
 package com.b210.damda.util.emailAPI.service;
 
-import java.time.LocalDateTime;
 import java.util.Random;
 
 import javax.mail.Message.RecipientType;
@@ -10,20 +9,23 @@ import javax.mail.internet.MimeMessage;
 import com.b210.damda.domain.entity.EmailSendLog;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.util.emailAPI.repository.EmailSendLogRepository;
-import com.b210.damda.util.emailAPI.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EmailServiceImpl implements EmailService {
 
-    @Autowired
     JavaMailSender emailSender;
     EmailSendLog emailSendLog;
     EmailSendLogRepository emailSendLogRepository;
+
+    @Autowired
+    public EmailServiceImpl(JavaMailSender emailSender, EmailSendLogRepository emailSendLogRepository) {
+        this.emailSender = emailSender;
+        this.emailSendLogRepository = emailSendLogRepository;
+    }
 
     public static final String ePw = createKey();
 
@@ -100,8 +102,8 @@ public class EmailServiceImpl implements EmailService {
                 .user(user)
                 .build();
 
-        build.setCreateTime(LocalDateTime.now());
         EmailSendLog save = emailSendLogRepository.save(build);
+        System.out.println(save);
         return save.getEmailSendLogNo();
     }
 
