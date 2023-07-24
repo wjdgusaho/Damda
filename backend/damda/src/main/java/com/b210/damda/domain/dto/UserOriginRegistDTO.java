@@ -4,6 +4,8 @@ import com.b210.damda.domain.entity.User;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Entity;
+
 @Data
 public class UserOriginRegistDTO {
 
