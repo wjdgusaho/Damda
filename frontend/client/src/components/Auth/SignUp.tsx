@@ -1,32 +1,46 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router'
 import { styled } from 'styled-components'
 import axios from 'axios'
 import { serverUrl } from '../../urls'
+import { Link } from 'react-router-dom'
+import 'tailwindcss/tailwind.css'
 
 const Form = styled.form`
     display: flex;
     flex-wrap: wrap;
-    width: 200px;
     margin-left: auto;
     margin-right: auto;
 `
 
+const inputCSS = 'bg-transparent border-b-2 border-b-white-500 my-2 outline-none focus:outline-none'
+const InputFile = styled.input``
+
 export const SignUp = function () {
+    // const navigate = useNavigate()
     const [userdata, setUserdata] = useState({
         email: '',
         password: '',
         passwordCheck: '',
         nickname: '',
-        profilePicture: undefined,
-        recommendNickname: '',
+        profilePicture: '',
     })
     const [passwordMatch, setPasswordMatch] = useState('')
+    const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
-    function handleChange(event: React.FormEvent<HTMLInputElement>) {
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
         setUserdata({
             ...userdata,
             [event.currentTarget.name]: event.currentTarget.value,
         })
+        const file = event.target.files?.[0]
+        if (file) {
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                setSelectedImage(reader.result as string)
+            }
+            reader.readAsDataURL(file)
+        }
     }
 
     useEffect(() => {
@@ -41,10 +55,15 @@ export const SignUp = function () {
         }
     }, [userdata.password, userdata.passwordCheck])
 
+    function imgChange() {
+        const fileinput = document.querySelector('input[type="file"]') as HTMLInputElement
+        fileinput.click()
+    }
+
     function checkEmailOverlap(event: React.MouseEvent<HTMLButtonElement>) {
         axios({
             method: 'GET',
-            url: serverUrl + 'regist',
+            url: serverUrl + 'user/regist',
             data: { email: userdata.email },
         })
             .then((response) => {
@@ -55,53 +74,111 @@ export const SignUp = function () {
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
-        axios({
-            method: 'POST',
-            url: serverUrl + 'regist/',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            data: {
-                email: userdata.email,
-                password: userdata.password,
-                nickname: userdata.nickname,
-            },
-        })
-            .then((response) => {
-                console.log(response)
+        if (!userdata.email) {
+            alert('이메일을 입력해주세요.')
+        } else if (!userdata.nickname) {
+            alert('닉네임을 입력해주세요.')
+        } else if (!userdata.password) {
+            alert('비밀번호를 입력해주세요.')
+        } else if (userdata.password !== userdata.passwordCheck) {
+            alert('비밀번호가 일치하지 않습니다.')
+        } else {
+            axios({
+                method: 'POST',
+                url: serverUrl + 'user/regist',
+                headers: {
+                    // 'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    email: userdata.email,
+                    userPw: userdata.password,
+                    nickname: userdata.nickname,
+                    profileImage: userdata.profilePicture,
+                },
             })
-            .catch((error) => console.error(error))
+                .then((response) => {
+                    console.log(response)
+                })
+                .catch((error) => console.error(error))
+        }
     }
 
     return (
-        <div>
-            <Form onSubmit={handleSubmit}>
-                <label htmlFor="email">Email</label>
-                <input name="email" type="email" value={userdata.email} onChange={handleChange} />
-                <button onClick={checkEmailOverlap}>중복체크</button>
-
-                <label htmlFor="password">Password</label>
-                <input name="password" type="password" value={userdata.password} onChange={handleChange} />
-
-                <label htmlFor="passwordCheck">Password Check</label>
-                <input name="passwordCheck" type="password" value={userdata.passwordCheck} onChange={handleChange} />
-                <span>{passwordMatch}</span>
-
-                <label htmlFor="nickname">Nickname</label>
-                <input name="nickname" type="text" value={userdata.nickname} onChange={handleChange} />
-
-                <label htmlFor="profilePicture">Profile Picture</label>
-                <input name="profilePicture" type="file" value={userdata.profilePicture} onChange={handleChange} />
-
-                <label htmlFor="recommendNickname">Recommend Nickname</label>
+        <div className="grid grid-cols-1 w-48 mx-auto">
+            <Link to={'/login'}>뒤로가기</Link>
+            <Form className="grid grid-cols-1 w-full mx-auto" onSubmit={handleSubmit}>
+                <div style={{ margin: 'auto' }}>
+                    <img
+                        style={{ backgroundColor: '#AEB8E2', borderRadius: '50%' }}
+                        src={selectedImage ? selectedImage : '/defalutprofile.png'}
+                        width={100}
+                        height={100}
+                        alt="profile"
+                    />
+                    <img
+                        src="/profilesetting.png"
+                        alt="a"
+                        width={30}
+                        style={{ position: 'relative', top: '-30px', left: '70px' }}
+                        onClick={imgChange}
+                    />
+                </div>
                 <input
-                    name="recommendNickname"
-                    type="text"
-                    value={userdata.recommendNickname}
+                    name="profilePicture"
+                    type="file"
+                    className="hidden"
+                    value={userdata.profilePicture}
                     onChange={handleChange}
                 />
 
-                <button>제출</button>
+                <p className="grid grid-cols-2 items-center">
+                    <span>이메일</span>
+                    <button
+                        className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-24"
+                        onClick={checkEmailOverlap}
+                    >
+                        중복확인
+                    </button>
+                </p>
+                <input className={inputCSS} name="email" type="email" value={userdata.email} onChange={handleChange} />
+
+                <p>
+                    닉네임<span style={{ color: 'gray', fontSize: '8px', marginLeft: '3px' }}>최대 10자</span>{' '}
+                </p>
+                <input
+                    className={inputCSS}
+                    name="nickname"
+                    type="text"
+                    value={userdata.nickname}
+                    onChange={handleChange}
+                />
+
+                <p>비밀번호</p>
+                <input
+                    className={inputCSS}
+                    name="password"
+                    type="password"
+                    value={userdata.password}
+                    onChange={handleChange}
+                />
+
+                <p>비밀번호 확인</p>
+                <input
+                    className={inputCSS}
+                    name="passwordCheck"
+                    type="password"
+                    value={userdata.passwordCheck}
+                    onChange={handleChange}
+                />
+                <p>{passwordMatch}</p>
+
+                <button
+                    className="p-2 px-4 text-sm rounded-full shadow-md w-full mx-auto"
+                    style={{ backgroundColor: '#EFE0F4', color: 'black' }}
+                >
+                    확인
+                </button>
             </Form>
         </div>
     )
