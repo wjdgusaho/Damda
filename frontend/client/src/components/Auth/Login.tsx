@@ -123,7 +123,7 @@ const Login = function () {
 
     axios({
       method: "POST",
-      url: serverUrl + "login/",
+      url: serverUrl + "user/login/",
       data: {
         email: email,
         password: password,
@@ -137,7 +137,7 @@ const Login = function () {
         } else {
           setRefreshToken(response.data.refreshToken)
           dispatch(SET_TOKEN(response.data.accessToken))
-          navigate("/")
+          navigate("/main")
         }
       })
       .catch((error) => {

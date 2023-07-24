@@ -5,6 +5,8 @@ import "slick-carousel/slick/slick-theme.css"
 
 const Tutorial = function () {
   const settings = {
+    centerMode: true,
+    arrows: false,
     dots: true,
     infinite: true,
     speed: 500,
