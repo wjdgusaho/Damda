@@ -22,9 +22,28 @@ spring:
   profiles:
     include: secret
 
+  mail:
+    smtp:
+      auth: true
+      starttls:
+        required: true
+        enable: true
+      socketFactory:
+        class: javax.net.ssl.SSLSocketFactory
+        fallback: false
+        port: 465
+      port: 465
+
+  AdminMail:
+    id: "damdaCop"
+    password: "vizahyecgncvsdch"
+
 logging:
   level:
     org.hibernate.SQL: debug
+
+
+
 
 
 
