@@ -46,6 +46,9 @@ dependencies {
 	// 스프링 시큐리티
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
+	// Oauth2
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client', version: '2.5.4'
+
 }
 
 tasks.named('test') {
