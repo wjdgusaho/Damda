@@ -36,14 +36,20 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public User regist(UserOriginRegistDTO userOriginRegistDTO){
+    public User regist(UserOriginRegistDTO userOriginRegistDTO, String profileUri){
         String encode = encoder.encode(userOriginRegistDTO.getUserPw()); // 비밀번호 암호화
-        if(userOriginRegistDTO.getProfileImage().equals("")){
-            userOriginRegistDTO.setProfileImage("default");
-        }
+
         userOriginRegistDTO.setUserPw(encode);
-        User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
-        return savedUser;
+        if(profileUri.equals("")){
+            userOriginRegistDTO.setUri("profile.jpg");
+            User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
+            return savedUser;
+        }else{
+            userOriginRegistDTO.setUri(profileUri);
+            User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
+            return savedUser;
+        }
+
     }
 
     // 로그인
