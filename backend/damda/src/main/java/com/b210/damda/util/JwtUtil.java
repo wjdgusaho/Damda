@@ -30,9 +30,9 @@ public class JwtUtil {
     }
 
     // 액세스 토큰 생성
-    public static String createAccessJwt(Long id, String secretKey){
+    public static String createAccessJwt(Long userNo, String secretKey){
         Claims claims = Jwts.claims();
-        claims.put("userNo", id);
+        claims.put("userNo", userNo);
 
         return Jwts.builder() // 액세스 토큰을 생성
                 .setClaims(claims) // 유저의 pk값
