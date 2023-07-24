@@ -2,8 +2,10 @@ package com.b210.damda.domain.user.service;
 
 import com.b210.damda.domain.dto.UserOriginRegistDTO;
 import com.b210.damda.domain.dto.UserUpdateDTO;
+import com.b210.damda.domain.entity.RefreshToken;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.entity.UserLog;
+import com.b210.damda.domain.repository.RefreshTokenRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -25,12 +28,14 @@ public class UserService {
     private UserRepository userRepository;
     private UserLogRepository userLogRepository;
     private final BCryptPasswordEncoder encoder;
+    private RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserLogRepository userLogRepository, BCryptPasswordEncoder encoder) {
+    public UserService(UserRepository userRepository, UserLogRepository userLogRepository, BCryptPasswordEncoder encoder, RefreshTokenRepository refreshTokenRepository) {
         this.userRepository = userRepository;
         this.userLogRepository = userLogRepository;
         this.encoder = encoder;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
 
@@ -73,6 +78,28 @@ public class UserService {
         // 로그인 성공
         String jwtToken = JwtUtil.createAccessJwt(user.getUserNo(), secretKey); // 토큰 발급해서 넘김
         String refreshToken = JwtUtil.createRefreshToken(secretKey); // 리프레시 토큰 발급해서 넘김
+
+        Optional<RefreshToken> byUserUserNo = refreshTokenRepository.findByUserUserNo(user.getUserNo());
+        if(byUserUserNo.isPresent()){
+            RefreshToken currentRefreshToken = byUserUserNo.get(); // 현재 유저의 리프레시 토큰 꺼내옴
+
+            currentRefreshToken.setRefreshToken(refreshToken); // 전부 새롭게 저장
+            currentRefreshToken.setExpirationDate(LocalDateTime.now().plusDays(14));
+            currentRefreshToken.setCreateDate(LocalDateTime.now());
+
+            refreshTokenRepository.save(currentRefreshToken); // db에 저장
+
+        }else{
+            RefreshToken refreshTokenUser = RefreshToken.builder() // 리프레시 토큰 빌더로 생성
+                    .user(user)
+                    .refreshToken(refreshToken)
+                    .expirationDate(LocalDateTime.now().plusDays(14))
+                    .build();
+
+            refreshTokenRepository.save(refreshTokenUser); // 리프레시 토큰 저장.
+        }
+
+
 
         tokens.put("accessToken", jwtToken);
         tokens.put("refreshToken", refreshToken);
