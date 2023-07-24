@@ -2,11 +2,14 @@ package com.b210.damda.util.kakaoAPI.controller;
 
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.kakaoAPI.service.KakaoAPIService;
+import com.b210.damda.util.kakaoAPI.service.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +18,6 @@ import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/kakaoapi")
 @RequiredArgsConstructor
 public class KakaoAPIController {
 
@@ -24,18 +26,6 @@ public class KakaoAPIController {
     private UserRepository userRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-
-//    public String getKakaAuthUrl(HttpServletRequest request) throws Exception{
-//        System.out.println("testet");
-//        String reqUrl = "https://kauth.kakao.com/oauth/authorize"
-//                + "?client_id=9292106e6bff609d98bd0df4de1ede06"
-//                //+ "&client_secret=GcveX0t6jBVJV3TT7XOxrFAc13inJUYf"
-//                + "&redirect_url=http://localhost:8080/api/kakaoapi/login/oauth_kakao"
-//                + "&response_type=code";
-//
-//        return reqUrl;
-//    }
 
 //    @GetMapping("login/oauth_kakao")
 //    public ResponseEntity<?> oauthKakao(@RequestParam(value = "code", required = false)String code) throws IOException {
@@ -46,5 +36,6 @@ public class KakaoAPIController {
 //
 //        return new ResponseEntity<>(UserInfo, HttpStatus.OK);
 //    }
+
 
 }

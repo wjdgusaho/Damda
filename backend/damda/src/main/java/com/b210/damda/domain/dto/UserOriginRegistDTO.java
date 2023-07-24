@@ -3,6 +3,8 @@ package com.b210.damda.domain.dto;
 import com.b210.damda.domain.entity.User;
 import lombok.Data;
 
+import javax.persistence.Entity;
+
 @Data
 public class UserOriginRegistDTO {
 
