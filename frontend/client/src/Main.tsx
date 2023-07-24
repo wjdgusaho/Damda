@@ -16,6 +16,7 @@ import { Logout } from "./components/Auth/Logout"
 import { ChangePassword } from "./components/Auth/ChangePassword"
 import { LandingPage } from "./components/LandingPage"
 import Navigation from "./Navigation"
+import Tutorial from "./components/Tutorial"
 
 function Main() {
   return (
@@ -39,6 +40,7 @@ function Main() {
                 path="/changepassword/"
                 element={<ChangePassword />}
               ></Route>
+              <Route path="/tutorial/" element={<Tutorial />}></Route>
             </Routes>
           </BrowserRouter>
         </Provider>
