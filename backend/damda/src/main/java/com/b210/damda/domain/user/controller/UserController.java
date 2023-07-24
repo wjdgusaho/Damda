@@ -54,6 +54,18 @@ public class UserController {
         }
     }
 
+    // 이메일 중복체크
+    @GetMapping("regist")
+    public ResponseEntity<?> emailCheck(@RequestBody UserOriginRegistDTO userOriginRegistDTO){
+        String email = userOriginRegistDTO.getEmail();
+        User user = userService.fineByUser(email);
+        if(user != null){
+            return new ResponseEntity<>("사용불가", HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>("사용가능", HttpStatus.OK);
+        }
+    }
+
     // 로그인 요청
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody UserLoginDTO userLoginDTO){

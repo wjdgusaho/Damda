@@ -89,8 +89,10 @@ public class UserService {
     @Transactional
     public User fineByUser(String email){
         Optional<User> byEmail = userRepository.findByEmail(email);
-        User user = byEmail.get();
-        return user;
+        if(byEmail.isEmpty()){
+            return null;
+        }
+        return byEmail.get();
     }
 
     // 회원 정보 수정
