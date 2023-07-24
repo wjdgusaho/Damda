@@ -1,25 +1,25 @@
 package com.b210.damda.domain.dto;
 
 import com.b210.damda.domain.entity.User;
-import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 @Data
-public class UserRegistDTO {
+public class UserOriginRegistDTO {
 
     private String email;
-    private String password;
+    private String userPw;
     private String nickname;
+    private String profileImage;
+
 
 
     public User toEntity(){
         return User.builder()
+                .accountType("ORIGIN")
                 .email(email)
-                .password(password)
+                .userPw(userPw)
                 .nickname(nickname)
+                .profileImage(profileImage)
                 .build();
     }
 }

@@ -1,13 +1,13 @@
 package com.b210.damda.domain.user.controller;
 
 import com.b210.damda.domain.dto.UserLoginDTO;
-import com.b210.damda.domain.dto.UserRegistDTO;
+import com.b210.damda.domain.dto.UserOriginRegistDTO;
 import com.b210.damda.domain.dto.UserUpdateDTO;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.user.service.UserService;
-import com.b210.damda.util.JwtUtil;
+import com.b210.damda.util.emailAPI.dto.EmailDTO;
+import com.b210.damda.util.emailAPI.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,21 +15,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/user")
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     public UserService userService;
+    public EmailService emailService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, EmailService emailService) {
         this.userService = userService;
+        this.emailService = emailService;
     }
 
     // 회원가입 요청
     @PostMapping("regist")
-    public ResponseEntity<?> regist(@RequestBody UserRegistDTO userRegistDTO){
-        User savedUser = userService.regist(userRegistDTO);
+    public ResponseEntity<?> regist(@RequestBody UserOriginRegistDTO userOriginRegistDTO){
+        User savedUser = userService.regist(userOriginRegistDTO);
         if(savedUser != null){
             return new ResponseEntity<>(savedUser, HttpStatus.OK);
         }else {
@@ -37,6 +39,7 @@ public class UserController {
         }
     }
 
+    // 로그인 요청
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody UserLoginDTO userLoginDTO){
         Map<String, String> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getPassword());
@@ -50,6 +53,26 @@ public class UserController {
         }
     }
 
+    // 비밀번호 이메일 인증 요청
+    @PostMapping("change-password/email")
+    public ResponseEntity emailConfirm(@RequestBody EmailDTO emailRequest) throws Exception {
+        String email = emailRequest.getEmail();
+
+        // 이메일 유저를 찾음
+        User user = userService.fineByUser(email);
+        if(user == null){
+            return new ResponseEntity<>("해당 이메일이 존재하지 않습니다.",HttpStatus.BAD_REQUEST);
+        }
+        String key = emailService.sendSimpleMessage(email);
+        if(emailService.registTempKey(key, email, user) == 0){
+            return new ResponseEntity<>("인증번호 전송에 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("해당 이메일로 인증번호를 전송하였습니다.", HttpStatus.OK);
+
+
+    }
+
+    // 회원정보 수정 요청(바꿔야함)
     @PatchMapping("update")
     public ResponseEntity<?> update(@RequestHeader(value="Authorization") String token, @RequestBody UserUpdateDTO userUpdateDTO){
         User updateUser = userService.update(userUpdateDTO, token);
