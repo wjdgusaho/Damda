@@ -69,7 +69,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             user = optionalUser.get();
             log.info("로그인 성공");
         }
-
+        //컨트롤러에서 유저 정보를 필요할때 그때 사용한다.
         return new PrincipalDetails(user, oAuth2User.getAttributes());
 
     }
