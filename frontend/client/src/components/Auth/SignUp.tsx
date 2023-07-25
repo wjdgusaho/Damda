@@ -5,6 +5,7 @@ import axios from 'axios'
 import { serverUrl } from '../../urls'
 import { Link } from 'react-router-dom'
 import tw from 'tailwind-styled-components'
+import { type } from '@testing-library/user-event/dist/type'
 
 const Form = styled.form`
     display: flex;
@@ -25,21 +26,25 @@ export const SignUp = function () {
     const navigate = useNavigate()
     const [userdata, setUserdata] = useState({
         email: '',
-        password: '',
-        passwordCheck: '',
+        userPw: '',
+        userPwCheck: '',
         nickname: '',
-        profilePicture: '',
+        profileImage: '',
     })
-    const [passwordMatch, setPasswordMatch] = useState('')
+    const [userPwMatch, setuserPwMatch] = useState('')
     const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const file = event.target.files?.[0]
+
         setUserdata({
             ...userdata,
             [event.currentTarget.name]: event.currentTarget.value,
         })
-        const file = event.target.files?.[0]
         if (file) {
+            setUserdata({
+                ...userdata,
+            })
             const reader = new FileReader()
             reader.onloadend = () => {
                 setSelectedImage(reader.result as string)
@@ -49,19 +54,19 @@ export const SignUp = function () {
     }
 
     useEffect(() => {
-        if (userdata.password && userdata.passwordCheck) {
-            if (userdata.password === userdata.passwordCheck) {
-                setPasswordMatch('일치')
+        if (userdata.userPw && userdata.userPwCheck) {
+            if (userdata.userPw === userdata.userPwCheck) {
+                setuserPwMatch('일치')
             } else {
-                setPasswordMatch('불일치')
+                setuserPwMatch('불일치')
             }
         } else {
-            setPasswordMatch('')
+            setuserPwMatch('')
         }
-    }, [userdata.password, userdata.passwordCheck])
+    }, [userdata.userPw, userdata.userPwCheck])
 
     function imgChange() {
-        const fileinput = document.querySelector('input[type="file"]') as HTMLInputElement
+        const fileinput = document.getElementById('profileImage') as HTMLInputElement
         fileinput.click()
     }
 
@@ -79,33 +84,45 @@ export const SignUp = function () {
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
-        console.log(event)
+        const filedata = document.getElementById('profileImage') as HTMLInputElement
+        const data = new FormData()
+        const userform = {
+            email: userdata.email,
+            userPw: userdata.userPw,
+            nickname: userdata.nickname,
+        }
+        // data.append('user', userdata.email)
+        // data.append('userPw', userdata.userPw)
+        // data.append('nickname', userdata.nickname)
+        data.append('user', new Blob([JSON.stringify(userform)], { type: 'application/json' }))
+        if (filedata?.files && filedata.files.length > 0) {
+            data.append('profileImage', filedata.files[0])
+        } else {
+            data.append('profileImage', new Blob())
+        }
 
         if (!userdata.email) {
             alert('이메일을 입력해주세요.')
         } else if (!userdata.nickname) {
             alert('닉네임을 입력해주세요.')
-        } else if (!userdata.password) {
+        } else if (!userdata.userPw) {
             alert('비밀번호를 입력해주세요.')
-        } else if (userdata.password !== userdata.passwordCheck) {
+        } else if (userdata.userPw !== userdata.userPwCheck) {
             alert('비밀번호가 일치하지 않습니다.')
         } else {
             axios({
                 method: 'POST',
                 url: serverUrl + 'user/regist',
                 headers: {
-                    // 'Content-Type': 'multipart/form-data',
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    // 'Content-Type': 'application/json',
                 },
-                data: {
-                    email: userdata.email,
-                    userPw: userdata.password,
-                    nickname: userdata.nickname,
-                    profileImage: userdata.profilePicture,
-                },
+                data: data,
             })
-                .then(() => {
-                    navigate('/login')
+                .then((res) => {
+                    console.log(res)
+
+                    // navigate('/login')
                 })
                 .catch((error) => console.error(error))
         }
@@ -147,13 +164,7 @@ export const SignUp = function () {
                         onClick={imgChange}
                     />
                 </div>
-                <input
-                    name="profilePicture"
-                    type="file"
-                    className="hidden"
-                    value={userdata.profilePicture}
-                    onChange={handleChange}
-                />
+                <input id="profileImage" name="profileImage" type="file" className="hidden" onChange={handleChange} />
 
                 <p className="grid grid-cols-2 items-center">
                     <span>이메일</span>
@@ -172,11 +183,11 @@ export const SignUp = function () {
                 <InputCSS name="nickname" type="text" value={userdata.nickname} onChange={handleChange} />
 
                 <p>비밀번호</p>
-                <InputCSS name="password" type="password" value={userdata.password} onChange={handleChange} />
+                <InputCSS name="userPw" type="password" value={userdata.userPw} onChange={handleChange} />
 
                 <p>비밀번호 확인</p>
-                <InputCSS name="passwordCheck" type="password" value={userdata.passwordCheck} onChange={handleChange} />
-                <p>{passwordMatch}</p>
+                <InputCSS name="userPwCheck" type="password" value={userdata.userPwCheck} onChange={handleChange} />
+                <p>{userPwMatch}</p>
 
                 <button
                     className="p-2 px-4 text-sm rounded-full shadow-md w-full mx-auto"
