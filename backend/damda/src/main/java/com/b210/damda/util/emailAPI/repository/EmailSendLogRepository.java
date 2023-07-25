@@ -12,9 +12,6 @@ import java.util.Optional;
 @Repository
 public interface EmailSendLogRepository extends JpaRepository<EmailSendLog, Long> {
 
-//    @Query(value = "SELECT e.verificationCode FROM EmailSendLog e WHERE e.user.userNo = ?1 ORDER BY e.createTime DESC")
-//    Optional<String> findTopVerificationCodeByUserNoOrderByCreateTimeDesc(Long userNo);
-
     Optional<EmailSendLog> findTopByUserUserNoOrderByCreateTimeDesc(Long userNo);
 
 }
