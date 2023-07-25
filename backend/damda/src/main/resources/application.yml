@@ -7,15 +7,15 @@ spring:
     password: ssafy
 
   jpa:
-    open-in-view: true
+    open-in-view: false
     hibernate:
       ddl-auto: none
       naming:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
       use-new-id-generator-mappings: false
-    show-sql: true
+    show-sql: false
     properties:
-      hibernate.format_sql: true
+      hibernate.format_sql: false
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
 
   #Personal Information Management(.ignore)
