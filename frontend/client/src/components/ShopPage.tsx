@@ -67,8 +67,9 @@ export const ShopPage = function () {
 }
 const Card = function () {
     return (
-        <div className='w-80 h-40 bg-white bg-opacity-10 m-auto rounded-3xl flex shadow-lg'>
+        <div className='w-80 h-40 bg-white bg-opacity-10 m-auto rounded-3xl flex shadow-2xl'>
             <div className='w-40 h-40 bg-white opacity-100 rounded-3xl'>
+                <img src="/assets/Planet-3.png" alt="카드이미지" />
             </div>
             <div className='w-40 h-40 text-center'>
                 <TextStyle className='mt-1 text-white text-lg'>문자 (파랑색)</TextStyle>
@@ -113,6 +114,10 @@ export const Sticker = function () {
 export const Theme = function () {
     return (
         <div>
+            <div className='ml-8 mb-4'>
+                <input type="checkbox" name="" id="" />
+                <label htmlFor=""><TextStyle className='inline text-white ml-2 opacity-70'>보유중인 상품만</TextStyle></label>
+            </div>
             <Card></Card>
             <CardLine></CardLine>
             <Card></Card>
