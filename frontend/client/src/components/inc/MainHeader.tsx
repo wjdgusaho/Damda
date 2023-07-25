@@ -16,12 +16,12 @@ export const MainHeader = function () {
           <TextStyle>테마설정</TextStyle>
         </div>
         <div className="flex items-center">
-          <img src="assets/icons/alerm.png" alt="알림" className="mr-6" />
+          <img src="/assets/icons/alerm.png" alt="알림" className="mr-6" />
           <img
             onClick={() => {
               navigate("/menu")
             }}
-            src="assets/icons/menu.png"
+            src="/assets/icons/menu.png"
             alt="메뉴"
             className="h-6"
           />
