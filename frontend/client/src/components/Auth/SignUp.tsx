@@ -4,7 +4,7 @@ import { styled } from 'styled-components'
 import axios from 'axios'
 import { serverUrl } from '../../urls'
 import { Link } from 'react-router-dom'
-import 'tailwindcss/tailwind.css'
+import tw from 'tailwind-styled-components'
 
 const Form = styled.form`
     display: flex;
@@ -13,11 +13,16 @@ const Form = styled.form`
     margin-right: auto;
 `
 
-const inputCSS = 'bg-transparent border-b-2 border-b-white-500 my-2 outline-none focus:outline-none'
-const InputFile = styled.input``
+const InputCSS = tw.input`
+    bg-transparent
+    border-b-2
+    border-b-white-500
+    my-2
+    focus:outline-none
+`
 
 export const SignUp = function () {
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
     const [userdata, setUserdata] = useState({
         email: '',
         password: '',
@@ -74,6 +79,8 @@ export const SignUp = function () {
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
+        console.log(event)
+
         if (!userdata.email) {
             alert('이메일을 입력해주세요.')
         } else if (!userdata.nickname) {
@@ -97,16 +104,16 @@ export const SignUp = function () {
                     profileImage: userdata.profilePicture,
                 },
             })
-                .then((response) => {
-                    console.log(response)
+                .then(() => {
+                    navigate('/login')
                 })
                 .catch((error) => console.error(error))
         }
     }
 
     return (
-        <div className="grid grid-cols-1 w-48 mx-auto mt-5">
-            <Link to={'/login'} style={{ fontSize: '30px' }}>
+        <div className="grid grid-cols-1 w-48 mx-auto mt-5 text-white">
+            <Link to={'/login'} style={{ fontSize: '30px', color: 'white' }}>
                 <svg
                     className="w-6 h-6 text-black-800 dark:text-white"
                     aria-hidden="true"
@@ -157,36 +164,18 @@ export const SignUp = function () {
                         중복확인
                     </button>
                 </p>
-                <input className={inputCSS} name="email" type="email" value={userdata.email} onChange={handleChange} />
+                <InputCSS name="email" type="email" value={userdata.email} onChange={handleChange} />
 
                 <p>
                     닉네임<span style={{ color: 'gray', fontSize: '8px', marginLeft: '3px' }}>최대 10자</span>{' '}
                 </p>
-                <input
-                    className={inputCSS}
-                    name="nickname"
-                    type="text"
-                    value={userdata.nickname}
-                    onChange={handleChange}
-                />
+                <InputCSS name="nickname" type="text" value={userdata.nickname} onChange={handleChange} />
 
                 <p>비밀번호</p>
-                <input
-                    className={inputCSS}
-                    name="password"
-                    type="password"
-                    value={userdata.password}
-                    onChange={handleChange}
-                />
+                <InputCSS name="password" type="password" value={userdata.password} onChange={handleChange} />
 
                 <p>비밀번호 확인</p>
-                <input
-                    className={inputCSS}
-                    name="passwordCheck"
-                    type="password"
-                    value={userdata.passwordCheck}
-                    onChange={handleChange}
-                />
+                <InputCSS name="passwordCheck" type="password" value={userdata.passwordCheck} onChange={handleChange} />
                 <p>{passwordMatch}</p>
 
                 <button
