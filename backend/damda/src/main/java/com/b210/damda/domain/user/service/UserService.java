@@ -122,7 +122,6 @@ public class UserService {
     }
 
     // 유저 이메일 확인(이메일 존재하는지)
-    @Transactional
     public User fineByUser(String email) {
         Optional<User> byEmail = userRepository.findByEmail(email);
         if (byEmail.isEmpty()) {
