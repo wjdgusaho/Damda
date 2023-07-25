@@ -59,7 +59,7 @@ const capsuleList: CapsuleType[] = [
         id: 3,
         type: 'memory',
         sDate: '2023-01-01',
-        eDate: '2023-09-01',
+        eDate: '2023-02-30',
         name: '기록1',
         imgsrc: 'assets/Planet-7.png',
         curCard: 0,
@@ -117,14 +117,14 @@ const MainPage = function () {
                                             {c.type !== "goal" && (
                                                 <div>
                                                     <Dday className='m-auto'>
-                                                        D - {calculateDateDifference(c.sDate, c.eDate)}
+                                                        {calculateDday(c.eDate)}
                                                     </Dday>
                                                     <ProgressBar percentage={calculateProgressPercentage(c.sDate, c.eDate)}></ProgressBar>
                                                 </div>
                                             )}
                                             {/* 퍼센트가 다 찼을 때 */}
                                             {calculateProgressPercentage(c.sDate, c.eDate) >= 100 && (
-                                                <div className='w-60 h-60 ml-16 mt-12 rounded-full blur-2xl bg-white absolute' >
+                                                <div className='w-60 h-60 ml-16 mt-14 rounded-full blur-2xl bg-lilac-50 absolute' >
                                                 </div>
                                             )}
                                             <FloatingImage className='h-52 m-auto mt-20' src={c.imgsrc} alt="타임캡슐" />
@@ -133,10 +133,10 @@ const MainPage = function () {
                                     {c.type === "new" && (
                                         // 24시간 내의 타임캡슐인 경우
                                         <div>
-                                            <Dday className='m-auto !text-white !opacity-80'>
+                                            <Dday className='m-auto !text-white !opacity-80 mt-2'>
                                                 NEW!
                                             </Dday>
-                                            <FloatingImage className='h-52 m-auto mt-20 grayscale' src={c.imgsrc} alt="타임캡슐" />
+                                            <FloatingImage className='h-52 m-auto mt-24 grayscale' src={c.imgsrc} alt="타임캡슐" />
                                         </div>
                                     )}
                                     <CapsuleShadow className='m-auto mt-2'></CapsuleShadow>
@@ -160,7 +160,6 @@ const MainPage = function () {
         </div >
     )
 }
-
 
 const ProgressBar = ({ percentage }: ProgressBarProps) => {
     return (
@@ -242,7 +241,6 @@ const Progress = styled.div`
   box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
   `;
 
-
 const Capsule = styled.div`
     font-family: 'pretendard';
     font-weight: 300;
@@ -257,9 +255,23 @@ const CapsuleShadow = styled.div`
     filter: blur(5px);
   `;
 
-
 interface ProgressBarProps {
     percentage: number;
+}
+
+const calculateDday = (endDate: string) =>{
+    const currentDate = new Date();
+    const dateString = currentDate.toISOString().slice(0, 10);
+
+    const dday = calculateDateDifference(dateString, endDate);
+
+    let ddayPrint = '';
+    if(dday <= 0 ){
+        ddayPrint = 'D - DAY';
+    }else{
+        ddayPrint = 'D - ' + dday;
+    }
+    return ddayPrint;
 }
 
 const calculateDateDifference = (startDate: string, endDate: string) => {
@@ -270,9 +282,9 @@ const calculateDateDifference = (startDate: string, endDate: string) => {
     return differenceInDays;
 };
 const calculateProgressPercentage = (startDate: string, endDate: string) => {
-    const total = calculateDateDifference(startDate, endDate);
     const currentDate = new Date();
     const dateString = currentDate.toISOString().slice(0, 10);
+    const total = calculateDateDifference(startDate, endDate);
     const ratio = calculateDateDifference(startDate, dateString);
     return (ratio / total) * 100;
 };
