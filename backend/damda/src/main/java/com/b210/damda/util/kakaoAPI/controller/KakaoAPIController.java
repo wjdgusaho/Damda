@@ -3,40 +3,35 @@ package com.b210.damda.util.kakaoAPI.controller;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
-import com.b210.damda.util.kakaoAPI.service.KakaoAPIService;
-import com.b210.damda.util.kakaoAPI.service.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin("*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/kakao")
+@Slf4j
 public class KakaoAPIController {
 
 
     @Value("${jwt.secret}")
     private String secretKey;
+    private final UserRepository userRepository;
 
     @GetMapping("login")
-    public ResponseEntity<?> kakaoLogin(Authentication authentication) throws IOException {
+    public ResponseEntity<?> kakaoLogin(@RequestPart("code") String code) throws IOException {
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
-        User UserInfo = principalDetails.getUser(); //PrincipalDetails에서 사용자 정보 가져오기
+        Optional<User> optionalUser = userRepository.findByUserPw(code);
+        User UserInfo = optionalUser.get();
 
         // 로그인 성공
         String jwtToken = JwtUtil.createAccessJwt(UserInfo.getUserNo(), secretKey); // 토큰 발급해서 넘김
@@ -49,16 +44,4 @@ public class KakaoAPIController {
 
         return new ResponseEntity<>(tokens, HttpStatus.OK);
     }
-
-//    @GetMapping("login/oauth_kakao")
-//    public ResponseEntity<?> oauthKakao(@RequestParam(value = "code", required = false)String code) throws IOException {
-//        System.out.println("#########" + code);
-//        String access_token = kakaoAPIService.getKakaoAccessToken(code);
-//        System.out.println("access_token Controller = "+ access_token);
-//        Map<String, Object> UserInfo =  kakaoAPIService.getKakaoUserInfo(access_token);
-//
-//        return new ResponseEntity<>(UserInfo, HttpStatus.OK);
-//    }
-
-
 }
