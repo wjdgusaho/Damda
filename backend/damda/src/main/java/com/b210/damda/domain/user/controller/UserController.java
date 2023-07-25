@@ -96,10 +96,21 @@ public class UserController {
         return new ResponseEntity<>("해당 이메일로 인증번호를 전송하였습니다.", HttpStatus.OK);
     }
 
+    // 인증번호 제출
+    @PostMapping("change-password/code")
+    public ResponseEntity<?> tempCodeConfirm(@RequestBody TempCodeDTO tempCodeDTO){
+        boolean b = userService.tempCodeCheck(tempCodeDTO);
+        if(b){
+            return new ResponseEntity<>("인증번호가 일치합니다.", HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("인증번호가 일치하지 않습니다.", HttpStatus.OK);
+        }
+    }
+
     // 로그아웃
     @PostMapping("logout")
     public ResponseEntity<?> logout(@RequestHeader(value="Authorization") String token){
-        System.out.println(token);
+
         int logout = userService.logout(token);
         if(logout == 1){
             return new ResponseEntity<>("true", HttpStatus.OK);
@@ -108,10 +119,4 @@ public class UserController {
         }
     }
 
-    // 회원정보 수정 요청(바꿔야함)
-    @PatchMapping("update")
-    public ResponseEntity<?> update(@RequestHeader(value="Authorization") String token, @RequestBody UserUpdateDTO userUpdateDTO){
-        User updateUser = userService.update(userUpdateDTO, token);
-        return new ResponseEntity<>(updateUser, HttpStatus.OK);
-    }
 }
