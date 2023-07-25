@@ -28,8 +28,10 @@ public class KakaoAPIController {
     private final UserRepository userRepository;
 
     @PostMapping("login")
-    public ResponseEntity<?> kakaoLogin(@RequestParam("code") String code) throws IOException {
-        log.info("code 값을 받았는가? 여기가 실행이되었는가 ? " + code );
+    public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, Object> data) throws IOException {
+
+        //log.info("code 값을 받았는가? 여기가 실행이되었는가 ? " + data );
+        String code = (String) data.get("code");
         Optional<User> optionalUser = userRepository.findByUserPw(code);
         User UserInfo = optionalUser.get();
 
