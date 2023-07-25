@@ -108,90 +108,88 @@ export default function Tutorial() {
   const showButtonForThirdSlide = currentSlide === 2
 
   return (
-    <>
-      <Box>
-        <SkipBtn
-          onClick={() => {
-            navigate("/main")
-          }}
-        >
-          SKIP
-        </SkipBtn>
-        <Container className="mt-9">
-          <Slider {...settings}>
-            <div>
-              <img
-                src="assets/Planet-pretty.png"
-                alt=""
-                style={{
-                  width: "288.66px",
-                  margin: "auto",
-                  filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
-                }}
-              />
-              <Title>타임캡슐에 추억을 담아보세요</Title>
-              <Text>
-                상세 설명 어쩌구 저쩌구
-                <br />
-                가나다라마바사아자차카타파하
-                <br />
-                오예 신난다
-              </Text>
-            </div>
-            <div>
-              <img
-                src="assets/Shake.png"
-                alt=""
-                style={{
-                  width: "310px",
-                  marginTop: "70px",
-                  filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
-                  marginBottom: "37px",
-                }}
-              />
-              <Title>묻혀있던 타임캡슐을 흔들어 여세요</Title>
-              <Text>
-                상세 설명 어쩌구 저쩌구
-                <br />
-                가나다라마바사아자차카타파하
-                <br />
-                오예 신난다
-              </Text>
-            </div>
-            <div>
-              <img
-                src="assets/Solar System.png"
-                alt=""
-                style={{
-                  width: "300px",
-                  marginTop: "50px",
-                  filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
-                  marginBottom: "14px",
-                }}
-              />
-              <Title>친구들과 함께 할 수도 있어요</Title>
-              <Text>
-                상세 설명 어쩌구 저쩌구
-                <br />
-                가나다라마바사아자차카타파하
-                <br />
-                오예 신난다
-              </Text>
-            </div>
-          </Slider>
-        </Container>
-        <div style={{ textAlign: "center" }}>
-          {showButtonForThirdSlide && (
-            <StartBtn
-              onClick={() => {
-                navigate("/main")
+    <Box>
+      <SkipBtn
+        onClick={() => {
+          navigate("/main")
+        }}
+      >
+        SKIP
+      </SkipBtn>
+      <Container className="mt-9">
+        <Slider {...settings}>
+          <div>
+            <img
+              src="assets/Planet-pretty.png"
+              alt=""
+              style={{
+                width: "288.66px",
+                margin: "auto",
+                filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
               }}
-            >
-              시작하기
-            </StartBtn>
-          )}
-        </div>
-      </Box>
-    </>
+            />
+            <Title>타임캡슐에 추억을 담아보세요</Title>
+            <Text>
+              상세 설명 어쩌구 저쩌구
+              <br />
+              가나다라마바사아자차카타파하
+              <br />
+              오예 신난다
+            </Text>
+          </div>
+          <div>
+            <img
+              src="assets/Shake.png"
+              alt=""
+              style={{
+                width: "310px",
+                marginTop: "70px",
+                filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
+                marginBottom: "37px",
+              }}
+            />
+            <Title>묻혀있던 타임캡슐을 흔들어 여세요</Title>
+            <Text>
+              상세 설명 어쩌구 저쩌구
+              <br />
+              가나다라마바사아자차카타파하
+              <br />
+              오예 신난다
+            </Text>
+          </div>
+          <div>
+            <img
+              src="assets/Solar System.png"
+              alt=""
+              style={{
+                width: "300px",
+                marginTop: "50px",
+                filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
+                marginBottom: "14px",
+              }}
+            />
+            <Title>친구들과 함께 할 수도 있어요</Title>
+            <Text>
+              상세 설명 어쩌구 저쩌구
+              <br />
+              가나다라마바사아자차카타파하
+              <br />
+              오예 신난다
+            </Text>
+          </div>
+        </Slider>
+      </Container>
+      <div style={{ textAlign: "center" }}>
+        {showButtonForThirdSlide && (
+          <StartBtn
+            onClick={() => {
+              navigate("/main")
+            }}
+          >
+            시작하기
+          </StartBtn>
+        )}
+      </div>
+    </Box>
   )
 }
