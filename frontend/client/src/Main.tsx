@@ -7,7 +7,7 @@ import { CookiesProvider } from 'react-cookie'
 import MainPage from "./components/MainPage"
 import MyPage from "./components/MyPage"
 import ShopPage from "./components/ShopPage"
-import {Sticker, Theme} from "./components/ShopPage"
+import {Sticker, Theme, Capsule} from "./components/ShopPage"
 import TimecapsulePage from "./components/TimecapsulePage"
 import Card from "./components/Card"
 import Friend from "./components/Friend"
@@ -34,6 +34,7 @@ function Main() {
               <Route path="/shop/" element={<ShopPage />}>
                 <Route path="sticker" element={<Sticker/>}></Route>
                 <Route path="theme" element={<Theme/>}></Route>
+                <Route path="capsule" element={<Capsule/>}></Route>
               </Route>
               <Route path="/timecapsule/" element={<TimecapsulePage />}></Route>
               <Route path="/card/" element={<Card />}></Route>
