@@ -1,5 +1,7 @@
 import React from 'react'
 import { MainHeader } from './inc/MainHeader'
+import { SubHeader } from './inc/SubHeader';
+
 import { styled } from 'styled-components'
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css"
@@ -86,6 +88,7 @@ const MainPage = function () {
     return (
         <div>
             <MainHeader></MainHeader>
+            <SubHeader></SubHeader>
             <div>
                 <img className='absolute w-10 right-0 mr-10 mt-10' src="assets/icons/questionMark.png" alt="도움말" />
             </div>
@@ -211,7 +214,7 @@ const FloatingImage = styled.img`
       transform: translateY(0); /* 다시 원래 위치로 이동 */
     }
   }
-  animation: floatingAnimation 2s ease infinite;
+  animation: floatingAnimation 2s ease-in-out infinite;
 `;
 
 const Dday = styled.div`
