@@ -24,6 +24,14 @@ type CapsuleType = {
 
 const capsuleList: CapsuleType[] = [
     {
+        id: 4,
+        type: 'new',
+        sDate: '2023-01-01',
+        eDate: '2024-01-01',
+        name: '클래식1',
+        imgsrc: 'assets/Planet-6.png',
+    },
+    {
         id: 1,
         type: 'classic',
         sDate: '2023-01-01',
@@ -54,7 +62,7 @@ const MainPage = function () {
 
     const previous = useCallback(() => slickRef.current?.slickPrev(), []);
     const next = useCallback(() => slickRef.current?.slickNext(), []);
-    
+
     const settings = {
         centerMode: false,
         arrows: false,
@@ -77,14 +85,26 @@ const MainPage = function () {
                     </div>
                 ) : (
                     <div className=''>
-                        <Slider {...settings} className=''>
+                        <Slider ref={slickRef} {...settings} className=''>
                             {capsuleList.map(c => (
                                 <Capsule key={c.id} className='text-center'>
-                                    <Dday className='m-auto'>
-                                        D - {calculateDateDifference(c.sDate, c.eDate)}
-                                    </Dday>
-                                    <ProgressBar percentage={calculateProgressPercentage(c.sDate, c.eDate)}></ProgressBar>
-                                    <FloatingImage className='h-52 m-auto mt-20' src={c.imgsrc} alt="" />
+                                    {c.type !== "new" && (
+                                        <div>
+                                            <Dday className='m-auto'>
+                                                D - {calculateDateDifference(c.sDate, c.eDate)}
+                                            </Dday>
+                                            <ProgressBar percentage={calculateProgressPercentage(c.sDate, c.eDate)}></ProgressBar>
+                                            <FloatingImage className='h-52 m-auto mt-20' src={c.imgsrc} alt="타임캡슐" />
+                                        </div>
+                                    )}
+                                    {c.type === "new" && (
+                                        <div>
+                                            <Dday className='m-auto !text-white !opacity-80'>
+                                                NEW!
+                                            </Dday>
+                                            <FloatingImage className='h-52 m-auto mt-20 grayscale' src={c.imgsrc} alt="타임캡슐" />
+                                        </div>
+                                    )}
                                     <CapsuleShadow className='m-auto mt-2'></CapsuleShadow>
                                 </Capsule>
                             ))}
@@ -96,13 +116,14 @@ const MainPage = function () {
                             <img className='fixed w-8 right-5 top-1/2' src="assets/icons/arrow_r.png" alt="오른쪽화살표" />
                         </div>
                     </div>
-                )}
-            </div>
+                )
+                }
+            </div >
             <div className='text-center mt-8 fixed bottom-4 left-0 right-0'>
                 <MakeCapsuleButton className='bg-lilac-100 w-64 h-16 flex items-center justify-center m-auto text-lilac-950 hover:bg-lilac-500'>타임캡슐 만들기</MakeCapsuleButton>
                 <MakeCapsuleCode className='mt-4 hover:text-lilac-900'>타임캡슐 코드로 참여하기</MakeCapsuleCode>
             </div>
-        </div>
+        </div >
     )
 }
 
@@ -146,7 +167,6 @@ const FloatingImage = styled.img`
   position: relative;
   top: 0;
 
-  /* 애니메이션을 정의합니다. */
   @keyframes floatingAnimation {
     0% {
       transform: translateY(0); /* 시작 위치 (위치 이동 없음) */
@@ -158,8 +178,6 @@ const FloatingImage = styled.img`
       transform: translateY(0); /* 다시 원래 위치로 이동 */
     }
   }
-
-  /* 애니메이션을 적용합니다. */
   animation: floatingAnimation 2s ease infinite;
 `;
 
