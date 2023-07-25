@@ -88,7 +88,6 @@ const MainPage = function () {
     return (
         <div>
             <MainHeader></MainHeader>
-            <SubHeader></SubHeader>
             <div>
                 <img className='absolute w-10 right-0 mr-10 mt-10' src="assets/icons/questionMark.png" alt="도움말" />
             </div>
