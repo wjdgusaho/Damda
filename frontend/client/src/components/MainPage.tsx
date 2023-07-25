@@ -27,7 +27,7 @@ const capsuleList: CapsuleType[] = [
         id: 4,
         type: 'new',
         sDate: '2023-01-01',
-        eDate: '2024-01-01',
+        eDate: '2023-06-01',
         name: '클래식1',
         imgsrc: 'assets/Planet-6.png',
     },
@@ -35,7 +35,7 @@ const capsuleList: CapsuleType[] = [
         id: 1,
         type: 'classic',
         sDate: '2023-01-01',
-        eDate: '2024-01-01',
+        eDate: '2023-06-01',
         name: '클래식1',
         imgsrc: 'assets/Planet-6.png',
     },
@@ -76,14 +76,19 @@ const MainPage = function () {
     return (
         <div>
             <MainHeader></MainHeader>
+            <div>
+                <img className='absolute w-10 right-0 mr-10 mt-10' src="assets/icons/questionMark.png" alt="도움말" />
+            </div>
             <div className='mt-14'>
                 {capsuleList.length === 0 ? (
+                    // 타임캡슐이 하나도 없을 때
                     <div className='text-center mt-20'>
                         <TextStyle className='text-victoria-400'>타임캡슐이 없어요... 아직은요! </TextStyle>
                         <img className='w-72 m-auto mt-12' src="assets/Astronaut-3.png" alt="Astronaut-3" />
                         <CapsuleShadow className='m-auto'></CapsuleShadow>
                     </div>
                 ) : (
+                    // 타임캡슐이 한개 이상 있을 때
                     <div className=''>
                         <Slider ref={slickRef} {...settings} className=''>
                             {capsuleList.map(c => (
@@ -94,10 +99,16 @@ const MainPage = function () {
                                                 D - {calculateDateDifference(c.sDate, c.eDate)}
                                             </Dday>
                                             <ProgressBar percentage={calculateProgressPercentage(c.sDate, c.eDate)}></ProgressBar>
+                                            {/* 퍼센트가 다 찼을 때 */}
+                                            {calculateProgressPercentage(c.sDate, c.eDate) >= 100 && (
+                                                <div className='w-60 h-60 ml-16 mt-12 rounded-full blur-2xl bg-white absolute' >
+                                                </div>
+                                            )}
                                             <FloatingImage className='h-52 m-auto mt-20' src={c.imgsrc} alt="타임캡슐" />
                                         </div>
                                     )}
                                     {c.type === "new" && (
+                                        // 24시간 내의 타임캡슐인 경우
                                         <div>
                                             <Dday className='m-auto !text-white !opacity-80'>
                                                 NEW!
