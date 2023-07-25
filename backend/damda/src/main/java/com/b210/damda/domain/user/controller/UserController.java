@@ -115,16 +115,38 @@ public class UserController {
     @PostMapping("change-password/code")
     public ResponseEntity<?> tempCodeConfirm(@RequestBody TempCodeDTO tempCodeDTO){
         try{
-            boolean b = userService.tempCodeCheck(tempCodeDTO);
-            if(b){
+            int result = userService.tempCodeCheck(tempCodeDTO);
+            if(result == 1){
+                return new ResponseEntity<>("만료시간이 지났습니다. 재발급 부탁드립니다.", HttpStatus.BAD_REQUEST);
+            }else if(result == 2){
                 return new ResponseEntity<>("인증번호가 일치합니다.", HttpStatus.OK);
-            }else {
-                return new ResponseEntity<>("인증번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
+            }else if(result == 3){
+                return new ResponseEntity<>("이미 사용된 인증번호입니다. 재발급 부탁드립니다.", HttpStatus.BAD_REQUEST);
+            }else{
+                return new ResponseEntity<>("인증번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
             }
         }catch (Exception e){
             return new ResponseEntity<>("서버 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    // 비밀번호 재설정
+    @PatchMapping("change-password/new")
+    public ResponseEntity<?> newPassword(@RequestBody UserUpdateDTO userUpdateDTO){
+        try{
+            int result = userService.newPassword(userUpdateDTO);
+            if(result == 3){
+                return new ResponseEntity<>("비밀번호가 변경되었습니다. 로그인 부탁드립니다.", HttpStatus.OK);
+            }
+            else if(result == 2){
+                return new ResponseEntity<>("현재 비밀번호와 같은 비밀번호입니다.", HttpStatus.BAD_REQUEST);
+            }else{
+                return new ResponseEntity<>("비밀번호 변경에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<>("서버 에러가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // 로그아웃
