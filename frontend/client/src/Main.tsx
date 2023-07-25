@@ -1,8 +1,8 @@
-import React from "react"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Store from "./store/Store"
-import { Provider } from "react-redux"
-import { CookiesProvider } from "react-cookie"
+import React from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Store from './store/Store'
+import { Provider } from 'react-redux'
+import { CookiesProvider } from 'react-cookie'
 
 import MainPage from "./components/MainPage"
 import MyPage from "./components/MyPage"
@@ -17,6 +17,7 @@ import { ChangePassword } from "./components/Auth/ChangePassword"
 import { LandingPage } from "./components/LandingPage"
 import Navigation from "./Navigation"
 import Tutorial from "./components/Tutorial"
+import { DummyKakao } from './components/Auth/DummyKakao'
 import Menu from "./components/Menu"
 
 function Main() {
@@ -42,6 +43,7 @@ function Main() {
                 element={<ChangePassword />}
               ></Route>
               <Route path="/tutorial/" element={<Tutorial />}></Route>
+              <Route path="/dummykakao/" element={<DummyKakao />}></Route>
               <Route path="/menu/" element={<Menu />}></Route>
             </Routes>
           </BrowserRouter>
