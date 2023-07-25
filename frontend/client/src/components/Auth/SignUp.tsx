@@ -140,6 +140,12 @@ export const SignUp = function () {
                     />
                 </svg>
             </Link>
+            <button
+                className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-24 relative top-40 left-24"
+                onClick={checkEmailOverlap}
+            >
+                중복확인
+            </button>
             <Form className="grid grid-cols-1 w-full mx-auto" onSubmit={handleSubmit}>
                 <div style={{ margin: 'auto' }}>
                     <img
@@ -161,12 +167,6 @@ export const SignUp = function () {
 
                 <p className="grid grid-cols-2 items-center">
                     <span>이메일</span>
-                    <button
-                        className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-24"
-                        onClick={checkEmailOverlap}
-                    >
-                        중복확인
-                    </button>
                 </p>
                 <InputCSS name="email" type="email" value={userdata.email} onChange={handleChange} />
 
