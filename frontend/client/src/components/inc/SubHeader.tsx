@@ -20,7 +20,7 @@ export const SubHeader = function () {
       <div className="w-10/12 m-auto mt-12 flex justify-between">
         <img
           onClick={goBack}
-          src="assets/icons/arrow_l.png"
+          src="/assets/icons/arrow_l.png"
           alt="메뉴"
           className="h-6"
         />
@@ -29,7 +29,7 @@ export const SubHeader = function () {
             navigate("/main")
           }}
         >
-          <img src="assets/icons/home.png" alt="알림" className="mr-4 w-6" />
+          <img src="/assets/icons/home.png" alt="알림" className="mr-4 w-6" />
           <TextStyle className="text-white">홈으로</TextStyle>
         </div>
       </div>
