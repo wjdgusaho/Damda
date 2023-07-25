@@ -2,6 +2,9 @@ package com.b210.damda.domain.dto;
 
 import com.b210.damda.domain.entity.User;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.Entity;
 
 @Data
 public class UserOriginRegistDTO {
@@ -9,7 +12,7 @@ public class UserOriginRegistDTO {
     private String email;
     private String userPw;
     private String nickname;
-    private String profileImage;
+    private String uri;
 
 
 
@@ -18,8 +21,8 @@ public class UserOriginRegistDTO {
                 .accountType("ORIGIN")
                 .email(email)
                 .userPw(userPw)
+                .profileImage(uri)
                 .nickname(nickname)
-                .profileImage(profileImage)
                 .build();
     }
 }
