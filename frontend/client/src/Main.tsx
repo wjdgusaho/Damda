@@ -17,6 +17,7 @@ import { ChangePassword } from "./components/Auth/ChangePassword"
 import { LandingPage } from "./components/LandingPage"
 import Navigation from "./Navigation"
 import Tutorial from "./components/Tutorial"
+import Menu from "./components/Menu"
 
 function Main() {
   return (
@@ -41,6 +42,7 @@ function Main() {
                 element={<ChangePassword />}
               ></Route>
               <Route path="/tutorial/" element={<Tutorial />}></Route>
+              <Route path="/menu/" element={<Menu />}></Route>
             </Routes>
           </BrowserRouter>
         </Provider>
