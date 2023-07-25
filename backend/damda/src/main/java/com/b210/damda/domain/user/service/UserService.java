@@ -6,6 +6,7 @@ import com.b210.damda.domain.entity.RefreshToken;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.entity.UserLog;
 import com.b210.damda.domain.repository.RefreshTokenRepository;
+import com.b210.damda.domain.user.filter.JwtFilter;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
@@ -129,8 +130,8 @@ public class UserService {
         // 토큰 꺼내기(첫 번째가 토큰이다. Bearer 제외)
         String parsingToken = token.split(" ")[1];
 
-        Long userId = JwtUtil.getUserNo(parsingToken, secretKey);
-        Optional<User> user = userRepository.findById(userId);
+        Long userNo = JwtUtil.getUserNo(parsingToken, secretKey);
+        Optional<User> user = userRepository.findById(userNo);
 
         if(user.isPresent()) {
             User findUser = user.get();
@@ -145,6 +146,24 @@ public class UserService {
             // 적절한 예외 처리를 해줍니다.
             throw new IllegalArgumentException("유효하지 않은 이메일입니다.");
         }
+    }
+
+    // 로그아웃 처리
+    public int logout(String token){
+
+        String parsingToken = token.split(" ")[1];
+        Optional<RefreshToken> byRefreshToken = refreshTokenRepository.findByRefreshToken(parsingToken);
+        RefreshToken refreshToken = byRefreshToken.get(); // 유저의 리프레시 토큰 꺼냄.
+        refreshToken.setRefreshToken("");
+        RefreshToken save = refreshTokenRepository.save(refreshToken);
+
+        if(save.getRefreshToken().equals("")){
+            return 1;
+        }else{
+            return 0;
+        }
+
+
     }
 
 
