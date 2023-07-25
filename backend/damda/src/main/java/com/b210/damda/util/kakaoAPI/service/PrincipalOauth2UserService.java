@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import com.b210.damda.domain.entity.User;
 
-import java.nio.file.attribute.UserPrincipalLookupService;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,11 +43,15 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2UserInfo.getEmail();
         String loginId = provider + "_" + providerId;
         String nickname = oAuth2UserInfo.getName();
-        String profileImage = oAuth2UserInfo.getImagePath();
+        String profileImage = null;
+        if(!oAuth2UserInfo.getImagePath().isEmpty()){
+            profileImage = oAuth2UserInfo.getImagePath();
+        }
 
         log.info(email);
         log.info(loginId);
         log.info(nickname);
+        log.info(profileImage);
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
         User user = null;
@@ -58,7 +62,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             user = User.builder()
                     .accountType("KAKAO")
                     .email(email)
-                    .userPw(loginId)
+                    .userPw(encoder.encode(loginId))
                     .nickname(nickname)
                     .profileImage(profileImage)
                     .build();
@@ -68,6 +72,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         else{
             user = optionalUser.get();
             log.info("로그인 성공");
+            log.info("로그인 성공2"+ user);
         }
         //컨트롤러에서 유저 정보를 필요할때 그때 사용한다.
         return new PrincipalDetails(user, oAuth2User.getAttributes());
