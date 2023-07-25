@@ -14,22 +14,23 @@ export const DummyKakao = () => {
         return new URLSearchParams(window.location.search).get(key)
     }
     let code = getParameter('code')
-    console.log(code)
 
-    // axios({
-    //     method: 'GET',
-    //     url: serverUrl + 'api/kakao/login',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     data: {},
-    // })
-    //     .then((response) => {
-    //         setRefreshToken(response.data.refreshToken)
-    //         dispatch(SET_TOKEN(response.data.accessToken))
-    //         // navigate('/main')
-    //     })
-    //     .catch((err) => console.error(err))
+    axios({
+        method: 'GET',
+        url: serverUrl + 'api/kakao/login',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: { code: code },
+    })
+        .then((response) => {
+            console.log(response)
+
+            // setRefreshToken(response.data.refreshToken)
+            // dispatch(SET_TOKEN(response.data.accessToken))
+            // navigate('/main')
+        })
+        .catch((err) => console.error(err))
 
     return <div></div>
 }
