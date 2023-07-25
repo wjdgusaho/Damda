@@ -34,6 +34,9 @@ export const SignUp = function () {
     const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setUserdata({
+            ...userdata,
+        })
         const file = event.target.files?.[0]
 
         setUserdata({
@@ -41,9 +44,6 @@ export const SignUp = function () {
             [event.currentTarget.name]: event.currentTarget.value,
         })
         if (file) {
-            setUserdata({
-                ...userdata,
-            })
             const reader = new FileReader()
             reader.onloadend = () => {
                 setSelectedImage(reader.result as string)
