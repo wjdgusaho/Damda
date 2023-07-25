@@ -20,6 +20,8 @@ type CapsuleType = {
     eDate: string;
     name: string;
     imgsrc: string;
+    curCard: number;
+    goalCard: number;
 };
 
 const capsuleList: CapsuleType[] = [
@@ -30,6 +32,8 @@ const capsuleList: CapsuleType[] = [
         eDate: '2023-06-01',
         name: '클래식1',
         imgsrc: 'assets/Planet-6.png',
+        curCard: 0,
+        goalCard: 0,
     },
     {
         id: 1,
@@ -38,6 +42,8 @@ const capsuleList: CapsuleType[] = [
         eDate: '2023-06-01',
         name: '클래식1',
         imgsrc: 'assets/Planet-6.png',
+        curCard: 0,
+        goalCard: 0,
     },
     {
         id: 2,
@@ -46,6 +52,8 @@ const capsuleList: CapsuleType[] = [
         eDate: '2024-01-01',
         name: '목표1',
         imgsrc: 'assets/Planet-5.png',
+        curCard: 50,
+        goalCard: 100,
     },
     {
         id: 3,
@@ -54,6 +62,8 @@ const capsuleList: CapsuleType[] = [
         eDate: '2023-09-01',
         name: '기록1',
         imgsrc: 'assets/Planet-7.png',
+        curCard: 0,
+        goalCard: 0,
     },
 ];
 
@@ -95,10 +105,23 @@ const MainPage = function () {
                                 <Capsule key={c.id} className='text-center'>
                                     {c.type !== "new" && (
                                         <div>
-                                            <Dday className='m-auto'>
-                                                D - {calculateDateDifference(c.sDate, c.eDate)}
-                                            </Dday>
-                                            <ProgressBar percentage={calculateProgressPercentage(c.sDate, c.eDate)}></ProgressBar>
+                                            {c.type === "goal" && (
+                                                // 목표 타임캡슐인 경우
+                                                <div>
+                                                    <Dday className='m-auto'>
+                                                        {c.curCard} / {c.goalCard}
+                                                    </Dday>
+                                                    <ProgressBar percentage={(c.curCard/c.goalCard)*100}></ProgressBar>
+                                                </div>
+                                            )}
+                                            {c.type !== "goal" && (
+                                                <div>
+                                                    <Dday className='m-auto'>
+                                                        D - {calculateDateDifference(c.sDate, c.eDate)}
+                                                    </Dday>
+                                                    <ProgressBar percentage={calculateProgressPercentage(c.sDate, c.eDate)}></ProgressBar>
+                                                </div>
+                                            )}
                                             {/* 퍼센트가 다 찼을 때 */}
                                             {calculateProgressPercentage(c.sDate, c.eDate) >= 100 && (
                                                 <div className='w-60 h-60 ml-16 mt-12 rounded-full blur-2xl bg-white absolute' >
