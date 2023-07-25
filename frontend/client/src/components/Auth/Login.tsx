@@ -138,7 +138,7 @@ const Login = function () {
         } else {
           setRefreshToken(response.data.refreshToken)
           dispatch(SET_TOKEN(response.data.accessToken))
-          navigate("/main")
+          navigate("/tutorial")
         }
       })
       .catch((error) => {
