@@ -5,7 +5,6 @@ import axios from 'axios'
 import { serverUrl } from '../../urls'
 import { Link } from 'react-router-dom'
 import tw from 'tailwind-styled-components'
-import { type } from '@testing-library/user-event/dist/type'
 
 const Form = styled.form`
     display: flex;
@@ -91,9 +90,6 @@ export const SignUp = function () {
             userPw: userdata.userPw,
             nickname: userdata.nickname,
         }
-        // data.append('user', userdata.email)
-        // data.append('userPw', userdata.userPw)
-        // data.append('nickname', userdata.nickname)
         data.append('user', new Blob([JSON.stringify(userform)], { type: 'application/json' }))
         if (filedata?.files && filedata.files.length > 0) {
             data.append('profileImage', filedata.files[0])
@@ -115,14 +111,11 @@ export const SignUp = function () {
                 url: serverUrl + 'user/regist',
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    // 'Content-Type': 'application/json',
                 },
                 data: data,
             })
                 .then((res) => {
-                    console.log(res)
-
-                    // navigate('/login')
+                    navigate('/login')
                 })
                 .catch((error) => console.error(error))
         }
