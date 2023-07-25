@@ -20,6 +20,8 @@ type CapsuleType = {
     eDate: string;
     name: string;
     imgsrc: string;
+    curCard: number;
+    goalCard: number;
 };
 
 const capsuleList: CapsuleType[] = [
@@ -27,17 +29,21 @@ const capsuleList: CapsuleType[] = [
         id: 4,
         type: 'new',
         sDate: '2023-01-01',
-        eDate: '2024-01-01',
+        eDate: '2023-06-01',
         name: '클래식1',
         imgsrc: 'assets/Planet-6.png',
+        curCard: 0,
+        goalCard: 0,
     },
     {
         id: 1,
         type: 'classic',
         sDate: '2023-01-01',
-        eDate: '2024-01-01',
+        eDate: '2023-06-01',
         name: '클래식1',
         imgsrc: 'assets/Planet-6.png',
+        curCard: 0,
+        goalCard: 0,
     },
     {
         id: 2,
@@ -46,14 +52,18 @@ const capsuleList: CapsuleType[] = [
         eDate: '2024-01-01',
         name: '목표1',
         imgsrc: 'assets/Planet-5.png',
+        curCard: 50,
+        goalCard: 100,
     },
     {
         id: 3,
         type: 'memory',
         sDate: '2023-01-01',
-        eDate: '2023-09-01',
+        eDate: '2023-02-30',
         name: '기록1',
         imgsrc: 'assets/Planet-7.png',
+        curCard: 0,
+        goalCard: 0,
     },
 ];
 
@@ -76,33 +86,57 @@ const MainPage = function () {
     return (
         <div>
             <MainHeader></MainHeader>
+            <div>
+                <img className='absolute w-10 right-0 mr-10 mt-10' src="assets/icons/questionMark.png" alt="도움말" />
+            </div>
             <div className='mt-14'>
                 {capsuleList.length === 0 ? (
+                    // 타임캡슐이 하나도 없을 때
                     <div className='text-center mt-20'>
                         <TextStyle className='text-victoria-400'>타임캡슐이 없어요... 아직은요! </TextStyle>
                         <img className='w-72 m-auto mt-12' src="assets/Astronaut-3.png" alt="Astronaut-3" />
                         <CapsuleShadow className='m-auto'></CapsuleShadow>
                     </div>
                 ) : (
+                    // 타임캡슐이 한개 이상 있을 때
                     <div className=''>
                         <Slider ref={slickRef} {...settings} className=''>
                             {capsuleList.map(c => (
                                 <Capsule key={c.id} className='text-center'>
                                     {c.type !== "new" && (
                                         <div>
-                                            <Dday className='m-auto'>
-                                                D - {calculateDateDifference(c.sDate, c.eDate)}
-                                            </Dday>
-                                            <ProgressBar percentage={calculateProgressPercentage(c.sDate, c.eDate)}></ProgressBar>
+                                            {c.type === "goal" && (
+                                                // 목표 타임캡슐인 경우
+                                                <div>
+                                                    <Dday className='m-auto'>
+                                                        {c.curCard} / {c.goalCard}
+                                                    </Dday>
+                                                    <ProgressBar percentage={(c.curCard/c.goalCard)*100}></ProgressBar>
+                                                </div>
+                                            )}
+                                            {c.type !== "goal" && (
+                                                <div>
+                                                    <Dday className='m-auto'>
+                                                        {calculateDday(c.eDate)}
+                                                    </Dday>
+                                                    <ProgressBar percentage={calculateProgressPercentage(c.sDate, c.eDate)}></ProgressBar>
+                                                </div>
+                                            )}
+                                            {/* 퍼센트가 다 찼을 때 */}
+                                            {calculateProgressPercentage(c.sDate, c.eDate) >= 100 && (
+                                                <div className='w-60 h-60 ml-16 mt-14 rounded-full blur-2xl bg-lilac-50 absolute' >
+                                                </div>
+                                            )}
                                             <FloatingImage className='h-52 m-auto mt-20' src={c.imgsrc} alt="타임캡슐" />
                                         </div>
                                     )}
                                     {c.type === "new" && (
+                                        // 24시간 내의 타임캡슐인 경우
                                         <div>
-                                            <Dday className='m-auto !text-white !opacity-80'>
+                                            <Dday className='m-auto !text-white !opacity-80 mt-2'>
                                                 NEW!
                                             </Dday>
-                                            <FloatingImage className='h-52 m-auto mt-20 grayscale' src={c.imgsrc} alt="타임캡슐" />
+                                            <FloatingImage className='h-52 m-auto mt-24 grayscale' src={c.imgsrc} alt="타임캡슐" />
                                         </div>
                                     )}
                                     <CapsuleShadow className='m-auto mt-2'></CapsuleShadow>
@@ -126,7 +160,6 @@ const MainPage = function () {
         </div >
     )
 }
-
 
 const ProgressBar = ({ percentage }: ProgressBarProps) => {
     return (
@@ -208,7 +241,6 @@ const Progress = styled.div`
   box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
   `;
 
-
 const Capsule = styled.div`
     font-family: 'pretendard';
     font-weight: 300;
@@ -223,9 +255,23 @@ const CapsuleShadow = styled.div`
     filter: blur(5px);
   `;
 
-
 interface ProgressBarProps {
     percentage: number;
+}
+
+const calculateDday = (endDate: string) =>{
+    const currentDate = new Date();
+    const dateString = currentDate.toISOString().slice(0, 10);
+
+    const dday = calculateDateDifference(dateString, endDate);
+
+    let ddayPrint = '';
+    if(dday <= 0 ){
+        ddayPrint = 'D - DAY';
+    }else{
+        ddayPrint = 'D - ' + dday;
+    }
+    return ddayPrint;
 }
 
 const calculateDateDifference = (startDate: string, endDate: string) => {
@@ -236,9 +282,9 @@ const calculateDateDifference = (startDate: string, endDate: string) => {
     return differenceInDays;
 };
 const calculateProgressPercentage = (startDate: string, endDate: string) => {
-    const total = calculateDateDifference(startDate, endDate);
     const currentDate = new Date();
     const dateString = currentDate.toISOString().slice(0, 10);
+    const total = calculateDateDifference(startDate, endDate);
     const ratio = calculateDateDifference(startDate, dateString);
     return (ratio / total) * 100;
 };
