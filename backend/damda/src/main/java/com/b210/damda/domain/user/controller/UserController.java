@@ -6,7 +6,7 @@ import com.b210.damda.domain.dto.UserUpdateDTO;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.file.service.FileStoreService;
 import com.b210.damda.domain.user.service.UserService;
-import com.b210.damda.util.emailAPI.dto.EmailDTO;
+import com.b210.damda.util.emailAPI.dto.TempCodeDTO;
 import com.b210.damda.util.emailAPI.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -82,7 +81,7 @@ public class UserController {
 
     // 비밀번호 이메일 인증 요청
     @PostMapping("change-password/email")
-    public ResponseEntity emailConfirm(@RequestBody EmailDTO emailRequest) throws Exception {
+    public ResponseEntity<?> emailConfirm(@RequestBody TempCodeDTO emailRequest) throws Exception {
         String email = emailRequest.getEmail();
 
         // 이메일 유저를 찾음
@@ -95,14 +94,29 @@ public class UserController {
             return new ResponseEntity<>("인증번호 전송에 실패하였습니다.", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("해당 이메일로 인증번호를 전송하였습니다.", HttpStatus.OK);
-
-
     }
 
-    // 회원정보 수정 요청(바꿔야함)
-    @PatchMapping("update")
-    public ResponseEntity<?> update(@RequestHeader(value="Authorization") String token, @RequestBody UserUpdateDTO userUpdateDTO){
-        User updateUser = userService.update(userUpdateDTO, token);
-        return new ResponseEntity<>(updateUser, HttpStatus.OK);
+    // 인증번호 제출
+    @PostMapping("change-password/code")
+    public ResponseEntity<?> tempCodeConfirm(@RequestBody TempCodeDTO tempCodeDTO){
+        boolean b = userService.tempCodeCheck(tempCodeDTO);
+        if(b){
+            return new ResponseEntity<>("인증번호가 일치합니다.", HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>("인증번호가 일치하지 않습니다.", HttpStatus.OK);
+        }
     }
+
+    // 로그아웃
+    @PostMapping("logout")
+    public ResponseEntity<?> logout(@RequestHeader(value="Authorization") String token){
+
+        int logout = userService.logout(token);
+        if(logout == 1){
+            return new ResponseEntity<>("true", HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>("false", HttpStatus.OK);
+        }
+    }
+
 }
