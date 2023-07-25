@@ -6,6 +6,7 @@ import com.b210.damda.util.JwtUtil;
 import com.b210.damda.util.kakaoAPI.service.KakaoAPIService;
 import com.b210.damda.util.kakaoAPI.service.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -21,10 +22,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin("*")
+//@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/kakao")
+@Slf4j
 public class KakaoAPIController {
 
 
@@ -34,9 +37,11 @@ public class KakaoAPIController {
     @GetMapping("login")
     public ResponseEntity<?> kakaoLogin(Authentication authentication) throws IOException {
 
+        log.info("로그인 시작");
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
+        log.info(principalDetails.toString());
         User UserInfo = principalDetails.getUser(); //PrincipalDetails에서 사용자 정보 가져오기
+        log.info(UserInfo.toString());
 
         // 로그인 성공
         String jwtToken = JwtUtil.createAccessJwt(UserInfo.getUserNo(), secretKey); // 토큰 발급해서 넘김
