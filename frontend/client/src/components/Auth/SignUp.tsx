@@ -70,9 +70,11 @@ export const SignUp = function () {
     }
 
     function checkEmailOverlap(event: React.MouseEvent<HTMLButtonElement>) {
+        console.log(userdata.email)
+
         axios({
-            method: 'GET',
-            url: serverUrl + 'user/regist',
+            method: 'POST',
+            url: serverUrl + 'user/email-check',
             data: { email: userdata.email },
         })
             .then((response) => {
