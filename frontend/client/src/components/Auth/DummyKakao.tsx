@@ -1,36 +1,46 @@
 import axios from 'axios'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { serverUrl } from '../../urls'
 import { setRefreshToken } from '../../store/Cookie'
 import { useDispatch } from 'react-redux'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { SET_TOKEN } from '../../store/Auth'
 
 export const DummyKakao = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    let getParameter = (key: string) => {
+    const getParameter = (key: string) => {
         return new URLSearchParams(window.location.search).get(key)
     }
-    let code = getParameter('code')
+    const code = getParameter('code')
 
-    axios({
-        method: 'POST',
-        url: serverUrl + 'api/kakao/login',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        data: { code: code },
-    })
-        .then((response) => {
-            console.log(response)
-
-            // setRefreshToken(response.data.refreshToken)
-            // dispatch(SET_TOKEN(response.data.accessToken))
-            // navigate('/main')
-        })
-        .catch((err) => console.error(err))
+    useEffect(() => {
+        if (code) {
+            axios({
+                method: 'POST',
+                url: serverUrl + 'api/kakao/login',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: { code: code },
+            })
+                .then((response) => {
+                    if (response.data.accessToken) {
+                        setRefreshToken(response.data.refreshToken)
+                        dispatch(SET_TOKEN(response.data.accessToken))
+                        navigate('/main')
+                    } else {
+                        const data = {
+                            message:
+                                '카카오 로그인에 실패하셨습니다. 다시 시도해주시거나, 서비스 회원가입 진행을 해주세요.',
+                        }
+                        navigate('/login', { state: data })
+                    }
+                })
+                .catch((err) => console.error(err))
+        }
+    }, [code])
 
     return <div></div>
 }
