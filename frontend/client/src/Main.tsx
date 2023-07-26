@@ -14,7 +14,7 @@ import Friend from "./components/Friend"
 import Login from "./components/Auth/Login"
 import { SignUp } from "./components/Auth/SignUp"
 import { Logout } from "./components/Auth/Logout"
-import { ChangePassword } from "./components/Auth/ChangePassword"
+import { FindPassword } from "./components/Auth/FindPassword"
 import { LandingPage } from "./components/LandingPage"
 import Navigation from "./Navigation"
 import Tutorial from "./components/Tutorial"
@@ -45,10 +45,7 @@ function Main() {
               <Route path="/signup/" element={<SignUp />}></Route>
               <Route path="/logout/" element={<Logout />}></Route>
               <Route path="/main/" element={<MainPage />}></Route>
-              <Route
-                path="/changepassword/"
-                element={<ChangePassword />}
-              ></Route>
+              <Route path="/findPassword/" element={<FindPassword />}></Route>
               <Route path="/tutorial/" element={<Tutorial />}></Route>
               <Route path="/dummykakao/" element={<DummyKakao />}></Route>
               <Route path="/menu/" element={<Menu />}></Route>
