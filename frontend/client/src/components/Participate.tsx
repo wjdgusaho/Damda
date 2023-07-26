@@ -33,6 +33,7 @@ const InputCode = styled.input`
   height: 50px;
   text-align: center;
   margin-top: 40px;
+  z-index: 1;
 `
 
 const Btn = styled.button`
@@ -47,9 +48,9 @@ const Btn = styled.button`
   font-family: "Pretendard";
   position: absolute;
   bottom: 10%;
+  z-index: 2;
 `
 const HeaderWrap = styled.div`
-  z-index: -1;
   position: absolute;
   top: 0;
   bottom: 0;
