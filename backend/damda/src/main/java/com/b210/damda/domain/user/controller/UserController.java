@@ -48,14 +48,14 @@ public class UserController {
 
             User savedUser = userService.regist(userOriginRegistDTO, fileUri);
             if(savedUser != null){
-                return new ResponseEntity<>("회원가입이 완료되었습니다.", HttpStatus.CREATED);
+                return new ResponseEntity<>("회원가입 완료", HttpStatus.CREATED);
             }else {
-                return new ResponseEntity<>("회원가입을 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("회원가입 실패", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch(IOException e){
-            return new ResponseEntity<>("파일 저장에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("사진저장 실패", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch(Exception e){
-            return new ResponseEntity<>("서버에서 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("서버 에러", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -66,12 +66,12 @@ public class UserController {
         try {
             User user = userService.fineByUser(email);
             if(user != null){
-                return new ResponseEntity<>("이메일 사용 불가능합니다.", HttpStatus.CONFLICT);
+                return new ResponseEntity<>("이메일 사용 불가능", HttpStatus.BAD_REQUEST);
             }else{
-                return new ResponseEntity<>("이메일 사용 가능합니다.", HttpStatus.OK);
+                return new ResponseEntity<>("이메일 사용 가능", HttpStatus.OK);
             }
         }catch (Exception e){
-            return new ResponseEntity<>("서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("서버 에러", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -81,12 +81,11 @@ public class UserController {
         Map<String, String> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getPassword());
 
         if(loginUser.get("error") != null && loginUser.get("error").equals("no email")){ //
-            return new ResponseEntity<>("아이디가 없습니다.", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("아이디 없음", HttpStatus.UNAUTHORIZED);
         }else if (loginUser.get("error") != null && loginUser.get("error").equals("no password")){
-            return new ResponseEntity<>("비밀번호가 틀립니다.", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("비밀번호 틀림", HttpStatus.UNAUTHORIZED);
         }else{
-            loginUser.put("message", "로그인에 성공하였습니다.");
-            return new ResponseEntity<>(loginUser, HttpStatus.OK);
+            return new ResponseEntity<>("로그인 성공", HttpStatus.OK);
         }
     }
 
@@ -98,15 +97,15 @@ public class UserController {
         try{
             User user = userService.fineByUser(email);
             if(user == null){
-                return new ResponseEntity<>("해당 이메일이 존재하지 않습니다.",HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("이메일 없음",HttpStatus.BAD_REQUEST);
             }
             String key = emailService.sendSimpleMessage(email);
             if(emailService.registTempKey(key, email, user) == 0){
-                return new ResponseEntity<>("인증번호 전송에 실패하였습니다.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("인증번호 전송 실패", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return new ResponseEntity<>("해당 이메일로 인증번호를 전송하였습니다.", HttpStatus.OK);
+            return new ResponseEntity<>("인증번호 전송 성공", HttpStatus.OK);
         }catch (Exception e){
-            return new ResponseEntity<>("서버 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("서버 에러", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -117,16 +116,16 @@ public class UserController {
         try{
             int result = userService.tempCodeCheck(tempCodeDTO);
             if(result == 1){
-                return new ResponseEntity<>("만료시간이 지났습니다. 재발급 부탁드립니다.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("만료시간 지남", HttpStatus.BAD_REQUEST);
             }else if(result == 2){
-                return new ResponseEntity<>("인증번호가 일치합니다.", HttpStatus.OK);
+                return new ResponseEntity<>("인증번호 일치", HttpStatus.OK);
             }else if(result == 3){
-                return new ResponseEntity<>("이미 사용된 인증번호입니다. 재발급 부탁드립니다.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("이미 사용", HttpStatus.BAD_REQUEST);
             }else{
-                return new ResponseEntity<>("인증번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("인증번호 불일치", HttpStatus.BAD_REQUEST);
             }
         }catch (Exception e){
-            return new ResponseEntity<>("서버 에러가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("서버 에러", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -137,15 +136,15 @@ public class UserController {
         try{
             int result = userService.newPassword(userUpdateDTO);
             if(result == 3){
-                return new ResponseEntity<>("비밀번호가 변경되었습니다. 로그인 부탁드립니다.", HttpStatus.OK);
+                return new ResponseEntity<>("비밀번호 변경 성공", HttpStatus.OK);
             }
             else if(result == 2){
-                return new ResponseEntity<>("현재 비밀번호와 같은 비밀번호입니다.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("동일한 비밀번호", HttpStatus.BAD_REQUEST);
             }else{
-                return new ResponseEntity<>("비밀번호 변경에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("비밀번호 변경에 실패", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }catch (Exception e){
-            return new ResponseEntity<>("서버 에러가 발생하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("서버 에러", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -155,7 +154,7 @@ public class UserController {
 
         int logout = userService.logout(token);
         if(logout == 1){
-            return new ResponseEntity<>("true", HttpStatus.OK);
+            return new ResponseEntity<>("로그아웃 성공", HttpStatus.OK);
         }else{
             return new ResponseEntity<>("false", HttpStatus.OK);
         }
