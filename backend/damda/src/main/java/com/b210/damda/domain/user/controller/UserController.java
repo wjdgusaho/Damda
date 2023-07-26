@@ -12,6 +12,8 @@ import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -159,12 +161,10 @@ public class UserController {
         }
     }
 
+    // 비밀번호 2차 검증
     @PostMapping("info")
-    public ResponseEntity<?> passwordCheck(@RequestHeader(value="Authorization") String token
-            , @RequestBody UserLoginDTO userLoginDTO){
-        System.out.println(token);
-        String password = userLoginDTO.getUserPw();
-        int result = userService.passwordCheck(token, password);
+    public ResponseEntity<?> passwordCheck(@RequestBody UserLoginDTO userLoginDTO){
+        int result = userService.passwordCheck(userLoginDTO.getUserPw());
         if(result == 1){
             return new ResponseEntity<>("해당 유저 없음", HttpStatus.BAD_REQUEST);
         }else if(result == 2){
@@ -173,5 +173,6 @@ public class UserController {
             return new ResponseEntity<>("비밀번호 불일치", HttpStatus.OK);
         }
     }
+
 
 }

@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -197,23 +199,16 @@ public class UserService {
     }
 
     // 비밀번호 확인
-    public int passwordCheck(String token, String password){
-        System.out.println(token);
-        String jwtToken = token.split(" ")[1];
-        Long userNo = JwtUtil.getUserNo(jwtToken, secretKey);
-        System.out.println(userNo);
-
+    public int passwordCheck(String password){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        Long userNo = (Long) principal;
         Optional<User> byId = userRepository.findById(userNo);
         if(byId.isEmpty()){ // 해당 유저가 없음
             return 1;
         }else{
-            System.out.println(321);
             User user = byId.get();
-            System.out.println(user.toString());
-            String encode = encoder.encode(password);
-            System.out.println(encode);
-            if(encode.equals(user.getUserPw())){ // 비밀번호 일치하면
-                System.out.println("asd");
+            if(encoder.matches(password, user.getUserPw())){ // 비밀번호 일치하면
                 return 2;
             }else { // 비밀번호 일치하지 않으면
                 return 3;

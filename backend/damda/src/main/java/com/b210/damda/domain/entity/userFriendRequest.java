@@ -2,6 +2,7 @@ package com.b210.damda.domain.entity;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -32,5 +33,14 @@ public class userFriendRequest {
     private String status = "NOTREAD";
 
     public userFriendRequest() {
+    }
+
+    public userFriendRequest(Long userFriendRequestNo, boolean isCheck, Long requestUserNo, Long receivedUserNo, LocalDateTime requestDate, String status) {
+        this.userFriendRequestNo = userFriendRequestNo;
+        this.isCheck = isCheck;
+        this.requestUserNo = requestUserNo;
+        this.receivedUserNo = receivedUserNo;
+        this.requestDate = requestDate;
+        this.status = status;
     }
 }
