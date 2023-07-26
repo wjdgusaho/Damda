@@ -5,7 +5,7 @@ import { Provider } from "react-redux"
 import { CookiesProvider } from "react-cookie"
 
 import MainPage from "./components/MainPage"
-import MyPage from "./components/MyPage"
+import { UserInfo } from "./components/UserInfo"
 import ShopPage from "./components/ShopPage"
 import { Sticker, Theme, Capsule } from "./components/ShopPage"
 import TimecapsulePage from "./components/TimecapsulePage"
@@ -16,7 +16,6 @@ import { SignUp } from "./components/Auth/SignUp"
 import { Logout } from "./components/Auth/Logout"
 import { FindPassword } from "./components/Auth/FindPassword"
 import { LandingPage } from "./components/LandingPage"
-import Navigation from "./Navigation"
 import Tutorial from "./components/Tutorial"
 import { DummyKakao } from "./components/Auth/DummyKakao"
 import Menu from "./components/Menu"
@@ -29,10 +28,9 @@ function Main() {
       <CookiesProvider>
         <Provider store={Store}>
           <BrowserRouter>
-            {/* <Navigation/> */}
             <Routes>
               <Route path="/" element={<LandingPage />}></Route>
-              <Route path="/user/" element={<MyPage />}></Route>
+              <Route path="/user/" element={<UserInfo />}></Route>
               <Route path="/shop/" element={<ShopPage />}>
                 <Route path="sticker" element={<Sticker />}></Route>
                 <Route path="theme" element={<Theme />}></Route>
