@@ -11,6 +11,7 @@ import { Sticker, Theme, Capsule } from "./components/ShopPage"
 import TimecapsulePage from "./components/TimecapsulePage"
 import Card from "./components/Card"
 import Friend from "./components/Friend"
+import { List, Request } from "./components/Friend"
 import Login from "./components/Auth/Login"
 import { SignUp } from "./components/Auth/SignUp"
 import { Logout } from "./components/Auth/Logout"
@@ -22,6 +23,7 @@ import Menu from "./components/Menu"
 import SavedTimecapsule from "./components/SavedTimecapsule"
 import Participate from "./components/Participate"
 import { UserInfoChange } from "./components/Auth/UserInfoChange"
+import SelectType from "./components/SelectType"
 
 function Main() {
   return (
@@ -40,7 +42,10 @@ function Main() {
               </Route>
               <Route path="/timecapsule/" element={<TimecapsulePage />}></Route>
               <Route path="/card/" element={<Card />}></Route>
-              <Route path="/friend/" element={<Friend />}></Route>
+              <Route path="/friend/" element={<Friend />}>
+                <Route path="list" element={<List />}></Route>
+                <Route path="request" element={<Request />}></Route>
+              </Route>
               <Route path="/login/" element={<Login />}></Route>
               <Route path="/signup/" element={<SignUp />}></Route>
               <Route path="/logout/" element={<Logout />}></Route>
@@ -54,6 +59,7 @@ function Main() {
                 element={<SavedTimecapsule />}
               ></Route>
               <Route path="/participate/" element={<Participate />}></Route>
+              <Route path="/selecttype/" element={<SelectType />}></Route>
             </Routes>
           </BrowserRouter>
         </Provider>
