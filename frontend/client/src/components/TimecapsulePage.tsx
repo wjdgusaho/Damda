@@ -15,6 +15,7 @@ type CapsuleType = {
   curCard: number
   goalCard: number
   state: string
+  title: string
 }
 
 const capsuleList: CapsuleType[] = [
@@ -28,6 +29,7 @@ const capsuleList: CapsuleType[] = [
     curCard: 0,
     goalCard: 0,
     state: "openable",
+    title: "싸피 친구들 타임캡슐",
   },
   {
     id: 3,
@@ -39,6 +41,7 @@ const capsuleList: CapsuleType[] = [
     curCard: 0,
     goalCard: 0,
     state: "openable",
+    title: "퇴사하고 싶은 사람들",
   },
   {
     id: 4,
@@ -50,6 +53,7 @@ const capsuleList: CapsuleType[] = [
     curCard: 0,
     goalCard: 0,
     state: "unregistered",
+    title: "눈올때마다 기록하기",
   },
   {
     id: 2,
@@ -61,6 +65,7 @@ const capsuleList: CapsuleType[] = [
     curCard: 50,
     goalCard: 100,
     state: "proceeding",
+    title: "우리 1년 뒤 만나",
   },
 ]
 
@@ -102,7 +107,20 @@ const UnregisteredCard = styled(Card)`
   background-color: rgb(0, 0, 0, 0.3);
 `
 
-const CapsuleTitle = styled.div``
+const CapsuleState = styled.div`
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
+const CapsuleTitle = styled.div`
+  width: 165px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-break: break-all;
+`
 
 const TimecapsulePage = function () {
   return (
@@ -116,10 +134,18 @@ const TimecapsulePage = function () {
               <OpenableCard>
                 <CapsuleImg src={`${capsule.imgsrc}`} alt="capsuleImg" />
                 <div style={{ marginLeft: "15px" }}>
-                  <CapsuleTitle>
-                    오픈가능 <span> {capsule.eDate} </span>
+                  <CapsuleState>
+                    오픈가능
+                    <span
+                      className="text-sm font-thin"
+                      style={{ color: "white", opacity: "56%" }}
+                    >
+                      {capsule.eDate}
+                    </span>
+                  </CapsuleState>
+                  <CapsuleTitle className="text-xl font-thin">
+                    {capsule.title}
                   </CapsuleTitle>
-                  <div> {capsule.name} </div>
                 </div>
               </OpenableCard>
             ) : capsule.state === "unregistered" ? (
@@ -129,10 +155,38 @@ const TimecapsulePage = function () {
                   src={`${capsule.imgsrc}`}
                   alt="capsuleImg"
                 />
+                <div style={{ marginLeft: "15px" }}>
+                  <CapsuleState>
+                    등록 전
+                    <span
+                      className="text-sm font-thin"
+                      style={{ color: "white", opacity: "56%" }}
+                    >
+                      {capsule.eDate}
+                    </span>
+                  </CapsuleState>
+                  <CapsuleTitle className="text-xl font-thin">
+                    {capsule.title}
+                  </CapsuleTitle>
+                </div>
               </UnregisteredCard>
             ) : (
               <Card>
                 <CapsuleImg src={`${capsule.imgsrc}`} alt="capsuleImg" />
+                <div style={{ marginLeft: "15px" }}>
+                  <CapsuleState>
+                    {calculateDday(capsule.eDate)}
+                    <span
+                      className="text-sm font-thin"
+                      style={{ color: "white", opacity: "56%" }}
+                    >
+                      {capsule.eDate}
+                    </span>
+                  </CapsuleState>
+                  <CapsuleTitle className="text-xl font-thin">
+                    {capsule.title}
+                  </CapsuleTitle>
+                </div>
               </Card>
             )}
           </React.Fragment>
@@ -140,6 +194,29 @@ const TimecapsulePage = function () {
       </Box>
     </>
   )
+}
+
+const calculateDday = (endDate: string) => {
+  const currentDate = new Date()
+  const dateString = currentDate.toISOString().slice(0, 10)
+
+  const dday = calculateDateDifference(dateString, endDate)
+
+  let ddayPrint = ""
+  if (dday <= 0) {
+    ddayPrint = "D - DAY"
+  } else {
+    ddayPrint = "D - " + dday
+  }
+  return ddayPrint
+}
+
+const calculateDateDifference = (startDate: string, endDate: string) => {
+  const start = new Date(startDate)
+  const end = new Date(endDate)
+  const differenceInTime = end.getTime() - start.getTime()
+  const differenceInDays = differenceInTime / (1000 * 3600 * 24) // Convert milliseconds to days
+  return differenceInDays
 }
 
 export default TimecapsulePage
