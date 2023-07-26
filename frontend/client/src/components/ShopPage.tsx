@@ -9,7 +9,7 @@ export const ShopPage = function () {
   return (
     <div>
       <SubHeader></SubHeader>
-      <div className="text-white opacity-80">
+      <div className="text-white">
         <div className="text-center mt-10">
           <TextStyle className="text-xl">상점</TextStyle>
         </div>
