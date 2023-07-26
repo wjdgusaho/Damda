@@ -78,7 +78,7 @@ public class UserController {
     // 로그인 요청
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody UserLoginDTO userLoginDTO){
-        Map<String, String> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getPassword());
+        Map<String, String> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getUserPw());
 
         if(loginUser.get("error") != null && loginUser.get("error").equals("no email")){ //
             return new ResponseEntity<>("아이디 없음", HttpStatus.OK);
@@ -162,7 +162,8 @@ public class UserController {
     @PostMapping("info")
     public ResponseEntity<?> passwordCheck(@RequestHeader(value="Authorization") String token
             , @RequestBody UserLoginDTO userLoginDTO){
-        String password = userLoginDTO.getPassword();
+        System.out.println(token);
+        String password = userLoginDTO.getUserPw();
         int result = userService.passwordCheck(token, password);
         if(result == 1){
             return new ResponseEntity<>("해당 유저 없음", HttpStatus.BAD_REQUEST);

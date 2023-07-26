@@ -196,16 +196,24 @@ public class UserService {
         }
     }
 
+    // 비밀번호 확인
     public int passwordCheck(String token, String password){
+        System.out.println(token);
         String jwtToken = token.split(" ")[1];
         Long userNo = JwtUtil.getUserNo(jwtToken, secretKey);
+        System.out.println(userNo);
 
         Optional<User> byId = userRepository.findById(userNo);
         if(byId.isEmpty()){ // 해당 유저가 없음
             return 1;
         }else{
+            System.out.println(321);
             User user = byId.get();
-            if(encoder.matches(password, user.getUserPw())){ // 비밀번호 일치하면
+            System.out.println(user.toString());
+            String encode = encoder.encode(password);
+            System.out.println(encode);
+            if(encode.equals(user.getUserPw())){ // 비밀번호 일치하면
+                System.out.println("asd");
                 return 2;
             }else { // 비밀번호 일치하지 않으면
                 return 3;
