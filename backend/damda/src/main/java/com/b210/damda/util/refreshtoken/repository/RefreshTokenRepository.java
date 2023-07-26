@@ -1,4 +1,4 @@
-package com.b210.damda.domain.repository;
+package com.b210.damda.util.refreshtoken.repository;
 
 import com.b210.damda.domain.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;

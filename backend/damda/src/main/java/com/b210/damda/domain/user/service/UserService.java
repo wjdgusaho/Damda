@@ -6,13 +6,12 @@ import com.b210.damda.domain.entity.EmailSendLog;
 import com.b210.damda.domain.entity.RefreshToken;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.entity.UserLog;
-import com.b210.damda.domain.repository.RefreshTokenRepository;
-import com.b210.damda.domain.user.filter.JwtFilter;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
 import com.b210.damda.util.emailAPI.dto.TempCodeDTO;
 import com.b210.damda.util.emailAPI.repository.EmailSendLogRepository;
+import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -129,31 +128,6 @@ public class UserService {
         }
         return byEmail.get();
     }
-
-//    // 회원 정보 수정
-//    @Transactional
-//    public User update(UserUpdateDTO userUpdateDTO, String token) {
-//
-//        // 토큰 꺼내기(첫 번째가 토큰이다. Bearer 제외)
-//        String parsingToken = token.split(" ")[1];
-//
-//        Long userNo = JwtUtil.getUserNo(parsingToken, secretKey);
-//        Optional<User> user = userRepository.findById(userNo);
-//
-//        if (user.isPresent()) {
-//            User findUser = user.get();
-//            if (userUpdateDTO.get() != null && !userUpdateDTO.getPassword().isEmpty()) {
-//                findUser.updatePassword(encoder.encode(userUpdateDTO.getPassword()));
-//            }
-//            if (userUpdateDTO.getNickname() != null && !userUpdateDTO.getNickname().isEmpty()) {
-//                findUser.updateNickname(userUpdateDTO.getNickname());
-//            }
-//            return findUser;
-//        } else {
-//            // 적절한 예외 처리를 해줍니다.
-//            throw new IllegalArgumentException("유효하지 않은 이메일입니다.");
-//        }
-//    }
 
     // 로그아웃 처리
     public int logout(String token) {
