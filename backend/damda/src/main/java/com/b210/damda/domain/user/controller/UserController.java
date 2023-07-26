@@ -19,7 +19,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     public UserService userService;
@@ -66,7 +65,7 @@ public class UserController {
         try {
             User user = userService.fineByUser(email);
             if(user != null){
-                return new ResponseEntity<>("이메일 사용 불가능", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("이메일 사용 불가능", HttpStatus.OK);
             }else{
                 return new ResponseEntity<>("이메일 사용 가능", HttpStatus.OK);
             }
@@ -81,9 +80,9 @@ public class UserController {
         Map<String, String> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getPassword());
 
         if(loginUser.get("error") != null && loginUser.get("error").equals("no email")){ //
-            return new ResponseEntity<>("아이디 없음", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("아이디 없음", HttpStatus.OK);
         }else if (loginUser.get("error") != null && loginUser.get("error").equals("no password")){
-            return new ResponseEntity<>("비밀번호 틀림", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("비밀번호 틀림", HttpStatus.OK);
         }else{
             return new ResponseEntity<>("로그인 성공", HttpStatus.OK);
         }
@@ -97,7 +96,7 @@ public class UserController {
         try{
             User user = userService.fineByUser(email);
             if(user == null){
-                return new ResponseEntity<>("이메일 없음",HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("이메일 없음",HttpStatus.OK);
             }
             String key = emailService.sendSimpleMessage(email);
             if(emailService.registTempKey(key, email, user) == 0){
@@ -116,13 +115,13 @@ public class UserController {
         try{
             int result = userService.tempCodeCheck(tempCodeDTO);
             if(result == 1){
-                return new ResponseEntity<>("만료시간 지남", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("만료시간 지남", HttpStatus.OK);
             }else if(result == 2){
                 return new ResponseEntity<>("인증번호 일치", HttpStatus.OK);
             }else if(result == 3){
-                return new ResponseEntity<>("이미 사용", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("이미 사용", HttpStatus.OK);
             }else{
-                return new ResponseEntity<>("인증번호 불일치", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("인증번호 불일치", HttpStatus.OK);
             }
         }catch (Exception e){
             return new ResponseEntity<>("서버 에러", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -139,7 +138,7 @@ public class UserController {
                 return new ResponseEntity<>("비밀번호 변경 성공", HttpStatus.OK);
             }
             else if(result == 2){
-                return new ResponseEntity<>("동일한 비밀번호", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("동일한 비밀번호", HttpStatus.OK);
             }else{
                 return new ResponseEntity<>("비밀번호 변경에 실패", HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -156,7 +155,7 @@ public class UserController {
         if(logout == 1){
             return new ResponseEntity<>("로그아웃 성공", HttpStatus.OK);
         }else{
-            return new ResponseEntity<>("false", HttpStatus.OK);
+            return new ResponseEntity<>("서버 에러", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

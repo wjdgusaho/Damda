@@ -30,7 +30,7 @@ public class JwtFilter extends OncePerRequestFilter { // 모든 요청에 대해
         String path = request.getRequestURI();
         return path.startsWith("/user/login") || path.startsWith("/user/regist") || path.startsWith("/user/change-password/email")
                 || path.startsWith("/user/logout") || path.startsWith("/user/change-password/code") || path.startsWith("/api/kakao/login") || path.startsWith("/user/check-email")
-                || path.startsWith("/user/change-password/new");
+                || path.startsWith("/user/change-password/new") || path.startsWith("/user/refresh-token");
     }
 
     @Override
@@ -44,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter { // 모든 요청에 대해
         // 토큰이 없거나 Bearer로 시작하지 않는 경우
         if(authorization == null || !authorization.startsWith("Bearer ")){
             log.error("authorization을 잘못 보냈습니다.");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰을 잘못 보냈습니다.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰을 잘못 보냈습니다");
             return;
         }
 
@@ -55,7 +55,7 @@ public class JwtFilter extends OncePerRequestFilter { // 모든 요청에 대해
         // 토큰 만료됐는지 확인
         if(JwtUtil.isExpired(token, secretKey)){
             log.error("토큰이 만료되었습니다.");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 만료되었습니다.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰 만료");
             return;
         }
 
