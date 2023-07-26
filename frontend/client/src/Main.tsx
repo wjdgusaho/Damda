@@ -22,6 +22,7 @@ import Menu from "./components/Menu"
 import SavedTimecapsule from "./components/SavedTimecapsule"
 import Participate from "./components/Participate"
 import { UserInfoChange } from "./components/Auth/UserInfoChange"
+import SelectType from "./components/SelectType"
 
 function Main() {
   return (
@@ -54,6 +55,7 @@ function Main() {
                 element={<SavedTimecapsule />}
               ></Route>
               <Route path="/participate/" element={<Participate />}></Route>
+              <Route path="/selecttype/" element={<SelectType />}></Route>
             </Routes>
           </BrowserRouter>
         </Provider>
