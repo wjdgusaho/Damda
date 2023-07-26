@@ -1,11 +1,10 @@
 package com.b210.damda.domain.user.service;
 
 import com.b210.damda.domain.dto.UserOriginRegistDTO;
+import com.b210.damda.domain.dto.UserSearchResultDTO;
 import com.b210.damda.domain.dto.UserUpdateDTO;
-import com.b210.damda.domain.entity.EmailSendLog;
-import com.b210.damda.domain.entity.RefreshToken;
-import com.b210.damda.domain.entity.User;
-import com.b210.damda.domain.entity.UserLog;
+import com.b210.damda.domain.entity.*;
+import com.b210.damda.domain.friend.repository.FriendRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
@@ -18,21 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-<<<<<<< HEAD
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-=======
->>>>>>> 5b4f6f0ac296d15420c3fe53887c6bbecfd4656e
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -44,15 +37,17 @@ public class UserService {
     private final BCryptPasswordEncoder encoder;
     private RefreshTokenRepository refreshTokenRepository;
     private EmailSendLogRepository emailSendLogRepository;
+    private FriendRepository friendRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, UserLogRepository userLogRepository, BCryptPasswordEncoder encoder, RefreshTokenRepository refreshTokenRepository,
-                       EmailSendLogRepository emailSendLogRepository) {
+                       EmailSendLogRepository emailSendLogRepository, FriendRepository friendRepository) {
         this.userRepository = userRepository;
         this.userLogRepository = userLogRepository;
         this.encoder = encoder;
         this.refreshTokenRepository = refreshTokenRepository;
         this.emailSendLogRepository = emailSendLogRepository;
+        this.friendRepository = friendRepository;
     }
 
 
@@ -201,18 +196,11 @@ public class UserService {
         }
     }
 
-<<<<<<< HEAD
     // 비밀번호 확인
     public int passwordCheck(String password){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         Long userNo = (Long) principal;
-=======
-    public int passwordCheck(String token, String password){
-        String jwtToken = token.split(" ")[1];
-        Long userNo = JwtUtil.getUserNo(jwtToken, secretKey);
-
->>>>>>> 5b4f6f0ac296d15420c3fe53887c6bbecfd4656e
         Optional<User> byId = userRepository.findById(userNo);
         if(byId.isEmpty()){ // 해당 유저가 없음
             return 1;
@@ -224,5 +212,48 @@ public class UserService {
                 return 3;
             }
         }
+    }
+
+    // 회원 검색
+    public List<UserSearchResultDTO> userSearch(String query, String type){
+
+        List<UserSearchResultDTO> result = new ArrayList<>();
+        List<User> users = new ArrayList<>();
+
+        if(type.equals("nickname")){ // 닉네임으로 검색
+            users = userRepository.findByNicknameContaining(query);
+        }else if(type.equals("code")){ // 코드로 검색
+            long userNo = Long.parseLong(query);
+            Optional<User> byId = userRepository.findById(userNo);
+            if(byId.isEmpty()){ // 유저가 없으면
+                return result;
+            }else{ // 유저가 있으면
+                User user = byId.get();
+                users.add(user);
+            }
+        }else{ // 닉네임#코드로 검색
+            String[] parts = query.split("#");
+            long userNo = Long.parseLong(parts[0]);
+            Optional<User> byId = userRepository.findById(userNo);
+            if(byId.isEmpty()){ // 코드와 일치하는 유저가 없으면
+                return result;
+            }else{ // 코드와 일치하는 유저가 있으면
+                User user = byId.get();
+                if(user.getNickname().equals(parts[0])){ // 코드의 유저와 닉네임이 같으면
+                    users.add(user);
+                }else{ // 코드의 유저와 닉네임이 다르면
+                    return result;
+                }
+            }
+        }
+
+        for(User user : users){
+            Optional<userFriend> userFriendByUser = friendRepository.getUserFriendByUser(user);
+            if (userFriendByUser.isPresent()) {
+                UserSearchResultDTO results = new UserSearchResultDTO(user, userFriendByUser.get());
+                result.add(results);
+            }
+        }
+        return result;
     }
 }
