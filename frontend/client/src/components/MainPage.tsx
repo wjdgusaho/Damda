@@ -190,7 +190,12 @@ const MainPage = function () {
         )}
       </div>
       <div className="text-center mt-8 fixed bottom-4 left-0 right-0">
-        <MakeCapsuleButton className="bg-lilac-100 w-64 h-16 flex items-center justify-center m-auto text-lilac-950 hover:bg-lilac-500">
+        <MakeCapsuleButton
+          onClick={() => {
+            navigate("/selecttype")
+          }}
+          className="bg-lilac-100 w-64 h-16 flex items-center justify-center m-auto text-lilac-950 hover:bg-lilac-500"
+        >
           타임캡슐 만들기
         </MakeCapsuleButton>
         <MakeCapsuleCode

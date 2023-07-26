@@ -34,6 +34,7 @@ const InputCode = styled.input`
   text-align: center;
   margin-top: 40px;
   z-index: 1;
+  outline: none;
 `
 
 const Btn = styled.button`
