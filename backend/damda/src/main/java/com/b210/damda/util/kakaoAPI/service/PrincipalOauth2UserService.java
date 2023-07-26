@@ -43,9 +43,9 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2UserInfo.getEmail();
         String loginId = provider + "_" + providerId;
         String nickname = oAuth2UserInfo.getName();
-        String profileImage = null;
-        if(!oAuth2UserInfo.getImagePath().isEmpty()){
-            profileImage = oAuth2UserInfo.getImagePath();
+        String profileImage = oAuth2UserInfo.getImagePath();
+        if(profileImage == null){
+            profileImage = "default.jpg";
         }
 
         log.info(email);
