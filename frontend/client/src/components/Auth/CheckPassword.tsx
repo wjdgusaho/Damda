@@ -1,10 +1,10 @@
 import React, { useState } from "react"
 import tw from "tailwind-styled-components"
-import { serverUrl } from "../urls"
+import { serverUrl } from "../../urls"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import { useSelector } from "react-redux"
-import Store from "../store/Store"
+import Store from "../../store/Store"
 
 type RootState = ReturnType<typeof Store.getState>
 
@@ -25,7 +25,7 @@ const InputText = tw.input`
 `
 const Button = tw.button`bg-lilac-100 ml-24 text-black shadow-md w-48 border rounded-full mt-96 h-10`
 
-export const UserInfo = function () {
+export const CheckPassword = function () {
   const [userPw, setUserPw] = useState("")
   const token = useSelector((state: RootState) => state.authToken.accessToken)
   const handlePwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
