@@ -130,17 +130,17 @@ public class UserService {
     }
 
     // 로그아웃 처리
+    @Transactional
     public int logout(String token) {
-
         String parsingToken = token.split(" ")[1];
         Optional<RefreshToken> byRefreshToken = refreshTokenRepository.findByRefreshToken(parsingToken);
         RefreshToken refreshToken = byRefreshToken.get(); // 유저의 리프레시 토큰 꺼냄.
         refreshToken.setRefreshToken("");
         RefreshToken save = refreshTokenRepository.save(refreshToken);
 
-        if (save.getRefreshToken().equals("")) {
+        if (save.getRefreshToken().equals("")) { //리프레시 토큰이 만료됐으면
             return 1;
-        } else {
+        } else { // 리프레시 토큰 만료 실패했으면
             return 0;
         }
     }
@@ -174,6 +174,7 @@ public class UserService {
     }
 
     // 유저 비밀번호 재설정
+    @Transactional
     public int newPassword(UserUpdateDTO userUpdateDTO){
         String email = userUpdateDTO.getEmail();
         String userPw = userUpdateDTO.getUserPw();

@@ -23,7 +23,10 @@ public class RefreshTokenController {
 
     @PostMapping("refresh-token")
     public ResponseEntity<?> reloadRefresh(@RequestHeader(value = "RefreshToken") String refreshToken){
-        String token = refreshTokenService.findByRefreshToken(refreshToken);
+
+        String parsingToken = refreshToken.split(" ")[1];
+
+        String token = refreshTokenService.findByRefreshToken(parsingToken);
         if(token.equals("1")){ // 토큰과 일치하는 유저 없으면
             return new ResponseEntity<>("잘못된 접근", HttpStatus.BAD_REQUEST);
         }else if(token.equals("2")){ // 리프레시 토큰 만료
