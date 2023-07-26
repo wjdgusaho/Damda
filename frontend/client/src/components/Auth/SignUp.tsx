@@ -13,7 +13,7 @@ const isFileSizeValid = (file: File | null) => {
   return file !== null && file.size <= FILE_SIZE_LIMIT_BYTES
 }
 // 닉네임 정규식
-const nicknameRegex = /^(?=.*[a-zA-Z]).{2,15}&/
+const nicknameRegex = /^(?=.*[a-zA-Z가-힣0-9]).{2,15}$/
 
 // 비밀번호 정규식
 const passwordRegex = /^(?=.*[a-zA-Z])[!@#$%^*+=-]?(?=.*[0-9]).{5,25}$/
@@ -56,15 +56,6 @@ export const SignUp = function () {
       ...userdata,
       [event.currentTarget.name]: event.currentTarget.value,
     })
-    if (userdata.nickname) {
-      if (nicknameRegex.test(userdata.nickname)) {
-        setUserNicknameCondition(1)
-      } else {
-        setUserNicknameCondition(2)
-      }
-    } else {
-      setUserNicknameCondition(0)
-    }
   }
 
   function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -84,6 +75,18 @@ export const SignUp = function () {
       alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
     }
   }
+  useEffect(() => {
+    if (userdata.nickname) {
+      if (nicknameRegex.test(userdata.nickname)) {
+        setUserNicknameCondition(1)
+      } else {
+        setUserNicknameCondition(2)
+      }
+    } else {
+      setUserNicknameCondition(0)
+    }
+  }, [userdata.nickname])
+
   useEffect(() => {
     if (userdata.userPw) {
       if (passwordRegex.test(userdata.userPw)) {
@@ -289,9 +292,9 @@ export const SignUp = function () {
         />
         {userNicknameCondition === 2 ? (
           <p className="text-red-500 w-full">
-            닉네임은 영문 2-15자이어야 합니다.
+            닉네임은 영문, 한글, 숫자로 2-15자이어야 합니다.
           </p>
-        ) : userPwCondition === 1 ? (
+        ) : userNicknameCondition === 1 ? (
           <p className="text-green-500 w-full">유효한 닉네임</p>
         ) : (
           <></>
