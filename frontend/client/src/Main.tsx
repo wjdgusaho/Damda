@@ -21,6 +21,7 @@ import Tutorial from "./components/Tutorial"
 import { DummyKakao } from "./components/Auth/DummyKakao"
 import Menu from "./components/Menu"
 import SavedTimecapsule from "./components/SavedTimecapsule"
+import Participate from "./components/Participate"
 
 function Main() {
   return (
@@ -55,6 +56,7 @@ function Main() {
                 path="/savetimecapsule/"
                 element={<SavedTimecapsule />}
               ></Route>
+              <Route path="/participate/" element={<Participate />}></Route>
             </Routes>
           </BrowserRouter>
         </Provider>
