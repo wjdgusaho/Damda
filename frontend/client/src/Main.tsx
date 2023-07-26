@@ -11,6 +11,7 @@ import { Sticker, Theme, Capsule } from "./components/ShopPage"
 import TimecapsulePage from "./components/TimecapsulePage"
 import Card from "./components/Card"
 import Friend from "./components/Friend"
+import { List, Request } from "./components/Friend"
 import Login from "./components/Auth/Login"
 import { SignUp } from "./components/Auth/SignUp"
 import { Logout } from "./components/Auth/Logout"
@@ -41,7 +42,10 @@ function Main() {
               </Route>
               <Route path="/timecapsule/" element={<TimecapsulePage />}></Route>
               <Route path="/card/" element={<Card />}></Route>
-              <Route path="/friend/" element={<Friend />}></Route>
+              <Route path="/friend/" element={<Friend />}>
+                <Route path="list" element={<List />}></Route>
+                <Route path="request" element={<Request />}></Route>
+              </Route>
               <Route path="/login/" element={<Login />}></Route>
               <Route path="/signup/" element={<SignUp />}></Route>
               <Route path="/logout/" element={<Logout />}></Route>
