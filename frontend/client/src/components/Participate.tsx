@@ -68,7 +68,7 @@ const Participate = function () {
       <Box>
         <>
           <div>초대 코드를 입력하세요</div>
-          <InputCode type="text" name="" id="" />
+          <InputCode type="text" name="code" id="code" />
         </>
         <Btn>참여하기</Btn>
       </Box>
