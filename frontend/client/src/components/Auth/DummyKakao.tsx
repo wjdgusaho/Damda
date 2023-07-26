@@ -16,7 +16,7 @@ export const DummyKakao = () => {
     let code = getParameter('code')
 
     axios({
-        method: 'GET',
+        method: 'POST',
         url: serverUrl + 'api/kakao/login',
         headers: {
             'Content-Type': 'application/json',
