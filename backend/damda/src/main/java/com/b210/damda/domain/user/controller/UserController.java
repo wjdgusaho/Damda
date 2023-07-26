@@ -1,8 +1,6 @@
 package com.b210.damda.domain.user.controller;
 
-import com.b210.damda.domain.dto.UserLoginDTO;
-import com.b210.damda.domain.dto.UserOriginRegistDTO;
-import com.b210.damda.domain.dto.UserUpdateDTO;
+import com.b210.damda.domain.dto.*;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.file.service.FileStoreService;
 import com.b210.damda.domain.user.service.UserService;
@@ -12,10 +10,14 @@ import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -77,7 +79,7 @@ public class UserController {
     // 로그인 요청
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody UserLoginDTO userLoginDTO){
-        Map<String, String> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getPassword());
+        Map<String, String> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getUserPw());
 
         if(loginUser.get("error") != null && loginUser.get("error").equals("no email")){ //
             return new ResponseEntity<>("아이디 없음", HttpStatus.OK);
@@ -92,10 +94,9 @@ public class UserController {
     @PostMapping("change-password/email")
     public ResponseEntity<?> emailConfirm(@RequestBody TempCodeDTO emailRequest) throws Exception {
         String email = emailRequest.getEmail();
-
         try{
             User user = userService.fineByUser(email);
-            if(user == null){
+            if(user.getAccountType().equals("KAKAO") || user == null){ // 인증번호 전송은 ORIGIN 유저만 가능.
                 return new ResponseEntity<>("이메일 없음",HttpStatus.OK);
             }
             String key = emailService.sendSimpleMessage(email);
@@ -158,5 +159,26 @@ public class UserController {
             return new ResponseEntity<>("서버 에러", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    // 비밀번호 2차 검증
+    @PostMapping("info")
+    public ResponseEntity<?> passwordCheck(@RequestBody UserLoginDTO userLoginDTO){
+        int result = userService.passwordCheck(userLoginDTO.getUserPw());
+        if(result == 1){
+            return new ResponseEntity<>("해당 유저 없음", HttpStatus.BAD_REQUEST);
+        }else if(result == 2){
+            return new ResponseEntity<>("비밀번호 일치", HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>("비밀번호 불일치", HttpStatus.OK);
+        }
+    }
+
+    // 유저 검색
+    @GetMapping("search")
+    public ResponseEntity<?> userSearch(@RequestBody UserSearchDTO userSearchDTO){
+        List<UserSearchResultDTO> userSearchResultDTOS = userService.userSearch(userSearchDTO.getQuery(), userSearchDTO.getType());
+        return new ResponseEntity<>(userSearchResultDTOS, HttpStatus.OK);
+    }
+
 
 }
