@@ -131,9 +131,9 @@ const Login = function () {
       },
     })
       .then((response) => {
-        if (response.data === "no user") {
+        if (response.data === "아이디 없음") {
           setUserdataText("아이디가 존재하지 않습니다.")
-        } else if (response.data === "fail password") {
+        } else if (response.data === "비밀번호 틀림") {
           setUserdataText("비밀번호가 일치하지 않습니다.")
         } else {
           setRefreshToken(response.data.refreshToken)
@@ -200,8 +200,8 @@ const Login = function () {
                   value={password}
                   onChange={inputPassword}
                 />
-                <p style={{ color: "red" }}>{userdataText}</p>
               </div>
+              <p style={{ color: "red" }}>{userdataText}</p>
               <div className="flex grid-cols-2 justify-between">
                 <div style={{ marginLeft: "-15px" }}>
                   <button
