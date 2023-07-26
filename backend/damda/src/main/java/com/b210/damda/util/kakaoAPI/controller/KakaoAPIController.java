@@ -59,7 +59,7 @@ public class KakaoAPIController {
         tokens.put("accessToken", jwtToken);
         tokens.put("refreshToken", refreshToken);
 
-<<<<<<< HEAD
+
         Optional<RefreshToken> byUserUserNo = refreshTokenRepository.findByUserUserNo(UserInfo.getUserNo());
 
         if(byUserUserNo.isPresent()){
@@ -80,9 +80,9 @@ public class KakaoAPIController {
 
             refreshTokenRepository.save(refreshTokenUser); // 리프레시 토큰 저장.
         }
-=======
+
 //        userRepository.
->>>>>>> 5b4f6f0ac296d15420c3fe53887c6bbecfd4656e
+
 
         return new ResponseEntity<>(tokens, HttpStatus.OK);
     }

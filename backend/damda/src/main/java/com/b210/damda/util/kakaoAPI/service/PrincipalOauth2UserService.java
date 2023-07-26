@@ -1,9 +1,8 @@
 package com.b210.damda.util.kakaoAPI.service;
 
-<<<<<<< HEAD
+
 import com.b210.damda.domain.entity.UserLog;
-=======
->>>>>>> 5b4f6f0ac296d15420c3fe53887c6bbecfd4656e
+
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.domain.user.service.UserService;

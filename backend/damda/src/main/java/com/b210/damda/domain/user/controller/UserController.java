@@ -1,8 +1,6 @@
 package com.b210.damda.domain.user.controller;
 
-import com.b210.damda.domain.dto.UserLoginDTO;
-import com.b210.damda.domain.dto.UserOriginRegistDTO;
-import com.b210.damda.domain.dto.UserUpdateDTO;
+import com.b210.damda.domain.dto.*;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.domain.file.service.FileStoreService;
 import com.b210.damda.domain.user.service.UserService;
@@ -17,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -172,6 +171,13 @@ public class UserController {
         }else{
             return new ResponseEntity<>("비밀번호 불일치", HttpStatus.OK);
         }
+    }
+
+    // 유저 검색
+    @GetMapping("search")
+    public ResponseEntity<?> userSearch(@RequestBody UserSearchDTO userSearchDTO){
+        List<UserSearchResultDTO> userSearchResultDTOS = userService.userSearch(userSearchDTO.getQuery(), userSearchDTO.getType());
+        return new ResponseEntity<>(userSearchResultDTOS, HttpStatus.OK);
     }
 
 
