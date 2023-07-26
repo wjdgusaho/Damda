@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @ToString
-@EntityListeners(AuditingEntityListener.class)
 @Builder
 @AllArgsConstructor
 public class EmailSendLog {
@@ -25,11 +24,17 @@ public class EmailSendLog {
     @Column(nullable = false)
     private String verificationCode;
     @Column(nullable = false)
-    @CreatedDate
     private LocalDateTime createTime;
+    @Column(nullable = false)
+    private LocalDateTime expiryTime;
+    @Column(nullable = false)
+    private boolean used;
 
     public EmailSendLog() {
 
     }
 
+    public void setUsed(boolean used) {
+        this.used = used;
+    }
 }

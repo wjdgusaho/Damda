@@ -122,7 +122,6 @@ public class UserService {
     }
 
     // 유저 이메일 확인(이메일 존재하는지)
-    @Transactional
     public User fineByUser(String email) {
         Optional<User> byEmail = userRepository.findByEmail(email);
         if (byEmail.isEmpty()) {
@@ -131,30 +130,30 @@ public class UserService {
         return byEmail.get();
     }
 
-    // 회원 정보 수정
-    @Transactional
-    public User update(UserUpdateDTO userUpdateDTO, String token) {
-
-        // 토큰 꺼내기(첫 번째가 토큰이다. Bearer 제외)
-        String parsingToken = token.split(" ")[1];
-
-        Long userNo = JwtUtil.getUserNo(parsingToken, secretKey);
-        Optional<User> user = userRepository.findById(userNo);
-
-        if (user.isPresent()) {
-            User findUser = user.get();
-            if (userUpdateDTO.getPassword() != null && !userUpdateDTO.getPassword().isEmpty()) {
-                findUser.updatePassword(encoder.encode(userUpdateDTO.getPassword()));
-            }
-            if (userUpdateDTO.getNickname() != null && !userUpdateDTO.getNickname().isEmpty()) {
-                findUser.updateNickname(userUpdateDTO.getNickname());
-            }
-            return findUser;
-        } else {
-            // 적절한 예외 처리를 해줍니다.
-            throw new IllegalArgumentException("유효하지 않은 이메일입니다.");
-        }
-    }
+//    // 회원 정보 수정
+//    @Transactional
+//    public User update(UserUpdateDTO userUpdateDTO, String token) {
+//
+//        // 토큰 꺼내기(첫 번째가 토큰이다. Bearer 제외)
+//        String parsingToken = token.split(" ")[1];
+//
+//        Long userNo = JwtUtil.getUserNo(parsingToken, secretKey);
+//        Optional<User> user = userRepository.findById(userNo);
+//
+//        if (user.isPresent()) {
+//            User findUser = user.get();
+//            if (userUpdateDTO.get() != null && !userUpdateDTO.getPassword().isEmpty()) {
+//                findUser.updatePassword(encoder.encode(userUpdateDTO.getPassword()));
+//            }
+//            if (userUpdateDTO.getNickname() != null && !userUpdateDTO.getNickname().isEmpty()) {
+//                findUser.updateNickname(userUpdateDTO.getNickname());
+//            }
+//            return findUser;
+//        } else {
+//            // 적절한 예외 처리를 해줍니다.
+//            throw new IllegalArgumentException("유효하지 않은 이메일입니다.");
+//        }
+//    }
 
     // 로그아웃 처리
     public int logout(String token) {
@@ -173,17 +172,49 @@ public class UserService {
     }
 
     // 유저 인증번호 확인
-    public boolean tempCodeCheck(TempCodeDTO tempCodeDTO) {
+    public int tempCodeCheck(TempCodeDTO tempCodeDTO) {
         String email = tempCodeDTO.getEmail();
         String code = tempCodeDTO.getCode();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("No user found with the provided email."));
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        User user = byEmail.get();
 
         Long userNo = user.getUserNo();
 
-        EmailSendLog emailSendLog = emailSendLogRepository.findTopByUserUserNoOrderByCreateTimeDesc(userNo)
-                .orElseThrow(() -> new IllegalArgumentException("No verification code sent to the user found."));
+        Optional<EmailSendLog> topByUserUserNoOrderByCreateTimeDesc = emailSendLogRepository.findTopByUserUserNoOrderByCreateTimeDesc(userNo);
+        EmailSendLog emailSendLog = topByUserUserNoOrderByCreateTimeDesc.get();
+        if(!emailSendLog.getVerificationCode().equals(code)){ // 코드가 일치하지 않는 상태
+            return 4;
+        }else{
+            if(emailSendLog.getExpiryTime().isBefore(LocalDateTime.now())){ // 만료시간이 지난 상태
+                return 1;
+            }else{ // 만료시간이 지나지 않은 상태
+                if(emailSendLog.getVerificationCode().equals(code) && !emailSendLog.isUsed()){ // 코드가 일치하고 사용하지 않은 상태
+                    emailSendLog.setUsed(true);
+                    emailSendLogRepository.save(emailSendLog);
+                    return 2;
+                }else{ // 코드가 일치하지만 사용한 상태
+                    return 3;
+                }
+            }
+        }
+    }
 
-        return emailSendLog.getVerificationCode().equals(code);
+    // 유저 비밀번호 재설정
+    public int newPassword(UserUpdateDTO userUpdateDTO){
+        String email = userUpdateDTO.getEmail();
+        String userPw = userUpdateDTO.getUserPw();
+
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        if(byEmail.isEmpty()){
+            return 1;
+        }else{
+            User user = byEmail.get();
+            if(user.getUserPw().equals(userPw)){
+                return 2;
+            }
+            user.updatePassword(userPw);
+            userRepository.save(user);
+            return 3;
+        }
     }
 }
