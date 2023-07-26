@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
 import Store from "../../store/Store"
-import { TokenRefresh } from "./TokenRefresh"
 import { refresh_accessToken } from "../../store/Auth"
 
 type RootState = ReturnType<typeof Store.getState>
@@ -35,7 +34,10 @@ export const CheckPassword = function () {
   const handlePwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserPw(event.currentTarget.value)
   }
-  const handlePwSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handlePwSubmit = (
+    event: React.FormEvent<HTMLFormElement>,
+    retry = true
+  ) => {
     event.preventDefault()
     if (userPw) {
       axios({
@@ -56,7 +58,9 @@ export const CheckPassword = function () {
         .catch((error) => {
           if (error.response.data.message === "토큰 만료") {
             dispatch(refresh_accessToken())
-            handlePwSubmit(event)
+            if (retry) {
+              handlePwSubmit(event, false)
+            }
           }
         })
     } else {
