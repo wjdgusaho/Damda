@@ -18,6 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+<<<<<<< HEAD
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+=======
+>>>>>>> 5b4f6f0ac296d15420c3fe53887c6bbecfd4656e
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -196,10 +201,18 @@ public class UserService {
         }
     }
 
+<<<<<<< HEAD
+    // 비밀번호 확인
+    public int passwordCheck(String password){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        Long userNo = (Long) principal;
+=======
     public int passwordCheck(String token, String password){
         String jwtToken = token.split(" ")[1];
         Long userNo = JwtUtil.getUserNo(jwtToken, secretKey);
 
+>>>>>>> 5b4f6f0ac296d15420c3fe53887c6bbecfd4656e
         Optional<User> byId = userRepository.findById(userNo);
         if(byId.isEmpty()){ // 해당 유저가 없음
             return 1;

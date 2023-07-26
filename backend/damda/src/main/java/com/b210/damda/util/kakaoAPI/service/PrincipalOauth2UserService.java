@@ -1,5 +1,9 @@
 package com.b210.damda.util.kakaoAPI.service;
 
+<<<<<<< HEAD
+import com.b210.damda.domain.entity.UserLog;
+=======
+>>>>>>> 5b4f6f0ac296d15420c3fe53887c6bbecfd4656e
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.domain.user.service.UserService;
@@ -89,6 +93,12 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             log.info("로그인 성공");
             log.info("로그인 성공2"+ user);
         }
+
+        // 카카오 유저 로그인 로그 저장
+        UserLog userLog = new UserLog();
+        userLog.setUser(user);
+        UserLog save = userLogRepository.save(userLog);
+
         //컨트롤러에서 유저 정보를 필요할때 그때 사용한다.
         return new PrincipalDetails(user, oAuth2User.getAttributes());
 
