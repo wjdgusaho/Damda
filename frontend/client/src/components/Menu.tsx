@@ -117,7 +117,7 @@ const Menu = function () {
         </MenuBtn>
         <MenuBtn
           onClick={() => {
-            navigate("/changepassword")
+            navigate("/user")
           }}
         >
           회원정보 수정
