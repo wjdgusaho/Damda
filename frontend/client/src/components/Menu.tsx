@@ -77,13 +77,23 @@ const Menu = function () {
           #{UserData.user_no}
         </div>
         <div className="grid grid-cols-2 text-base font-thin space-x-7 mt-6">
-          <div className="grid grid-rows-2 text-center">
+          <div
+            onClick={() => {
+              navigate("/timecapsule")
+            }}
+            className="grid grid-rows-2 text-center"
+          >
             진행중인 타임캡슐
             <div className="text-xl font-normal">
               {UserData.now_capsule_count}개
             </div>
           </div>
-          <div className="grid grid-rows-2 text-center">
+          <div
+            onClick={() => {
+              navigate("/savetimecapsule")
+            }}
+            className="grid grid-rows-2 text-center"
+          >
             저장된 타임캡슐
             <div className="text-xl font-normal">
               {UserData.saved_capsule_count}개
