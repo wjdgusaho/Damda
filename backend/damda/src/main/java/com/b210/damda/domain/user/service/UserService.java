@@ -12,10 +12,13 @@ import com.b210.damda.util.JwtUtil;
 import com.b210.damda.util.emailAPI.dto.TempCodeDTO;
 import com.b210.damda.util.emailAPI.repository.EmailSendLogRepository;
 import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,7 +88,7 @@ public class UserService {
         User user = findUser.get();
 
         // 로그인 성공
-        String jwtToken = JwtUtil.createAccessJwt(user.getUserNo(), secretKey); // 토큰 발급해서 넘김
+        String accessToken = JwtUtil.createAccessJwt(user.getUserNo(), secretKey); // 토큰 발급해서 넘김
         String refreshToken = JwtUtil.createRefreshToken(secretKey); // 리프레시 토큰 발급해서 넘김
 
         Optional<RefreshToken> byUserUserNo = refreshTokenRepository.findByUserUserNo(user.getUserNo());
@@ -109,7 +112,7 @@ public class UserService {
         }
 
 
-        tokens.put("accessToken", jwtToken);
+        tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
 
         // 로그인 log 기록
@@ -190,6 +193,23 @@ public class UserService {
             user.updatePassword(userPw);
             userRepository.save(user);
             return 3;
+        }
+    }
+
+    public int passwordCheck(String token, String password){
+        String jwtToken = token.split(" ")[1];
+        Long userNo = JwtUtil.getUserNo(jwtToken, secretKey);
+
+        Optional<User> byId = userRepository.findById(userNo);
+        if(byId.isEmpty()){ // 해당 유저가 없음
+            return 1;
+        }else{
+            User user = byId.get();
+            if(encoder.matches(password, user.getUserPw())){ // 비밀번호 일치하면
+                return 2;
+            }else { // 비밀번호 일치하지 않으면
+                return 3;
+            }
         }
     }
 }
