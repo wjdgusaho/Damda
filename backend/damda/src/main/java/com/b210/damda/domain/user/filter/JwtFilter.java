@@ -29,7 +29,8 @@ public class JwtFilter extends OncePerRequestFilter { // 모든 요청에 대해
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
         return path.startsWith("/user/login") || path.startsWith("/user/regist") || path.startsWith("/user/change-password/email")
-                || path.startsWith("/user/logout") || path.startsWith("/user/change-password/code") || path.startsWith("/api/kakao/login");
+                || path.startsWith("/user/logout") || path.startsWith("/user/change-password/code") || path.startsWith("/api/kakao/login") || path.startsWith("/user/check-email")
+                || path.startsWith("/user/change-password/new");
     }
 
     @Override
