@@ -1,9 +1,12 @@
 package com.b210.damda.util.kakaoAPI.service;
 
+import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.domain.user.service.UserService;
+import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -17,13 +20,23 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final UserService userService;
+    private final UserLogRepository userLogRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    public PrincipalOauth2UserService(UserRepository userRepository, BCryptPasswordEncoder encoder, UserService userService, UserLogRepository userLogRepository, RefreshTokenRepository refreshTokenRepository) {
+        this.userRepository = userRepository;
+        this.encoder = encoder;
+        this.userService = userService;
+        this.userLogRepository = userLogRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException{
@@ -68,9 +81,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .build();
 
             user = userRepository.save(user);
+            System.out.println("유저없음"+user);
         }
         else{
             user = optionalUser.get();
+            System.out.println("유저있음"+user);
             log.info("로그인 성공");
             log.info("로그인 성공2"+ user);
         }

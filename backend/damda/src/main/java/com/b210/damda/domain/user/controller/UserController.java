@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -92,10 +93,9 @@ public class UserController {
     @PostMapping("change-password/email")
     public ResponseEntity<?> emailConfirm(@RequestBody TempCodeDTO emailRequest) throws Exception {
         String email = emailRequest.getEmail();
-
         try{
             User user = userService.fineByUser(email);
-            if(user == null){
+            if(user.getAccountType().equals("KAKAO") || user == null){ // 인증번호 전송은 ORIGIN 유저만 가능.
                 return new ResponseEntity<>("이메일 없음",HttpStatus.OK);
             }
             String key = emailService.sendSimpleMessage(email);
@@ -156,6 +156,20 @@ public class UserController {
             return new ResponseEntity<>("로그아웃 성공", HttpStatus.OK);
         }else{
             return new ResponseEntity<>("서버 에러", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("info")
+    public ResponseEntity<?> passwordCheck(@RequestHeader(value="Authorization") String token
+            , @RequestBody UserLoginDTO userLoginDTO){
+        String password = userLoginDTO.getPassword();
+        int result = userService.passwordCheck(token, password);
+        if(result == 1){
+            return new ResponseEntity<>("해당 유저 없음", HttpStatus.BAD_REQUEST);
+        }else if(result == 2){
+            return new ResponseEntity<>("비밀번호 일치", HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>("비밀번호 불일치", HttpStatus.OK);
         }
     }
 
