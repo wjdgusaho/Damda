@@ -110,7 +110,7 @@ const Menu = function () {
         </MenuBtn>
         <MenuBtn
           onClick={() => {
-            navigate("/shop")
+            navigate("/shop/sticker")
           }}
         >
           상점
