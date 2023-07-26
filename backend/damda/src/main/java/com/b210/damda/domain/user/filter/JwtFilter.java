@@ -44,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter { // 모든 요청에 대해
         // 토큰이 없거나 Bearer로 시작하지 않는 경우
         if(authorization == null || !authorization.startsWith("Bearer ")){
             log.error("authorization을 잘못 보냈습니다.");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰을 잘못 보냈습니다");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "토큰을 잘못 보냈습니다");
             return;
         }
 

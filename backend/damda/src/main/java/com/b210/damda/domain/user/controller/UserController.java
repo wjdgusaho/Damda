@@ -84,7 +84,7 @@ public class UserController {
         }else if (loginUser.get("error") != null && loginUser.get("error").equals("no password")){
             return new ResponseEntity<>("비밀번호 틀림", HttpStatus.OK);
         }else{
-            return new ResponseEntity<>("로그인 성공", HttpStatus.OK);
+            return new ResponseEntity<>(loginUser, HttpStatus.OK);
         }
     }
 
