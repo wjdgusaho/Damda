@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import Store from "../../store/Store"
@@ -28,6 +28,7 @@ const Button = tw.button`bg-lilac-100 ml-24 text-black shadow-md w-48 border rou
 export const CheckPassword = function () {
   const [userPw, setUserPw] = useState("")
   const token = useSelector((state: RootState) => state.authToken.accessToken)
+  const navigate = useNavigate()
   const handlePwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserPw(event.currentTarget.value)
   }
@@ -47,8 +48,12 @@ export const CheckPassword = function () {
       })
         .then((response) => {
           console.log(response)
+          navigate("/user-info")
         })
-        .catch((error) => console.error(error))
+        .catch((error) => {
+          if (error.response.data.message === "토큰 만료") {
+          }
+        })
     } else {
       alert("비밀번호를 입력하세요.")
     }

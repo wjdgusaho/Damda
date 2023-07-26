@@ -21,6 +21,7 @@ import { DummyKakao } from "./components/Auth/DummyKakao"
 import Menu from "./components/Menu"
 import SavedTimecapsule from "./components/SavedTimecapsule"
 import Participate from "./components/Participate"
+import { UserInfoChange } from "./components/Auth/UserInfoChange"
 
 function Main() {
   return (
@@ -31,6 +32,7 @@ function Main() {
             <Routes>
               <Route path="/" element={<LandingPage />}></Route>
               <Route path="/user/" element={<CheckPassword />}></Route>
+              <Route path="/user-info/" element={<UserInfoChange />}></Route>
               <Route path="/shop/" element={<ShopPage />}>
                 <Route path="sticker" element={<Sticker />}></Route>
                 <Route path="theme" element={<Theme />}></Route>
