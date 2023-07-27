@@ -21,5 +21,5 @@ public interface ShopService {
 
     Map<String, Object> buySticker(Long userNo, Long itemNo);
 
-    void buyCapsuleLimit(Long userNo, Long itemNo);
+    Map<String, Object> buyCapsuleLimit(Long userNo, Long itemNo);
 }

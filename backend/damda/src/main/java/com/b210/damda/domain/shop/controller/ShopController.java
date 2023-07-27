@@ -76,14 +76,16 @@ public class ShopController {
         타임캡슐 갯수 추가 구매
      */
     @PostMapping("purchase/timecapsule/limit")
-    public CommonResponse buyCapsuleLimit(@RequestBody Map<String, Object> data){
+    public DataResponse<Map<String, Object>> buyCapsuleLimit(@RequestBody Map<String, Object> data){
 
         Long userNo = Long.parseLong((String) data.get("userNo"));
         Long itemNo = Long.parseLong((String) data.get("itemNo"));
 
-        shopService.buyCapsuleLimit(userNo, itemNo);
+        Map<String, Object> capsuleLimit = shopService.buyCapsuleLimit(userNo, itemNo);
 
-        CommonResponse response = new CommonResponse(200, "타임캡슐 최대 개수 구매 성공");
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 최대 개수 구매 성공");
+        response.setData(capsuleLimit);
+
         return response;
     }
 }

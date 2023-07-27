@@ -25,7 +25,7 @@ public enum CustomExceptionStatus {
     CAPSULE_MAXSIZE(-5004, "해당 타임캡슐의 용량사이즈가 최대이므로 구매할수 없습니다."),
     ITEM_NOT_STICKER( -5005, "해당 아이템은 스티커가 아이템이 아닙니다"),
     ITEM_NOT_CAPSULE( -5006, "해당 아이템은 캡슐증가 아이템이 아닙니다"),
-    ITEM_NOT_STROAGE(-5007, "해당 아이템은 용량증가 아이템이 아닙니다");
+    ITEM_NOT_STORAGE(-5007, "해당 아이템은 용량증가 아이템이 아닙니다");
 
 
     private final int code;

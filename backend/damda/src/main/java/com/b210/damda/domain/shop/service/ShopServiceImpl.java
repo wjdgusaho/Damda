@@ -166,6 +166,7 @@ public class ShopServiceImpl implements ShopService{
 
         // 유저 골드 소모
         user.setCoin(user.getCoin() - thema.getPrice());
+        userRepository.save(user);
 
         // 유저 - 구매한아이템 매핑
         ThemaMapping buyThema = new ThemaMapping();
@@ -212,6 +213,7 @@ public class ShopServiceImpl implements ShopService{
 
         // 유저 코인 소모
         user.setCoin(user.getCoin() - items.getPrice());
+        userRepository.save(user);
 
         // 유저 구매한 아이템 매핑
         ItemsMapping itemMapping = new ItemsMapping();
@@ -234,7 +236,7 @@ public class ShopServiceImpl implements ShopService{
         타임 캡슐 최대 개수 증가 아이템 구매
      */
     @Override
-    public void buyCapsuleLimit(Long userNo, Long itemNo) {
+    public Map<String, Object> buyCapsuleLimit(Long userNo, Long itemNo) {
 
         User user = userRepository.findByUserNo(userNo);
 
@@ -261,7 +263,13 @@ public class ShopServiceImpl implements ShopService{
         user.setCoin(user.getCoin() - items.getPrice());
 
         //유저 가질수 있는 타임캡슐 개수 증가
-        user.setNowCapsuleCount(user.getNowCapsuleCount() + 1);
+        user.setMaxCapsuleCount(user.getMaxCapsuleCount() + 1);
+        userRepository.save(user);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("userInfo", user.toUserDTO());
+
+        return result;
     }
 
 
