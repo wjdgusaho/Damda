@@ -26,6 +26,7 @@ const TypeBtn = styled.button`
   font-weight: 100;
   margin-bottom: 55px;
   box-shadow: 0px 4px 4px rgb(33, 25, 74, 0.4);
+  z-index: 1;
 `
 
 const HeaderWrap = styled.div`
@@ -61,6 +62,7 @@ interface HelpProps {
 
 const SelectType = function () {
   let [isHelp, setIsHelp] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <>
@@ -79,7 +81,13 @@ const SelectType = function () {
               alt="questionMark"
             />
           </div>
-          <TypeBtn>클래식 타임캡슐</TypeBtn>
+          <TypeBtn
+            onClick={() => {
+              navigate("/classic")
+            }}
+          >
+            클래식 타임캡슐
+          </TypeBtn>
           <TypeBtn>기록 타임캡슐</TypeBtn>
           <TypeBtn>목표 타임캡슐</TypeBtn>
         </Box>
