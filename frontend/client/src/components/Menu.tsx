@@ -102,7 +102,7 @@ const Menu = function () {
         </div>
         <MenuBtn
           onClick={() => {
-            navigate("/friend")
+            navigate("/friend/list")
           }}
           style={{ marginTop: "35px" }}
         >
@@ -110,14 +110,14 @@ const Menu = function () {
         </MenuBtn>
         <MenuBtn
           onClick={() => {
-            navigate("/shop")
+            navigate("/shop/sticker")
           }}
         >
           상점
         </MenuBtn>
         <MenuBtn
           onClick={() => {
-            navigate("/changepassword")
+            navigate("/user")
           }}
         >
           회원정보 수정

@@ -127,7 +127,7 @@ const Login = function () {
       url: serverUrl + "user/login/",
       data: {
         email: email,
-        password: password,
+        userPw: password,
       },
     })
       .then((response) => {
@@ -206,7 +206,7 @@ const Login = function () {
                 <div style={{ marginLeft: "-15px" }}>
                   <button
                     onClick={() => {
-                      navigate("/changepassword")
+                      navigate("/findPassword")
                     }}
                   >
                     비밀번호 찾기 |
