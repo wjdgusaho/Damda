@@ -15,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserPw(String userPw);
 
     List<User> findByNicknameContaining(String nickname);
+
+    User findByUserNo(Long userNo);
 }

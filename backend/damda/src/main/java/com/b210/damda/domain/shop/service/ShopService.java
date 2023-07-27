@@ -10,10 +10,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public interface ShopService {
-    List<ThemaShopDTO> getThemaList(Long userNo) throws Exception;
-    List<ThemaShopDTO> getThemList() throws Exception;
-    List<ThemaMappingDTO> getThemMappingList(Long userNo) throws Exception;
-    Map<String, Object> getItemList(Long userNo) throws Exception;
-    List<ItemsMappingDTO> getItemsMappginList(Long userNo) throws Exception;
-    List<ItemsShopDTO> getItemList() throws Exception;
+    List<ThemaShopDTO> getThemaList(Long userNo);
+    List<ThemaShopDTO> getThemAllList();
+    List<ThemaMappingDTO> getThemMappingList(Long userNo);
+    Map<String, Object> getItemList(Long userNo);
+    List<ItemsMappingDTO> getItemsMappginList(Long userNo);
+    List<ItemsShopDTO> getItemAllList();
+
+    Map<String, Object> buyThema(Long userNo, Long themaNo);
 }
