@@ -11,8 +11,6 @@ export const tokenSlice = createSlice({
   },
   reducers: {
     SET_TOKEN: (state, action) => {
-      console.log(action)
-
       state.accessToken = action.payload
     },
     DELETE_TOKEN: (state) => {
