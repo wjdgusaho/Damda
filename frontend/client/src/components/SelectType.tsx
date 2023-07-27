@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
@@ -50,11 +50,17 @@ const Box = styled.div`
 const HelpIcon = styled.img`
   width: 36px;
   height: 36px;
+  cursor: pointer;
+  z-index: 1;
 `
 
 const SelectType = function () {
+  let [isHelp, SetIsHelp] = useState(false)
+  console.log(isHelp)
+
   return (
     <Background>
+      {isHelp ? <Help /> : null}
       <HeaderWrap>
         <SubHeader />
       </HeaderWrap>
@@ -62,6 +68,7 @@ const SelectType = function () {
         <div className="flex">
           <div className="mb-5 ml-9">어떤 타임캡슐을 만들어 볼까요?</div>
           <HelpIcon
+            onClick={() => SetIsHelp(!isHelp)}
             className="mt-12 mb-8"
             src="../../assets/icons/questionMark.png"
             alt="questionMark"
@@ -73,6 +80,10 @@ const SelectType = function () {
       </Box>
     </Background>
   )
+}
+
+function Help() {
+  return <div>도움말</div>
 }
 
 export default SelectType
