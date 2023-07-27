@@ -3,6 +3,10 @@ import { Link, useNavigate } from "react-router-dom"
 import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
 import axios from "axios"
+import { useSelector } from "react-redux"
+import Store from "../../store/Store"
+
+type RootState = ReturnType<typeof Store.getState>
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -45,6 +49,7 @@ export const UserInfoChange = function () {
   const [userNicknameCondition, setUserNicknameCondition] = useState(0)
   const [userPwCondition, setUserPwCondition] = useState(0)
   const [userPwMatch, setuserPwMatch] = useState(0)
+  const token = useSelector((state: RootState) => state.authToken.accessToken)
 
   useEffect(() => {
     if (userdata.nickname) {
@@ -146,6 +151,7 @@ export const UserInfoChange = function () {
         url: serverUrl + "user/info",
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + token,
         },
         data: data,
       })
