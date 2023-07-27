@@ -7,10 +7,6 @@ export const tokenSlice = createSlice({
   name: "authToken",
   initialState: {
     accessToken: null,
-<<<<<<< Updated upstream
-    expireTime: 0,
-=======
->>>>>>> Stashed changes
     accountType: "",
   },
   reducers: {
