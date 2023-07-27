@@ -86,6 +86,7 @@ public class UserController {
         }else if (loginUser.get("error") != null && loginUser.get("error").equals("no password")){
             return new ResponseEntity<>("비밀번호 틀림", HttpStatus.OK);
         }else{
+            loginUser.put("accountType", "ORIGIN");
             return new ResponseEntity<>(loginUser, HttpStatus.OK);
         }
     }
