@@ -4,9 +4,10 @@ import { serverUrl } from "../../urls"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
-import { Store } from "../../store/Store"
-import { refresh_accessToken } from "../../store/Auth"
-import { AppThunk, RootState } from "../../store/Store"
+import { RootState } from "../../store/Store"
+import { getCookieToken, setRefreshToken } from "../../store/Cookie"
+import {getNewTokens} from './RefreshTokenApi'
+import { SET_TOKEN } from "../../store/Auth"
 
 const Box = tw.div`
   flex
@@ -55,11 +56,17 @@ export const CheckPassword = function () {
           }
           setUserPw("")
         })
-        .catch((error) => {
-          console.log(error)
-
-          refresh_accessToken()
+        .catch(async (error) => {
           if (error.response.data.message === "토큰 만료") {
+            try {
+              const accessToken = await getNewTokens(getCookieToken())
+              
+              dispatch(SET_TOKEN(accessToken))
+              // setRefreshToken(refreshToken)
+            } catch (error) {
+              console.log(error);
+              
+            }
           }
         })
     } else {
