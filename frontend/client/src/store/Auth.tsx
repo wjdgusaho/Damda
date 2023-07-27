@@ -3,28 +3,26 @@ import axios from "axios"
 import { serverUrl } from "../urls"
 import { getCookieToken } from "./Cookie"
 
-export const TOKEN_TIME_OUT = 600 * 1000
-
 export const tokenSlice = createSlice({
   name: "authToken",
   initialState: {
-    authenticated: false,
     accessToken: null,
+<<<<<<< Updated upstream
     expireTime: 0,
+=======
+>>>>>>> Stashed changes
     accountType: "",
   },
   reducers: {
     SET_TOKEN: (state, action) => {
-      state.authenticated = true
+      console.log(action)
+
       state.accessToken = action.payload
-      state.expireTime = new Date().getTime() + TOKEN_TIME_OUT
     },
     DELETE_TOKEN: (state) => {
-      state.authenticated = false
       state.accessToken = null
-      state.expireTime = 0
     },
-    refresh_accessToken: () => {
+    refresh_accessToken: (state) => {
       axios({
         method: "POST",
         url: serverUrl + "user/refresh-token",
@@ -34,7 +32,7 @@ export const tokenSlice = createSlice({
         },
       })
         .then((response) => {
-          SET_TOKEN(response.data.accessToken)
+          state.accessToken = response.data.accessToken
         })
         .catch((error) => console.error(error))
     },
