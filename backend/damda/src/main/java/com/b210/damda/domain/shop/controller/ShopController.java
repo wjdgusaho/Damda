@@ -22,11 +22,15 @@ public class ShopController {
     private final ShopService shopService;
 
     @GetMapping("list")
-    public DataResponse<Map<String, Object>> shopList(@RequestBody Map<String, Object> data) throws Exception {
-         Long userNo = Long.parseLong((String) data.get("userNo"));
+    public DataResponse<Map<String, Object>> shopList(@RequestParam("userNo") Long userNo) throws Exception {
          List<ThemaShopDTO> themaList = shopService.getThemaList(userNo);
+         Map<String, Object> itemsList = shopService.getItemList(userNo);
 
-        return null;
+         itemsList.put("themaList", themaList);
+         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "아이템 리스트 조회 성공");
+         response.setData(itemsList);
+
+        return response;
     }
 
 }
