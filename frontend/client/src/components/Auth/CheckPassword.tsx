@@ -3,8 +3,9 @@ import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import Store from "../../store/Store"
+import { refresh_accessToken } from "../../store/Auth"
 
 type RootState = ReturnType<typeof Store.getState>
 
@@ -29,17 +30,21 @@ export const CheckPassword = function () {
   const [userPw, setUserPw] = useState("")
   const token = useSelector((state: RootState) => state.authToken.accessToken)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const handlePwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserPw(event.currentTarget.value)
   }
-  const handlePwSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handlePwSubmit = (
+    event: React.FormEvent<HTMLFormElement>,
+    retry = true
+  ) => {
     event.preventDefault()
     if (userPw) {
       axios({
         method: "POST",
         url: serverUrl + "user/info",
         headers: {
-          "Content-Type": "application.json",
+          "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
         data: {
@@ -47,11 +52,21 @@ export const CheckPassword = function () {
         },
       })
         .then((response) => {
-          console.log(response)
-          navigate("/user-info")
+          if (response.data === "비밀번호 일치") {
+            navigate("/user-info")
+          } else {
+            alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.")
+          }
+          setUserPw("")
         })
         .catch((error) => {
+          console.log(error)
+
           if (error.response.data.message === "토큰 만료") {
+            dispatch(refresh_accessToken())
+            if (retry) {
+              handlePwSubmit(event, false)
+            }
           }
         })
     } else {
