@@ -11,6 +11,7 @@ export const tokenSlice = createSlice({
     authenticated: false,
     accessToken: null,
     expireTime: 0,
+    accountType: "",
   },
   reducers: {
     SET_TOKEN: (state, action) => {
