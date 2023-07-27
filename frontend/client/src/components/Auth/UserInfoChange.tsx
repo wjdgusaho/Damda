@@ -162,6 +162,21 @@ export const UserInfoChange = function () {
     }
   }
 
+  function userDelete(event: React.MouseEvent<HTMLParagraphElement>) {
+    axios({
+      method: "PATCH",
+      url: serverUrl + "user/delete",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((error) => console.error(error))
+  }
+
   return (
     <div style={{ color: "#CFD4EE" }}>
       <div className="flex flex-initial justify-between w-96 mx-auto mt-10">
@@ -290,9 +305,8 @@ export const UserInfoChange = function () {
         </button>
       </Form>
       <p
-        className="absolute underline underline-offset-1 cursor-pointer text-gray-500"
-        style={{ left: "46.5%", top: "435px" }}
-        // onClick={}
+        className="relative mt-10 underline underline-offset-1 cursor-pointer text-gray-500 text-center"
+        onClick={userDelete}
       >
         회원 탈퇴
       </p>
