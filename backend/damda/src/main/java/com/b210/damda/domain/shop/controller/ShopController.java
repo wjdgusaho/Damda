@@ -4,6 +4,7 @@ import com.b210.damda.domain.dto.ThemaShopDTO;
 import com.b210.damda.domain.shop.repository.ThemaRepository;
 import com.b210.damda.domain.shop.service.ShopService;
 import com.b210.damda.domain.user.service.UserService;
+import com.b210.damda.util.response.CommonResponse;
 import com.b210.damda.util.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,10 @@ import java.util.Map;
 public class ShopController {
 
     private final ShopService shopService;
-
+    
+    /*
+        모든 아이템 리스트 (테마, 캡슐, 데코) - 보유중 미보유중
+     */
     @GetMapping("list")
     public DataResponse<Map<String, Object>> shopList(@RequestParam("userNo") Long userNo) throws Exception {
          List<ThemaShopDTO> themaList = shopService.getThemaList(userNo);
@@ -34,6 +38,9 @@ public class ShopController {
         return response;
     }
 
+    /*
+        테마 구입 
+     */
     @PostMapping("purchase/thema")
     public DataResponse<Map<String, Object>> buyThema(@RequestBody Map<String, Object> data) {
 
@@ -48,13 +55,14 @@ public class ShopController {
         return response;
     }
 
+    /*
+        스티커(데코) 구입
+     */
     @PostMapping("purchase/sticker")
     public DataResponse<Map<String, Object>> buySticker(@RequestBody Map<String, Object> data){
 
         Long userNo = Long.parseLong((String) data.get("userNo"));
-        log.info("userNo : " + userNo);
         Long itemNo = Long.parseLong((String) data.get("itemNo"));
-        log.info("itemNo : " + itemNo);
 
         Map<String, Object> itemList = shopService.buySticker(userNo, itemNo);
 
@@ -64,4 +72,20 @@ public class ShopController {
         return  response;
     }
 
+    /*
+        타임캡슐 갯수 추가 구매
+     */
+    @PostMapping("purchase/timecapsule/limit")
+    public DataResponse<Map<String, Object>> buyCapsuleLimit(@RequestBody Map<String, Object> data){
+
+        Long userNo = Long.parseLong((String) data.get("userNo"));
+        Long itemNo = Long.parseLong((String) data.get("itemNo"));
+
+        Map<String, Object> capsuleLimit = shopService.buyCapsuleLimit(userNo, itemNo);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 최대 개수 구매 성공");
+        response.setData(capsuleLimit);
+
+        return response;
+    }
 }
