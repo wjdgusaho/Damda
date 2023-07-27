@@ -52,10 +52,16 @@ export const CheckPassword = function () {
         },
       })
         .then((response) => {
-          console.log(response)
-          navigate("/user-info")
+          if (response.data === "비밀번호 일치") {
+            navigate("/user-info")
+          } else {
+            alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.")
+          }
+          setUserPw("")
         })
         .catch((error) => {
+          console.log(error)
+
           if (error.response.data.message === "토큰 만료") {
             dispatch(refresh_accessToken())
             if (retry) {
