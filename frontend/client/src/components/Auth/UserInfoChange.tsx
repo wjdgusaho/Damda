@@ -3,6 +3,10 @@ import { Link, useNavigate } from "react-router-dom"
 import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
 import axios from "axios"
+import { useSelector } from "react-redux"
+import Store from "../../store/Store"
+
+type RootState = ReturnType<typeof Store.getState>
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -16,15 +20,6 @@ const nicknameRegex = /^(?=.*[a-zA-Z가-힣0-9]).{2,15}$/
 // 비밀번호 정규식
 const passwordRegex = /^(?=.*[a-zA-Z])[!@#$%^*+=-]?(?=.*[0-9]).{5,25}$/
 
-const Box = tw.div`
-  flex
-  justify-center
-  mt-10
-  mx-auto
-  flex-col
-  text-center
-  w-96
-`
 const Form = tw.form`
   flex
   mx-auto
@@ -54,6 +49,7 @@ export const UserInfoChange = function () {
   const [userNicknameCondition, setUserNicknameCondition] = useState(0)
   const [userPwCondition, setUserPwCondition] = useState(0)
   const [userPwMatch, setuserPwMatch] = useState(0)
+  const token = useSelector((state: RootState) => state.authToken.accessToken)
 
   useEffect(() => {
     if (userdata.nickname) {
@@ -155,6 +151,7 @@ export const UserInfoChange = function () {
         url: serverUrl + "user/info",
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + token,
         },
         data: data,
       })
@@ -163,6 +160,21 @@ export const UserInfoChange = function () {
         })
         .catch((error) => console.error(error))
     }
+  }
+
+  function userDelete(event: React.MouseEvent<HTMLParagraphElement>) {
+    axios({
+      method: "PATCH",
+      url: serverUrl + "user/delete",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((error) => console.error(error))
   }
 
   return (
@@ -198,7 +210,7 @@ export const UserInfoChange = function () {
           <p>홈으로</p>
         </Link>
       </div>
-      <Form className="grid grid-cols-1 w-full mx-auto" onSubmit={handleSubmit}>
+      <Form className="grid grid-cols-1 w-72 mx-auto" onSubmit={handleSubmit}>
         <div className="w-full justify-center">
           <img
             className="mx-auto"
@@ -286,12 +298,18 @@ export const UserInfoChange = function () {
         )}
 
         <button
-          className="p-2 px-4 text-sm rounded-full shadow-md w-full mx-auto"
+          className="p-2 px-4 text-sm rounded-full shadow-md w-48 mt-14 mx-auto"
           style={{ backgroundColor: "#EFE0F4", color: "black" }}
         >
           확인
         </button>
       </Form>
+      <p
+        className="relative mt-10 underline underline-offset-1 cursor-pointer text-gray-500 text-center"
+        onClick={userDelete}
+      >
+        회원 탈퇴
+      </p>
     </div>
   )
 }
