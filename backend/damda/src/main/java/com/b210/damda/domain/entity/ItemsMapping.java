@@ -1,10 +1,12 @@
 package com.b210.damda.domain.entity;
 
 import com.b210.damda.domain.dto.ItemsMappingDTO;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
+@Setter
 public class ItemsMapping {
 
     @Id

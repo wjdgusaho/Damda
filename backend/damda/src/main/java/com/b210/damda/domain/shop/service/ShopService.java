@@ -18,4 +18,6 @@ public interface ShopService {
     List<ItemsShopDTO> getItemAllList();
 
     Map<String, Object> buyThema(Long userNo, Long themaNo);
+
+    Map<String, Object> buySticker(Long userNo, Long itemNo);
 }

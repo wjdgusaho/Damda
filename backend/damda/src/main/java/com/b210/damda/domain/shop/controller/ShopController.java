@@ -48,4 +48,20 @@ public class ShopController {
         return response;
     }
 
+    @PostMapping("purchase/sticker")
+    public DataResponse<Map<String, Object>> buySticker(@RequestBody Map<String, Object> data){
+
+        Long userNo = Long.parseLong((String) data.get("userNo"));
+        log.info("userNo : " + userNo);
+        Long itemNo = Long.parseLong((String) data.get("itemNo"));
+        log.info("itemNo : " + itemNo);
+
+        Map<String, Object> itemList = shopService.buySticker(userNo, itemNo);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "스티커팩 구매 성공");
+        response.setData(itemList);
+
+        return  response;
+    }
+
 }
