@@ -4,7 +4,7 @@ import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
 import axios from "axios"
 import { useSelector } from "react-redux"
-import Store from "../../store/Store"
+import { Store } from "../../store/Store"
 
 type RootState = ReturnType<typeof Store.getState>
 

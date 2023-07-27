@@ -4,10 +4,9 @@ import { serverUrl } from "../../urls"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
-import Store from "../../store/Store"
+import { Store } from "../../store/Store"
 import { refresh_accessToken } from "../../store/Auth"
-
-type RootState = ReturnType<typeof Store.getState>
+import { AppThunk, RootState } from "../../store/Store"
 
 const Box = tw.div`
   flex
@@ -34,10 +33,7 @@ export const CheckPassword = function () {
   const handlePwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserPw(event.currentTarget.value)
   }
-  const handlePwSubmit = (
-    event: React.FormEvent<HTMLFormElement>,
-    retry = true
-  ) => {
+  const handlePwSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (userPw) {
       axios({
@@ -62,11 +58,8 @@ export const CheckPassword = function () {
         .catch((error) => {
           console.log(error)
 
+          refresh_accessToken()
           if (error.response.data.message === "토큰 만료") {
-            dispatch(refresh_accessToken())
-            if (retry) {
-              handlePwSubmit(event, false)
-            }
           }
         })
     } else {
