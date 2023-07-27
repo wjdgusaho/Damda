@@ -3,27 +3,24 @@ import axios from "axios"
 import { serverUrl } from "../urls"
 import { getCookieToken } from "./Cookie"
 
-export const TOKEN_TIME_OUT = 600 * 1000
-
 export const tokenSlice = createSlice({
   name: "authToken",
   initialState: {
-    authenticated: false,
     accessToken: null,
-    expireTime: 0,
+    accountType: "",
   },
   reducers: {
     SET_TOKEN: (state, action) => {
-      state.authenticated = true
       state.accessToken = action.payload
-      state.expireTime = new Date().getTime() + TOKEN_TIME_OUT
+    },
+    SET_ACCOUNT_TYPE: (state, action) => {
+      state.accountType = action.payload
     },
     DELETE_TOKEN: (state) => {
-      state.authenticated = false
       state.accessToken = null
-      state.expireTime = 0
+      state.accountType = ""
     },
-    refresh_accessToken: () => {
+    refresh_accessToken: (state) => {
       axios({
         method: "POST",
         url: serverUrl + "user/refresh-token",
@@ -33,14 +30,18 @@ export const tokenSlice = createSlice({
         },
       })
         .then((response) => {
-          SET_TOKEN(response.data.accessToken)
+          state.accessToken = response.data.accessToken
         })
         .catch((error) => console.error(error))
     },
   },
 })
 
-export const { SET_TOKEN, DELETE_TOKEN, refresh_accessToken } =
-  tokenSlice.actions
+export const {
+  SET_TOKEN,
+  DELETE_TOKEN,
+  refresh_accessToken,
+  SET_ACCOUNT_TYPE,
+} = tokenSlice.actions
 
 export default tokenSlice.reducer

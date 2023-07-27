@@ -119,7 +119,7 @@ const MainPage = function () {
               {capsuleList.map((c) => (
                 <Capsule key={c.id} className="text-center">
                   {c.type !== "new" && (
-                    <div>
+                    <div className="relative">
                       {c.type === "goal" && (
                         // 목표 타임캡슐인 경우
                         <div>
@@ -146,7 +146,7 @@ const MainPage = function () {
                       )}
                       {/* 퍼센트가 다 찼을 때 */}
                       {calculateProgressPercentage(c.sDate, c.eDate) >= 100 && (
-                        <div className="w-60 h-60 ml-16 mt-14 rounded-full blur-2xl bg-lilac-50 absolute"></div>
+                        <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-lilac-50 absolute"></div>
                       )}
                       <FloatingImage
                         className="h-52 m-auto mt-20"
