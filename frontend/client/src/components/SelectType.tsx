@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
@@ -53,6 +53,8 @@ const HelpIcon = styled.img`
 `
 
 const SelectType = function () {
+  let [isHelp, SetIsHelp] = useState(false)
+
   return (
     <Background>
       <HeaderWrap>
@@ -73,6 +75,10 @@ const SelectType = function () {
       </Box>
     </Background>
   )
+}
+
+function Help() {
+  return <div>도움말</div>
 }
 
 export default SelectType
