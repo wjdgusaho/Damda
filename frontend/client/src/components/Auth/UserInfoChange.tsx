@@ -16,15 +16,6 @@ const nicknameRegex = /^(?=.*[a-zA-Z가-힣0-9]).{2,15}$/
 // 비밀번호 정규식
 const passwordRegex = /^(?=.*[a-zA-Z])[!@#$%^*+=-]?(?=.*[0-9]).{5,25}$/
 
-const Box = tw.div`
-  flex
-  justify-center
-  mt-10
-  mx-auto
-  flex-col
-  text-center
-  w-96
-`
 const Form = tw.form`
   flex
   mx-auto
@@ -198,7 +189,7 @@ export const UserInfoChange = function () {
           <p>홈으로</p>
         </Link>
       </div>
-      <Form className="grid grid-cols-1 w-full mx-auto" onSubmit={handleSubmit}>
+      <Form className="grid grid-cols-1 w-72 mx-auto" onSubmit={handleSubmit}>
         <div className="w-full justify-center">
           <img
             className="mx-auto"
@@ -286,12 +277,19 @@ export const UserInfoChange = function () {
         )}
 
         <button
-          className="p-2 px-4 text-sm rounded-full shadow-md w-full mx-auto"
+          className="p-2 px-4 text-sm rounded-full shadow-md w-48 mt-14 mx-auto"
           style={{ backgroundColor: "#EFE0F4", color: "black" }}
         >
           확인
         </button>
       </Form>
+      <p
+        className="absolute underline underline-offset-1 cursor-pointer text-gray-500"
+        style={{ left: "46.5%", top: "435px" }}
+        // onClick={}
+      >
+        회원 탈퇴
+      </p>
     </div>
   )
 }
