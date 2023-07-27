@@ -78,4 +78,8 @@
         public void updateprofileImage(String profileImage){
             this.profileImage = profileImage;
         }
+
+        public void insertDeleteDate() {
+            this.deleteDate = LocalDateTime.now();
+        }
     }

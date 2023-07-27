@@ -46,7 +46,7 @@ public class EmailServiceImpl implements EmailService {
         msgg+= "<p>감사합니다.<p>";
         msgg+= "<br>";
         msgg+= "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgg+= "<h3 style='color:blue;'>회원가입 인증 코드입니다. 해당 코드는 10분만 유효합니다.</h3>";
+        msgg+= "<h3 style='color:blue;'>비밀번호 찾기 인증코드입니다. 해당 코드는 10분만 유효합니다.</h3>";
         msgg+= "<div style='font-size:130%'>";
         msgg+= "CODE : <strong>";
         msgg+= authCode + "</strong><div><br/> ";

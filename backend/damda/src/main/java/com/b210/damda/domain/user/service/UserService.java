@@ -87,15 +87,20 @@ public class UserService {
 
         // 유저의 이메일이 없음
         if (findUser.isEmpty()) {
-            tokens.put("error", "no email");
+            tokens.put("error", "유저 없음");
             return tokens;
         }
 
+        // 비밀번호 불일치
         if (!encoder.matches(password, findUser.get().getUserPw())) {
-            tokens.put("error", "no password");
+            tokens.put("error", "비밀번호 틀림");
             return tokens;
         }
         User user = findUser.get();
+        if(user.getDeleteDate() != null){
+            tokens.put("error", "탈퇴된 유저");
+            return tokens;
+        }
 
         // 로그인 성공
         String accessToken = JwtUtil.createAccessJwt(user.getUserNo(), secretKey); // 토큰 발급해서 넘김
@@ -284,7 +289,6 @@ public class UserService {
                 String uri = fileStoreService.storeFile(multipartFile);
                 user.updateprofileImage(uri);
             }
-            System.out.println();
             if(!userUpdateDTO.getUserPw().equals("")){
                 String encode = encoder.encode(userUpdateDTO.getUserPw());
                 user.updatePassword(encode);
@@ -296,8 +300,22 @@ public class UserService {
             }else{
                 return 3;
             }
-
-
         }
+    }
+
+    @Transactional
+    public void userWithdrawal(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        Long userNo = (Long) principal;
+
+        Optional<User> byId = userRepository.findById(userNo);
+        User user = byId.get();
+        RefreshToken referenceById = refreshTokenRepository.getReferenceById(user.getUserNo());
+        referenceById.setRefreshToken("");
+        refreshTokenRepository.save(referenceById);
+
+        user.insertDeleteDate();
+        userRepository.save(user);
     }
 }
