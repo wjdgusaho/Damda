@@ -127,7 +127,7 @@ const Login = function () {
       url: serverUrl + "user/login/",
       data: {
         email: email,
-        password: password,
+        userPw: password,
       },
     })
       .then((response) => {

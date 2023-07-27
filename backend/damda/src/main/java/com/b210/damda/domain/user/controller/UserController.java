@@ -39,15 +39,7 @@ public class UserController {
     public ResponseEntity<?> regist(@RequestPart("user") UserOriginRegistDTO userOriginRegistDTO,
                                     @RequestPart("profileImage") MultipartFile profileImage){
         try {
-            String fileUri = "";
-
-            if(profileImage.isEmpty() && profileImage.getSize() == 0){
-                fileUri = "profile.jpg";
-            }else{
-                fileUri = fileStoreService.storeFile(profileImage);
-            }
-
-            User savedUser = userService.regist(userOriginRegistDTO, fileUri);
+            User savedUser = userService.regist(userOriginRegistDTO, profileImage);
             if(savedUser != null){
                 return new ResponseEntity<>("회원가입 완료", HttpStatus.CREATED);
             }else {
@@ -86,6 +78,7 @@ public class UserController {
         }else if (loginUser.get("error") != null && loginUser.get("error").equals("no password")){
             return new ResponseEntity<>("비밀번호 틀림", HttpStatus.OK);
         }else{
+            loginUser.put("accountType", "ORIGIN");
             return new ResponseEntity<>(loginUser, HttpStatus.OK);
         }
     }
@@ -178,6 +171,20 @@ public class UserController {
     public ResponseEntity<?> userSearch(@RequestBody UserSearchDTO userSearchDTO){
         List<UserSearchResultDTO> userSearchResultDTOS = userService.userSearch(userSearchDTO.getQuery(), userSearchDTO.getType());
         return new ResponseEntity<>(userSearchResultDTOS, HttpStatus.OK);
+    }
+
+    // 유저 회원정보 수정
+    @PatchMapping("info")
+    public ResponseEntity<?> userInfoUpdate(@RequestPart("user") UserUpdateDTO userUpdateDTO,
+                                            @RequestPart("profileImage") MultipartFile profileImage){
+        int result = userService.userInfoUpdate(userUpdateDTO, profileImage);
+        if(result == 1){
+            return new ResponseEntity<>("유저 없음",HttpStatus.INTERNAL_SERVER_ERROR);
+        }else if(result == 2){
+            return new ResponseEntity<>("정보 수정 완료",HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>("수정 실패",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
