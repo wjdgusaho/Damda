@@ -4,14 +4,14 @@ import com.b210.damda.domain.dto.ItemsMappingDTO;
 import com.b210.damda.domain.dto.ItemsShopDTO;
 import com.b210.damda.domain.dto.ThemaMappingDTO;
 import com.b210.damda.domain.dto.ThemaShopDTO;
-import com.b210.damda.domain.entity.Items;
-import com.b210.damda.domain.entity.ItemsMapping;
-import com.b210.damda.domain.entity.Thema;
-import com.b210.damda.domain.entity.ThemaMapping;
+import com.b210.damda.domain.entity.*;
 import com.b210.damda.domain.shop.repository.ItemsMappingRepository;
 import com.b210.damda.domain.shop.repository.ItemsRepository;
 import com.b210.damda.domain.shop.repository.ThemaMappingRepository;
 import com.b210.damda.domain.shop.repository.ThemaRepository;
+import com.b210.damda.domain.user.repository.UserRepository;
+import com.b210.damda.util.exception.CommonException;
+import com.b210.damda.util.exception.CustomExceptionStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,13 +28,14 @@ public class ShopServiceImpl implements ShopService{
     private final ThemaMappingRepository themaMappingRepository;
     private final ItemsRepository itemsRepository;
     private final ItemsMappingRepository itemsMappingRepository;
+    private final UserRepository userRepository;
     
     /*
         테마 보유중, 미보유중 내보내기
      */
     @Override
-    public List<ThemaShopDTO> getThemaList(Long userNo) throws Exception {
-        List<ThemaShopDTO> themaList = getThemList();
+    public List<ThemaShopDTO> getThemaList(Long userNo) {
+        List<ThemaShopDTO> themaList = getThemAllList();
         List<ThemaMappingDTO> themaMappingList = getThemMappingList(userNo);
 
         // HashSet으로 변경 (검색 속도 증가를 위함)
@@ -54,7 +55,7 @@ public class ShopServiceImpl implements ShopService{
         테마 전체 리스트 가져오기
      */
     @Override
-    public List<ThemaShopDTO> getThemList() throws Exception {
+    public List<ThemaShopDTO> getThemAllList() {
         List<Thema> themaList = themaRepository.findAll();
 
         List<ThemaShopDTO> themaShopList = new ArrayList<>();
@@ -68,7 +69,7 @@ public class ShopServiceImpl implements ShopService{
         유저가 구입한 테마 리스트 가져오기
      */
     @Override
-    public List<ThemaMappingDTO> getThemMappingList(Long userNo) throws Exception {
+    public List<ThemaMappingDTO> getThemMappingList(Long userNo) {
         List<ThemaMapping> myThema = themaMappingRepository.findByUserUserNo(userNo);
 
         List<ThemaMappingDTO> myThemaList = new ArrayList<>();
@@ -79,8 +80,8 @@ public class ShopServiceImpl implements ShopService{
     }
 
     @Override
-    public Map<String, Object> getItemList(Long userNo) throws Exception {
-        List<ItemsShopDTO> allItemList = getItemList();
+    public Map<String, Object> getItemList(Long userNo) {
+        List<ItemsShopDTO> allItemList = getItemAllList();
         List<ItemsMappingDTO> ItemMappingList = getItemsMappginList(userNo);
 
         Set<Long> itemMappginNumbers = ItemMappingList.stream()
@@ -113,7 +114,7 @@ public class ShopServiceImpl implements ShopService{
         유저 아이템 받아오기
      */
     @Override
-    public List<ItemsMappingDTO> getItemsMappginList(Long userNo) throws Exception {
+    public List<ItemsMappingDTO> getItemsMappginList(Long userNo) {
         List<ItemsMapping> itemsMapping = itemsMappingRepository.findByUserUserNo(userNo);
 
         List<ItemsMappingDTO> itemsMappingList = new ArrayList<>();
@@ -127,7 +128,7 @@ public class ShopServiceImpl implements ShopService{
         전체 아이템 리스트 받아오기
      */
     @Override
-    public List<ItemsShopDTO> getItemList() throws Exception {
+    public List<ItemsShopDTO> getItemAllList() {
         List<Items> items = itemsRepository.findAll();
 
         List<ItemsShopDTO> itemsList = new ArrayList<>();
@@ -137,5 +138,47 @@ public class ShopServiceImpl implements ShopService{
         return itemsList;
     }
 
+    /*
+        테마 아이템 구매하기
+     */
+    @Override
+    public Map<String, Object> buyThema(Long userNo, Long themaNo) {
+
+        User user = userRepository.findByUserNo(userNo);
+        
+        // 해당 아이템이 있는지 조건 확인
+        Thema thema = themaRepository.findByThemaNo(themaNo)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.THEMA_NOT_FOUND));
+
+        // 골드 부족 검증 로직
+        if(thema.getPrice() > user.getCoin()){
+            throw new CommonException(CustomExceptionStatus.USER_NOT_ENOUGH_COIN);
+        }
+
+        // 중복 구매 검증 로직 - ifPresent 조회된 데이터가 있는경우 실행
+        themaMappingRepository.findByUserUserNoAndThemaThemaNo(userNo, themaNo).ifPresent(i -> {
+            throw new CommonException(CustomExceptionStatus.THEMA_DUPLICATE);
+        });
+
+        // 유저 골드 소모
+        user.setCoin(user.getCoin() - thema.getPrice());
+
+        // 유저 - 구매한아이템 매핑
+        ThemaMapping buyThema = new ThemaMapping();
+        buyThema.setThema(thema);
+        buyThema.setUser(user);
+
+        themaMappingRepository.save(buyThema);
+        
+        // 전체 리스트 반환 (보유중 미보유중)
+        List<ThemaShopDTO> themaList = getThemaList(userNo);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("themaList", themaList);
+
+        result.put("userInfo", user.toUserDTO());
+
+        return result;
+    }
 
 }

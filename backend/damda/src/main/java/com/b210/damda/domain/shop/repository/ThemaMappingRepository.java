@@ -12,4 +12,5 @@ public interface ThemaMappingRepository extends JpaRepository<ThemaMapping, Long
 
     List<ThemaMapping> findByUserUserNo(Long userNo);
 
+    Optional<ThemaMapping> findByUserUserNoAndThemaThemaNo(Long userNo, Long themaNo);
 }

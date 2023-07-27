@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,20 @@ public class ShopController {
          itemsList.put("themaList", themaList);
          DataResponse<Map<String, Object>> response = new DataResponse<>(200, "아이템 리스트 조회 성공");
          response.setData(itemsList);
+
+        return response;
+    }
+
+    @PostMapping("purchase/thema")
+    public DataResponse<Map<String, Object>> buyThema(@RequestBody Map<String, Object> data) {
+
+        Long userNo = Long.parseLong((String) data.get("userNo"));
+        Long themaNo = Long.parseLong((String) data.get("themaNo"));
+
+        Map<String, Object> themaList = shopService.buyThema(userNo, themaNo);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "테마 구매 성공");
+        response.setData(themaList);
 
         return response;
     }

@@ -1,5 +1,6 @@
     package com.b210.damda.domain.entity;
 
+    import com.b210.damda.domain.dto.UserDTO;
     import com.b210.damda.domain.dto.UserUpdateDTO;
     import lombok.*;
     import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@
     import java.util.List;
 
     @Entity
+    @Setter
     @Getter
     @ToString
     @EntityListeners(AuditingEntityListener.class)
@@ -75,6 +77,7 @@
             this.nickname = newNickname;
         }
 
+
         public void updateprofileImage(String profileImage){
             this.profileImage = profileImage;
         }
@@ -82,4 +85,20 @@
         public void insertDeleteDate() {
             this.deleteDate = LocalDateTime.now();
         }
+
+        public UserDTO toUserDTO(){
+            return UserDTO.builder()
+                    .userNo(this.userNo)
+                    .accountType(this.accountType)
+                    .email(this.email)
+                    .nickname(this.nickname)
+                    .profileImage(this.profileImage)
+                    .coin(this.coin)
+                    .nowThema(this.nowThema)
+                    .maxCapsuleCount(this.maxCapsuleCount)
+                    .nowCapsuleCount(this.nowCapsuleCount)
+                    .build();
+        }
+
+
     }
