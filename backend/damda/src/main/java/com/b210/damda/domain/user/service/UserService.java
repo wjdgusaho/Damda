@@ -218,13 +218,13 @@ public class UserService {
         Long userNo = (Long) principal;
         Optional<User> byId = userRepository.findById(userNo);
         if(byId.isEmpty()){ // 해당 유저가 없음
-            return 1;
+            return 4001;
         }else{
             User user = byId.get();
             if(encoder.matches(password, user.getUserPw())){ // 비밀번호 일치하면
-                return 2;
+                return 200;
             }else { // 비밀번호 일치하지 않으면
-                return 3;
+                return 4002;
             }
         }
     }
