@@ -22,7 +22,8 @@ public enum CustomExceptionStatus {
     THEMA_DUPLICATE(-5001, "현재 가지고있는 테마 입니다."),
     STICKER_DUPLICATE(-5002, "현재 가지고있는 스티커 입니다."),
     CAPSULE_MAXLIMIT(-5003, "현재 타임캡슐의 최대치 이므로 구매할수 없습니다."),
-    CAPSULE_MAXSIZE(-5004, "해당 타임캡슐의 용량사이즈가 최대이므로 구매할수 없습니다.");
+    CAPSULE_MAXSIZE(-5004, "해당 타임캡슐의 용량사이즈가 최대이므로 구매할수 없습니다."),
+    ITEM_NOT_STICKER( -5005, "해당 아이템은 스티커가 아이템이 아닙니다");
 
 
     private final int code;
