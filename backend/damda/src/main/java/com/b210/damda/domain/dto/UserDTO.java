@@ -13,7 +13,7 @@ public class UserDTO {
     private String nickname;
     private String profileImage;
     private int coin;
-    private int nowThema;
+    private int nowTheme;
     private int maxCapsuleCount;
     private int nowCapsuleCount;
 }
