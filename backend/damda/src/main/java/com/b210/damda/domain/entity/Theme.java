@@ -1,6 +1,6 @@
 package com.b210.damda.domain.entity;
 
-import com.b210.damda.domain.dto.ThemaShopDTO;
+import com.b210.damda.domain.dto.ThemeShopDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,10 +13,10 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Thema {
+public class Theme {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long themaNo;
+    private long themeNo;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
@@ -27,9 +27,9 @@ public class Thema {
     private String icon;
 
 
-    public ThemaShopDTO toThemaShopDTO(){
-        return ThemaShopDTO.builder()
-                .themaNo(this.themaNo)
+    public ThemeShopDTO toThemeShopDTO(){
+        return ThemeShopDTO.builder()
+                .themeNo(this.themeNo)
                 .name(this.name)
                 .description(this.description)
                 .price(this.price)
