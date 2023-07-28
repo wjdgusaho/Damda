@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux"
 import { styled } from "styled-components"
 import axios from "axios"
 import { serverUrl, reqUrl } from "../../urls"
-import { SET_TOKEN, SET_ACCOUNT_TYPE } from "../../store/Auth"
+import { SET_TOKEN, SET_USER } from "../../store/Auth"
 import { setRefreshToken } from "../../store/Cookie"
 import "../../index.css"
 
@@ -133,7 +133,9 @@ const Login = function () {
       .then((response) => {
         setRefreshToken(response.data.refreshToken)
         dispatch(SET_TOKEN(response.data.accessToken))
-        dispatch(SET_ACCOUNT_TYPE(response.data.accountType))
+
+        // const userData = response.data
+        dispatch(SET_USER(response.data.accountType))
         navigate("/tutorial")
       })
       .catch((error) => {
