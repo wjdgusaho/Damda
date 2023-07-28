@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ThemaDetailDTO {
+public class ThemeDetailDTO {
 
-    private Long themaDetailsNo;
-    private Long themaNo;
+    private Long themeDetailsNo;
+    private Long themeNo;
     private String path;
     private String type;
 

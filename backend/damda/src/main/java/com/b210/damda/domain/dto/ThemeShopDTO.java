@@ -5,15 +5,15 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ThemaShopDTO {
+public class ThemeShopDTO {
 
-    private long themaNo;
+    private long themeNo;
     private String name;
     private String description;
     private int price;
     private String icon;
     private boolean isUserHave;
 
-    //private List<ThemaDetailDTO> items;
+    //private List<ThemeDetailDTO> items;
 
 }

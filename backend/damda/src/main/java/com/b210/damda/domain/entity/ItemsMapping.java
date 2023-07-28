@@ -21,7 +21,7 @@ public class ItemsMapping {
     @JoinColumn(name = "item_no")
     private Items items;
 
-    public ItemsMappingDTO tothemaMappingDTO(){
+    public ItemsMappingDTO tothemeMappingDTO(){
         return ItemsMappingDTO.builder()
                 .itemMappingNo(this.itemMappingNo)
                 .userNo(user.getUserNo())
