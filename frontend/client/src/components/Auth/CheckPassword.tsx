@@ -4,10 +4,10 @@ import { serverUrl } from "../../urls"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
-import Store from "../../store/Store"
-import { refresh_accessToken } from "../../store/Auth"
-
-type RootState = ReturnType<typeof Store.getState>
+import { RootState } from "../../store/Store"
+import { getCookieToken, setRefreshToken } from "../../store/Cookie"
+import {getNewTokens} from './RefreshTokenApi'
+import { SET_TOKEN } from "../../store/Auth"
 
 const Box = tw.div`
   flex
@@ -34,10 +34,7 @@ export const CheckPassword = function () {
   const handlePwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserPw(event.currentTarget.value)
   }
-  const handlePwSubmit = (
-    event: React.FormEvent<HTMLFormElement>,
-    retry = true
-  ) => {
+  const handlePwSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (userPw) {
       axios({
@@ -59,13 +56,16 @@ export const CheckPassword = function () {
           }
           setUserPw("")
         })
-        .catch((error) => {
-          console.log(error)
-
+        .catch(async (error) => {
           if (error.response.data.message === "토큰 만료") {
-            dispatch(refresh_accessToken())
-            if (retry) {
-              handlePwSubmit(event, false)
+            try {
+              const accessToken = await getNewTokens(getCookieToken())
+              
+              dispatch(SET_TOKEN(accessToken))
+              // setRefreshToken(refreshToken)
+            } catch (error) {
+              console.log(error);
+              
             }
           }
         })
@@ -90,9 +90,9 @@ export const CheckPassword = function () {
           >
             <path
               stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
             />
           </svg>
