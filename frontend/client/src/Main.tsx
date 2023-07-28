@@ -35,7 +35,10 @@ function Main() {
             <Routes>
               <Route path="/" element={<LandingPage />}></Route>
               <Route path="/user/" element={<CheckPassword />}></Route>
-              <Route path="/user-info/" element={<UserInfoChange />}></Route>
+              <Route
+                path="/user-info/"
+                element={<UserInfoChange props="" />}
+              ></Route>
               <Route path="/shop/" element={<ShopPage />}>
                 <Route path="sticker" element={<Sticker />}></Route>
                 <Route path="theme" element={<Theme />}></Route>
