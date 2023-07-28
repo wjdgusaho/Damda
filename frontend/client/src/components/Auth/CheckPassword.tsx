@@ -27,7 +27,7 @@ const Button = tw.button`bg-lilac-100 ml-24 text-black shadow-md w-48 border rou
 
 export const CheckPassword = function () {
   const [userPw, setUserPw] = useState("")
-  const token = useSelector((state: RootState) => state.authToken.accessToken)
+  const token = useSelector((state: RootState) => state.auth.accessToken)
   const navigate = useNavigate()
   const handlePwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserPw(event.currentTarget.value)
