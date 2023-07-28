@@ -3,6 +3,7 @@ package com.b210.damda.domain.file.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,8 +31,10 @@ public class FileStoreService {
             String newFileName = uuid + "_" + millis + extension;
 
             // 파일 저장
-            Path targetLocation = this.fileStorageLocation.resolve(newFileName);
-            Files.copy(file.getInputStream(), targetLocation);
+            try (InputStream is = file.getInputStream()) {
+                Path targetLocation = this.fileStorageLocation.resolve(newFileName);
+                Files.copy(is, targetLocation);
+            }
 
             // 저장된 파일의 경로 반환
             return newFileName;

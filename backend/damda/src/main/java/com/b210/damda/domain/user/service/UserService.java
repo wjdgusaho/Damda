@@ -4,6 +4,7 @@ import com.b210.damda.domain.dto.UserOriginRegistDTO;
 import com.b210.damda.domain.dto.UserSearchResultDTO;
 import com.b210.damda.domain.dto.UserUpdateDTO;
 import com.b210.damda.domain.entity.*;
+import com.b210.damda.domain.file.service.FileStoreService;
 import com.b210.damda.domain.friend.repository.FriendRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
@@ -23,6 +24,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -38,35 +40,43 @@ public class UserService {
     private RefreshTokenRepository refreshTokenRepository;
     private EmailSendLogRepository emailSendLogRepository;
     private FriendRepository friendRepository;
+    private FileStoreService fileStoreService;
 
     @Autowired
     public UserService(UserRepository userRepository, UserLogRepository userLogRepository, BCryptPasswordEncoder encoder, RefreshTokenRepository refreshTokenRepository,
-                       EmailSendLogRepository emailSendLogRepository, FriendRepository friendRepository) {
+                       EmailSendLogRepository emailSendLogRepository, FriendRepository friendRepository, FileStoreService fileStoreService) {
         this.userRepository = userRepository;
         this.userLogRepository = userLogRepository;
         this.encoder = encoder;
         this.refreshTokenRepository = refreshTokenRepository;
         this.emailSendLogRepository = emailSendLogRepository;
         this.friendRepository = friendRepository;
+        this.fileStoreService = fileStoreService;
     }
 
 
     // 회원가입
     @Transactional
-    public User regist(UserOriginRegistDTO userOriginRegistDTO, String profileUri) {
+    public User regist(UserOriginRegistDTO userOriginRegistDTO, MultipartFile multipartFile) {
+        String fileUri = "";
+
+        if(multipartFile.isEmpty() && multipartFile.getSize() == 0){
+            fileUri = "profile.jpg";
+        }else{
+            fileUri = fileStoreService.storeFile(multipartFile);
+        }
         String encode = encoder.encode(userOriginRegistDTO.getUserPw()); // 비밀번호 암호화
 
         userOriginRegistDTO.setUserPw(encode);
-        if (profileUri.equals("")) {
+        if (fileUri.equals("profile.jpg")) {
             userOriginRegistDTO.setUri("profile.jpg");
             User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
             return savedUser;
         } else {
-            userOriginRegistDTO.setUri(profileUri);
+            userOriginRegistDTO.setUri(fileUri);
             User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
             return savedUser;
         }
-
     }
 
     // 로그인
@@ -77,15 +87,20 @@ public class UserService {
 
         // 유저의 이메일이 없음
         if (findUser.isEmpty()) {
-            tokens.put("error", "no email");
+            tokens.put("error", "유저 없음");
             return tokens;
         }
 
+        // 비밀번호 불일치
         if (!encoder.matches(password, findUser.get().getUserPw())) {
-            tokens.put("error", "no password");
+            tokens.put("error", "비밀번호 틀림");
             return tokens;
         }
         User user = findUser.get();
+        if(user.getDeleteDate() != null){
+            tokens.put("error", "탈퇴된 유저");
+            return tokens;
+        }
 
         // 로그인 성공
         String accessToken = JwtUtil.createAccessJwt(user.getUserNo(), secretKey); // 토큰 발급해서 넘김
@@ -187,10 +202,10 @@ public class UserService {
             return 1;
         }else{
             User user = byEmail.get();
-            if(user.getUserPw().equals(userPw)){
+            if(encoder.matches(userPw, user.getUserPw())){
                 return 2;
             }
-            user.updatePassword(userPw);
+            user.updatePassword(encoder.encode(userPw));
             userRepository.save(user);
             return 3;
         }
@@ -203,13 +218,13 @@ public class UserService {
         Long userNo = (Long) principal;
         Optional<User> byId = userRepository.findById(userNo);
         if(byId.isEmpty()){ // 해당 유저가 없음
-            return 1;
+            return 4001;
         }else{
             User user = byId.get();
             if(encoder.matches(password, user.getUserPw())){ // 비밀번호 일치하면
-                return 2;
+                return 200;
             }else { // 비밀번호 일치하지 않으면
-                return 3;
+                return 4002;
             }
         }
     }
@@ -255,5 +270,52 @@ public class UserService {
             }
         }
         return result;
+    }
+
+    @Transactional
+    // 유저 정보 업데이트
+    public int userInfoUpdate(UserUpdateDTO userUpdateDTO, MultipartFile multipartFile){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        Long userNo = (Long) principal;
+
+        Optional<User> byId = userRepository.findById(userNo);
+        if(byId.isEmpty()){
+            return 1;
+        }else{
+            User user = byId.get();
+
+            if(!multipartFile.isEmpty()){
+                String uri = fileStoreService.storeFile(multipartFile);
+                user.updateprofileImage(uri);
+            }
+            if(!userUpdateDTO.getUserPw().equals("")){
+                String encode = encoder.encode(userUpdateDTO.getUserPw());
+                user.updatePassword(encode);
+            }
+            user.updateNickname(userUpdateDTO.getNickname());
+            User save = userRepository.save(user);
+            if(save != null){
+                return 2;
+            }else{
+                return 3;
+            }
+        }
+    }
+
+    @Transactional
+    public void userWithdrawal(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        Long userNo = (Long) principal;
+
+        Optional<User> byId = userRepository.findById(userNo);
+        User user = byId.get();
+        RefreshToken referenceById = refreshTokenRepository.getReferenceById(user.getUserNo());
+        referenceById.setRefreshToken("");
+        refreshTokenRepository.save(referenceById);
+
+        user.insertDeleteDate();
+        userRepository.save(user);
     }
 }

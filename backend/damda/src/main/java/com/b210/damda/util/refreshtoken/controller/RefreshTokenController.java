@@ -24,7 +24,7 @@ public class RefreshTokenController {
     @PostMapping("refresh-token")
     public ResponseEntity<?> reloadRefresh(@RequestHeader(value = "RefreshToken") String refreshToken){
 
-        String parsingToken = refreshToken.split(" ")[1];
+        String parsingToken = refreshToken.split(" ")[0];
 
         String token = refreshTokenService.findByRefreshToken(parsingToken);
         if(token.equals("1")){ // 토큰과 일치하는 유저 없으면
