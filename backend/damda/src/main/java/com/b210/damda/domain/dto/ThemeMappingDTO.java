@@ -9,9 +9,9 @@ import lombok.Setter;
 @Data
 @Builder
 @Getter @Setter
-public class ThemaMappingDTO {
+public class ThemeMappingDTO {
 
-    private long themaMappingNo;
+    private long themeMappingNo;
     private long userNo;
     private long temaNo;
 

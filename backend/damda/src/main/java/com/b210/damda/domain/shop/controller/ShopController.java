@@ -1,7 +1,7 @@
 package com.b210.damda.domain.shop.controller;
 
-import com.b210.damda.domain.dto.ThemaShopDTO;
-import com.b210.damda.domain.shop.repository.ThemaRepository;
+import com.b210.damda.domain.dto.ThemeShopDTO;
+import com.b210.damda.domain.shop.repository.ThemeRepository;
 import com.b210.damda.domain.shop.service.ShopService;
 import com.b210.damda.domain.user.service.UserService;
 import com.b210.damda.util.response.CommonResponse;
@@ -28,10 +28,10 @@ public class ShopController {
      */
     @GetMapping("list")
     public DataResponse<Map<String, Object>> shopList(@RequestParam("userNo") Long userNo) throws Exception {
-         List<ThemaShopDTO> themaList = shopService.getThemaList(userNo);
+         List<ThemeShopDTO> themeList = shopService.getThemeList(userNo);
          Map<String, Object> itemsList = shopService.getItemList(userNo);
 
-         itemsList.put("themaList", themaList);
+         itemsList.put("themeList", themeList);
          DataResponse<Map<String, Object>> response = new DataResponse<>(200, "아이템 리스트 조회 성공");
          response.setData(itemsList);
 
@@ -41,16 +41,16 @@ public class ShopController {
     /*
         테마 구입 
      */
-    @PostMapping("purchase/thema")
-    public DataResponse<Map<String, Object>> buyThema(@RequestBody Map<String, Object> data) {
+    @PostMapping("purchase/theme")
+    public DataResponse<Map<String, Object>> buyTheme(@RequestBody Map<String, Object> data) {
 
         Long userNo = Long.parseLong((String) data.get("userNo"));
-        Long themaNo = Long.parseLong((String) data.get("themaNo"));
+        Long themeNo = Long.parseLong((String) data.get("themeNo"));
 
-        Map<String, Object> themaList = shopService.buyThema(userNo, themaNo);
+        Map<String, Object> themeList = shopService.buyTheme(userNo, themeNo);
 
         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "테마 구매 성공");
-        response.setData(themaList);
+        response.setData(themeList);
 
         return response;
     }

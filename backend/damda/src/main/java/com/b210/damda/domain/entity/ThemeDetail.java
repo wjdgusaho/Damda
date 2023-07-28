@@ -1,6 +1,6 @@
 package com.b210.damda.domain.entity;
 
-import com.b210.damda.domain.dto.ThemaDetailDTO;
+import com.b210.damda.domain.dto.ThemeDetailDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,15 +13,15 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @ToString
-public class ThemaDetail {
+public class ThemeDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long thema_details_no;
+    private Long theme_details_no;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "thema_no")
-    private Thema tema;
+    @JoinColumn(name = "theme_no")
+    private Theme tema;
 
     @Column(nullable = false)
     private String path;

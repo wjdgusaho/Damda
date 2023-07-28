@@ -1,6 +1,6 @@
 package com.b210.damda.domain.entity;
 
-import com.b210.damda.domain.dto.ThemaMappingDTO;
+import com.b210.damda.domain.dto.ThemeMappingDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,24 +12,24 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-public class ThemaMapping {
+public class ThemeMapping {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long themaMappingNo;
+    private long themeMappingNo;
 
     @ManyToOne
     @JoinColumn(name = "user_no")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "thema_no")
-    private Thema thema;
+    @JoinColumn(name = "theme_no")
+    private Theme theme;
 
-    public ThemaMappingDTO tothemaMappingDTO(){
-        return ThemaMappingDTO.builder()
-                .themaMappingNo(this.themaMappingNo)
+    public ThemeMappingDTO tothemeMappingDTO(){
+        return ThemeMappingDTO.builder()
+                .themeMappingNo(this.themeMappingNo)
                 .userNo(user.getUserNo())
-                .temaNo(thema.getThemaNo())
+                .temaNo(theme.getThemeNo())
                 .build();
     }
 }

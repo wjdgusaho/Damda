@@ -38,7 +38,7 @@
         private int coin = 0;
         @Builder.Default
         @Column(nullable = false, columnDefinition = "integer default 0")
-        private int nowThema = 0;
+        private int nowTheme = 0;
         @CreatedDate
         @Column(nullable = false)
         private LocalDateTime registDate;
@@ -54,7 +54,7 @@
         public User() {
         }
 
-        public User(Long userNo, String accountType, String email, String userPw, String nickname, String profileImage, int coin, int nowThema, LocalDateTime registDate, LocalDateTime deleteDate, int maxCapsuleCount, int nowCapsuleCount) {
+        public User(Long userNo, String accountType, String email, String userPw, String nickname, String profileImage, int coin, int nowTheme, LocalDateTime registDate, LocalDateTime deleteDate, int maxCapsuleCount, int nowCapsuleCount) {
             this.userNo = userNo;
             this.accountType = accountType;
             this.email = email;
@@ -62,7 +62,7 @@
             this.nickname = nickname;
             this.profileImage = profileImage;
             this.coin = coin;
-            this.nowThema = nowThema;
+            this.nowTheme = nowTheme;
             this.registDate = registDate;
             this.deleteDate = deleteDate;
             this.maxCapsuleCount = maxCapsuleCount;
@@ -94,7 +94,7 @@
                     .nickname(this.nickname)
                     .profileImage(this.profileImage)
                     .coin(this.coin)
-                    .nowThema(this.nowThema)
+                    .nowTheme(this.nowTheme)
                     .maxCapsuleCount(this.maxCapsuleCount)
                     .nowCapsuleCount(this.nowCapsuleCount)
                     .build();
