@@ -1,10 +1,5 @@
-export const serverUrl = 'http://localhost:8080/'
-// export const serverUrl = 'http://14.50.47.12:8080/'
-// export const reqUrl =
-//     'https://kauth.kakao.com/oauth/authorize' +
-//     '?client_id=9292106e6bff609d98bd0df4de1ede06' +
-//     '&client_secret=GcveX0t6jBVJV3TT7XOxrFAc13inJUYf' +
-//     '&redirect_uri=http://localhost:3000/dummykakao' +
-//     '&response_type=code'
+// export const serverUrl = 'http://localhost:8080/'
+export const serverUrl = "http://http://i9b210.p.ssafy.io:8081/"
 
-export const reqUrl = 'http://localhost:8080/oauth2/authorization/kakao'
+// export const reqUrl = 'http://localhost:8080/oauth2/authorization/kakao'
+export const reqUrl = "http://i9b210.p.ssafy.io:8081/oauth2/authorization/kakao"

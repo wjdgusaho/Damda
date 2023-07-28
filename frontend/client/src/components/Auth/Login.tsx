@@ -177,6 +177,26 @@ const Login = function () {
         <Shadow />
 
         <div>
+          <div
+            className="text-lilac-300 font-thin relative -top-9"
+            style={{ marginLeft: "-15px" }}
+          >
+            <button
+              onClick={() => {
+                navigate("/findPassword")
+              }}
+            >
+              비밀번호 찾기 |
+            </button>
+            <button
+              onClick={() => {
+                navigate("/signup")
+              }}
+              style={{ marginLeft: "5px" }}
+            >
+              회원가입
+            </button>
+          </div>
           <Form onSubmit={formSubmit} className="text-lilac-300 font-thin">
             <div className="grid gird-rows-4">
               <div
@@ -205,24 +225,7 @@ const Login = function () {
                 />
               </div>
               <p style={{ color: "red" }}>{userdataText}</p>
-              <div className="flex grid-cols-2 justify-between">
-                <div style={{ marginLeft: "-15px" }}>
-                  <button
-                    onClick={() => {
-                      navigate("/findPassword")
-                    }}
-                  >
-                    비밀번호 찾기 |
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate("/signup")
-                    }}
-                    style={{ marginLeft: "5px" }}
-                  >
-                    회원가입
-                  </button>
-                </div>
+              <div className="flex grid-cols-2 justify-end">
                 <LoginBtn>로그인</LoginBtn>
               </div>
             </div>
