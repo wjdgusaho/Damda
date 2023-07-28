@@ -1,6 +1,6 @@
 import React from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Store from "./store/Store"
+import { Store } from "./store/Store"
 import { Provider } from "react-redux"
 import { CookiesProvider } from "react-cookie"
 

@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface ThemaRepository extends JpaRepository<Thema, Long> {
     Optional<Thema> findByThemaNo(Long themaNo);
+
+
 }
