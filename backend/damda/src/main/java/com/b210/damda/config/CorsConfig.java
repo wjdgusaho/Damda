@@ -15,8 +15,8 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowCredentials(false);
-        config.setAllowedOrigins(List.of("*")); // 이 출처로 오는 모든 요청을 허용함.
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(List.of("http://localhost:3000")); // 이 출처로 오는 모든 요청을 허용함.
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*")); // 허용되는 헤더
         config.setExposedHeaders(List.of("*")); // 노출되는 응답 헤어
