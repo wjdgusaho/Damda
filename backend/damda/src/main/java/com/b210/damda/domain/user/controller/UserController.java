@@ -52,19 +52,23 @@ public class UserController {
         }
     }
 
-    // 이메일 중복체크
-    @PostMapping("check-email")
-    public ResponseEntity<?> emailCheck(@RequestBody UserOriginRegistDTO userOriginRegistDTO){
+    // 이메일 인증번호 전송
+    @PostMapping("send-email")
+    public ResponseEntity<?> emailSend(@RequestBody UserOriginRegistDTO userOriginRegistDTO) throws Exception {
         String email = userOriginRegistDTO.getEmail();
         try {
             User user = userService.fineByUser(email);
             if(user != null){
                 return new ResponseEntity<>("이메일 사용 불가능", HttpStatus.CONFLICT);
             }else{
-                return new ResponseEntity<>("사용 가능", HttpStatus.OK);
+                String key = emailService.sendSimpleMessageRegist(email);
+                if(emailService.registTempKey(key, email) == 0){
+                    return new ResponseEntity<>("인증번호 전송에 실패했습니다. 잠시 후 다시 시도해주세요.", HttpStatus.BAD_GATEWAY);
+                }
+                return new ResponseEntity<>("인증번호 전송 성공", HttpStatus.OK);
             }
         }catch (Exception e){
-            return new ResponseEntity<>("재시도", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -95,15 +99,14 @@ public class UserController {
             if(user.getAccountType().equals("KAKAO") || user == null){ // 인증번호 전송은 ORIGIN 유저만 가능.
                 return new ResponseEntity<>("이메일이 존재하지 않습니다.",HttpStatus.NOT_FOUND);
             }
-            String key = emailService.sendSimpleMessage(email);
-            if(emailService.registTempKey(key, email, user) == 0){
+            String key = emailService.sendSimpleMessageChange(email);
+            if(emailService.changeTempKey(key, email, user) == 0){
                 return new ResponseEntity<>("인증번호 전송에 실패했습니다. 잠시 후 다시 시도해주세요.", HttpStatus.BAD_GATEWAY);
             }
             return new ResponseEntity<>("인증번호 전송 성공", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>("알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     // 인증번호 제출

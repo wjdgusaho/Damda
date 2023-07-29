@@ -1,4 +1,4 @@
-package com.b210.damda.domain.user.filter;
+package com.b210.damda.util.filter;
 
 import com.b210.damda.domain.user.service.UserService;
 import com.b210.damda.util.JwtUtil;
@@ -30,7 +30,7 @@ public class JwtFilter extends OncePerRequestFilter { // 모든 요청에 대해
         String path = request.getRequestURI();
         return path.startsWith("/user/login") || path.startsWith("/user/regist") || path.startsWith("/user/change-password/email")
                 || path.startsWith("/user/logout") || path.startsWith("/user/change-password/code") || path.startsWith("/api/kakao/login") || path.startsWith("/user/check-email")
-                || path.startsWith("/user/change-password/new") || path.startsWith("/user/refresh-token");
+                || path.startsWith("/user/change-password/new") || path.startsWith("/user/refresh-token") || path.startsWith("/user/send-email");
     }
 
     @Override
