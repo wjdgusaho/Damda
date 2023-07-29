@@ -13,10 +13,12 @@ import com.b210.damda.domain.entity.SignupEmailLog;
 import com.b210.damda.domain.entity.User;
 import com.b210.damda.util.emailAPI.repository.EmailSendLogRepository;
 import com.b210.damda.util.emailAPI.repository.SignupEmailLogRepository;
+import com.b210.damda.util.exception.CommonException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -129,6 +131,7 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
+    @Transactional
     public Long changeTempKey(String key, String email, User user) {
         EmailSendLog build = emailSendLog.builder()
                 .email(email)
@@ -139,17 +142,18 @@ public class EmailServiceImpl implements EmailService {
                 .build();
 
         EmailSendLog save = emailSendLogRepository.save(build);
-        System.out.println(save);
+
         return save.getEmailSendLogNo();
     }
 
     @Override
+    @Transactional
     public Long registTempKey(String key, String email) {
         SignupEmailLog build = SignupEmailLog.builder()
                 .email(email)
                 .verificationCode(key)
                 .createTime(LocalDateTime.now())
-                .expiryTime(LocalDateTime.now().plusMinutes(10))
+                .expiryTime(LocalDateTime.now().plusSeconds(20))
                 .build();
 
         SignupEmailLog save = signupEmailLogRepository.save(build);
