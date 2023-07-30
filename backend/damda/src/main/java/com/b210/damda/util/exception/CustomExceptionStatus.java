@@ -39,7 +39,11 @@ public enum CustomExceptionStatus {
     ALREADY_USED_CODE(-9003, "이미 사용된 인증번호입니다."),
     NOT_MATCH_PASSWORD(-9004, "비밀번호가 일치하지 않습니다."),
     USER_ALREADY_DEACTIVATED(-9005, "탈퇴한 유저입니다."),
-    KAKAO_USER(-9006, "카카오로 가입한 회원입니다. 카카오로 로그인 부탁드립니다.");
+    KAKAO_USER(-9006, "카카오로 가입한 회원입니다. 카카오로 로그인 부탁드립니다."),
+    SAME_PASSWORD(-9007, "기존 비밀번호와 동일합니다."),
+
+    // 토큰 관련
+    NOT_FOUND_JWT_TOKEN(-1000, "잘못된 접근입니다. 로그아웃 후 다시 로그인 부탁드립니다.");
 
 
 
