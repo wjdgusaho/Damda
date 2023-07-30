@@ -7,20 +7,20 @@ import java.util.Map;
 import java.util.Objects;
 
 public interface ShopService {
-    List<ThemeShopDTO> getThemeList(Long userNo);
+    List<ThemeShopDTO> getThemeList();
     List<ThemeShopDTO> getThemAllList();
-    List<ThemeMappingDTO> getThemMappingList(Long userNo);
-    Map<String, Object> getItemList(Long userNo);
-    List<ItemsMappingDTO> getItemsMappginList(Long userNo);
+    List<ThemeMappingDTO> getThemMappingList();
+    Map<String, Object> getItemList();
+    List<ItemsMappingDTO> getItemsMappginList();
     List<ItemsShopDTO> getItemAllList();
 
-    Map<String, Object> buyTheme(Long userNo, Long themeNo);
+    Map<String, Object> buyTheme(Long themeNo);
 
-    Map<String, Object> buySticker(Long userNo, Long itemNo);
+    Map<String, Object> buySticker(Long itemNo);
 
-    Map<String, Object> buyCapsuleLimit(Long userNo, Long itemNo);
+    Map<String, Object> buyCapsuleLimit(Long itemNo);
 
-    List<TimecapsuleShopDTO> timecapsuleList(Long userNo);
+    List<TimecapsuleShopDTO> timecapsuleList();
 
-    void timecapsuleSize(Long userNo, Long timecapsuleNo, Long itemNo);
+    void timecapsuleSize(Long timecapsuleNo, Long itemNo);
 }
