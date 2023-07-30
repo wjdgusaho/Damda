@@ -137,16 +137,19 @@ export const SignUp = function () {
         url: serverUrl + "user/check-email",
         data: { email: userdata.email },
       })
-        .then((response) => {
+        .then(() => {
           setuserEmailMessage("")
-          if (response.data === "이메일 사용 가능") {
-            setuserEmailMatch(2)
-          } else if (response.data === "이메일 사용 불가능") {
-            setuserEmailMatch(1)
-          }
+          setuserEmailMatch(2)
         })
         .catch((error) => {
-          console.error(error)
+          // 이메일 사용 불가
+          if (error.response.status === 409) {
+            setuserEmailMatch(1)
+          }
+          // 서버오류
+          else {
+            alert("중복확인에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
+          }
         })
     }
   }
@@ -195,7 +198,9 @@ export const SignUp = function () {
         .then(() => {
           navigate("/login")
         })
-        .catch((error) => console.error(error))
+        .catch(() => {
+          alert("회원가입에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
+        })
     }
   }
 
@@ -211,9 +216,9 @@ export const SignUp = function () {
         >
           <path
             stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
             d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
           />
         </svg>

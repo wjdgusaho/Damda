@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface EmailSendLogRepository extends JpaRepository<EmailSendLog, Long> {
 
-    Optional<EmailSendLog> findTopByUserUserNoOrderByCreateTimeDesc(Long userNo);
+    EmailSendLog findTopByUserUserNoOrderByCreateTimeDesc(Long userNo);
+
 
 }

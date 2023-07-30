@@ -1,46 +1,32 @@
-import { createSlice } from "@reduxjs/toolkit"
-import axios from "axios"
-import { serverUrl } from "../urls"
-import { getCookieToken } from "./Cookie"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
-export const TOKEN_TIME_OUT = 600 * 1000
+interface TokenState {
+  accessToken: string | null
+  accountType: string
+}
+
+const initialState: TokenState = {
+  accessToken: null,
+  accountType: "",
+}
 
 export const tokenSlice = createSlice({
   name: "authToken",
-  initialState: {
-    authenticated: false,
-    accessToken: null,
-    expireTime: 0,
-  },
+  initialState,
   reducers: {
-    SET_TOKEN: (state, action) => {
-      state.authenticated = true
+    SET_TOKEN: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload
-      state.expireTime = new Date().getTime() + TOKEN_TIME_OUT
+    },
+    SET_ACCOUNT_TYPE: (state, action: PayloadAction<string>) => {
+      state.accountType = action.payload
     },
     DELETE_TOKEN: (state) => {
-      state.authenticated = false
       state.accessToken = null
-      state.expireTime = 0
-    },
-    refresh_accessToken: () => {
-      axios({
-        method: "POST",
-        url: serverUrl + "user/refresh-token",
-        headers: {
-          "Content-Length": "application/json",
-          Authorization: "Bearer " + getCookieToken(),
-        },
-      })
-        .then((response) => {
-          SET_TOKEN(response.data.accessToken)
-        })
-        .catch((error) => console.error(error))
+      state.accountType = ""
     },
   },
 })
 
-export const { SET_TOKEN, DELETE_TOKEN, refresh_accessToken } =
-  tokenSlice.actions
+export const { SET_TOKEN, DELETE_TOKEN, SET_ACCOUNT_TYPE } = tokenSlice.actions
 
 export default tokenSlice.reducer

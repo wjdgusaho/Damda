@@ -31,6 +31,18 @@ public enum CustomExceptionStatus {
     USER_NOT_TIMECAPSULE (-5008, "해당 유저의 타임캡슐이 아닙니다");
 
 
+    //유저 관련
+    USER_NOT_FOUND(-9000, "존재하지 않는 회원입니다."),
+    EMAIL_NOT_FOUND(-9006, "이메일이 일치하지 않습니다."),
+    NOT_MATCH_CODE(-9001, "인증번호가 일치하지 않습니다."),
+    EXPIRE_CODE(-9002, "인증번호가 만료되었습니다."),
+    ALREADY_USED_CODE(-9003, "이미 사용된 인증번호입니다."),
+    NOT_MATCH_PASSWORD(-9004, "비밀번호가 일치하지 않습니다."),
+    USER_ALREADY_DEACTIVATED(-9005, "탈퇴한 유저입니다."),
+    KAKAO_USER(-9006, "카카오로 가입한 회원입니다. 카카오로 로그인 부탁드립니다.");
+
+
+
 
     private final int code;
     private final String message;

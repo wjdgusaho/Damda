@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux"
 import { styled } from "styled-components"
 import axios from "axios"
 import { serverUrl, reqUrl } from "../../urls"
-import { SET_TOKEN } from "../../store/Auth"
+import { SET_TOKEN, SET_ACCOUNT_TYPE } from "../../store/Auth"
 import { setRefreshToken } from "../../store/Cookie"
 import "../../index.css"
 
@@ -131,18 +131,21 @@ const Login = function () {
       },
     })
       .then((response) => {
-        if (response.data === "아이디 없음") {
-          setUserdataText("아이디가 존재하지 않습니다.")
-        } else if (response.data === "비밀번호 틀림") {
-          setUserdataText("비밀번호가 일치하지 않습니다.")
-        } else {
-          setRefreshToken(response.data.refreshToken)
-          dispatch(SET_TOKEN(response.data.accessToken))
-          navigate("/tutorial")
-        }
+        setRefreshToken(response.data.refreshToken)
+        dispatch(SET_TOKEN(response.data.accessToken))
+        dispatch(SET_ACCOUNT_TYPE(response.data.accountType))
+        navigate("/tutorial")
       })
       .catch((error) => {
-        console.error(error)
+        if (error.response.status === 404) {
+          setUserdataText("아이디가 존재하지 않습니다.")
+        } else if (error.response.status === 401) {
+          setUserdataText("비밀번호가 올바르지 않습니다.")
+        } else if (error.response.status === 410) {
+          setUserdataText("탈퇴한 회원입니다.")
+        } else {
+          console.error(error)
+        }
       })
   }
 
@@ -174,6 +177,26 @@ const Login = function () {
         <Shadow />
 
         <div>
+          <div
+            className="text-lilac-300 font-thin relative -top-9"
+            style={{ marginLeft: "-15px" }}
+          >
+            <button
+              onClick={() => {
+                navigate("/findPassword")
+              }}
+            >
+              비밀번호 찾기 |
+            </button>
+            <button
+              onClick={() => {
+                navigate("/signup")
+              }}
+              style={{ marginLeft: "5px" }}
+            >
+              회원가입
+            </button>
+          </div>
           <Form onSubmit={formSubmit} className="text-lilac-300 font-thin">
             <div className="grid gird-rows-4">
               <div
@@ -202,24 +225,7 @@ const Login = function () {
                 />
               </div>
               <p style={{ color: "red" }}>{userdataText}</p>
-              <div className="flex grid-cols-2 justify-between">
-                <div style={{ marginLeft: "-15px" }}>
-                  <button
-                    onClick={() => {
-                      navigate("/findPassword")
-                    }}
-                  >
-                    비밀번호 찾기 |
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate("/signup")
-                    }}
-                    style={{ marginLeft: "5px" }}
-                  >
-                    회원가입
-                  </button>
-                </div>
+              <div className="flex grid-cols-2 justify-end">
                 <LoginBtn>로그인</LoginBtn>
               </div>
             </div>
