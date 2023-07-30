@@ -8,6 +8,8 @@ import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -34,14 +36,27 @@ public class ShopServiceImpl implements ShopService{
 
     //증가될 파일의 사이즈 (구매시)
     private final int UP_FILE_SIZE = 100;
-    
+
+    /*
+        유저정보 불러오기
+     */
+    public Long getUserNo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        Long userNo = (Long) principal;
+
+        return userNo;
+    }
+
+
     /*
         테마 보유중, 미보유중 내보내기
      */
     @Override
-    public List<ThemeShopDTO> getThemeList(Long userNo) {
+    public List<ThemeShopDTO> getThemeList() {
+
         List<ThemeShopDTO> themeList = getThemAllList();
-        List<ThemeMappingDTO> themeMappingList = getThemMappingList(userNo);
+        List<ThemeMappingDTO> themeMappingList = getThemMappingList();
 
         // HashSet으로 변경 (검색 속도 증가를 위함)
         Set<Long> themeMappingNumbers = themeMappingList.stream()
@@ -74,7 +89,10 @@ public class ShopServiceImpl implements ShopService{
         유저가 구입한 테마 리스트 가져오기
      */
     @Override
-    public List<ThemeMappingDTO> getThemMappingList(Long userNo) {
+    public List<ThemeMappingDTO> getThemMappingList() {
+
+        Long userNo = getUserNo();
+
         List<ThemeMapping> myTheme = themeMappingRepository.findByUserUserNo(userNo);
 
         List<ThemeMappingDTO> myThemeList = new ArrayList<>();
@@ -88,9 +106,10 @@ public class ShopServiceImpl implements ShopService{
         아이템 리스트 받아오기 deco랑 캡슐 나누기
      */
     @Override
-    public Map<String, Object> getItemList(Long userNo) {
+    public Map<String, Object> getItemList() {
+
         List<ItemsShopDTO> allItemList = getItemAllList();
-        List<ItemsMappingDTO> ItemMappingList = getItemsMappginList(userNo);
+        List<ItemsMappingDTO> ItemMappingList = getItemsMappginList();
 
         Set<Long> itemMappginNumbers = ItemMappingList.stream()
                 .map(ItemsMappingDTO::getItemNo)
@@ -122,7 +141,10 @@ public class ShopServiceImpl implements ShopService{
         유저 아이템 받아오기
      */
     @Override
-    public List<ItemsMappingDTO> getItemsMappginList(Long userNo) {
+    public List<ItemsMappingDTO> getItemsMappginList() {
+
+        Long userNo = getUserNo();
+
         List<ItemsMapping> itemsMapping = itemsMappingRepository.findByUserUserNo(userNo);
 
         List<ItemsMappingDTO> itemsMappingList = new ArrayList<>();
@@ -150,7 +172,8 @@ public class ShopServiceImpl implements ShopService{
         테마 아이템 구매하기
      */
     @Override
-    public Map<String, Object> buyTheme(Long userNo, Long themeNo) {
+    public Map<String, Object> buyTheme(Long themeNo) {
+        Long userNo = getUserNo();
 
         User user = userRepository.findByUserNo(userNo);
         
@@ -179,7 +202,7 @@ public class ShopServiceImpl implements ShopService{
         themeMappingRepository.save(buyTheme);
         
         // 전체 리스트 반환 (보유중 미보유중)
-        List<ThemeShopDTO> themeList = getThemeList(userNo);
+        List<ThemeShopDTO> themeList = getThemeList();
 
         Map<String, Object> result = new HashMap<>();
         result.put("themeList", themeList);
@@ -192,8 +215,8 @@ public class ShopServiceImpl implements ShopService{
         스티커 아이템 구매하기
      */
     @Override
-    public Map<String, Object> buySticker(Long userNo, Long itemNo) {
-
+    public Map<String, Object> buySticker(Long itemNo) {
+        Long userNo = getUserNo();
         User user = userRepository.findByUserNo(userNo);
         
         // 해당 아이템이 있는지 조건 확인
@@ -226,7 +249,7 @@ public class ShopServiceImpl implements ShopService{
         itemsMappingRepository.save(itemMapping);
 
         //전체 아이템 리스트 반환
-        Map<String, Object> itemList = getItemList(userNo);
+        Map<String, Object> itemList = getItemList();
 
         //필요한 데이터만 전달
         Map<String, Object> result = new HashMap<>();
@@ -240,8 +263,8 @@ public class ShopServiceImpl implements ShopService{
         타임 캡슐 최대 개수 증가 아이템 구매
      */
     @Override
-    public Map<String, Object> buyCapsuleLimit(Long userNo, Long itemNo) {
-
+    public Map<String, Object> buyCapsuleLimit(Long itemNo) {
+        Long userNo = getUserNo();
         User user = userRepository.findByUserNo(userNo);
 
         // 해당 아이템이 있는지 조건 확인
@@ -280,8 +303,9 @@ public class ShopServiceImpl implements ShopService{
         유저의 타임캡슐
      */
     @Override
-    public List<TimecapsuleShopDTO> timecapsuleList(Long userNo) {
+    public List<TimecapsuleShopDTO> timecapsuleList() {
 
+        Long userNo = getUserNo();
         List<TimecapsuleMapping> timecapsules = timecapsuleMappingRepository.findByUserUserNo(userNo);
 
         //타임캡슐이 있는지?
@@ -312,8 +336,9 @@ public class ShopServiceImpl implements ShopService{
         사이즈 구매
      */
     @Override
-    public void timecapsuleSize(Long userNo, Long timecapsuleNo, Long itemNo) {
+    public void timecapsuleSize(Long timecapsuleNo, Long itemNo) {
 
+        Long userNo = getUserNo();
         User user = userRepository.findByUserNo(userNo);
 
        //해당 타임캡슐이 없다면
