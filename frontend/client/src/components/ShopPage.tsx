@@ -5,6 +5,7 @@ import { NavLink, Navigate, Outlet } from "react-router-dom"
 import Modal from "react-modal"
 import axios, { Axios } from "axios"
 import { serverUrl, reqUrl } from "../urls"
+import { getCookieToken } from "../store/Cookie"
 
 interface themeType {
   themeNo: number
@@ -46,7 +47,7 @@ export const ShopPage = function () {
       try {
         const response = await axios.get(serverUrl + "shop/list?userNo=1", {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyTm8iOjEsImlhdCI6MTY5MDcwNTg1NCwiZXhwIjoxNjkwNzA3NjU0fQ.1QhfcAl5MIPnENZoxAv0XFp1qD5U4ZC0owHItNwBEk8`,
+            Authorization: "Bearer " + getCookieToken(),
           },
         })
         setThemeList(response.data.data.themeList)
