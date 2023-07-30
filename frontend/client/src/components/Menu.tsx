@@ -112,7 +112,7 @@ const Menu = function () {
         </MenuBtn>
         <MenuBtn
           onClick={() => {
-            navigate("/shop/sticker")
+            navigate("/shop")
           }}
         >
           상점
