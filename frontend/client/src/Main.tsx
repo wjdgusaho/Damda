@@ -36,11 +36,7 @@ function Main() {
               <Route path="/" element={<LandingPage />}></Route>
               <Route path="/user/" element={<CheckPassword />}></Route>
               <Route path="/user-info/" element={<UserInfoChange />}></Route>
-              <Route path="/shop/" element={<ShopPage />}>
-                <Route path="sticker" element={<Sticker />}></Route>
-                <Route path="theme" element={<Theme />}></Route>
-                <Route path="capsule" element={<Capsule />}></Route>
-              </Route>
+              <Route path="/shop/" element={<ShopPage />}></Route>
               <Route path="/timecapsule/" element={<TimecapsulePage />}></Route>
               <Route path="/card/" element={<Card />}></Route>
               <Route path="/friend/" element={<Friend />}>
