@@ -1,9 +1,6 @@
 package com.b210.damda.domain.shop.service;
 
-import com.b210.damda.domain.dto.ItemsMappingDTO;
-import com.b210.damda.domain.dto.ItemsShopDTO;
-import com.b210.damda.domain.dto.ThemeMappingDTO;
-import com.b210.damda.domain.dto.ThemeShopDTO;
+import com.b210.damda.domain.dto.*;
 
 import java.util.List;
 import java.util.Map;
@@ -22,4 +19,8 @@ public interface ShopService {
     Map<String, Object> buySticker(Long userNo, Long itemNo);
 
     Map<String, Object> buyCapsuleLimit(Long userNo, Long itemNo);
+
+    List<TimecapsuleShopDTO> timecapsuleList(Long userNo);
+
+    void timecapsuleSize(Long userNo, Long timecapsuleNo, Long itemNo);
 }

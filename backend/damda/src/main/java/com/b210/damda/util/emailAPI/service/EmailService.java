@@ -4,7 +4,12 @@ import com.b210.damda.domain.entity.User;
 import org.springframework.stereotype.Service;
 
 public interface EmailService {
-    String sendSimpleMessage(String to)throws Exception;
 
-    Long registTempKey(String key, String email, User user);
+    Long changeTempKey(String key, String email, User user);
+
+    Long registTempKey(String key, String email);
+
+    String sendSimpleMessageChange(String email)throws Exception;;
+
+    String sendSimpleMessageRegist(String email)throws Exception;;
 }
