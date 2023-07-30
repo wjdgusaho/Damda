@@ -28,7 +28,7 @@ public enum CustomExceptionStatus {
     ITEM_NOT_STICKER( -5005, "해당 아이템은 스티커가 아이템이 아닙니다"),
     ITEM_NOT_CAPSULE( -5006, "해당 아이템은 캡슐증가 아이템이 아닙니다"),
     ITEM_NOT_STORAGE(-5007, "해당 아이템은 용량증가 아이템이 아닙니다"),
-    USER_NOT_TIMECAPSULE (-5008, "해당 유저의 타임캡슐이 아닙니다");
+    USER_NOT_TIMECAPSULE (-5008, "해당 유저의 타임캡슐이 아닙니다"),
 
 
     //유저 관련
