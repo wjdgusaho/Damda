@@ -6,6 +6,8 @@ import Modal from "react-modal"
 import axios, { Axios } from "axios"
 import { serverUrl, reqUrl } from "../urls"
 import { getCookieToken } from "../store/Cookie"
+import { RootState } from "../store/Store"
+import { useSelector } from "react-redux"
 
 interface themeType {
   themeNo: number
@@ -35,6 +37,7 @@ interface decoItemType {
 }
 
 export const ShopPage = function () {
+  const token = useSelector((state: RootState) => state.authToken.accessToken)
   const [loading, setLoading] = useState(true)
   const [themeList, setThemeList] = useState<themeType[]>([])
   const [capsuleItemList, setCapsuleItemList] = useState<capsuleItemType[]>([])
@@ -43,11 +46,16 @@ export const ShopPage = function () {
   const [activeComponent, setActiveComponent] = useState("Sticker")
 
   useEffect(() => {
+    console.log("token", token)
     const fetchData = async () => {
       try {
-        const response = await axios.get(serverUrl + "shop/list?userNo=1", {
+        // const userNo = 1
+        const response = await axios.get(serverUrl + "shop/list", {
           headers: {
-            Authorization: "Bearer " + getCookieToken(),
+            Authorization: "Bearer " + token,
+          },
+          params: {
+            // userNo,
           },
         })
         setThemeList(response.data.data.themeList)
@@ -57,29 +65,12 @@ export const ShopPage = function () {
         console.log("themeList", response.data.data.themeList)
         console.log("capsuleItemList", response.data.data.capsuleItemList)
         console.log("decoItemList", response.data.data.decoItemList)
-        setLoading(false) // 데이터가 준비되면 loading을 false로 변경합니다.
       } catch (error) {
         console.error(error)
-        setLoading(false) // 에러가 발생해도 loading을 false로 변경합니다.
       }
     }
     fetchData()
   }, [])
-
-  // 데이터가 준비되지 않았을 때 로딩 스피너를 표시합니다.
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  interface ComponentMap {
-    [key: string]: JSX.Element
-  }
-
-  const componentMap: ComponentMap = {
-    Sticker: <Sticker decoItemList={decoItemList} />,
-    Theme: <Theme themeList={themeList} />,
-    Capsule: <Capsule capsuleItemList={capsuleItemList} />,
-  }
 
   const handleNavClick = (compName: string) => {
     setActiveComponent(compName)
