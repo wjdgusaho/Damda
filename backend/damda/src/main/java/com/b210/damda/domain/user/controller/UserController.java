@@ -44,7 +44,7 @@ public class UserController {
                                     @RequestPart("profileImage") MultipartFile profileImage){
         try {
             User savedUser = userService.regist(userOriginRegistDTO, profileImage);
-            DataResponse<Map<String, Object>> response = new     DataResponse<>(201, "회원가입 완료");
+            DataResponse<Map<String, Object>> response = new DataResponse<>(201, "회원가입 완료");
             return response;
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
@@ -87,7 +87,6 @@ public class UserController {
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
         }
-
     }
 
     // 로그인 요청
@@ -95,8 +94,14 @@ public class UserController {
     public DataResponse<Map<String, Object>> login(@RequestBody UserLoginDTO userLoginDTO){
         try {
             Map<String, Object> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getUserPw());
+            User user = userService.fineByUser(userLoginDTO.getEmail());
+            System.out.println(user.getCoin());
 
             loginUser.put("accountType", "ORIGIN");
+            loginUser.put("nickname", user.getNickname());
+            loginUser.put("profileImage", user.getProfileImage());
+            loginUser.put("userNo", user.getUserNo());
+
             DataResponse<Map<String, Object>> response = new DataResponse<>(200, "로그인 성공");
             response.setData(loginUser);
 
@@ -184,7 +189,8 @@ public class UserController {
     @PostMapping("info")
     public DataResponse<Map<String, Object>> passwordCheck(@RequestBody UserLoginDTO userLoginDTO){
         try {
-            userService.passwordCheck(userLoginDTO.getUserPw());
+            User user = userService.passwordCheck(userLoginDTO.getUserPw());
+
             return new DataResponse<>(200, "비밀번호가 일치합니다.");
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());

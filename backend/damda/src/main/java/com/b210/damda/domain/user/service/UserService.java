@@ -244,7 +244,7 @@ public class UserService {
     }
 
     // 비밀번호 확인
-    public void passwordCheck(String password){
+    public User passwordCheck(String password){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
@@ -258,6 +258,8 @@ public class UserService {
         if(!encoder.matches(password, user.getUserPw())){
             throw new CommonException(CustomExceptionStatus.NOT_MATCH_PASSWORD);
         }
+
+        return user;
     }
 
 
