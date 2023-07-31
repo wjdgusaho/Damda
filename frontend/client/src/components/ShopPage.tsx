@@ -35,7 +35,7 @@ interface decoItemType {
 }
 
 export const ShopPage = function () {
-  const token = useSelector((state: RootState) => state.authToken.accessToken)
+  const token = useSelector((state: RootState) => state.auth.accessToken)
   const [themeList, setThemeList] = useState<themeType[]>([])
   const [capsuleItemList, setCapsuleItemList] = useState<capsuleItemType[]>([])
   const [decoItemList, setDecoItemList] = useState<decoItemType[]>([])
@@ -247,7 +247,7 @@ export const Card: React.FC<CardProps> = ({ name, price, desc, isHave }) => {
         {name !== "캡슐 추가" && name !== "용량증가" && (
           <ModalBuyInner name={name}></ModalBuyInner>
         )}
-        <div className="flex mt-4 w-48 justify-center m-auto justify-between">
+        <div className="flex mt-4 w-48 m-auto justify-between">
           <ModalButton className="bg-black bg-opacity-10" onClick={closeModal}>
             취소
           </ModalButton>
