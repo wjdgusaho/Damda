@@ -2,6 +2,7 @@ import { DefaultTheme } from "styled-components"
 
 export const universeDarkTheme: DefaultTheme = {
   colorTheme: "linear-gradient(180deg, #090634 0%, #9173AE 100%)",
+  colorProgressBar: "linear-gradient(90deg, #a247c1 -19.12%, #ffb86c 117.65%)",
   color50: "#fbf8fc",
   color100: "#f6eef9",
   color200: "#efe0f4",
@@ -20,6 +21,8 @@ export const universeDarkTheme: DefaultTheme = {
 
 export const universeLightTheme: DefaultTheme = {
   colorTheme: "linear-gradient(180deg, #8793D3 0%, #FFF5F0 100%)",
+  colorDday: "linear-gradient(180deg, #8793D3 0%, #FFF5F0 100%)",
+  colorProgressBar: "linear-gradient(180deg, #090634 0%, #9173AE 100%)",
   color50: "#f3f5fb",
   color100: "#e4e6f5",
   color200: "#cfd4ee",
@@ -37,6 +40,9 @@ export const universeLightTheme: DefaultTheme = {
 export const heartTheme: DefaultTheme = {
   colorTheme:
     "linear-gradient(180deg, #FF6565 0%, #FFBB89 21.67%, #FFEF99 41.98%, #CAF594 63.33%, #47ECB1 80%, #04C3FF 100%)",
+  colorDday: "black",
+  colorProgressBar:
+    "linear-gradient(90deg, #FF6565 0%, #FFBB89 21.67%, #FFEF99 41.98%, #CAF594 63.33%, #47ECB1 80%, #04C3FF 100%);",
   color50: "#F6F6F6",
   color100: "#E7E7E7",
   color200: "#D1D1D1",
@@ -53,6 +59,7 @@ export const heartTheme: DefaultTheme = {
 }
 export const marbleTheme: DefaultTheme = {
   colorTheme: "linear-gradient(180deg, #939ABC 0%, #EFDFCC 100%)",
+  colorProgressBar: "linear-gradient(180deg, #090634 0%, #9173AE 100%)",
   color50: "#F4F6F9",
   color100: "#DBE0EA",
   color200: "#C4CDDD",

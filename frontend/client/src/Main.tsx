@@ -26,11 +26,16 @@ import { UserInfoChange } from "./components/Auth/UserInfoChange"
 import SelectType from "./components/SelectType"
 import ClassicCapsule from "./components/ClassicCapsule"
 import { ThemeProvider } from "styled-components"
-import { universeDarkTheme, universeLightTheme } from "./theme"
+import {
+  universeDarkTheme,
+  universeLightTheme,
+  heartTheme,
+  marbleTheme,
+} from "./theme"
 
 function Main() {
   return (
-    <ThemeProvider theme={universeDarkTheme}>
+    <ThemeProvider theme={heartTheme}>
       <div className="Main">
         <CookiesProvider>
           <Provider store={Store}>

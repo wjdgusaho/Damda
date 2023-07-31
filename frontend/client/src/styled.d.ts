@@ -3,6 +3,8 @@ import "styled-components"
 declare module "styled-components" {
   export interface DefaultTheme {
     colorTheme: string
+    colorDday?: string
+    colorProgressBar: string
     color50: string
     color100: string
     color200: string

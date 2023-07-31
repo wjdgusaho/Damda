@@ -12,7 +12,7 @@ import {
 } from "./theme"
 
 const container = document.getElementById("root")
-const root = createRoot(container!) // createRoot(container!) if you use TypeScript
+const root = createRoot(container!)
 
 const styleElement = document.createElement("style")
 styleElement.innerHTML = `
