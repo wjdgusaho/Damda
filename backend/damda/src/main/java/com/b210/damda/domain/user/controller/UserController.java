@@ -201,9 +201,16 @@ public class UserController {
 
     // 유저 검색
     @GetMapping("search")
-    public ResponseEntity<?> userSearch(@RequestBody UserSearchDTO userSearchDTO){
-        List<UserSearchResultDTO> userSearchResultDTOS = userService.userSearch(userSearchDTO.getQuery(), userSearchDTO.getType());
-        return new ResponseEntity<>(userSearchResultDTOS, HttpStatus.OK);
+    public DataResponse<Map<String, Object>> userSearch(@RequestBody UserSearchDTO userSearchDTO){
+        List<UserSearchResultDTO> userSearchResultDTO = userService.userSearch(userSearchDTO.getQuery(), userSearchDTO.getType());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("result" , userSearchResultDTO);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "유저 검색 결과");
+        response.setData(result);
+
+        return response;
     }
 
     // 유저 회원정보 수정
