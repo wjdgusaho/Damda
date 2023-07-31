@@ -1,4 +1,10 @@
 spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://i9b210.p.ssafy.io:7777/damda?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: b210shinchanghak
+
   jpa:
     open-in-view: false
     hibernate:
@@ -14,6 +20,10 @@ spring:
   #Personal Information Management(.ignore)
   profiles:
     include: secret
+
+  AdminMail:
+    id: "damdaCop"
+    password: "vizahyecgncvsdch"
 
   mail:
     smtp:
