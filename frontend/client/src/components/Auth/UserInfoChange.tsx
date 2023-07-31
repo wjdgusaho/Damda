@@ -3,8 +3,9 @@ import { Link, useNavigate } from "react-router-dom"
 import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
 import axios from "axios"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
+import { SET_USER } from "../../store/Auth"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -38,10 +39,9 @@ export const UserInfoChange = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null)
   const imageRef = useRef<HTMLInputElement>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(
-    useSelector(
-      (state: RootState) =>
-        serverUrl + "uploads/" + state.auth.userInfo.profileImage
-    )
+    serverUrl +
+      "uploads/" +
+      useSelector((state: RootState) => state.auth.userInfo.profileImage)
   )
   const [userdata, setUserdata] = useState({
     userPw: "",
@@ -53,6 +53,7 @@ export const UserInfoChange = () => {
   const [userPwCondition, setUserPwCondition] = useState(0)
   const [userPwMatch, setuserPwMatch] = useState(0)
   let token = useSelector((state: RootState) => state.auth.accessToken)
+  const dispatch = useDispatch()
 
   const handleCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsChangePassword(event.currentTarget.checked)
@@ -161,8 +162,10 @@ export const UserInfoChange = () => {
         },
         data: data,
       })
-        .then(() => {
-          alert("회원정보 변경에 성공하셨습니다.")
+        .then((response) => {
+          alert(response.data.message)
+          const userInfo = response.data.data
+          dispatch(SET_USER(userInfo))
           navigate("/main")
         })
         .catch((error) => console.error(error))
@@ -200,9 +203,9 @@ export const UserInfoChange = () => {
           >
             <path
               stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
             />
           </svg>
