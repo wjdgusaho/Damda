@@ -131,11 +131,10 @@ const Login = function () {
       },
     })
       .then((response) => {
-        setRefreshToken(response.data.refreshToken)
-        dispatch(SET_TOKEN(response.data.accessToken))
-
-        // const userData = response.data
-        dispatch(SET_USER(response.data.accountType))
+        const { accessToken, refreshToken, accountType } = response.data.data
+        setRefreshToken(refreshToken)
+        dispatch(SET_TOKEN(accessToken))
+        dispatch(SET_USER(accountType))
         navigate("/tutorial")
       })
       .catch((error) => {
