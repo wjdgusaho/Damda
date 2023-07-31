@@ -220,7 +220,6 @@ public class UserController {
 
             DataResponse<Map<String, Object>> response = new DataResponse<>(200, "회원정보 변경에 성공하였습니다.");
             response.setData(result);
-            
             return response;
 
         }catch (CommonException e){
