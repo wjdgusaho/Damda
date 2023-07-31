@@ -38,7 +38,10 @@ export const UserInfoChange = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null)
   const imageRef = useRef<HTMLInputElement>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(
-    useSelector((state: RootState) => state.auth.userInfo.profileImage)
+    useSelector(
+      (state: RootState) =>
+        serverUrl + "uploads/" + state.auth.userInfo.profileImage
+    )
   )
   const [userdata, setUserdata] = useState({
     userPw: "",

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
 import { Link, useNavigate } from "react-router-dom"
@@ -57,9 +57,6 @@ export const CheckPassword = function () {
           if (response.data.code === -9004) {
             alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.")
           } else {
-            console.log(response.data)
-
-            const userInfo = response.data.data
             navigate("/user-info")
           }
           setUserPw("")

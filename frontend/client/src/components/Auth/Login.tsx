@@ -138,10 +138,10 @@ const Login = function () {
         ) {
           setUserdataText(response.data.message)
         } else {
-          const { accessToken, refreshToken, accountType } = response.data.data
+          const { accessToken, refreshToken, ...userInfo } = response.data.data
           setRefreshToken(refreshToken)
           dispatch(SET_TOKEN(accessToken))
-          dispatch(SET_USER(accountType))
+          dispatch(SET_USER(userInfo))
           navigate("/tutorial")
         }
       })
