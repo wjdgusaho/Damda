@@ -90,7 +90,7 @@ public class UserService {
     public Map<String, Object> login(String email, String password) {
 
         Optional<User> findUser = Optional.ofNullable(userRepository.findByEmail(email)
-                .orElseThrow(() -> new CommonException(CustomExceptionStatus.EMAIL_NOT_FOUND)));
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
 
         User user = findUser.get();
 
@@ -341,10 +341,11 @@ public class UserService {
 
         User user = byId.get();
 
-        RefreshToken referenceById = refreshTokenRepository.getReferenceById(user.getUserNo());
+        Optional<RefreshToken> byUserUserNo = refreshTokenRepository.findByUserUserNo(user.getUserNo());
 
-        referenceById.setRefreshToken("");
-        refreshTokenRepository.save(referenceById);
+        RefreshToken refreshToken = byUserUserNo.get();
+        refreshToken.setRefreshToken("");
+        refreshTokenRepository.save(refreshToken);
 
         user.insertDeleteDate();
         userRepository.save(user);
