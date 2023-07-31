@@ -25,44 +25,51 @@ import Participate from "./components/Participate"
 import { UserInfoChange } from "./components/Auth/UserInfoChange"
 import SelectType from "./components/SelectType"
 import ClassicCapsule from "./components/ClassicCapsule"
+import { ThemeProvider } from "styled-components"
+import { universeDarkTheme, universeLightTheme } from "./theme"
 
 function Main() {
   return (
-    <div className="Main">
-      <CookiesProvider>
-        <Provider store={Store}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<LandingPage />}></Route>
-              <Route path="/user/" element={<CheckPassword />}></Route>
-              <Route path="/user-info/" element={<UserInfoChange />}></Route>
-              <Route path="/shop/" element={<ShopPage />}></Route>
-              <Route path="/timecapsule/" element={<TimecapsulePage />}></Route>
-              <Route path="/card/" element={<Card />}></Route>
-              <Route path="/friend/" element={<Friend />}>
-                <Route path="list" element={<List />}></Route>
-                <Route path="request" element={<Request />}></Route>
-              </Route>
-              <Route path="/login/" element={<Login />}></Route>
-              <Route path="/signup/" element={<SignUp />}></Route>
-              <Route path="/logout/" element={<Logout />}></Route>
-              <Route path="/main/" element={<MainPage />}></Route>
-              <Route path="/findPassword/" element={<FindPassword />}></Route>
-              <Route path="/tutorial/" element={<Tutorial />}></Route>
-              <Route path="/dummykakao/" element={<DummyKakao />}></Route>
-              <Route path="/menu/" element={<Menu />}></Route>
-              <Route
-                path="/savetimecapsule/"
-                element={<SavedTimecapsule />}
-              ></Route>
-              <Route path="/participate/" element={<Participate />}></Route>
-              <Route path="/selecttype/" element={<SelectType />}></Route>
-              <Route path="/classic/" element={<ClassicCapsule />}></Route>
-            </Routes>
-          </BrowserRouter>
-        </Provider>
-      </CookiesProvider>
-    </div>
+    <ThemeProvider theme={universeDarkTheme}>
+      <div className="Main">
+        <CookiesProvider>
+          <Provider store={Store}>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<LandingPage />}></Route>
+                <Route path="/user/" element={<CheckPassword />}></Route>
+                <Route path="/user-info/" element={<UserInfoChange />}></Route>
+                <Route path="/shop/" element={<ShopPage />}></Route>
+                <Route
+                  path="/timecapsule/"
+                  element={<TimecapsulePage />}
+                ></Route>
+                <Route path="/card/" element={<Card />}></Route>
+                <Route path="/friend/" element={<Friend />}>
+                  <Route path="list" element={<List />}></Route>
+                  <Route path="request" element={<Request />}></Route>
+                </Route>
+                <Route path="/login/" element={<Login />}></Route>
+                <Route path="/signup/" element={<SignUp />}></Route>
+                <Route path="/logout/" element={<Logout />}></Route>
+                <Route path="/main/" element={<MainPage />}></Route>
+                <Route path="/findPassword/" element={<FindPassword />}></Route>
+                <Route path="/tutorial/" element={<Tutorial />}></Route>
+                <Route path="/dummykakao/" element={<DummyKakao />}></Route>
+                <Route path="/menu/" element={<Menu />}></Route>
+                <Route
+                  path="/savetimecapsule/"
+                  element={<SavedTimecapsule />}
+                ></Route>
+                <Route path="/participate/" element={<Participate />}></Route>
+                <Route path="/selecttype/" element={<SelectType />}></Route>
+                <Route path="/classic/" element={<ClassicCapsule />}></Route>
+              </Routes>
+            </BrowserRouter>
+          </Provider>
+        </CookiesProvider>
+      </div>
+    </ThemeProvider>
   )
 }
 
