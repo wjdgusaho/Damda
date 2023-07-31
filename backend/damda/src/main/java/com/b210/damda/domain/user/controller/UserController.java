@@ -100,7 +100,7 @@ public class UserController {
             loginUser.put("accountType", "ORIGIN");
             loginUser.put("nickname", user.getNickname());
             loginUser.put("profileImage", user.getProfileImage());
-            loginUser.put("coin", user.getCoin());
+            loginUser.put("userNo", user.getUserNo());
 
             DataResponse<Map<String, Object>> response = new DataResponse<>(200, "로그인 성공");
             response.setData(loginUser);
