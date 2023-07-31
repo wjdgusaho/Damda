@@ -17,6 +17,8 @@ public enum CustomExceptionStatus {
     ITEM_NOT_FOUND(-6001, "해당 아이템이 존재하지 않습니다"),
     NOT_TIMECAPSULE(-6002, "타임캠슐이 존재하지 않습니다"),
     NOT_WORK_TIMECAPSULE(-6003, "현재 진행중인 타임캡슐이 없습니다"),
+    NOT_SAVE_TIMECAPSULE(-6004, "저장된 타임캡슐이 없습니다."),
+    NOT_CARD(-6005, "작성된 카드가 없습니다"),
 
 
     //상점 관련

@@ -1,14 +1,13 @@
 package com.b210.damda.domain.entity;
 
+import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
+import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
 import com.b210.damda.domain.dto.ThemeShopDTO;
 import com.b210.damda.domain.dto.TimecapsuleShopDTO;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -16,7 +15,7 @@ import javax.persistence.Id;
 public class Timecapsule {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long timecapsuleNo;
+    private Long timecapsuleNo;
 
     private String openDate;
 
@@ -30,9 +29,9 @@ public class Timecapsule {
 
     private String registDate;
 
-    private long maxFileSize;
+    private Long maxFileSize;
 
-    private long nowFileSize;
+    private Long nowFileSize;
 
     private int maxParticipant;
 
@@ -44,7 +43,11 @@ public class Timecapsule {
 
     private int capsuleIconNo;
 
-    //캡슐 아이콘 no 변경해줘야함!
+    private int goalCard;
+
+    /*
+        상점에서 타임캡슐 목록 불러올경우
+     */
     public TimecapsuleShopDTO toTimecapsuleShopDTO(){
         return TimecapsuleShopDTO.builder()
                 .timecapsuleNo(this.timecapsuleNo)
@@ -55,5 +58,32 @@ public class Timecapsule {
                 .build();
     }
 
+    /*
+        메인화면에서 타임캡슐 목록 불러올경우
+     */
+    public MainTimecapsuleListDTO toMainTimecapsuleListDTO(){
+        return MainTimecapsuleListDTO.builder()
+                .timecapsuleNo(this.timecapsuleNo)
+                .type(this.type)
+                .sDate(this.registDate)
+                .eDate(this.openDate)
+                .name(this.title)
+                .capsuleIconNo(this.capsuleIconNo)
+                .goalCard(this.goalCard)
+                .build();
+    }
+
+    public SaveTimecapsuleListDTO toSaveTimecapsuleListDTO(){
+        return SaveTimecapsuleListDTO.builder()
+                .timecapsuleNo(this.timecapsuleNo)
+                .type(this.type)
+                .startDate(this.registDate)
+                .endDate(this.openDate)
+                .title(this.title)
+                .capsuleIconNo(this.capsuleIconNo)
+                .goalCard(this.goalCard)
+                .curCard(this.goalCard) //저장되었다는건 (이미 목표를 달성했기 때문)
+                .build();
+    }
 
 }

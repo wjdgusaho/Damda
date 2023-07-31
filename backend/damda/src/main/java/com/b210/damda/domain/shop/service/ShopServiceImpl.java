@@ -3,6 +3,8 @@ package com.b210.damda.domain.shop.service;
 import com.b210.damda.domain.dto.*;
 import com.b210.damda.domain.entity.*;
 import com.b210.damda.domain.shop.repository.*;
+import com.b210.damda.domain.timecapsule.repository.TimecapsuleMappingRepository;
+import com.b210.damda.domain.timecapsule.repository.TimecapsuleRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
@@ -11,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
