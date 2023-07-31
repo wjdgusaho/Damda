@@ -131,14 +131,12 @@ const Login = function () {
       },
     })
       .then((response) => {
-        console.log(response)
-
         if (
           response.data.code === -9000 ||
           response.data.code === -9004 ||
           response.data.code === -9005
         ) {
-          alert(response.data.message)
+          setUserdataText(response.data.message)
         } else {
           const { accessToken, refreshToken, accountType } = response.data.data
           setRefreshToken(refreshToken)

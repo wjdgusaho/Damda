@@ -1,18 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
-interface TokenState {
+interface authState {
   accessToken: string | null
   accountType: string
   userInfo: UserInfo
 }
 
-const initialState: TokenState = {
+const initialState: authState = {
   accessToken: null,
   accountType: "",
   userInfo: {
     nickname: "",
-    profileImage: ""
-  }
+    profileImage: "",
+  },
 }
 
 export interface UserInfo {
@@ -38,12 +38,13 @@ export const authSlice = createSlice({
       state.accountType = ""
       state.userInfo = {
         nickname: "",
-        profileImage: ""
+        profileImage: "",
       }
-    }
+    },
   },
 })
 
-export const { SET_TOKEN, DELETE_TOKEN, SET_USER, DELETE_USER } = authSlice.actions
+export const { SET_TOKEN, DELETE_TOKEN, SET_USER, DELETE_USER } =
+  authSlice.actions
 
 export default authSlice.reducer
