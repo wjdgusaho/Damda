@@ -181,7 +181,7 @@ const Login = function () {
 
         <div>
           <div
-            className="text-lilac-300 font-thin relative -top-9"
+            className="text-lilac-300 font-thin relative -top-9 w-48"
             style={{ marginLeft: "-15px" }}
           >
             <button
