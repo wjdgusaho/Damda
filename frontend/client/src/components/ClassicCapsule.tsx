@@ -97,7 +97,7 @@ const CancelBtn = styled(SubmitBtn)`
 
 const BtnWrap = tw.div`
   w-80
-  mt-16
+  my-16
   flex
   justify-evenly
 `
