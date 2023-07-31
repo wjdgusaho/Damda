@@ -95,7 +95,13 @@ const SelectType = function () {
           >
             기록 타임캡슐
           </TypeBtn>
-          <TypeBtn>목표 타임캡슐</TypeBtn>
+          <TypeBtn
+            onClick={() => {
+              navigate("/goal")
+            }}
+          >
+            목표 타임캡슐
+          </TypeBtn>
         </Box>
       </Background>
     </>
