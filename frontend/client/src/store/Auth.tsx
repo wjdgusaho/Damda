@@ -9,6 +9,8 @@ const initialState: authState = {
   accessToken: null,
   userInfo: {
     accountType: "",
+    coin: 0,
+    userNo: 0,
     nickname: "",
     profileImage: "",
   },
@@ -16,6 +18,8 @@ const initialState: authState = {
 
 export interface UserInfo {
   accountType: string
+  coin: number
+  userNo: number
   nickname: string
   profileImage: string
 }
@@ -27,10 +31,8 @@ export const authSlice = createSlice({
     SET_TOKEN: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload
     },
-    SET_USER: (state, action: PayloadAction<string>) => {
-      console.log(action)
-
-      // state.accountType = action.payload
+    SET_USER: (state, action: PayloadAction<UserInfo>) => {
+      state.userInfo = action.payload
     },
     DELETE_TOKEN: (state) => {
       state.accessToken = null
@@ -38,6 +40,8 @@ export const authSlice = createSlice({
     DELETE_USER: (state) => {
       state.userInfo = {
         accountType: "",
+        coin: 0,
+        userNo: 0,
         nickname: "",
         profileImage: "",
       }
