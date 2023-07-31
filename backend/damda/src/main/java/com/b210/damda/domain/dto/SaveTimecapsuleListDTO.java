@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.sql.Timestamp;
 
 @Data
 @Builder
@@ -19,8 +20,8 @@ public class SaveTimecapsuleListDTO {
     private Long timecapsuleNo;
     private String type;
     private String title;
-    private String startDate;
-    private String endDate;
+    private Timestamp startDate;
+    private Timestamp endDate;
     private int capsuleIconNo;
     private int curCard;
     private int goalCard;

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.sql.Timestamp;
 
 @Data
 @Builder
@@ -18,8 +19,8 @@ public class MainTimecapsuleListDTO {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long timecapsuleNo;
     private String type;
-    private String sDate;
-    private String eDate;
+    private Timestamp sDate;
+    private Timestamp eDate;
     private String name;
     private int capsuleIconNo;
     private int curCard;

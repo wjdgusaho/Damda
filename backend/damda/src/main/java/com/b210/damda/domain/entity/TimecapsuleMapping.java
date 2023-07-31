@@ -21,6 +21,7 @@ public class TimecapsuleMapping {
     @JoinColumn(name = "user_no")
     private User user;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isSave;
 
     private boolean isHost;

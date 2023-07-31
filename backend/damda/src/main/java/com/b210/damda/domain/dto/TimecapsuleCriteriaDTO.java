@@ -1,22 +1,18 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.dto;
 
-import com.b210.damda.domain.dto.SaveCapsuleCriteriaDTO;
-import lombok.AllArgsConstructor;
+import com.b210.damda.domain.entity.TimecapsuleCriteria;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.Date;
 
-@Entity
-@Setter  @Getter
+@Data
+@Getter @Setter
 @Builder
-@AllArgsConstructor
-public class TimecapsuleCriteria {
+public class TimecapsuleCriteriaDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long criteriaId;
 
     private String type;
@@ -33,16 +29,18 @@ public class TimecapsuleCriteria {
 
     private String location;
 
-    public TimecapsuleCriteria() {
-
-    }
 
 
-    public SaveCapsuleCriteriaDTO toSaveCapsuleCriteriaDTO(){
-        return SaveCapsuleCriteriaDTO.builder()
+    public TimecapsuleCriteria toEntity(){
+        return TimecapsuleCriteria.builder()
                 .type(this.type)
                 .weatherStatus(this.weatherStatus)
+                .cardInputStart(this.cardInputStart)
+                .cardInputEnd(this.cardInputEnd)
+                .nx(this.nx)
+                .ny(this.ny)
                 .location(this.location)
                 .build();
     }
+
 }

@@ -4,20 +4,27 @@ import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
 import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
 import com.b210.damda.domain.dto.ThemeShopDTO;
 import com.b210.damda.domain.dto.TimecapsuleShopDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
+@AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
+@Builder
 public class Timecapsule {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long timecapsuleNo;
 
-    private String openDate;
+    private Timestamp openDate;
 
     private String type;
 
@@ -25,13 +32,15 @@ public class Timecapsule {
 
     private String description;
 
-    private String removeDate;
+    private Timestamp removeDate;
 
-    private String registDate;
+    private Timestamp registDate;
 
     private Long maxFileSize;
 
-    private Long nowFileSize;
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long nowFileSize = 0L;
 
     private int maxParticipant;
 
@@ -41,9 +50,19 @@ public class Timecapsule {
 
     private boolean penalty;
 
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "integer default 0")
     private int capsuleIconNo;
 
     private int goalCard;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "criteria_id")
+    private TimecapsuleCriteria timecapsuleCriteria;
+
+    public Timecapsule(){
+
+    }
 
     /*
         상점에서 타임캡슐 목록 불러올경우
@@ -81,8 +100,8 @@ public class Timecapsule {
                 .endDate(this.openDate)
                 .title(this.title)
                 .capsuleIconNo(this.capsuleIconNo)
-                .goalCard(this.goalCard)
-                .curCard(this.goalCard) //저장되었다는건 (이미 목표를 달성했기 때문)
+                .goalCard(this.getType().equals("GOAL") ? this.goalCard : null)
+                .curCard(this.getType().equals("GOAL") ? this.goalCard : null) //저장되었다는건 (이미 목표를 달성했기 때문)
                 .build();
     }
 

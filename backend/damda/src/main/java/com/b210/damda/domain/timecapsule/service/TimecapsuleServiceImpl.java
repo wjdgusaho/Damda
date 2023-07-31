@@ -2,6 +2,8 @@ package com.b210.damda.domain.timecapsule.service;
 
 import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
 import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
+import com.b210.damda.domain.dto.TimecapsuleCreateDTO;
+import com.b210.damda.domain.dto.TimecapsuleDTO;
 import com.b210.damda.domain.entity.Timecapsule;
 import com.b210.damda.domain.entity.TimecapsuleCard;
 import com.b210.damda.domain.entity.TimecapsuleCriteria;
@@ -10,6 +12,7 @@ import com.b210.damda.domain.timecapsule.repository.TimecapsuleCardRepository;
 import com.b210.damda.domain.timecapsule.repository.TimecapsuleCriteriaRepository;
 import com.b210.damda.domain.timecapsule.repository.TimecapsuleMappingRepository;
 import com.b210.damda.domain.timecapsule.repository.TimecapsuleRepository;
+import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +21,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -33,7 +36,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final TimecapsuleRepository timecapsuleRepository;
     private final TimecapsuleCardRepository timecapsuleCardRepository;
     private final TimecapsuleCriteriaRepository timecapsuleCriteriaRepository;
+    private final UserRepository userRepository;
 
+    private final int MAX_PARTICIOPANT = 10;
+    private final Long MAX_FILESIZE = 100L;
     /*
         유저 정보 불러오기
      */
@@ -141,16 +147,84 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             Timecapsule timecapsule = timecapsuleMapping.getTimecapsule();
             SaveTimecapsuleListDTO saveTimecapsule = timecapsule.toSaveTimecapsuleListDTO();
             //GOAL 일경우 카드 작성 조건 추가
-            if(timecapsule.getType().equals("GOAL")) {
-                saveTimecapsule.setCriteria(
-                        timecapsuleCriteriaRepository.findByTimecapsuleTimecapsuleNo(
-                                timecapsule.getTimecapsuleNo()
-                        ).toSaveCapsuleCriteriaDTO()
-                );
-            }
+//            if(timecapsule.getType().equals("GOAL")) {
+//                saveTimecapsule.setCriteria(
+//                        timecapsuleCriteriaRepository.findByTimecapsuleTimecapsuleNo(
+//                                timecapsule.getTimecapsuleNo()
+//                        ).toSaveCapsuleCriteriaDTO()
+//                );
+//            }
             saveTimecapsuleList.add(saveTimecapsule);
         }
 
         return saveTimecapsuleList;
+    }
+
+    @Override
+    public TimecapsuleDTO createTimecapsule(TimecapsuleCreateDTO timecapsuleCreateDTO) {
+
+         //DTO Entitiy 변환
+         Timecapsule createTimecapsule = timecapsuleCreateDTO.toEntity();
+
+         //타임캡슐 추가 기본값 세팅
+         createTimecapsule.setRegistDate(
+                 Timestamp.valueOf(LocalDateTime.now().withSecond(0).withNano(0))
+         );
+         createTimecapsule.setMaxFileSize(MAX_FILESIZE);
+         createTimecapsule.setMaxParticipant(MAX_PARTICIOPANT);
+         createTimecapsule.setInviteCode(createKey());
+         createTimecapsule.setCapsuleIconNo(new Random().nextInt(10));
+
+         //타임캡슐 저장 후 No값 받아오기
+         Timecapsule saveTimecapsule = timecapsuleRepository.save(createTimecapsule);
+
+         //타임캡슐 생성 에러발생
+         if(saveTimecapsule.getTimecapsuleNo() == null){
+
+         }
+
+         if(timecapsuleCreateDTO.getType().equals("GOAL")){
+             //카드 작성 요일 등록
+             if(timecapsuleCreateDTO.getCardInputDay() != null){
+
+             }
+             //벌칙 추가
+             if(timecapsuleCreateDTO.getTimecapsulePenalty() != null){
+
+             }
+         }
+
+         //타임캡슐 유저 맵핑
+         Long userNo = getUserNo();
+         TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping();
+         timecapsuleMapping.setUser(userRepository.findByUserNo(userNo));
+         timecapsuleMapping.setTimecapsule(saveTimecapsule);
+         timecapsuleMapping.setHost(true);
+
+         // 저장
+         TimecapsuleMapping saveMapping = timecapsuleMappingRepository.save(timecapsuleMapping);
+
+         // 저장 에러
+         if(saveMapping.getTimecapsuleMappingNo() == null){
+
+         }
+ㅉ
+         // 상세페이지 불러오기 
+         // 상세페이지 만들고 리턴해줘야함
+
+        return null;
+    }
+
+    public static String createKey() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        int length = 6;
+        SecureRandom rnd = new SecureRandom();
+
+        StringBuilder key = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            key.append(characters.charAt(rnd.nextInt(characters.length())));
+        }
+
+        return key.toString();
     }
 }
