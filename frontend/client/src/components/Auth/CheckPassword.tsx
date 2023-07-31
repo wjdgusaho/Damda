@@ -32,7 +32,8 @@ export const CheckPassword = function () {
   const handlePwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserPw(event.currentTarget.value)
   }
-  const handlePwSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const getNewToken = GetNewTokens()
+  const handlePwSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (userPw) {
       axios({
@@ -47,18 +48,20 @@ export const CheckPassword = function () {
         },
       })
         .then((response) => {
-          if (!response.data.message) {
-            navigate("/user-info", { state: response.data })
-          } else {
+          console.log(response)
+
+          if (response.data.code === -9004) {
             alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.")
+          } else {
+            navigate("/user-info", { state: response.data })
           }
           setUserPw("")
         })
         .catch(async (error) => {
+          console.log(error)
           if (error.response.data.message === "토큰 만료") {
             try {
-              await GetNewTokens(getCookieToken())
-
+              await getNewToken(getCookieToken())
               handlePwSubmit(event)
             } catch (error) {
               console.log(error)

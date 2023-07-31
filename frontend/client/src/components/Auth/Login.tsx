@@ -131,22 +131,24 @@ const Login = function () {
       },
     })
       .then((response) => {
-        const { accessToken, refreshToken, accountType } = response.data.data
-        setRefreshToken(refreshToken)
-        dispatch(SET_TOKEN(accessToken))
-        dispatch(SET_USER(accountType))
-        navigate("/tutorial")
+        console.log(response)
+
+        if (
+          response.data.code === -9000 ||
+          response.data.code === -9004 ||
+          response.data.code === -9005
+        ) {
+          alert(response.data.message)
+        } else {
+          const { accessToken, refreshToken, accountType } = response.data.data
+          setRefreshToken(refreshToken)
+          dispatch(SET_TOKEN(accessToken))
+          dispatch(SET_USER(accountType))
+          navigate("/tutorial")
+        }
       })
       .catch((error) => {
-        if (error.response.status === 404) {
-          setUserdataText("아이디가 존재하지 않습니다.")
-        } else if (error.response.status === 401) {
-          setUserdataText("비밀번호가 올바르지 않습니다.")
-        } else if (error.response.status === 410) {
-          setUserdataText("탈퇴한 회원입니다.")
-        } else {
-          console.error(error)
-        }
+        console.error(error)
       })
   }
 
