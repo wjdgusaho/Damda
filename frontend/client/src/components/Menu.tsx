@@ -17,7 +17,6 @@ const UserData = {
 const Background = styled.div`
   background-image: url("../../Background.png");
   background-size: 540px;
-  /* background-position: center; */
   background-position-x: center;
   background-position-y: 60px;
   background-repeat: no-repeat;
@@ -29,24 +28,27 @@ const Box = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #e4e6f5;
+  color: ${(props) => props.theme.colorCommon};
   font-family: "Pretendard";
 `
 
 const MenuBtn = styled.button`
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: ${(props) => props.theme.color50};
+  opacity: 80%;
   width: 297px;
   height: 70px;
   font-size: 20px;
   border-radius: 15px;
-  color: #fff;
-  font-weight: 100;
+  color: ${(props) => props.theme.colorCommon};
+  font-weight: 400;
   margin-bottom: 25px;
-  box-shadow: 0px 4px 4px #45345c;
+  box-shadow: 0px 4px 4px ${(props) => props.theme.color700};
 `
 
 const LogoutBtn = styled(MenuBtn)`
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: ${(props) => props.theme.color900};
+  opacity: 70%;
+  color: ${(props) => props.theme.color100};
 `
 
 const CloseBtn = styled(MenuBtn)`

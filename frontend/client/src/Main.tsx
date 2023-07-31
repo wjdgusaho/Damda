@@ -26,8 +26,14 @@ import { UserInfoChange } from "./components/Auth/UserInfoChange"
 import SelectType from "./components/SelectType"
 import ClassicCapsule from "./components/ClassicCapsule"
 import { ThemeProvider } from "styled-components"
-import { universeDarkTheme, universeLightTheme } from "./theme"
+import {
+  universeDarkTheme,
+  universeLightTheme,
+  heartTheme,
+  marbleTheme,
+} from "./theme"
 import RecordCapsule from "./components/RecordCapsule"
+
 
 function Main() {
   return (

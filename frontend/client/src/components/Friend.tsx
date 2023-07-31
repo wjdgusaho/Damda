@@ -9,7 +9,7 @@ const Friend = function () {
   return (
     <div>
       <SubHeader></SubHeader>
-      <div className="text-white">
+      <div>
         <div className="text-center mt-10">
           <TextStyle className="text-xl">내 친구</TextStyle>
         </div>
@@ -125,27 +125,16 @@ const RequestCard = function ({ friend }: { friend: FriendType }) {
   )
 }
 
-const TextStyle7 = styled.div`
-  font-family: "pretendard";
-  font-weight: 700;
-`
-const TextStyle5 = styled.div`
-  font-family: "pretendard";
-  font-weight: 500;
-`
-const TextStyle3 = styled.div`
-  font-family: "pretendard";
-  font-weight: 300;
-`
 const TextStyle = styled.div`
   font-family: "pretendard";
   font-weight: 400;
+  color: ${(props) => props.theme.colorCommon};
 `
 const CapsuleShadow = styled.div`
   width: 205px;
   height: 80px;
   border-radius: 50%;
-  background: #513a71;
+  background: ${(props) => props.theme.colorShadow};
   filter: blur(5px);
 `
 
@@ -154,7 +143,7 @@ const NavLink2 = styled(NavLink)`
   text-decoration: none;
   font-family: "pretendard";
   font-weight: 200;
-  color: #ffffffac;
+  color: ${(props) => props.theme.colorCommon};
   transition: color 0.2s;
   display: inline-flex;
   align-items: center; /* Align the text and underline vertically */
@@ -162,7 +151,7 @@ const NavLink2 = styled(NavLink)`
   justify-content: center;
   &.active {
     font-weight: 400;
-    color: #ffffff;
+    color: ${(props) => props.theme.colorCommon};
 
     &::after {
       content: "";
@@ -170,7 +159,7 @@ const NavLink2 = styled(NavLink)`
       bottom: -10px; /* Adjust the value to control the underline's position */
       width: 100%;
       height: 1px;
-      background-color: #ffffff;
+      background-color: ${(props) => props.theme.colorCommon};
     }
   }
 `
