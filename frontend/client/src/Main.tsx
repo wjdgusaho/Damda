@@ -32,6 +32,8 @@ import {
   heartTheme,
   marbleTheme,
 } from "./theme"
+import RecordCapsule from "./components/RecordCapsule"
+
 
 function Main() {
   return (
@@ -69,6 +71,7 @@ function Main() {
                 <Route path="/participate/" element={<Participate />}></Route>
                 <Route path="/selecttype/" element={<SelectType />}></Route>
                 <Route path="/classic/" element={<ClassicCapsule />}></Route>
+                <Route path="/record/" element={<RecordCapsule />}></Route>
               </Routes>
             </BrowserRouter>
           </Provider>
