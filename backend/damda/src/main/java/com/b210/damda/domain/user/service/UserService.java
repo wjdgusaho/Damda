@@ -90,7 +90,7 @@ public class UserService {
     public Map<String, Object> login(String email, String password) {
 
         Optional<User> findUser = Optional.ofNullable(userRepository.findByEmail(email)
-                .orElseThrow(() -> new CommonException(CustomExceptionStatus.EMAIL_NOT_FOUND)));
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
 
         User user = findUser.get();
 
@@ -154,18 +154,14 @@ public class UserService {
 
     // 로그아웃 처리
     @Transactional
-    public int logout(String token) {
+    public void logout(String token) {
         String parsingToken = token.split(" ")[1];
+
         Optional<RefreshToken> byRefreshToken = refreshTokenRepository.findByRefreshToken(parsingToken);
+
         RefreshToken refreshToken = byRefreshToken.get(); // 유저의 리프레시 토큰 꺼냄.
         refreshToken.setRefreshToken("");
         RefreshToken save = refreshTokenRepository.save(refreshToken);
-
-        if (save.getRefreshToken().equals("")) { //리프레시 토큰이 만료됐으면
-            return 1;
-        } else { // 리프레시 토큰 만료 실패했으면
-            return 0;
-        }
     }
 
     // 회원가입 인증번호 확인
@@ -230,41 +226,40 @@ public class UserService {
 
     // 유저 비밀번호 재설정
     @Transactional
-    public int newPassword(UserUpdateDTO userUpdateDTO){
+    public void newPassword(UserUpdateDTO userUpdateDTO){
         String email = userUpdateDTO.getEmail();
         String userPw = userUpdateDTO.getUserPw();
 
-        Optional<User> byEmail = userRepository.findByEmail(email);
-        if(byEmail.isEmpty()){
-            return 1;
-        }else{
-            User user = byEmail.get();
-            if(encoder.matches(userPw, user.getUserPw())){
-                return 2;
-            }
-            user.updatePassword(encoder.encode(userPw));
-            userRepository.save(user);
-            return 3;
+        Optional<User> byEmail = Optional.ofNullable(userRepository.findByEmail(email)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
+
+        User user = byEmail.get();
+
+        if(encoder.matches(userPw, user.getUserPw())){
+            throw new CommonException(CustomExceptionStatus.SAME_PASSWORD);
         }
+
+        user.updatePassword(encoder.encode(userPw));
+        userRepository.save(user);
     }
 
     // 비밀번호 확인
-    public int passwordCheck(String password){
+    public void passwordCheck(String password){
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         Long userNo = (Long) principal;
-        Optional<User> byId = userRepository.findById(userNo);
-        if(byId.isEmpty()){ // 해당 유저가 없음
-            return 4001;
-        }else{
-            User user = byId.get();
-            if(encoder.matches(password, user.getUserPw())){ // 비밀번호 일치하면
-                return 200;
-            }else { // 비밀번호 일치하지 않으면
-                return 4002;
-            }
+
+        Optional<User> byId = Optional.ofNullable(userRepository.findById(userNo)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
+
+        User user = byId.get();
+
+        if(!encoder.matches(password, user.getUserPw())){
+            throw new CommonException(CustomExceptionStatus.NOT_MATCH_PASSWORD);
         }
     }
+
 
     // 회원 검색
     public List<UserSearchResultDTO> userSearch(String query, String type){
@@ -311,33 +306,28 @@ public class UserService {
 
     @Transactional
     // 유저 정보 업데이트
-    public int userInfoUpdate(UserUpdateDTO userUpdateDTO, MultipartFile multipartFile){
+    public void userInfoUpdate(UserUpdateDTO userUpdateDTO, MultipartFile multipartFile){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         Long userNo = (Long) principal;
 
-        Optional<User> byId = userRepository.findById(userNo);
-        if(byId.isEmpty()){
-            return 1;
-        }else{
-            User user = byId.get();
+        Optional<User> byId = Optional.ofNullable(userRepository.findById(userNo)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
 
-            if(!multipartFile.isEmpty()){
-                String uri = fileStoreService.storeFile(multipartFile);
-                user.updateprofileImage(uri);
-            }
-            if(!userUpdateDTO.getUserPw().equals("")){
-                String encode = encoder.encode(userUpdateDTO.getUserPw());
-                user.updatePassword(encode);
-            }
-            user.updateNickname(userUpdateDTO.getNickname());
-            User save = userRepository.save(user);
-            if(save != null){
-                return 2;
-            }else{
-                return 3;
-            }
+        User user = byId.get();
+
+        if(!multipartFile.isEmpty()){
+            String uri = fileStoreService.storeFile(multipartFile);
+            user.updateprofileImage(uri);
         }
+
+        if(!userUpdateDTO.getUserPw().equals("")){
+            String encode = encoder.encode(userUpdateDTO.getUserPw());
+            user.updatePassword(encode);
+        }
+
+        user.updateNickname(userUpdateDTO.getNickname());
+        userRepository.save(user);
     }
 
     @Transactional
@@ -346,11 +336,16 @@ public class UserService {
         Object principal = authentication.getPrincipal();
         Long userNo = (Long) principal;
 
-        Optional<User> byId = userRepository.findById(userNo);
+        Optional<User> byId = Optional.ofNullable(userRepository.findById(userNo)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
+
         User user = byId.get();
-        RefreshToken referenceById = refreshTokenRepository.getReferenceById(user.getUserNo());
-        referenceById.setRefreshToken("");
-        refreshTokenRepository.save(referenceById);
+
+        Optional<RefreshToken> byUserUserNo = refreshTokenRepository.findByUserUserNo(user.getUserNo());
+
+        RefreshToken refreshToken = byUserUserNo.get();
+        refreshToken.setRefreshToken("");
+        refreshTokenRepository.save(refreshToken);
 
         user.insertDeleteDate();
         userRepository.save(user);
