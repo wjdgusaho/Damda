@@ -44,7 +44,7 @@ public class UserController {
                                     @RequestPart("profileImage") MultipartFile profileImage){
         try {
             User savedUser = userService.regist(userOriginRegistDTO, profileImage);
-            DataResponse<Map<String, Object>> response = new DataResponse<>(201, "회원가입 완료");
+            DataResponse<Map<String, Object>> response = new     DataResponse<>(201, "회원가입 완료");
             return response;
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
@@ -57,13 +57,15 @@ public class UserController {
     @PostMapping("send-email")
     public DataResponse<Map<String, Object>> emailSend(@RequestBody UserOriginRegistDTO userOriginRegistDTO) throws Exception {
         try {
-
             String email = userOriginRegistDTO.getEmail();
             User user = userService.fineByUser(email);
             if (user != null) {
                 return new DataResponse<>(409, "이미 가입된 이메일입니다.");
             } else {
                 String key = emailService.sendSimpleMessageRegist(email);
+
+                emailService.registTempKey(key, email);
+
                 return new DataResponse<>(200, "인증번호 전송 성공");
             }
         }catch (CommonException e){

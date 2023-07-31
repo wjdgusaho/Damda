@@ -153,7 +153,7 @@ public class EmailServiceImpl implements EmailService {
                 .email(email)
                 .verificationCode(key)
                 .createTime(LocalDateTime.now())
-                .expiryTime(LocalDateTime.now().plusSeconds(20))
+                .expiryTime(LocalDateTime.now().plusMinutes(10))
                 .build();
 
         SignupEmailLog save = signupEmailLogRepository.save(build);

@@ -27,29 +27,32 @@ const Button = tw.button`bg-lilac-100 ml-24 text-black shadow-md w-48 border rou
 
 export const CheckPassword = function () {
   const [userPw, setUserPw] = useState("")
-  const token = useSelector((state: RootState) => state.auth.accessToken)
+  let Token = useSelector((state: RootState) => state.auth.accessToken)
   const navigate = useNavigate()
   const handlePwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserPw(event.currentTarget.value)
   }
   const getNewToken = GetNewTokens()
-  const handlePwSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+
+  const handlePwSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+    restart = true
+  ) => {
     event.preventDefault()
+
     if (userPw) {
       axios({
         method: "POST",
         url: serverUrl + "user/info",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
+          Authorization: "Bearer " + Token,
         },
         data: {
           userPw: userPw,
         },
       })
         .then((response) => {
-          console.log(response)
-
           if (response.data.code === -9004) {
             alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.")
           } else {
@@ -58,11 +61,12 @@ export const CheckPassword = function () {
           setUserPw("")
         })
         .catch(async (error) => {
-          console.log(error)
-          if (error.response.data.message === "토큰 만료") {
+          // 문제지점
+          console.log("비번에러 " + error)
+          if (error.response.data.message === "토큰 만료" && restart) {
             try {
               await getNewToken(getCookieToken())
-              handlePwSubmit(event)
+              handlePwSubmit(event, false)
             } catch (error) {
               console.log(error)
             }
