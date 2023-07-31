@@ -95,8 +95,12 @@ public class UserController {
     public DataResponse<Map<String, Object>> login(@RequestBody UserLoginDTO userLoginDTO){
         try {
             Map<String, Object> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getUserPw());
+            User user = userService.fineByUser(userLoginDTO.getEmail());
 
             loginUser.put("accountType", "ORIGIN");
+            loginUser.put("nickname", user.getNickname());
+            loginUser.put("profileImage", user.getProfileImage());
+
             DataResponse<Map<String, Object>> response = new DataResponse<>(200, "로그인 성공");
             response.setData(loginUser);
 
@@ -184,7 +188,8 @@ public class UserController {
     @PostMapping("info")
     public DataResponse<Map<String, Object>> passwordCheck(@RequestBody UserLoginDTO userLoginDTO){
         try {
-            userService.passwordCheck(userLoginDTO.getUserPw());
+            User user = userService.passwordCheck(userLoginDTO.getUserPw());
+
             return new DataResponse<>(200, "비밀번호가 일치합니다.");
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
