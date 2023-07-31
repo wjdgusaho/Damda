@@ -4,7 +4,7 @@ import { serverUrl } from "../../urls"
 import { setRefreshToken } from "../../store/Cookie"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { SET_ACCOUNT_TYPE, SET_TOKEN } from "../../store/Auth"
+import { SET_USER, SET_TOKEN } from "../../store/Auth"
 
 export const DummyKakao = () => {
   const navigate = useNavigate()
@@ -29,7 +29,7 @@ export const DummyKakao = () => {
           if (response.data.accessToken) {
             setRefreshToken(response.data.refreshToken)
             dispatch(SET_TOKEN(response.data.accessToken))
-            dispatch(SET_ACCOUNT_TYPE(response.data.accountType))
+            dispatch(SET_USER(response.data.accountType))
             navigate("/main")
           } else {
             const data = {

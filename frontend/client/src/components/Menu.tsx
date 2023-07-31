@@ -3,7 +3,7 @@ import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
 import { useNavigate } from "react-router"
-import { Store } from "../store/Store"
+// import { Store } from "../store/Store"
 
 const UserData = {
   // 주작된 데이터

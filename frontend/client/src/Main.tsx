@@ -1,13 +1,13 @@
 import React from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import { RootState, Store } from "./store/Store"
+import { RootState } from "./store/Store"
+import Store from "./store/Store"
 import { Provider, useSelector } from "react-redux"
 import { CookiesProvider } from "react-cookie"
 
 import MainPage from "./components/MainPage"
 import { CheckPassword } from "./components/Auth/CheckPassword"
 import ShopPage from "./components/ShopPage"
-import { Sticker, Theme, Capsule } from "./components/ShopPage"
 import TimecapsulePage from "./components/TimecapsulePage"
 import Card from "./components/Card"
 import Friend from "./components/Friend"
@@ -27,8 +27,6 @@ import SelectType from "./components/SelectType"
 import ClassicCapsule from "./components/ClassicCapsule"
 
 function Main() {
-  const {nickname, profileImage} = useSelector((state:RootState) => state.auth.userInfo)
-
   return (
     <div className="Main">
       <CookiesProvider>
@@ -37,15 +35,8 @@ function Main() {
             <Routes>
               <Route path="/" element={<LandingPage />}></Route>
               <Route path="/user/" element={<CheckPassword />}></Route>
-              <Route
-                path="/user-info/"
-                element={<UserInfoChange nickname={nickname} profileImage={profileImage} />}
-              ></Route>
-              <Route path="/shop/" element={<ShopPage />}>
-                <Route path="sticker" element={<Sticker />}></Route>
-                <Route path="theme" element={<Theme />}></Route>
-                <Route path="capsule" element={<Capsule />}></Route>
-              </Route>
+              <Route path="/user-info/" element={<UserInfoChange />}></Route>
+              <Route path="/shop/" element={<ShopPage />}></Route>
               <Route path="/timecapsule/" element={<TimecapsulePage />}></Route>
               <Route path="/card/" element={<Card />}></Route>
               <Route path="/friend/" element={<Friend />}>
