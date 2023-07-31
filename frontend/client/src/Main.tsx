@@ -35,7 +35,7 @@ import {
 
 function Main() {
   return (
-    <ThemeProvider theme={heartTheme}>
+    <ThemeProvider theme={universeDarkTheme}>
       <div className="Main">
         <CookiesProvider>
           <Provider store={Store}>

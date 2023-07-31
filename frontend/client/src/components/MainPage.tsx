@@ -2,7 +2,7 @@ import React from "react"
 import { MainHeader } from "./inc/MainHeader"
 import { SubHeader } from "./inc/SubHeader"
 
-import { styled } from "styled-components"
+import { ThemeProvider, styled } from "styled-components"
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
@@ -34,7 +34,7 @@ const capsuleList: CapsuleType[] = [
     sDate: "2023-01-01",
     eDate: "2023-06-01",
     name: "클래식1",
-    imgsrc: "assets/Planet-6.png",
+    imgsrc: "capsule1",
     curCard: 0,
     goalCard: 0,
   },
@@ -44,7 +44,7 @@ const capsuleList: CapsuleType[] = [
     sDate: "2023-01-01",
     eDate: "2023-06-01",
     name: "클래식1",
-    imgsrc: "assets/Planet-6.png",
+    imgsrc: "capsule2",
     curCard: 0,
     goalCard: 0,
   },
@@ -54,7 +54,7 @@ const capsuleList: CapsuleType[] = [
     sDate: "2023-01-01",
     eDate: "2024-01-01",
     name: "목표1",
-    imgsrc: "assets/Planet-5.png",
+    imgsrc: "capsule3",
     curCard: 50,
     goalCard: 100,
   },
@@ -64,7 +64,7 @@ const capsuleList: CapsuleType[] = [
     sDate: "2023-01-01",
     eDate: "2023-02-30",
     name: "기록1",
-    imgsrc: "assets/Planet-7.png",
+    imgsrc: "capsule1",
     curCard: 0,
     goalCard: 0,
   },
@@ -147,9 +147,8 @@ const MainPage = function () {
                         <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-white absolute"></div>
                       )}
                       <FloatingImage
-                        className="h-52 m-auto mt-20"
-                        src={c.imgsrc}
-                        alt="타임캡슐"
+                        capsuleNum={c.imgsrc}
+                        className="h-52 m-auto mt-10"
                       />
                     </div>
                   )}
@@ -158,9 +157,8 @@ const MainPage = function () {
                     <div>
                       <Dday className="m-auto !opacity-80 mt-2">NEW!</Dday>
                       <FloatingImage
-                        className="h-52 m-auto mt-24 grayscale"
-                        src={c.imgsrc}
-                        alt="타임캡슐"
+                        capsuleNum={c.imgsrc}
+                        className="h-52 m-auto mt-14 grayscale"
                       />
                     </div>
                   )}
@@ -248,11 +246,13 @@ const MakeCapsuleCode = styled.div`
   }
 `
 
-const FloatingImage = styled.img`
-  /* 기본 위치를 설정합니다. */
+const FloatingImage = styled.div<{ capsuleNum: string }>`
   position: relative;
-  top: 0;
-
+  background-image: url(${(props) => props.theme[props.capsuleNum]});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 250px;
+  height: 250px;
   @keyframes floatingAnimation {
     0% {
       transform: translateY(0); /* 시작 위치 (위치 이동 없음) */
@@ -272,7 +272,7 @@ const Dday = styled.div`
   background: ${(props) => props.theme.colorDday};
   background-clip: text; /* 텍스트 색상을 배경에 맞추기 위해 설정 */
   -webkit-background-clip: text; /* 크로스 브라우저 지원을 위해 -webkit- 접두사 사용 (일부 브라우저에 필요) */
-  color: transparent; /* 텍스트 색상을 투명하게 설정 */
+  color: transparent;
   font-size: 40px;
 `
 

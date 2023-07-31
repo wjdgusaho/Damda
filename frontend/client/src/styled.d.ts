@@ -18,5 +18,15 @@ declare module "styled-components" {
     colorEtc: string
     colorCommon: string
     colorShadow: string
+    capsule1: string
+    capsule2: string
+    capsule3: string
+    capsule4: string
+    capsule5: string
+    capsule6: string
+    capsule7: string
+    capsule8: string
+    capsule9: string
+    capsule10: string
   }
 }

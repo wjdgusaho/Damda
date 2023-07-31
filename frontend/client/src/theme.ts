@@ -2,6 +2,7 @@ import { DefaultTheme } from "styled-components"
 
 export const universeDarkTheme: DefaultTheme = {
   colorTheme: "linear-gradient(180deg, #090634 0%, #9173AE 100%)",
+  colorDday: "linear-gradient(90deg, #A247C1 -19.12%, #FFB86C 80.65%)",
   colorProgressBar: "linear-gradient(90deg, #a247c1 -19.12%, #ffb86c 117.65%)",
   color50: "#fbf8fc",
   color100: "#f6eef9",
@@ -16,7 +17,16 @@ export const universeDarkTheme: DefaultTheme = {
   colorEtc: "#F8BFD5",
   colorShadow: "#513A71",
   colorCommon: "white",
-  infoImg_sm: "../../assets/universe/Planet-1.png",
+  capsule1: "assets/universe/Planet-1.png",
+  capsule2: "assets/universe/Planet-2.png",
+  capsule3: "assets/universe/Planet-3.png",
+  capsule4: "assets/universe/Planet-4.png",
+  capsule5: "assets/universe/Planet-5.png",
+  capsule6: "assets/universe/Planet-6.png",
+  capsule7: "assets/universe/Planet-7.png",
+  capsule8: "assets/universe/Planet-8.png",
+  capsule9: "assets/universe/Planet-9.png",
+  capsule10: "assets/universe/Planet-10.png",
 }
 
 export const universeLightTheme: DefaultTheme = {
@@ -36,6 +46,16 @@ export const universeLightTheme: DefaultTheme = {
   colorEtc: "#E84B5F",
   colorShadow: "#BCBFD6",
   colorCommon: "black",
+  capsule1: "assets/universe/Planet-1.png",
+  capsule2: "assets/universe/Planet-1.png",
+  capsule3: "assets/universe/Planet-1.png",
+  capsule4: "assets/universe/Planet-1.png",
+  capsule5: "assets/universe/Planet-1.png",
+  capsule6: "assets/universe/Planet-1.png",
+  capsule7: "assets/universe/Planet-1.png",
+  capsule8: "assets/universe/Planet-1.png",
+  capsule9: "assets/universe/Planet-1.png",
+  capsule10: "assets/universe/Planet-1.png",
 }
 export const heartTheme: DefaultTheme = {
   colorTheme:
@@ -56,9 +76,20 @@ export const heartTheme: DefaultTheme = {
   colorEtc: "#FF6766",
   colorShadow: "rgba(0, 0, 0, 0.12)",
   colorCommon: "black",
+  capsule1: "assets/universe/Planet-1.png",
+  capsule2: "assets/universe/Planet-1.png",
+  capsule3: "assets/universe/Planet-1.png",
+  capsule4: "assets/universe/Planet-1.png",
+  capsule5: "assets/universe/Planet-1.png",
+  capsule6: "assets/universe/Planet-1.png",
+  capsule7: "assets/universe/Planet-1.png",
+  capsule8: "assets/universe/Planet-1.png",
+  capsule9: "assets/universe/Planet-1.png",
+  capsule10: "assets/universe/Planet-1.png",
 }
 export const marbleTheme: DefaultTheme = {
   colorTheme: "linear-gradient(180deg, #939ABC 0%, #EFDFCC 100%)",
+  colorDday: "black",
   colorProgressBar: "linear-gradient(180deg, #090634 0%, #9173AE 100%)",
   color50: "#F4F6F9",
   color100: "#DBE0EA",
@@ -73,4 +104,14 @@ export const marbleTheme: DefaultTheme = {
   colorEtc: "#FFF6D5",
   colorShadow: "rgba(0, 0, 0, 0.12)",
   colorCommon: "black",
+  capsule1: "assets/universe/Planet-1.png",
+  capsule2: "assets/universe/Planet-1.png",
+  capsule3: "assets/universe/Planet-1.png",
+  capsule4: "assets/universe/Planet-1.png",
+  capsule5: "assets/universe/Planet-1.png",
+  capsule6: "assets/universe/Planet-1.png",
+  capsule7: "assets/universe/Planet-1.png",
+  capsule8: "assets/universe/Planet-1.png",
+  capsule9: "assets/universe/Planet-1.png",
+  capsule10: "assets/universe/Planet-1.png",
 }
