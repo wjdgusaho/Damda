@@ -210,9 +210,18 @@ public class UserController {
     @PatchMapping("info")
     public DataResponse<Map<String, Object>> userInfoUpdate(@RequestPart("user") UserUpdateDTO userUpdateDTO,
                                             @RequestPart("profileImage") MultipartFile profileImage){
+
         try {
-            userService.userInfoUpdate(userUpdateDTO, profileImage);
-            return new DataResponse<>(200, "회원정보 변경에 성공하였습니다.");
+            User user = userService.userInfoUpdate(userUpdateDTO, profileImage);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("nickname", user.getNickname());
+            result.put("profileImage", user.getProfileImage());
+
+            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "회원정보 변경에 성공하였습니다.");
+            response.setData(result);
+            
+            return response;
 
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());

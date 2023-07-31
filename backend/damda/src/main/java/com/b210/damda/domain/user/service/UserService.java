@@ -70,6 +70,7 @@ public class UserService {
             fileUri = "profile.jpg";
         }else{
             fileUri = fileStoreService.storeFile(multipartFile);
+            System.out.println(fileUri);
         }
         String encode = encoder.encode(userOriginRegistDTO.getUserPw()); // 비밀번호 암호화
 
@@ -308,7 +309,7 @@ public class UserService {
 
     @Transactional
     // 유저 정보 업데이트
-    public void userInfoUpdate(UserUpdateDTO userUpdateDTO, MultipartFile multipartFile){
+    public User userInfoUpdate(UserUpdateDTO userUpdateDTO, MultipartFile multipartFile){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         Long userNo = (Long) principal;
@@ -329,7 +330,8 @@ public class UserService {
         }
 
         user.updateNickname(userUpdateDTO.getNickname());
-        userRepository.save(user);
+        User save = userRepository.save(user);
+        return save;
     }
 
     @Transactional
