@@ -5,7 +5,6 @@ import { serverUrl } from "../../urls"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
-import { UserInfo } from "../../store/Auth"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
