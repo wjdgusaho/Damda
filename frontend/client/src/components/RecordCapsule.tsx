@@ -43,6 +43,14 @@ const InputBox = styled.input`
   font-weight: 200;
 `
 
+const SelectBox = styled.select`
+  background-color: rgb(255, 255, 255, 0);
+  border-bottom: 2px solid rgb(255, 255, 255, 0.83);
+  height: 50px;
+  outline: none;
+  font-weight: 200;
+`
+
 const ContentWrap = tw.div`
     flex
     justify-start
@@ -97,7 +105,7 @@ const CancelBtn = styled(SubmitBtn)`
 
 const BtnWrap = tw.div`
   w-80
-  mt-16
+  my-16
   flex
   justify-evenly
 `
@@ -112,7 +120,7 @@ const RecordCapsule = function () {
     <>
       <SubHeader />
       <Box className="w-80 m-auto">
-        <Title>클래식 타임캡슐을 만들어요</Title>
+        <Title>기록 타임캡슐을 만들어요</Title>
         <ContentWrap>
           <Content>
             이름
@@ -189,6 +197,52 @@ const RecordCapsule = function () {
             name="time"
           />
           <RadioBtn htmlFor="night">밤</RadioBtn>
+        </div>
+        <ContentWrap>
+          <Content>
+            캡슐 공개위치
+            <span>특정 위치에만 열리도록 설정해요</span>
+          </Content>
+        </ContentWrap>
+        <div className="flex justify-between w-80">
+          {/* 일단 임시로 이렇게 둠 */}
+          <SelectBox className="w-36" name="region" id="region">
+            <option value="seoul">서울시</option>
+            <option value="gyeonggi">경기도</option>
+          </SelectBox>
+          <SelectBox className="w-36" name="region" id="region">
+            <option>강남구</option>
+            <option>강동구</option>
+          </SelectBox>
+        </div>
+        <ContentWrap>
+          <Content>
+            캡슐 공개날씨
+            <span>특정 날씨에만 열리도록 설정해요</span>
+          </Content>
+        </ContentWrap>
+        <div className="w-80 mt-6 flex justify-evenly">
+          <input
+            style={{ display: "none" }}
+            type="radio"
+            id="weather_none"
+            name="weather"
+          />
+          <RadioBtn htmlFor="weather_none">없음</RadioBtn>
+          <input
+            style={{ display: "none" }}
+            type="radio"
+            id="snow"
+            name="weather"
+          />
+          <RadioBtn htmlFor="snow">눈</RadioBtn>
+          <input
+            style={{ display: "none" }}
+            type="radio"
+            id="rain"
+            name="weather"
+          />
+          <RadioBtn htmlFor="rain">비</RadioBtn>
         </div>
         <BtnWrap>
           <CancelBtn
