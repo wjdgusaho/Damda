@@ -103,19 +103,77 @@ const BtnWrap = tw.div`
   justify-evenly
 `
 
+const RandomWrap = styled.div`
+  position: absolute;
+  top: -40px;
+  right: -145px;
+  display: flex;
+  align-items: center;
+`
+
+const CustomBtn = styled.button`
+  width: 90px;
+  height: 31px;
+  border-radius: 15px;
+  background-color: rgb(255, 255, 255, 0.29);
+  font-weight: 100;
+  margin-left: 20px;
+`
+
+const penalty = [
+  "엉덩이로 이름쓰기",
+  "스쿼트 10개 하기",
+  "카페 음료 돌리기",
+  "까나리 액젓 먹기",
+  "앞에 나가서 노래부르기",
+]
+
+interface DataItem {
+  id: number
+  title: string
+}
+
 const GoalCapsule = function () {
   let [isHelp, setIsHelp] = useState(false)
+  let [isCustom, setIsCustom] = useState(true)
   const navigate = useNavigate()
-  let [isDisabled, setIsDisabled] = useState(false)
-  let [isChecked, setIsChecked] = useState(false)
-  let [checkedValue, setCheckedValue] = useState("")
 
-  const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value
-    setCheckedValue(value)
-    if (value === "없음") {
-      setIsDisabled(!isDisabled)
+  const data: DataItem[] = [
+    { id: 0, title: "없음" },
+    { id: 1, title: "월" },
+    { id: 2, title: "화" },
+    { id: 3, title: "수" },
+    { id: 4, title: "목" },
+    { id: 5, title: "금" },
+    { id: 6, title: "토" },
+    { id: 7, title: "일" },
+  ]
+
+  // 체크된 아이템을 담을 배열
+  const [checkItems, setCheckItems] = useState<number[]>([])
+
+  const handleCheckboxChange = (id: number) => {
+    if (id === 0) {
+      setCheckItems([0])
+    } else {
+      // If "없음" is not selected, remove it from checkItems if present
+      const updatedCheckItems = checkItems.filter((item) => item !== 0)
+
+      // Toggle other checkboxes on/off
+      if (updatedCheckItems.includes(id)) {
+        setCheckItems(updatedCheckItems.filter((item) => item !== id))
+      } else {
+        setCheckItems([...updatedCheckItems, id])
+      }
     }
+  }
+
+  // 랜덤 벌칙
+  const [selectedPenalty, setSelectedPenalty] = useState<string | null>(null)
+
+  const handleButtonClick = () => {
+    const randomIndex = Math.floor(Math.random() * penalty.length)
+    setSelectedPenalty(penalty[randomIndex])
   }
 
   return (
@@ -205,91 +263,51 @@ const GoalCapsule = function () {
           </Content>
         </ContentWrap>
         <div className="mt-6">
-          <input
-            style={{ display: "none" }}
-            type="checkbox"
-            id="card_none"
-            name="day"
-            value="없음"
-            onChange={handleOptionChange}
-          />
-          <RadioBtn htmlFor="card_none">없음</RadioBtn>
-
-          <input
-            style={{ display: "none" }}
-            type="checkbox"
-            id="mon"
-            value="mon"
-            name="day"
-            disabled={isDisabled}
-            checked={checkedValue === "mon"}
-            onChange={handleOptionChange}
-          />
-          <RadioBtn htmlFor="mon">월</RadioBtn>
-
-          <input
-            style={{ display: "none" }}
-            type="checkbox"
-            id="tue"
-            value="tue"
-            name="day"
-            disabled={isDisabled}
-            checked={checkedValue === "tue"}
-            onChange={handleOptionChange}
-          />
-          <RadioBtn htmlFor="tue">화</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="checkbox"
-            id="wed"
-            name="day"
-            disabled={isDisabled}
-            onChange={handleOptionChange}
-            // checked={isChecked}
-          />
-          <RadioBtn htmlFor="wed">수</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="checkbox"
-            id="thu"
-            name="day"
-            disabled={isDisabled}
-            onChange={handleOptionChange}
-            // checked={isChecked}
-          />
-          <RadioBtn htmlFor="thu">목</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="checkbox"
-            id="fri"
-            name="day"
-            disabled={isDisabled}
-            onChange={handleOptionChange}
-            // checked={isChecked}
-          />
-          <RadioBtn className="mt-1" htmlFor="fri">
-            금
-          </RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="checkbox"
-            id="sat"
-            name="day"
-            disabled={isDisabled}
-            onChange={handleOptionChange}
-            // checked={isChecked}
-          />
-          <RadioBtn htmlFor="sat">토</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="checkbox"
-            id="sun"
-            name="day"
-            disabled={isDisabled}
-            onChange={handleOptionChange}
-            // checked={isChecked}
-          />
-          <RadioBtn htmlFor="sun">일</RadioBtn>
+          {data.map((item) => (
+            <React.Fragment key={item.id}>
+              <input
+                type="checkbox"
+                style={{ display: "none" }}
+                id={`day_${item.id}`}
+                name="day"
+                value={item.title}
+                onChange={() => handleCheckboxChange(item.id)}
+                checked={checkItems.includes(item.id)}
+              />
+              <RadioBtn className="my-1" htmlFor={`day_${item.id}`}>
+                {item.title}
+              </RadioBtn>
+            </React.Fragment>
+          ))}
+        </div>
+        <ContentWrap>
+          <Content>벌칙</Content>
+        </ContentWrap>
+        <PenaltyInputBox
+          className="w-80"
+          type="text"
+          placeholder="랜덤 벌칙 정하기"
+          disabled={isCustom}
+          maxLength={30}
+          defaultValue={selectedPenalty !== null ? selectedPenalty : ""}
+        />
+        <div style={{ position: "relative", width: "24px", height: "24px" }}>
+          <RandomWrap>
+            <img
+              onClick={handleButtonClick}
+              style={{ width: "18px", height: "18px" }}
+              src="assets/icons/random.png"
+              alt="random"
+            />
+            <CustomBtn
+              onClick={() => {
+                setIsCustom(false)
+                setSelectedPenalty(null)
+              }}
+            >
+              직접입력
+            </CustomBtn>
+          </RandomWrap>
         </div>
         <BtnWrap>
           <CancelBtn
@@ -305,5 +323,17 @@ const GoalCapsule = function () {
     </>
   )
 }
+
+// 랜덤 벌칙 정하기
+interface InputBoxProps {
+  className?: string
+  type?: string
+  placeholder?: string
+  disabled?: boolean
+  maxLength?: number
+  defaultValue: string | null
+}
+
+const PenaltyInputBox = styled(InputBox)<InputBoxProps>``
 
 export default GoalCapsule
