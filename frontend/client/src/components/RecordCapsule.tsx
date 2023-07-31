@@ -102,7 +102,7 @@ const BtnWrap = tw.div`
   justify-evenly
 `
 
-const ClassicCapsule = function () {
+const RecordCapsule = function () {
   let [isHelp, setIsHelp] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
   const currentDate = new Date()
@@ -205,4 +205,4 @@ const ClassicCapsule = function () {
   )
 }
 
-export default ClassicCapsule
+export default RecordCapsule
