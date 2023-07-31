@@ -1,12 +1,11 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, FunctionComponent } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
 import axios from "axios"
 import { useSelector } from "react-redux"
-import { Store } from "../../store/Store"
-
-type RootState = ReturnType<typeof Store.getState>
+import { Store, RootState } from "../../store/Store"
+import {UserInfo} from '../../store/Auth'
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -35,21 +34,23 @@ const InputCSS = tw.input`
     focus:outline-none
 `
 
-export const UserInfoChange = function () {
+export const UserInfoChange: FunctionComponent<UserInfo> = (props) => {
   const navigate = useNavigate()
   const [profileImage, setProfileImage] = useState<File | null>(null)
   const imageRef = useRef<HTMLInputElement>(null)
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(
+    props.profileImage
+  )
   const [userdata, setUserdata] = useState({
     email: "",
     userPw: "",
     userPwCheck: "",
-    nickname: "",
+    nickname: props.nickname,
   })
   const [userNicknameCondition, setUserNicknameCondition] = useState(0)
   const [userPwCondition, setUserPwCondition] = useState(0)
   const [userPwMatch, setuserPwMatch] = useState(0)
-  const token = useSelector((state: RootState) => state.authToken.accessToken)
+  const token = useSelector((state: RootState) => state.auth.accessToken)
 
   useEffect(() => {
     if (userdata.nickname) {
@@ -156,6 +157,7 @@ export const UserInfoChange = function () {
         data: data,
       })
         .then(() => {
+          alert("회원정보 변경에 성공하셨습니다.")
           navigate("/main")
         })
         .catch((error) => console.error(error))
