@@ -194,7 +194,7 @@ const MainPage = function () {
           onClick={() => {
             navigate("/selecttype")
           }}
-          className="bg-lilac-100 w-64 h-16 flex items-center justify-center m-auto text-lilac-950 hover:bg-lilac-500"
+          className=" w-64 h-16 flex items-center justify-center m-auto text-lilac-950 hover:bg-lilac-500"
         >
           타임캡슐 만들기
         </MakeCapsuleButton>
@@ -235,6 +235,7 @@ const MakeCapsuleButton = styled.div`
     transition: 0.2s;
     transform: scale(0.95);
   }
+  background-color: ${(props) => props.theme.color500};
 `
 const MakeCapsuleCode = styled.div`
   border-radius: 30px;
