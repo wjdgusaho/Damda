@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
 import { Link, useNavigate } from "react-router-dom"
@@ -36,7 +36,8 @@ export const CheckPassword = function () {
 
   const handlePwSubmit = async (
     event: React.FormEvent<HTMLFormElement>,
-    restart = true
+    restart = true,
+    token: string | null = Token
   ) => {
     event.preventDefault()
 
@@ -46,7 +47,7 @@ export const CheckPassword = function () {
         url: serverUrl + "user/info",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + Token,
+          Authorization: "Bearer " + token,
         },
         data: {
           userPw: userPw,
@@ -56,17 +57,18 @@ export const CheckPassword = function () {
           if (response.data.code === -9004) {
             alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.")
           } else {
-            navigate("/user-info", { state: response.data })
+            console.log(response.data)
+
+            const userInfo = response.data.data
+            navigate("/user-info")
           }
           setUserPw("")
         })
         .catch(async (error) => {
-          // 문제지점
-          console.log("비번에러 " + error)
           if (error.response.data.message === "토큰 만료" && restart) {
             try {
-              await getNewToken(getCookieToken())
-              handlePwSubmit(event, false)
+              const newaccessToken = await getNewToken(getCookieToken())
+              handlePwSubmit(event, false, newaccessToken)
             } catch (error) {
               console.log(error)
             }

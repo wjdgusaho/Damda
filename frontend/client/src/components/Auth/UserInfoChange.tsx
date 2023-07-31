@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, FunctionComponent } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
@@ -41,15 +41,19 @@ export const UserInfoChange = () => {
     useSelector((state: RootState) => state.auth.userInfo.profileImage)
   )
   const [userdata, setUserdata] = useState({
-    email: "",
     userPw: "",
     userPwCheck: "",
     nickname: useSelector((state: RootState) => state.auth.userInfo.nickname),
   })
+  const [isChangePassword, setIsChangePassword] = useState(false)
   const [userNicknameCondition, setUserNicknameCondition] = useState(0)
   const [userPwCondition, setUserPwCondition] = useState(0)
   const [userPwMatch, setuserPwMatch] = useState(0)
-  const token = useSelector((state: RootState) => state.auth.accessToken)
+  let token = useSelector((state: RootState) => state.auth.accessToken)
+
+  const handleCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsChangePassword(event.currentTarget.checked)
+  }
 
   useEffect(() => {
     if (userdata.nickname) {
@@ -121,7 +125,6 @@ export const UserInfoChange = () => {
     event.preventDefault()
     const data = new FormData()
     const userform = {
-      email: userdata.email,
       userPw: userdata.userPw,
       nickname: userdata.nickname,
     }
@@ -139,11 +142,11 @@ export const UserInfoChange = () => {
       alert("닉네임을 입력해주세요.")
     } else if (userdata.nickname && userNicknameCondition !== 1) {
       alert("닉네임이 유효하지 않습니다.")
-    } else if (!userdata.userPw) {
+    } else if (isChangePassword && !userdata.userPw) {
       alert("비밀번호를 입력해주세요.")
-    } else if (userdata.userPw && userPwCondition !== 1) {
+    } else if (isChangePassword && userdata.userPw && userPwCondition !== 1) {
       alert("비밀번호가 유효하지 않습니다.")
-    } else if (userdata.userPw !== userdata.userPwCheck) {
+    } else if (isChangePassword && userdata.userPw !== userdata.userPwCheck) {
       alert("비밀번호가 일치하지 않습니다.")
     } else {
       axios({
@@ -260,44 +263,56 @@ export const UserInfoChange = () => {
         ) : (
           <></>
         )}
-
-        <p>
-          비밀번호
-          <span style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}>
-            5~25자, 영문숫자 필수, 특수문자(!@#$%^*+=-) 가능
-          </span>
-        </p>
-        <InputCSS
-          name="userPw"
-          type="password"
-          value={userdata.userPw}
-          onChange={handleChange}
+        <label htmlFor="CheckPassword">비밀번호 변경하기</label>
+        <input
+          name="CheckPassword"
+          className="justify-self-start"
+          type="checkbox"
+          checked={isChangePassword}
+          onChange={handleCheckBox}
         />
-        {userPwCondition === 2 ? (
-          <p className="text-red-500 w-full">
-            비밀번호는 특수, 영문, 숫자 조합으로 5-25자이어야 합니다.
-          </p>
-        ) : userPwCondition === 1 ? (
-          <p className="text-green-500 w-full">유효한 비밀번호</p>
-        ) : (
-          <></>
-        )}
+        {isChangePassword && (
+          <div>
+            <p>
+              비밀번호
+              <span
+                style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}
+              >
+                5~25자, 영문숫자 필수, 특수문자(!@#$%^*+=-) 가능
+              </span>
+            </p>
+            <InputCSS
+              name="userPw"
+              type="password"
+              value={userdata.userPw}
+              onChange={handleChange}
+            />
+            {userPwCondition === 2 ? (
+              <p className="text-red-500 w-full">
+                비밀번호는 특수, 영문, 숫자 조합으로 5-25자이어야 합니다.
+              </p>
+            ) : userPwCondition === 1 ? (
+              <p className="text-green-500 w-full">유효한 비밀번호</p>
+            ) : (
+              <></>
+            )}
 
-        <p>비밀번호 확인</p>
-        <InputCSS
-          name="userPwCheck"
-          type="password"
-          value={userdata.userPwCheck}
-          onChange={handleChange}
-        />
-        {userPwMatch === 1 ? (
-          <p className="text-red-500">비밀번호 불일치</p>
-        ) : userPwMatch === 2 ? (
-          <p className="text-green-500">비밀번호 일치</p>
-        ) : (
-          <p></p>
+            <p>비밀번호 확인</p>
+            <InputCSS
+              name="userPwCheck"
+              type="password"
+              value={userdata.userPwCheck}
+              onChange={handleChange}
+            />
+            {userPwMatch === 1 ? (
+              <p className="text-red-500">비밀번호 불일치</p>
+            ) : userPwMatch === 2 ? (
+              <p className="text-green-500">비밀번호 일치</p>
+            ) : (
+              <p></p>
+            )}
+          </div>
         )}
-
         <button
           className="p-2 px-4 text-sm rounded-full shadow-md w-48 mt-14 mx-auto"
           style={{ backgroundColor: "#EFE0F4", color: "black" }}
