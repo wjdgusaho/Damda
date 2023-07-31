@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux"
 import { styled } from "styled-components"
 import axios from "axios"
 import { serverUrl, reqUrl } from "../../urls"
-import { SET_TOKEN, SET_ACCOUNT_TYPE } from "../../store/Auth"
+import { SET_TOKEN, SET_USER } from "../../store/Auth"
 import { setRefreshToken } from "../../store/Cookie"
 import "../../index.css"
 
@@ -131,21 +131,22 @@ const Login = function () {
       },
     })
       .then((response) => {
-        setRefreshToken(response.data.refreshToken)
-        dispatch(SET_TOKEN(response.data.accessToken))
-        dispatch(SET_ACCOUNT_TYPE(response.data.accountType))
-        navigate("/tutorial")
+        if (
+          response.data.code === -9000 ||
+          response.data.code === -9004 ||
+          response.data.code === -9005
+        ) {
+          setUserdataText(response.data.message)
+        } else {
+          const { accessToken, refreshToken, accountType } = response.data.data
+          setRefreshToken(refreshToken)
+          dispatch(SET_TOKEN(accessToken))
+          dispatch(SET_USER(accountType))
+          navigate("/tutorial")
+        }
       })
       .catch((error) => {
-        if (error.response.status === 404) {
-          setUserdataText("아이디가 존재하지 않습니다.")
-        } else if (error.response.status === 401) {
-          setUserdataText("비밀번호가 올바르지 않습니다.")
-        } else if (error.response.status === 410) {
-          setUserdataText("탈퇴한 회원입니다.")
-        } else {
-          console.error(error)
-        }
+        console.error(error)
       })
   }
 
@@ -178,7 +179,7 @@ const Login = function () {
 
         <div>
           <div
-            className="text-lilac-300 font-thin relative -top-9"
+            className="text-lilac-300 font-thin relative -top-9 w-48"
             style={{ marginLeft: "-15px" }}
           >
             <button

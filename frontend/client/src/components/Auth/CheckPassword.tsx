@@ -3,11 +3,10 @@ import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
-import { getCookieToken, setRefreshToken } from "../../store/Cookie"
-import {getNewTokens} from './RefreshTokenApi'
-import { SET_TOKEN } from "../../store/Auth"
+import { getCookieToken } from "../../store/Cookie"
+import { GetNewTokens } from "./RefreshTokenApi"
 
 const Box = tw.div`
   flex
@@ -28,45 +27,51 @@ const Button = tw.button`bg-lilac-100 ml-24 text-black shadow-md w-48 border rou
 
 export const CheckPassword = function () {
   const [userPw, setUserPw] = useState("")
-  const token = useSelector((state: RootState) => state.authToken.accessToken)
+  let Token = useSelector((state: RootState) => state.auth.accessToken)
   const navigate = useNavigate()
-  const dispatch = useDispatch()
   const handlePwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserPw(event.currentTarget.value)
   }
-  const handlePwSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const getNewToken = GetNewTokens()
+
+  const handlePwSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+    restart = true
+  ) => {
     event.preventDefault()
+
     if (userPw) {
       axios({
         method: "POST",
         url: serverUrl + "user/info",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
+          Authorization: "Bearer " + Token,
         },
         data: {
           userPw: userPw,
         },
       })
         .then((response) => {
-          if (response.data === "비밀번호 일치") {
-            navigate("/user-info")
-          } else {
+          if (response.data.code === -9004) {
             alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.")
+          } else {
+            navigate("/user-info", { state: response.data })
           }
           setUserPw("")
         })
         .catch(async (error) => {
-          if (error.response.data.message === "토큰 만료") {
+          // 문제지점
+          console.log("비번에러 " + error)
+          if (error.response.data.message === "토큰 만료" && restart) {
             try {
-              const accessToken = await getNewTokens(getCookieToken())
-              
-              dispatch(SET_TOKEN(accessToken))
-              // setRefreshToken(refreshToken)
+              await getNewToken(getCookieToken())
+              handlePwSubmit(event, false)
             } catch (error) {
-              console.log(error);
-              
+              console.log(error)
             }
+          } else {
+            console.log(error)
           }
         })
     } else {

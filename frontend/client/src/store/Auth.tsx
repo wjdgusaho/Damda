@@ -1,32 +1,50 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
-interface TokenState {
+interface authState {
   accessToken: string | null
   accountType: string
+  userInfo: UserInfo
 }
 
-const initialState: TokenState = {
+const initialState: authState = {
   accessToken: null,
   accountType: "",
+  userInfo: {
+    nickname: "",
+    profileImage: "",
+  },
 }
 
-export const tokenSlice = createSlice({
-  name: "authToken",
+export interface UserInfo {
+  nickname: string
+  profileImage: string
+}
+
+export const authSlice = createSlice({
+  name: "auth",
   initialState,
   reducers: {
     SET_TOKEN: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload
     },
-    SET_ACCOUNT_TYPE: (state, action: PayloadAction<string>) => {
+    SET_USER: (state, action: PayloadAction<string>) => {
       state.accountType = action.payload
     },
     DELETE_TOKEN: (state) => {
       state.accessToken = null
       state.accountType = ""
     },
+    DELETE_USER: (state) => {
+      state.accountType = ""
+      state.userInfo = {
+        nickname: "",
+        profileImage: "",
+      }
+    },
   },
 })
 
-export const { SET_TOKEN, DELETE_TOKEN, SET_ACCOUNT_TYPE } = tokenSlice.actions
+export const { SET_TOKEN, DELETE_TOKEN, SET_USER, DELETE_USER } =
+  authSlice.actions
 
-export default tokenSlice.reducer
+export default authSlice.reducer

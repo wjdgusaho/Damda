@@ -1,11 +1,74 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { SubHeader } from "./inc/SubHeader"
-import { styled } from "styled-components"
-import { NavLink, Navigate, Outlet } from "react-router-dom"
+import { styled, css } from "styled-components"
 import Modal from "react-modal"
-import { useNavigate } from "react-router-dom"
+import axios, { Axios } from "axios"
+import { serverUrl, reqUrl } from "../urls"
+import { RootState } from "../store/Store"
+import { useSelector } from "react-redux"
+
+interface themeType {
+  themeNo: number
+  name: string
+  description: string
+  price: number
+  icon: string
+  userHave: boolean
+}
+interface capsuleItemType {
+  itemNo: number
+  name: string
+  description: string
+  price: number
+  type: string
+  icon: string
+  userHave: boolean
+}
+interface decoItemType {
+  itemNo: number
+  name: string
+  description: string
+  price: number
+  icon: string
+  type: string
+  userHave: boolean
+}
 
 export const ShopPage = function () {
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const [themeList, setThemeList] = useState<themeType[]>([])
+  const [capsuleItemList, setCapsuleItemList] = useState<capsuleItemType[]>([])
+  const [decoItemList, setDecoItemList] = useState<decoItemType[]>([])
+  const [comp, setComp] = useState("Sticker")
+  const [activeComponent, setActiveComponent] = useState("Sticker")
+
+  useEffect(() => {
+    console.log("token", token)
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(serverUrl + "shop/list", {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        setThemeList(response.data.data.themeList)
+        setCapsuleItemList(response.data.data.capsuleItemList)
+        setDecoItemList(response.data.data.decoItemList)
+        console.log(response)
+        console.log("themeList", response.data.data.themeList)
+        console.log("capsuleItemList", response.data.data.capsuleItemList)
+        console.log("decoItemList", response.data.data.decoItemList)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchData()
+  }, [])
+
+  const handleNavClick = (compName: string) => {
+    setActiveComponent(compName)
+  }
+
   return (
     <div>
       <SubHeader></SubHeader>
@@ -18,16 +81,46 @@ export const ShopPage = function () {
         </CoinContainer>
       </div>
       <div className="flex justify-evenly mt-6 mb-8">
-        <NavLink2 to="/shop/sticker">스티커</NavLink2>
-        <NavLink2 to="/shop/theme">테마</NavLink2>
-        <NavLink2 to="/shop/capsule">타임캡슐</NavLink2>
+        <Nav
+          onClick={() => {
+            setComp("Sticker")
+            handleNavClick("Sticker")
+          }}
+          isActive={activeComponent === "Sticker"}
+        >
+          스티커
+        </Nav>
+        <Nav
+          onClick={() => {
+            setComp("Theme")
+            handleNavClick("Theme")
+          }}
+          isActive={activeComponent === "Theme"}
+        >
+          테마
+        </Nav>
+        <Nav
+          onClick={() => {
+            setComp("Capsule")
+            handleNavClick("Capsule")
+          }}
+          isActive={activeComponent === "Capsule"}
+        >
+          타임캡슐
+        </Nav>
       </div>
-      <Outlet />
+      {comp === "Sticker" && <Sticker decoItemList={decoItemList} />}
+      {comp === "Theme" && <Theme themeList={themeList} />}
+      {comp === "Capsule" && <Capsule capsuleItemList={capsuleItemList} />}
     </div>
   )
 }
 
-export const Sticker = function () {
+interface StickerProps {
+  decoItemList: decoItemType[]
+}
+
+export const Sticker: React.FC<StickerProps> = ({ decoItemList }) => {
   return (
     <div>
       <div className="ml-8 mb-4">
@@ -38,17 +131,26 @@ export const Sticker = function () {
           </TextStyle>
         </label>
       </div>
-
-      <Card></Card>
-      <CardLine></CardLine>
-      <Card></Card>
-      <CardLine></CardLine>
-      <Card></Card>
-      <CardLine></CardLine>
+      {decoItemList.length > 0 &&
+        decoItemList.map((d) => (
+          <div key={d.itemNo}>
+            <Card
+              name={d.name}
+              price={d.price}
+              desc={d.description}
+              isHave={d.userHave}
+            ></Card>
+            <CardLine></CardLine>
+          </div>
+        ))}
     </div>
   )
 }
-export const Theme = function () {
+
+interface ThemeProps {
+  themeList: themeType[]
+}
+export const Theme: React.FC<ThemeProps> = ({ themeList }) => {
   return (
     <div>
       <div className="ml-8 mb-4">
@@ -59,27 +161,49 @@ export const Theme = function () {
           </TextStyle>
         </label>
       </div>
-      <Card></Card>
-      <CardLine></CardLine>
-      <Card></Card>
-      <CardLine></CardLine>
-    </div>
-  )
-}
-export const Capsule = function () {
-  return (
-    <div>
-      <Card></Card>
-      <CardLine></CardLine>
-      <Card></Card>
-      <CardLine></CardLine>
-      <Card></Card>
-      <CardLine></CardLine>
+      {themeList.length > 0 &&
+        themeList.map((t) => (
+          <div key={t.themeNo}>
+            <Card
+              name={t.name}
+              price={t.price}
+              desc={t.description}
+              isHave={t.userHave}
+            ></Card>
+            <CardLine></CardLine>
+          </div>
+        ))}
     </div>
   )
 }
 
-const Card = function () {
+interface CapsuleProps {
+  capsuleItemList: capsuleItemType[]
+}
+
+export const Capsule: React.FC<CapsuleProps> = ({ capsuleItemList }) => {
+  return (
+    <div>
+      {capsuleItemList.length > 0 &&
+        capsuleItemList.map((c) => (
+          <div key={c.itemNo}>
+            <Card name={c.name} price={c.price} desc={c.description}></Card>
+            <CardLine></CardLine>
+          </div>
+        ))}
+    </div>
+  )
+}
+
+interface CardProps {
+  name?: string
+  price?: number
+  desc?: string
+  isHave?: boolean
+  icon?: string
+}
+
+export const Card: React.FC<CardProps> = ({ name, price, desc, isHave }) => {
   const [modalIsOpen, setIsOpen] = React.useState(false)
 
   function openModal() {
@@ -96,20 +220,20 @@ const Card = function () {
         <img src="/assets/Planet-3.png" alt="카드이미지" />
       </div>
       <div className="w-40 h-40 text-center">
-        <TextStyle className="mt-1 text-white text-lg">문자 (파랑색)</TextStyle>
+        <TextStyle className="mt-1 text-white text-lg">{name}</TextStyle>
         <div className="flex justify-center items-center w-20 h-6 mt-1 bg-white bg-opacity-10 rounded-full m-auto">
-          <TextStyle className=" text-white text-sm">30코인</TextStyle>
+          <TextStyle className=" text-white text-sm">{price}코인</TextStyle>
         </div>
         <div className="flex justify-center items-center w-36 h-14 mt-1 m-auto">
-          <TextStyle className=" text-white text-sm">
-            알파벳, 숫자, 특수기호가 포함되어 있어요
-          </TextStyle>
+          <TextStyle className=" text-white text-sm">{desc}</TextStyle>
         </div>
         <div
           onClick={openModal}
           className="flex justify-center items-center w-24 h-6 mt-2 bg-white bg-opacity-30 rounded-full m-auto"
         >
-          <TextStyle className=" text-white text-md">구매하기</TextStyle>
+          <TextStyle className=" text-white text-md">
+            {isHave ? "보유중" : "구매하기"}
+          </TextStyle>
         </div>
       </div>
       <Modal
@@ -118,8 +242,12 @@ const Card = function () {
         style={customStyles}
         contentLabel="BUY Modal"
       >
-        <ModalCapsuleInner></ModalCapsuleInner>
-        <div className="flex mt-4 w-48 justify-center m-auto justify-between">
+        {name === "용량증가" && <ModalCapsuleInner></ModalCapsuleInner>}
+        {name === "캡슐 추가" && <ModalCapsuleInner></ModalCapsuleInner>}
+        {name !== "캡슐 추가" && name !== "용량증가" && (
+          <ModalBuyInner name={name}></ModalBuyInner>
+        )}
+        <div className="flex mt-4 w-48 m-auto justify-between">
           <ModalButton className="bg-black bg-opacity-10" onClick={closeModal}>
             취소
           </ModalButton>
@@ -132,8 +260,13 @@ const Card = function () {
   )
 }
 
+interface ModalBuyInnerProps {
+  name?: string
+  icon?: string
+}
+
 // 일반 구매 팝업
-const ModalBuyInner = function () {
+export const ModalBuyInner: React.FC<ModalBuyInnerProps> = ({ name, icon }) => {
   return (
     <div className="flex items-center justify-around">
       <div className="w-1/3 p-2 rounded-2xl mr-2 shadow-lg">
@@ -141,7 +274,8 @@ const ModalBuyInner = function () {
       </div>
       <div className="w-2/3 p-2">
         <TextStyle7 className="opacity-70 text-lg">
-          우주를<br></br> 구매하시겠습니까?
+          {name}
+          <br></br> 구매하시겠습니까?
         </TextStyle7>
       </div>
     </div>
@@ -240,7 +374,7 @@ const CoinContainer = styled.div`
   border-radius: 10px;
 `
 
-const NavLink2 = styled(NavLink)`
+const Nav = styled.div<{ isActive: boolean }>`
   position: relative;
   text-decoration: none;
   font-family: "pretendard";
@@ -248,21 +382,18 @@ const NavLink2 = styled(NavLink)`
   color: #ffffffac;
   transition: color 0.2s;
   display: inline-flex;
-  align-items: center; /* Align the text and underline vertically */
+  align-items: center;
   width: 120px;
   justify-content: center;
-  &.active {
-    font-weight: 400;
-    color: #ffffff;
 
-    &::after {
-      content: "";
-      position: absolute;
-      bottom: -10px; /* Adjust the value to control the underline's position */
-      width: 100%;
-      height: 1px;
-      background-color: #ffffff;
-    }
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    width: 100%;
+    height: 1px;
+    background-color: #ffffff;
+    display: ${(props) => (props.isActive ? "block" : "none")};
   }
 `
 
