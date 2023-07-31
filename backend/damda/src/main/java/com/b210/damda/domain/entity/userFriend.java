@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class userFriend {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userFrinedNo;
+    private Long userFriendNo;
     @ManyToOne
     @JoinColumn(name = "user_no")
     private User user;
@@ -24,13 +24,13 @@ public class userFriend {
     @Column(nullable = false)
     private boolean isFavorite;
     @Column(nullable = false)
-    private String status;
+    private String status = "NOTREAD";
 
     public userFriend() {
     }
 
-    public userFriend(Long userFrinedNo, User user, Long friendNo, boolean isFavorite, String status) {
-        this.userFrinedNo = userFrinedNo;
+    public userFriend(Long userFriendNo, User user, Long friendNo, boolean isFavorite, String status) {
+        this.userFriendNo = userFriendNo;
         this.user = user;
         this.friendNo = friendNo;
         this.isFavorite = isFavorite;

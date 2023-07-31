@@ -18,6 +18,7 @@ import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
 import com.b210.damda.util.response.DataResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -267,23 +268,52 @@ public class UserService {
     // 회원 검색
     public List<UserSearchResultDTO> userSearch(String query, String type){
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        Long userNo = (Long) principal;
+
         List<UserSearchResultDTO> result = new ArrayList<>();
         List<User> users = new ArrayList<>();
 
         if(type.equals("nickname")){ // 닉네임으로 검색
             users = userRepository.findByNicknameContaining(query);
+
         }else if(type.equals("code")){ // 코드로 검색
-            long userNo = Long.parseLong(query);
-            Optional<User> byId = userRepository.findById(userNo);
+            long targetNo = Long.parseLong(query.replace("#", "")); // #을 빈공백으로 바꾸고 롱으로 전환
+            Optional<User> byId = userRepository.findById(targetNo);
+
             if(byId.isEmpty()){ // 유저가 없으면
                 return result;
+
             }else{ // 유저가 있으면
-                User user = byId.get();
-                users.add(user);
+
+                // 현재 유저 꺼냄
+                User currentUser = userRepository.findByUserNo(userNo);
+
+                // 현재 유저의 친구 목록을 전부 꺼냄
+                List<userFriend> userFriendByUser = friendRepository.getUserFriendByUser(currentUser);
+
+                // 찾는 대상의 유저 번호와 일치하는 유저 하나를 꺼냄
+                userFriend userFriend = userFriendByUser.stream()
+                        .filter(uf -> uf.getFriendNo() == targetNo)
+                        .findFirst()
+                        .orElse(null);
+
+                if(userFriend == null){
+                    return result;
+                }
+
+                User byUserNo = userRepository.findByUserNo(userFriend.getUserFriendNo());
+
+                UserSearchResultDTO userSearchResultDTO = new UserSearchResultDTO(byUserNo, userFriend);
+
+                result.add(userSearchResultDTO);
+
+                return result;
             }
         }else{ // 닉네임#코드로 검색
             String[] parts = query.split("#");
-            long userNo = Long.parseLong(parts[0]);
+            long targetNo = Long.parseLong(parts[0]);
             Optional<User> byId = userRepository.findById(userNo);
             if(byId.isEmpty()){ // 코드와 일치하는 유저가 없으면
                 return result;
@@ -297,13 +327,13 @@ public class UserService {
             }
         }
 
-        for(User user : users){
-            Optional<userFriend> userFriendByUser = friendRepository.getUserFriendByUser(user);
-            if (userFriendByUser.isPresent()) {
-                UserSearchResultDTO results = new UserSearchResultDTO(user, userFriendByUser.get());
-                result.add(results);
-            }
-        }
+//        for(User user : users){
+//            Optional<userFriend> userFriendByUser = friendRepository.getUserFriendByUser(user);
+//            if (userFriendByUser.isPresent()) {
+//                UserSearchResultDTO results = new UserSearchResultDTO(user, userFriendByUser.get());
+//                result.add(results);
+//            }
+//        }
         return result;
     }
 
