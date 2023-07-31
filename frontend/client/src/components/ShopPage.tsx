@@ -1,11 +1,9 @@
 import React, { useState, useRef, useEffect } from "react"
 import { SubHeader } from "./inc/SubHeader"
 import { styled, css } from "styled-components"
-import { NavLink, Navigate, Outlet } from "react-router-dom"
 import Modal from "react-modal"
 import axios, { Axios } from "axios"
 import { serverUrl, reqUrl } from "../urls"
-import { getCookieToken } from "../store/Cookie"
 import { RootState } from "../store/Store"
 import { useSelector } from "react-redux"
 
@@ -38,7 +36,6 @@ interface decoItemType {
 
 export const ShopPage = function () {
   const token = useSelector((state: RootState) => state.authToken.accessToken)
-  const [loading, setLoading] = useState(true)
   const [themeList, setThemeList] = useState<themeType[]>([])
   const [capsuleItemList, setCapsuleItemList] = useState<capsuleItemType[]>([])
   const [decoItemList, setDecoItemList] = useState<decoItemType[]>([])
@@ -49,13 +46,9 @@ export const ShopPage = function () {
     console.log("token", token)
     const fetchData = async () => {
       try {
-        // const userNo = 1
         const response = await axios.get(serverUrl + "shop/list", {
           headers: {
             Authorization: "Bearer " + token,
-          },
-          params: {
-            // userNo,
           },
         })
         setThemeList(response.data.data.themeList)

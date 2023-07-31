@@ -46,7 +46,9 @@ public class UserController {
             User savedUser = userService.regist(userOriginRegistDTO, profileImage);
             DataResponse<Map<String, Object>> response = new DataResponse<>(201, "회원가입 완료");
             return response;
-        } catch(Exception e){
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch(Exception e){
             return new DataResponse<>(500,"회원가입에 실패하셨습니다. 잠시 후 다시 시도해주세요.");
         }
     }
@@ -54,37 +56,54 @@ public class UserController {
     // 이메일 인증번호 전송
     @PostMapping("send-email")
     public DataResponse<Map<String, Object>> emailSend(@RequestBody UserOriginRegistDTO userOriginRegistDTO) throws Exception {
-        String email = userOriginRegistDTO.getEmail();
-        User user = userService.fineByUser(email);
-        if(user != null){
-            return new DataResponse<>(409,"이미 가입된 이메일입니다.");
-        }else{
-            String key = emailService.sendSimpleMessageRegist(email);
-            if(emailService.registTempKey(key, email) == 0){
-                return new DataResponse<>(500,"알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
+        try {
+
+            String email = userOriginRegistDTO.getEmail();
+            User user = userService.fineByUser(email);
+            if (user != null) {
+                return new DataResponse<>(409, "이미 가입된 이메일입니다.");
+            } else {
+                String key = emailService.sendSimpleMessageRegist(email);
+                return new DataResponse<>(200, "인증번호 전송 성공");
             }
-            return new DataResponse<>(200, "인증번호 전송 성공");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch (Exception e){
+            return new DataResponse<>(500, "알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
         }
     }
 
     // 회원가입 인증코드 확인
     @PostMapping("check-email")
     public DataResponse<Map<String, Object>> checkRegistCode(@RequestBody TempCodeDTO tempCodeDTO) {
+        try{
             int result = userService.registCodeCheck(tempCodeDTO);
             DataResponse<Map<String,Object>> response = new DataResponse<>(200, "인증이 완료되었습니다.");
             return response;
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch (Exception e){
+            return new DataResponse<>(500, "알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
+        }
+
     }
 
     // 로그인 요청
     @PostMapping("login")
     public DataResponse<Map<String, Object>> login(@RequestBody UserLoginDTO userLoginDTO){
-        Map<String, Object> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getUserPw());
+        try {
+            Map<String, Object> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getUserPw());
 
-        loginUser.put("accountType", "ORIGIN");
-        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "로그인 성공");
-        response.setData(loginUser);
+            loginUser.put("accountType", "ORIGIN");
+            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "로그인 성공");
+            response.setData(loginUser);
 
-        return response;
+            return response;
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch (Exception e){
+            return new DataResponse<>(500, "알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
+        }
     }
 
     // 비밀번호 이메일 인증 요청
@@ -110,6 +129,8 @@ public class UserController {
             Long result = emailService.changeTempKey(key, email, user);
 
             return new DataResponse<>(200, "인증번호를 성공적으로 전송했습니다.");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
         }
@@ -121,6 +142,8 @@ public class UserController {
         try{
             userService.tempCodeCheck(tempCodeDTO);
             return new DataResponse<>(200, "인증이 완료됐습니다.");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
         }
@@ -129,44 +152,42 @@ public class UserController {
 
     // 비밀번호 재설정
     @PatchMapping("change-password/new")
-    public ResponseEntity<?> newPassword(@RequestBody UserUpdateDTO userUpdateDTO){
+    public DataResponse<Map<String, Object>> newPassword(@RequestBody UserUpdateDTO userUpdateDTO){
         try{
-            int result = userService.newPassword(userUpdateDTO);
-            if(result == 3){
-                return new ResponseEntity<>("비밀번호 변경 성공", HttpStatus.OK);
-            }
-            else if(result == 2){
-                return new ResponseEntity<>("이전과 동일한 비밀번호입니다.", HttpStatus.CONFLICT);
-            }else{
-                return new ResponseEntity<>("비밀번호 변경에 실패하였습니다. 잠시 후 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }catch (Exception e){
-            return new ResponseEntity<>("알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
+            userService.newPassword(userUpdateDTO);
+            return new DataResponse<>(200, "비밀번호 변경에 성공했습니다.");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }
+        catch (Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
     }
 
     // 로그아웃
     @PostMapping("logout")
-    public ResponseEntity<?> logout(@RequestHeader(value="Authorization") String token){
-
-        int logout = userService.logout(token);
-        if(logout == 1){
-            return new ResponseEntity<>("로그아웃 성공", HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>("알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
+    public DataResponse<Map<String, Object>> logout(@RequestHeader(value="Authorization") String token){
+        try{
+            userService.logout(token);
+            return new DataResponse<>(200, "로그아웃 성공");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch (Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
+
     }
 
     // 비밀번호 2차 검증
     @PostMapping("info")
-    public ResponseEntity<?> passwordCheck(@RequestBody UserLoginDTO userLoginDTO){
-        int result = userService.passwordCheck(userLoginDTO.getUserPw());
-        if(result == 1){
-            return new ResponseEntity<>("알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }else if(result == 2){
-            return new ResponseEntity<>("비밀번호 일치", HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>("비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
+    public DataResponse<Map<String, Object>> passwordCheck(@RequestBody UserLoginDTO userLoginDTO){
+        try {
+            userService.passwordCheck(userLoginDTO.getUserPw());
+            return new DataResponse<>(200, "비밀번호가 일치합니다.");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch (Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
     }
 
@@ -179,26 +200,30 @@ public class UserController {
 
     // 유저 회원정보 수정
     @PatchMapping("info")
-    public ResponseEntity<?> userInfoUpdate(@RequestPart("user") UserUpdateDTO userUpdateDTO,
+    public DataResponse<Map<String, Object>> userInfoUpdate(@RequestPart("user") UserUpdateDTO userUpdateDTO,
                                             @RequestPart("profileImage") MultipartFile profileImage){
-        int result = userService.userInfoUpdate(userUpdateDTO, profileImage);
-        if(result == 1){
-            return new ResponseEntity<>("알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.",HttpStatus.INTERNAL_SERVER_ERROR);
-        }else if(result == 2){
-            return new ResponseEntity<>("수정이 완료되었습니다.",HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>("알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.",HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            userService.userInfoUpdate(userUpdateDTO, profileImage);
+            return new DataResponse<>(200, "회원정보 변경에 성공하였습니다.");
+
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch (Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
     }
 
     // 회원 탈퇴
     @PatchMapping("delete")
-    public ResponseEntity<?> userWithdrawal(){
+    public DataResponse<Map<String, Object>> userWithdrawal(){
         try{
             userService.userWithdrawal();
-            return new ResponseEntity<>("회원 탈퇴에 성공하였습니다.", HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>("알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new DataResponse<>(200, "정상적으로 탈퇴되었습니다. 그동안 이용해주셔서 감사합니다.");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }
+        catch (Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
 
     }
