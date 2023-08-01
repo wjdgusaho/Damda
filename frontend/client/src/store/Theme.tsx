@@ -8,7 +8,7 @@ import {
 
 let theme = createSlice({
   name: "theme",
-  initialState: heartTheme,
+  initialState: universeDarkTheme,
   reducers: {
     changeUniverseDarkTheme() {
       return universeDarkTheme
