@@ -4,14 +4,8 @@ import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
 import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
 import com.b210.damda.domain.dto.TimecapsuleCreateDTO;
 import com.b210.damda.domain.dto.TimecapsuleDTO;
-import com.b210.damda.domain.entity.Timecapsule;
-import com.b210.damda.domain.entity.TimecapsuleCard;
-import com.b210.damda.domain.entity.TimecapsuleCriteria;
-import com.b210.damda.domain.entity.TimecapsuleMapping;
-import com.b210.damda.domain.timecapsule.repository.TimecapsuleCardRepository;
-import com.b210.damda.domain.timecapsule.repository.TimecapsuleCriteriaRepository;
-import com.b210.damda.domain.timecapsule.repository.TimecapsuleMappingRepository;
-import com.b210.damda.domain.timecapsule.repository.TimecapsuleRepository;
+import com.b210.damda.domain.entity.*;
+import com.b210.damda.domain.timecapsule.repository.*;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
@@ -37,6 +31,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final TimecapsuleCardRepository timecapsuleCardRepository;
     private final TimecapsuleCriteriaRepository timecapsuleCriteriaRepository;
     private final UserRepository userRepository;
+    private final CirteriaDayRepository cirteriaDayRepository;
 
     private final int MAX_PARTICIOPANT = 10;
     private final Long MAX_FILESIZE = 100L;
@@ -56,10 +51,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
      */
     @Override
     public Map<String,List<TimecapsuleMapping>> getTimecapsuleList(Long userNo){
-        log.info(userNo.toString());
         List<TimecapsuleMapping> timecapsules = timecapsuleMappingRepository.findByUserUserNo(userNo);
-
-        log.info("열러라 : "+ timecapsules.toString());
 
         //타임캡슐이 있는지?
         if(timecapsules.size() < 1){
@@ -67,8 +59,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
         //진행중인 타임캡슐
         List<TimecapsuleMapping> workTimecapsules = new ArrayList<>();
+        //저장된 타임캡슐
         List<TimecapsuleMapping> saveTimecapsules = new ArrayList<>();
-        log.info(timecapsules.toString());
+
         for(TimecapsuleMapping timecapsule : timecapsules){
             //캡슐이 와전히 삭되었거나, 캡슐저장을 삭제한경우 넘어가라
             if(timecapsule.getTimecapsule().getRemoveDate() != null ||
@@ -140,20 +133,15 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
 
         /*
-            저장된 타임캡슐 DTO 변화 및 타입이 GOAL 이면 조건추가
+            저장된 타임캡슐 DTO 변화 및 타입이 GOAL 이면 OPENDATE 받아온다
          */
         List<SaveTimecapsuleListDTO> saveTimecapsuleList = new ArrayList<>();
         for(TimecapsuleMapping timecapsuleMapping : saveTimecapsules){
             Timecapsule timecapsule = timecapsuleMapping.getTimecapsule();
             SaveTimecapsuleListDTO saveTimecapsule = timecapsule.toSaveTimecapsuleListDTO();
-            //GOAL 일경우 카드 작성 조건 추가
-//            if(timecapsule.getType().equals("GOAL")) {
-//                saveTimecapsule.setCriteria(
-//                        timecapsuleCriteriaRepository.findByTimecapsuleTimecapsuleNo(
-//                                timecapsule.getTimecapsuleNo()
-//                        ).toSaveCapsuleCriteriaDTO()
-//                );
-//            }
+            if(saveTimecapsule.getType().equals("GOAL")) {
+                saveTimecapsule.setEndDate(timecapsuleMapping.getOpenDate());
+            }
             saveTimecapsuleList.add(saveTimecapsule);
         }
 
@@ -180,24 +168,40 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
          //타임캡슐 생성 에러발생
          if(saveTimecapsule.getTimecapsuleNo() == null){
-
+             throw new CommonException(CustomExceptionStatus.CREATE_TIMECAPSULE);
          }
 
          if(timecapsuleCreateDTO.getType().equals("GOAL")){
              //카드 작성 요일 등록
-             if(timecapsuleCreateDTO.getCardInputDay() != null){
+             if(timecapsuleCreateDTO.getCardInputDay().size() > 0){
+                for(String cardDay : timecapsuleCreateDTO.getCardInputDay()){
+                    String dayKr = null;
+                    if(cardDay.equals("Monday")) dayKr = "월";
+                    if(cardDay.equals("Tuesday")) dayKr = "화";
+                    if(cardDay.equals("Wednesday")) dayKr = "수";
+                    if(cardDay.equals("Thursday")) dayKr = "목";
+                    if(cardDay.equals("Friday")) dayKr = "금";
+                    if(cardDay.equals("Saturday")) dayKr = "토";
+                    if(cardDay.equals("Sunday")) dayKr = "일";
 
-             }
-             //벌칙 추가
-             if(timecapsuleCreateDTO.getTimecapsulePenalty() != null){
-
+                    CirteriaDay cirteriaDay = new CirteriaDay();
+                    cirteriaDay.setTimecapsuleCriteria(saveTimecapsule.getTimecapsuleCriteria());
+                    cirteriaDay.setDayEn(cardDay);
+                    cirteriaDay.setDayKor(dayKr);
+                    CirteriaDay saveCirteriaDay = cirteriaDayRepository.save(cirteriaDay);
+                    // 요일 저장 에러 발생
+                    if(saveCirteriaDay.getDayNo() == null){
+                        throw new CommonException(CustomExceptionStatus.CREATE_CIRTERIADAY);
+                    }
+                }
              }
          }
 
          //타임캡슐 유저 맵핑
          Long userNo = getUserNo();
          TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping();
-         timecapsuleMapping.setUser(userRepository.findByUserNo(userNo));
+         timecapsuleMapping.setUser(userRepository.findByUserNo(userNo).orElseThrow(
+                 () -> new CommonException(CustomExceptionStatus.NOT_USER)));
          timecapsuleMapping.setTimecapsule(saveTimecapsule);
          timecapsuleMapping.setHost(true);
 
@@ -206,9 +210,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
          // 저장 에러
          if(saveMapping.getTimecapsuleMappingNo() == null){
-
+             throw new CommonException(CustomExceptionStatus.CREATE_TIMECAPSULEUSERMAPPING);
          }
-ㅉ
+
          // 상세페이지 불러오기 
          // 상세페이지 만들고 리턴해줘야함
 

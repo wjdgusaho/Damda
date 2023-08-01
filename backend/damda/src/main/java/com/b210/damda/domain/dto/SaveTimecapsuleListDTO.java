@@ -1,6 +1,5 @@
 package com.b210.damda.domain.dto;
 
-import com.b210.damda.domain.entity.TimecapsuleCriteria;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -23,9 +22,6 @@ public class SaveTimecapsuleListDTO {
     private Timestamp startDate;
     private Timestamp endDate;
     private int capsuleIconNo;
-    private int curCard;
     private int goalCard;
-    //조건 정보
-    private SaveCapsuleCriteriaDTO criteria;
 
 }

@@ -57,11 +57,9 @@ public class TimecapsuleController {
         타임캡슐 생성
      */
     @PostMapping("create")
-    public DataResponse<Map<String, Object>> createTimecapsule(
-            @RequestBody TimecapsuleCreateDTO timecapsuleCreateDTO
-    ){
+    public DataResponse<Map<String, Object>> createTimecapsule(@RequestBody TimecapsuleCreateDTO timecapsuleCreateDTO){
         log.info(timecapsuleCreateDTO.toString());
-         //TimecapsuleDTO timacapsule = timecapsuleService.createTimecapsule(timecapsuleCreateDTO);
+        TimecapsuleDTO timacapsule = timecapsuleService.createTimecapsule(timecapsuleCreateDTO);
 
 
 

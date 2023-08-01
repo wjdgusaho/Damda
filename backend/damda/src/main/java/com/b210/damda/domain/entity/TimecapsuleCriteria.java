@@ -1,6 +1,5 @@
 package com.b210.damda.domain.entity;
 
-import com.b210.damda.domain.dto.SaveCapsuleCriteriaDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,14 +34,5 @@ public class TimecapsuleCriteria {
 
     public TimecapsuleCriteria() {
 
-    }
-
-
-    public SaveCapsuleCriteriaDTO toSaveCapsuleCriteriaDTO(){
-        return SaveCapsuleCriteriaDTO.builder()
-                .type(this.type)
-                .weatherStatus(this.weatherStatus)
-                .location(this.location)
-                .build();
     }
 }

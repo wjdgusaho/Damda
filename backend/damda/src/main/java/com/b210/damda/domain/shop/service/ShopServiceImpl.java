@@ -176,7 +176,8 @@ public class ShopServiceImpl implements ShopService{
     public Map<String, Object> buyTheme(Long themeNo) {
         Long userNo = getUserNo();
 
-        User user = userRepository.findByUserNo(userNo);
+        User user = userRepository.findByUserNo(userNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER));
         
         // 해당 아이템이 있는지 조건 확인
         Theme theme = themeRepository.findByThemeNo(themeNo)
@@ -218,7 +219,8 @@ public class ShopServiceImpl implements ShopService{
     @Override
     public Map<String, Object> buySticker(Long itemNo) {
         Long userNo = getUserNo();
-        User user = userRepository.findByUserNo(userNo);
+        User user = userRepository.findByUserNo(userNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER));
         
         // 해당 아이템이 있는지 조건 확인
         Items items = itemsRepository.findByItemNo(itemNo)
@@ -266,7 +268,8 @@ public class ShopServiceImpl implements ShopService{
     @Override
     public Map<String, Object> buyCapsuleLimit(Long itemNo) {
         Long userNo = getUserNo();
-        User user = userRepository.findByUserNo(userNo);
+        User user = userRepository.findByUserNo(userNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER));
 
         // 해당 아이템이 있는지 조건 확인
         Items items = itemsRepository.findByItemNo(itemNo)
@@ -340,7 +343,8 @@ public class ShopServiceImpl implements ShopService{
     public void timecapsuleSize(Long timecapsuleNo, Long itemNo) {
 
         Long userNo = getUserNo();
-        User user = userRepository.findByUserNo(userNo);
+        User user = userRepository.findByUserNo(userNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER));
 
        //해당 타임캡슐이 없다면
        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo)

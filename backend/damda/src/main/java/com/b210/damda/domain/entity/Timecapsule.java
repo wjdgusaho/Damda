@@ -24,7 +24,7 @@ public class Timecapsule {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long timecapsuleNo;
 
-    private Timestamp openDate;
+    private Timestamp endDate;
 
     private String type;
 
@@ -48,17 +48,19 @@ public class Timecapsule {
 
     private String inviteCode;
 
-    private boolean penalty;
+    private int capsuleIconNo;
 
     @Builder.Default
     @Column(nullable = false, columnDefinition = "integer default 0")
-    private int capsuleIconNo;
-
-    private int goalCard;
+    private int goalCard = 0;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "criteria_id")
     private TimecapsuleCriteria timecapsuleCriteria;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "timecapsule_penalty_no")
+    private TimecapsulePenalty timecapsulePenalty;
 
     public Timecapsule(){
 
@@ -85,7 +87,7 @@ public class Timecapsule {
                 .timecapsuleNo(this.timecapsuleNo)
                 .type(this.type)
                 .sDate(this.registDate)
-                .eDate(this.openDate)
+                .eDate(this.endDate)
                 .name(this.title)
                 .capsuleIconNo(this.capsuleIconNo)
                 .goalCard(this.goalCard)
@@ -97,11 +99,11 @@ public class Timecapsule {
                 .timecapsuleNo(this.timecapsuleNo)
                 .type(this.type)
                 .startDate(this.registDate)
-                .endDate(this.openDate)
+                .endDate(this.getType().equals("GOAL") ? null : this.endDate)
                 .title(this.title)
                 .capsuleIconNo(this.capsuleIconNo)
-                .goalCard(this.getType().equals("GOAL") ? this.goalCard : null)
-                .curCard(this.getType().equals("GOAL") ? this.goalCard : null) //저장되었다는건 (이미 목표를 달성했기 때문)
+                .goalCard(this.getType().equals("GOAL") ? this.goalCard : 0)
+
                 .build();
     }
 

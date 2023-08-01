@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -26,6 +27,8 @@ public class TimecapsuleMapping {
 
     private boolean isHost;
 
-    private String deleteDate;
+    private Timestamp deleteDate;
+
+    private Timestamp openDate;
 
 }

@@ -2,6 +2,7 @@ package com.b210.damda.domain.dto;
 
 import com.b210.damda.domain.entity.Timecapsule;
 import com.b210.damda.domain.entity.TimecapsuleCriteria;
+import com.b210.damda.domain.entity.TimecapsulePenalty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -22,9 +23,7 @@ public class TimecapsuleCreateDTO {
 
     private int goalCard;
 
-    private boolean penalty;
-
-    private TimecapsulePenaltyDTO timecapsulePenalty;
+    private TimecapsulePenaltyDTO penalty;
 
     private TimecapsuleCriteriaDTO criteria;
 
@@ -37,13 +36,22 @@ public class TimecapsuleCreateDTO {
                 .type(this.type)
                 .description(this.description)
                 .goalCard(this.type.equals("GOAL") ? this.goalCard : 0)
-                .penalty(this.type.equals("GOAL") ? this.penalty : false)
                 .build();
 
-        if (this.criteria != null) {
-            TimecapsuleCriteria timecapsuleCriteriaEntity = this.criteria.toEntity();
-            timecapsule.setTimecapsuleCriteria(timecapsuleCriteriaEntity);
+
+        TimecapsuleCriteria timecapsuleCriteriaEntity = this.criteria.toEntity();
+        timecapsule.setTimecapsuleCriteria(timecapsuleCriteriaEntity);
+
+       TimecapsulePenalty timecapsulePenaltyEntity = null;
+        if(this.penalty != null) {
+            timecapsulePenaltyEntity = this.penalty.toEntity();
         }
+        else{
+            TimecapsulePenaltyDTO timecapsulePenaltyDTO = new TimecapsulePenaltyDTO();
+            timecapsulePenaltyEntity = timecapsulePenaltyDTO.toEntity();
+        }
+        timecapsule.setTimecapsulePenalty(timecapsulePenaltyEntity);
+
 
         return timecapsule;
     }
