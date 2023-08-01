@@ -9,7 +9,9 @@ import {
   changeHeartTheme,
   changeMarbleTheme,
 } from "../store/Theme"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "../store/Store"
+import "./datePicker.css"
 
 const Box = styled.div`
   display: flex;
@@ -18,48 +20,48 @@ const Box = styled.div`
   color: white;
   font-family: "Pretendard";
   justify-content: center;
-`
-
-const ImgBtn = styled.img`
-  filter: drop-shadow(0px 4px 4px rgb(0, 0, 0, 0.4));
+  img {
+    filter: drop-shadow(0px 4px 4px rgb(0, 0, 0, 0.4));
+  }
 `
 
 const SelectTheme = function () {
   let dispatch = useDispatch()
+  let Theme = useSelector((state: RootState) => state.theme.color50)
 
   return (
     <>
       <SubHeader />
       <Box className="w-80 m-auto mt-10">
-        <ImgBtn
+        <img
           onClick={() => {
             dispatch(changeUniverseDarkTheme())
           }}
-          className="my-5"
+          className={Theme === "#fbf8fc" ? "my-5 selectedTheme" : "my-5"}
           src="../../UniverseDark.png"
           alt="UniverseDark"
         />
-        <ImgBtn
+        <img
           onClick={() => {
             dispatch(changeUniverseLightTheme())
           }}
-          className="my-5"
+          className={Theme === "#f3f5fb" ? "my-5 selectedTheme" : "my-5"}
           src="../../UniverseLight.png"
           alt="UniverseLight"
         />
-        <ImgBtn
+        <img
           onClick={() => {
             dispatch(changeHeartTheme())
           }}
-          className="my-5"
+          className={Theme === "#F6F6F6" ? "my-5 selectedTheme" : "my-5"}
           src="../../Heart.png"
           alt="Heart"
         />
-        <ImgBtn
+        <img
           onClick={() => {
             dispatch(changeMarbleTheme())
           }}
-          className="my-5"
+          className={Theme === "#F4F6F9" ? "my-5 selectedTheme" : "my-5"}
           src="../../Marble.png"
           alt="Marble"
         />
