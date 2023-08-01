@@ -2,10 +2,32 @@ import React, { useEffect, useState } from "react"
 import { SubHeader } from "./inc/SubHeader"
 import styled from "styled-components"
 
-const UserSearch = function () {
-  const [searchList, setSearchList] = useState([])
+type UserInfo = {
+  id: number
+  nickname: string
+  profileImage: string
+  status: string
+}
 
-  useEffect(() => {}, [])
+const UserSearch = function () {
+  const [searchList, setSearchList] = useState<UserInfo[]>([])
+
+  useEffect(() => {
+    setSearchList([
+      {
+        id: 1,
+        nickname: "달토끼맛쿠키",
+        profileImage: "/assets/icons/profile_1.png",
+        status: "NOTREAD",
+      },
+      {
+        id: 2,
+        nickname: "달토끼맛쿠키",
+        profileImage: "/assets/icons/profile_1.png",
+        status: "NOTREAD",
+      },
+    ])
+  }, [])
 
   return (
     <div>
@@ -31,6 +53,7 @@ const UserSearch = function () {
         <div className="opacity-60 text-white text-center pr-80 mt-4">
           검색결과
         </div>
+        <div className="flex justify-center"></div>
       </div>
     </div>
   )
