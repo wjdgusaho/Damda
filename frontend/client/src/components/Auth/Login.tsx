@@ -226,12 +226,14 @@ const Login = function () {
                 onChange={inputPassword}
               />
             </div>
-            <p style={{ color: "red" }}>{userdataText}</p>
             <div className="flex grid-cols-2 justify-end">
               <LoginBtn>로그인</LoginBtn>
             </div>
           </div>
         </Form>
+        <p style={{ color: "red" }} className="relative -left-4">
+          {userdataText}
+        </p>
         <KakaoLink as="a" href={reqUrl}>
           <img
             src="kakao_login_medium_narrow1.png"
