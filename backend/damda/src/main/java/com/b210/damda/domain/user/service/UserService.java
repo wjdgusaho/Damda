@@ -289,7 +289,10 @@ public class UserService {
             }else{ // 유저가 있으면
 
                 // 현재 유저 꺼냄
-                User currentUser = userRepository.findByUserNo(userNo);
+                User currentUser = userRepository.findByUserNo(userNo)
+                        .orElseThrow(
+                        () -> new CommonException(CustomExceptionStatus.NOT_USER)
+                        );
 
                 // 현재 유저의 친구 목록을 전부 꺼냄
                 List<userFriend> userFriendByUser = friendRepository.getUserFriendByUser(currentUser);
@@ -304,7 +307,11 @@ public class UserService {
                     return result;
                 }
 
-                User byUserNo = userRepository.findByUserNo(userFriend.getUserFriendNo());
+                User byUserNo = userRepository.findByUserNo(userFriend.getUserFriendNo())
+                        .orElseThrow(
+                                () -> new CommonException(CustomExceptionStatus.NOT_USER)
+                        );
+
 
                 UserSearchResultDTO userSearchResultDTO = new UserSearchResultDTO(byUserNo, userFriend);
 

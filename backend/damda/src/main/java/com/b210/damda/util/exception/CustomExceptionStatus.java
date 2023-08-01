@@ -17,6 +17,9 @@ public enum CustomExceptionStatus {
     ITEM_NOT_FOUND(-6001, "해당 아이템이 존재하지 않습니다"),
     NOT_TIMECAPSULE(-6002, "타임캠슐이 존재하지 않습니다"),
     NOT_WORK_TIMECAPSULE(-6003, "현재 진행중인 타임캡슐이 없습니다"),
+    NOT_SAVE_TIMECAPSULE(-6004, "저장된 타임캡슐이 없습니다."),
+    NOT_CARD(-6005, "작성된 카드가 없습니다"),
+    NOT_USER(-6006, "없는 유저입니다."),
 
 
     //상점 관련
@@ -43,10 +46,12 @@ public enum CustomExceptionStatus {
     SAME_PASSWORD(-9007, "기존 비밀번호와 동일합니다."),
 
     // 토큰 관련
-    NOT_FOUND_JWT_TOKEN(-1000, "잘못된 접근입니다. 로그아웃 후 다시 로그인 부탁드립니다.");
+    NOT_FOUND_JWT_TOKEN(-1000, "잘못된 접근입니다. 로그아웃 후 다시 로그인 부탁드립니다."),
 
-
-
+    //생성 관련
+    CREATE_TIMECAPSULE(-4001, "타임캡슐 생성 오류 발생"),
+    CREATE_CIRTERIADAY( -4002, "타임캡슐 요일조건 생성 에러 발생"),
+    CREATE_TIMECAPSULEUSERMAPPING(-4003, "타임캡슐 유저 매핑 에러 발생");
 
     private final int code;
     private final String message;
