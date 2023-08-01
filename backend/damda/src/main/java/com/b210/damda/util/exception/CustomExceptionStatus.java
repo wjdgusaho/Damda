@@ -20,6 +20,7 @@ public enum CustomExceptionStatus {
     NOT_SAVE_TIMECAPSULE(-6004, "저장된 타임캡슐이 없습니다."),
     NOT_CARD(-6005, "작성된 카드가 없습니다"),
     NOT_USER(-6006, "없는 유저입니다."),
+    BAD_QUERY_FORMAT(-6007, "(닉네임)#(번호) 양식에 맞춰서 검색해주세요."),
 
 
     //상점 관련

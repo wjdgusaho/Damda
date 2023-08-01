@@ -362,27 +362,46 @@ public class UserService {
             return result;
         }else{ // 닉네임#코드로 검색
             String[] parts = query.split("#");
-            long targetNo = Long.parseLong(parts[0]);
-            Optional<User> byId = userRepository.findById(userNo);
-            if(byId.isEmpty()){ // 코드와 일치하는 유저가 없으면
+            if(parts.length < 2){
+                throw new CommonException(CustomExceptionStatus.BAD_QUERY_FORMAT);
+            }
+            long targetNo = Long.parseLong(parts[1]); // 코드
+            String targetNickname = parts[0]; // 닉네임
+
+
+            Optional<User> byId = userRepository.findById(targetNo);// 코드로 검색한 유저의 정보
+
+            if(byId.isPresent() && byId.get().getUserNo() == userNo){ // 코드로 검색한 유저가 존재하고 그 유저가 나와 같다면
                 return result;
-            }else{ // 코드와 일치하는 유저가 있으면
-                User user = byId.get();
-                if(user.getNickname().equals(parts[0])){ // 코드의 유저와 닉네임이 같으면
-                    users.add(user);
-                }else{ // 코드의 유저와 닉네임이 다르면
-                    return result;
+            }else if(byId.isPresent()){
+                User targetUser = byId.get();
+
+                User currentUser = userRepository.findById(userNo).get(); // 현재 로그인 유저의 정보
+
+                if(targetUser != null){ // 코드로 먼저 검색했을 때 유저의 정보가 있으면
+                    if(targetUser.getNickname().equals(targetNickname)){ // 해당 유저의 닉네임과 검색어로 받은 닉네임이 일치하면
+                        List<UserFriend> userFriendByUser = friendRepository.getUserFriendByUser(currentUser); // 현재 로그인 유저의 친구 목록 가져옴.
+
+                        for(UserFriend userFriend : userFriendByUser){
+                            if(userFriend.getFriend().getUserNo() == targetUser.getUserNo()){ // 친구 목록의 유저 번호와 검색한 번호가 일치하면(친구 목록에 있다는 뜻)
+                                UserSearchResultDTO userSearchResultDTO = new UserSearchResultDTO(targetUser, userFriend);
+
+                                result.add(userSearchResultDTO); // 리스트에 넣고
+                                break;
+                            }
+                        }
+                        if(result.size()==0){
+                            UserSearchResultDTO build = UserSearchResultDTO.builder()
+                                    .id(targetUser.getUserNo())
+                                    .nickname(targetUser.getNickname())
+                                    .profileImage(targetUser.getProfileImage())
+                                    .status("").build();
+                            result.add(build);
+                        }
+                    }
                 }
             }
         }
-
-//        for(User user : users){
-//            Optional<userFriend> userFriendByUser = friendRepository.getUserFriendByUser(user);
-//            if (userFriendByUser.isPresent()) {
-//                UserSearchResultDTO results = new UserSearchResultDTO(user, userFriendByUser.get());
-//                result.add(results);
-//            }
-//        }
         return result;
     }
 
