@@ -25,7 +25,7 @@ const capsuleList: CapsuleType[] = [
     sDate: "2023-01-01",
     eDate: "2023-06-01",
     name: "클래식1",
-    imgsrc: "assets/Planet-6.png",
+    imgsrc: "capsule1",
     curCard: 0,
     goalCard: 0,
     state: "openable",
@@ -37,7 +37,7 @@ const capsuleList: CapsuleType[] = [
     sDate: "2023-01-01",
     eDate: "2023-02-30",
     name: "기록1",
-    imgsrc: "assets/Planet-7.png",
+    imgsrc: "capsule10",
     curCard: 0,
     goalCard: 0,
     state: "openable",
@@ -49,7 +49,7 @@ const capsuleList: CapsuleType[] = [
     sDate: "2023-01-01",
     eDate: "2023-06-01",
     name: "클래식1",
-    imgsrc: "assets/Planet-6.png",
+    imgsrc: "capsule3",
     curCard: 0,
     goalCard: 0,
     state: "unregistered",
@@ -61,7 +61,7 @@ const capsuleList: CapsuleType[] = [
     sDate: "2023-01-01",
     eDate: "2024-01-01",
     name: "목표1",
-    imgsrc: "assets/Planet-5.png",
+    imgsrc: "capsule5",
     curCard: 50,
     goalCard: 100,
     state: "proceeding",
@@ -73,14 +73,14 @@ const Box = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: ${(props) => props.theme.colorCommon};
   font-family: "Pretendard";
 `
 
 const Title = tw.div`
     mt-14
     text-xl
-    font-extralight
+    font-normal
 `
 
 const Card = styled.div`
@@ -91,12 +91,6 @@ const Card = styled.div`
   border-radius: 30px;
   margin-top: 30px;
   align-items: center;
-`
-
-const CapsuleImg = styled.img`
-  width: 87px;
-  height: 87px;
-  margin-left: 20px;
 `
 
 const OpenableCard = styled(Card)`
@@ -121,7 +115,18 @@ const CapsuleTitle = styled.div`
   text-overflow: ellipsis;
   word-break: break-all;
 `
-
+const CapsuleImg = styled.div<{ capsuleNum: string }>`
+  position: relative;
+  background-image: url(${(props) => props.theme[props.capsuleNum]});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 87px;
+  height: 87px;
+  margin-left: 20px;
+`
+const DateDiv = styled.div`
+  color: ${(props) => props.theme.colorCommon};
+`
 const TimecapsulePage = function () {
   return (
     <>
@@ -132,16 +137,16 @@ const TimecapsulePage = function () {
           <React.Fragment key={capsule.id}>
             {capsule.state === "openable" ? (
               <OpenableCard>
-                <CapsuleImg src={`${capsule.imgsrc}`} alt="capsuleImg" />
+                <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
                   <CapsuleState>
                     오픈가능
-                    <span
+                    <DateDiv
                       className="text-sm font-thin"
-                      style={{ color: "white", opacity: "56%" }}
+                      style={{ opacity: "56%" }}
                     >
                       {capsule.eDate}
-                    </span>
+                    </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
                     {capsule.title}
@@ -150,20 +155,16 @@ const TimecapsulePage = function () {
               </OpenableCard>
             ) : capsule.state === "unregistered" ? (
               <UnregisteredCard>
-                <CapsuleImg
-                  className="grayscale"
-                  src={`${capsule.imgsrc}`}
-                  alt="capsuleImg"
-                />
+                <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
                   <CapsuleState>
                     등록 전
-                    <span
+                    <DateDiv
                       className="text-sm font-thin"
-                      style={{ color: "white", opacity: "56%" }}
+                      style={{ opacity: "56%" }}
                     >
                       {capsule.eDate}
-                    </span>
+                    </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
                     {capsule.title}
@@ -172,16 +173,16 @@ const TimecapsulePage = function () {
               </UnregisteredCard>
             ) : (
               <Card>
-                <CapsuleImg src={`${capsule.imgsrc}`} alt="capsuleImg" />
+                <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
                   <CapsuleState>
                     {calculateDday(capsule.eDate)}
-                    <span
+                    <DateDiv
                       className="text-sm font-thin"
-                      style={{ color: "white", opacity: "56%" }}
+                      style={{ opacity: "56%" }}
                     >
                       {capsule.eDate}
-                    </span>
+                    </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
                     {capsule.title}

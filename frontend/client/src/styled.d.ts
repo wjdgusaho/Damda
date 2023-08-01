@@ -28,5 +28,12 @@ declare module "styled-components" {
     capsule8: string
     capsule9: string
     capsule10: string
+    InfoImg_sm: string
+    InfoImg_lg: string
+    emptyImg_1: string
+    emptyImg_2: string
+    emptyImg_3: string
+    bgImg: string
+    popupImg: string
   }
 }

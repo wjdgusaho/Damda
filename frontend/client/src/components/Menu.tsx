@@ -15,7 +15,7 @@ const UserData = {
 }
 
 const Background = styled.div`
-  background-image: url("../../Background.png");
+  background-image: url(${(props) => props.theme.bgImg});
   background-size: 540px;
   background-position-x: center;
   background-position-y: 60px;
