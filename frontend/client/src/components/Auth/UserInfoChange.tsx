@@ -39,9 +39,7 @@ export const UserInfoChange = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null)
   const imageRef = useRef<HTMLInputElement>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(
-    serverUrl +
-      "uploads/" +
-      useSelector((state: RootState) => state.auth.userInfo.profileImage)
+    useSelector((state: RootState) => state.auth.userInfo.profileImage)
   )
   const [userdata, setUserdata] = useState({
     userPw: "",
@@ -224,10 +222,13 @@ export const UserInfoChange = () => {
         <div className="w-full justify-center">
           <img
             className="mx-auto"
-            style={{ backgroundColor: "#AEB8E2", borderRadius: "50%" }}
+            style={{
+              backgroundColor: "#AEB8E2",
+              borderRadius: "50%",
+              width: "100px",
+              height: "100px",
+            }}
             src={selectedImage ? selectedImage : "/defalutprofile.png"}
-            width={100}
-            height={100}
             alt="profile"
           />
           <img
