@@ -37,7 +37,7 @@ const AmphText = styled.span`
   color: ${(props) => props.theme.colorEtc};
 `
 
-const Button = styled.div`
+const Button = styled.button`
   border-radius: 30px;
   font-family: "pretendard";
   font-size: 20px;
