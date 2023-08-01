@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { MainHeader } from "./inc/MainHeader"
 import { SubHeader } from "./inc/SubHeader"
 
@@ -27,48 +27,48 @@ type CapsuleType = {
   goalCard: number
 }
 
-const capsuleList: CapsuleType[] = [
-  {
-    id: 4,
-    type: "new",
-    sDate: "2023-01-01",
-    eDate: "2023-06-01",
-    name: "클래식1",
-    imgsrc: "capsule1",
-    curCard: 0,
-    goalCard: 0,
-  },
-  {
-    id: 1,
-    type: "classic",
-    sDate: "2023-01-01",
-    eDate: "2023-06-01",
-    name: "클래식1",
-    imgsrc: "capsule2",
-    curCard: 0,
-    goalCard: 0,
-  },
-  {
-    id: 2,
-    type: "goal",
-    sDate: "2023-01-01",
-    eDate: "2024-01-01",
-    name: "목표1",
-    imgsrc: "capsule3",
-    curCard: 50,
-    goalCard: 100,
-  },
-  {
-    id: 3,
-    type: "memory",
-    sDate: "2023-01-01",
-    eDate: "2023-02-30",
-    name: "기록1",
-    imgsrc: "capsule1",
-    curCard: 0,
-    goalCard: 0,
-  },
-]
+// const capsuleList: CapsuleType[] = [
+// {
+//   id: 4,
+//   type: "new",
+//   sDate: "2023-01-01",
+//   eDate: "2023-06-01",
+//   name: "클래식1",
+//   imgsrc: "capsule1",
+//   curCard: 0,
+//   goalCard: 0,
+// },
+// {
+//   id: 1,
+//   type: "classic",
+//   sDate: "2023-01-01",
+//   eDate: "2023-06-01",
+//   name: "클래식1",
+//   imgsrc: "capsule2",
+//   curCard: 0,
+//   goalCard: 0,
+// },
+// {
+//   id: 2,
+//   type: "goal",
+//   sDate: "2023-01-01",
+//   eDate: "2024-01-01",
+//   name: "목표1",
+//   imgsrc: "capsule3",
+//   curCard: 50,
+//   goalCard: 100,
+// },
+// {
+//   id: 3,
+//   type: "memory",
+//   sDate: "2023-01-01",
+//   eDate: "2023-02-30",
+//   name: "기록1",
+//   imgsrc: "capsule1",
+//   curCard: 0,
+//   goalCard: 0,
+// },
+// ]
 
 const MainPage = function () {
   const slickRef = useRef<Slider>(null)
@@ -87,6 +87,7 @@ const MainPage = function () {
   }
 
   const navigate = useNavigate()
+  const [capsuleList, setCapsuleList] = useState([])
 
   return (
     <div>
@@ -98,6 +99,7 @@ const MainPage = function () {
           alt="도움말"
         />
       </div>
+      <div className="bg-red-500 text-xl">자동배포 테스트</div>
       <div className="mt-14">
         {capsuleList.length === 0 ? (
           // 타임캡슐이 하나도 없을 때
@@ -110,7 +112,7 @@ const MainPage = function () {
           // 타임캡슐이 한개 이상 있을 때
           <div className="">
             <Slider ref={slickRef} {...settings} className="">
-              {capsuleList.map((c) => (
+              {capsuleList.map((c: CapsuleType) => (
                 <Capsule key={c.id} className="text-center">
                   {c.type !== "new" && (
                     <div className="relative">
@@ -143,7 +145,7 @@ const MainPage = function () {
                         <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-white absolute"></div>
                       )}
                       <FloatingImage
-                        capsuleNum={c.imgsrc}
+                        capsulenum={c.imgsrc}
                         className="h-52 m-auto mt-10"
                       />
                     </div>
@@ -153,7 +155,7 @@ const MainPage = function () {
                     <div>
                       <Dday className="m-auto !opacity-80 mt-2">NEW!</Dday>
                       <FloatingImage
-                        capsuleNum={c.imgsrc}
+                        capsulenum={c.imgsrc}
                         className="h-52 m-auto mt-14 grayscale"
                       />
                     </div>
@@ -262,9 +264,9 @@ const EmptyImage = styled.div`
   }
   animation: floatingAnimation 2s ease-in-out infinite;
 `
-const FloatingImage = styled.div<{ capsuleNum: string }>`
+const FloatingImage = styled.div<{ capsulenum: string }>`
   position: relative;
-  background-image: url(${(props) => props.theme[props.capsuleNum]});
+  background-image: url(${(props) => props.theme[props.capsulenum]});
   background-repeat: no-repeat;
   background-size: cover;
   width: 250px;
