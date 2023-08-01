@@ -37,13 +37,6 @@ import GoalCapsule from "./components/GoalCapsule"
 import SelectTheme from "./components/SelectTheme"
 
 function Main() {
-  const [themeIdx, setThemeIdx] = useState(0)
-  const [themeList, setThemeList] = useState([
-    universeDarkTheme,
-    universeLightTheme,
-    heartTheme,
-    marbleTheme,
-  ])
   return (
     <ThemeProvider theme={universeDarkTheme}>
       <div className="Main">
