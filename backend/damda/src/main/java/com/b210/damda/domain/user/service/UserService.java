@@ -5,6 +5,7 @@ import com.b210.damda.domain.dto.UserSearchResultDTO;
 import com.b210.damda.domain.dto.UserUpdateDTO;
 import com.b210.damda.domain.entity.*;
 import com.b210.damda.domain.file.service.FileStoreService;
+import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.friend.repository.FriendRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -45,32 +47,32 @@ public class UserService {
     private RefreshTokenRepository refreshTokenRepository;
     private EmailSendLogRepository emailSendLogRepository;
     private FriendRepository friendRepository;
-    private FileStoreService fileStoreService;
+    private S3UploadService s3UploadService;
     private SignupEmailLogRepository signupEmailLogRepository;
 
     @Autowired
     public UserService(UserRepository userRepository, UserLogRepository userLogRepository, BCryptPasswordEncoder encoder, RefreshTokenRepository refreshTokenRepository,
-                       EmailSendLogRepository emailSendLogRepository, FriendRepository friendRepository, FileStoreService fileStoreService, SignupEmailLogRepository signupEmailLogRepository) {
+                       EmailSendLogRepository emailSendLogRepository, FriendRepository friendRepository, S3UploadService s3UploadService, SignupEmailLogRepository signupEmailLogRepository) {
         this.userRepository = userRepository;
         this.userLogRepository = userLogRepository;
         this.encoder = encoder;
         this.refreshTokenRepository = refreshTokenRepository;
         this.emailSendLogRepository = emailSendLogRepository;
         this.friendRepository = friendRepository;
-        this.fileStoreService = fileStoreService;
+        this.s3UploadService = s3UploadService;
         this.signupEmailLogRepository = signupEmailLogRepository;
     }
 
 
     // 회원가입
     @Transactional
-    public User regist(UserOriginRegistDTO userOriginRegistDTO, MultipartFile multipartFile) {
+    public User regist(UserOriginRegistDTO userOriginRegistDTO, MultipartFile multipartFile) throws IOException {
         String fileUri = "";
 
         if(multipartFile.isEmpty() && multipartFile.getSize() == 0){
             fileUri = "profile.jpg";
         }else{
-            fileUri = fileStoreService.storeFile(multipartFile);
+            fileUri = s3UploadService.saveFile(multipartFile);
             System.out.println(fileUri);
         }
         String encode = encoder.encode(userOriginRegistDTO.getUserPw()); // 비밀번호 암호화
@@ -339,7 +341,7 @@ public class UserService {
 
     @Transactional
     // 유저 정보 업데이트
-    public User userInfoUpdate(UserUpdateDTO userUpdateDTO, MultipartFile multipartFile){
+    public User userInfoUpdate(UserUpdateDTO userUpdateDTO, MultipartFile multipartFile) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         Long userNo = (Long) principal;
@@ -350,7 +352,7 @@ public class UserService {
         User user = byId.get();
 
         if(!multipartFile.isEmpty()){
-            String uri = fileStoreService.storeFile(multipartFile);
+            String uri = s3UploadService.saveFile(multipartFile);
             user.updateprofileImage(uri);
         }
 
