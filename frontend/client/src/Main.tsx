@@ -34,6 +34,7 @@ import {
 } from "./theme"
 import RecordCapsule from "./components/RecordCapsule"
 import GoalCapsule from "./components/GoalCapsule"
+import SelectTheme from "./components/SelectTheme"
 
 function Main() {
   return (
@@ -73,6 +74,7 @@ function Main() {
                 <Route path="/classic/" element={<ClassicCapsule />}></Route>
                 <Route path="/record/" element={<RecordCapsule />}></Route>
                 <Route path="/goal/" element={<GoalCapsule />}></Route>
+                <Route path="/selecttheme/" element={<SelectTheme />}></Route>
               </Routes>
             </BrowserRouter>
           </Provider>
