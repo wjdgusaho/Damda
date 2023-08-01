@@ -95,7 +95,7 @@ const MainPage = function () {
       <div className="flex flex-col h-screen justify-center">
         <div className="-mt-60">
           <img
-            className="absolute w-10 right-0 mr-10 mt-10"
+            className="absolute w-8 right-0 mr-10 mt-10"
             src="assets/icons/questionMark.png"
             alt="도움말"
           />
@@ -103,9 +103,9 @@ const MainPage = function () {
         <div className="mt-14">
           {capsuleList.length === 0 ? (
             // 타임캡슐이 하나도 없을 때
-            <div className="text-center mt-20">
+            <div className="text-center mt-6">
               <TextStyle>타임캡슐이 없어요... 아직은요! </TextStyle>
-              <EmptyImage className="w-72 m-auto mt-12" />
+              <EmptyImage className="w-72 m-auto mt-6" />
               <CapsuleShadow className="m-auto"></CapsuleShadow>
             </div>
           ) : (
