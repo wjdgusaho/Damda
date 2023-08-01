@@ -39,10 +39,14 @@ const Card = function () {
   return (
     <BackGround bgColor={bgcolor}>
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
-        <img src="/assets/icons/button_x.png" alt="X" />
-        <img src="/assets/icons/button_check.png" alt="체크" />
+        <img className="w-6 h-6" src="/assets/icons/x_dark.png" alt="X" />
+        <img
+          className="w-8 h-6"
+          src="/assets/icons/check_dark.png"
+          alt="체크"
+        />
       </div>
-      <CardContainer className="mt-6 m-auto overflow-hidden">
+      <CardContainer className="mt-4 m-auto overflow-hidden">
         <div className="flex justify-between p-2 text-sm">
           <div className="flex">
             <img
@@ -103,6 +107,12 @@ const Card = function () {
             평창평화체2
           </Option>
         </FontSelect>
+      </div>
+      <div>
+        <div className="bg-slate-50 mt-4 h-7">스티커팩 목록</div>
+        <div className="flex">
+          <div className="bg-slate-500 flex-1">스티커 목록</div>
+        </div>
       </div>
     </BackGround>
   )
