@@ -39,7 +39,7 @@ const MenuBtn = styled.button`
   height: 70px;
   font-size: 20px;
   border-radius: 15px;
-  color: ${(props) => props.theme.colorCommon};
+  color: ${(props) => props.theme.color900};
   font-weight: 400;
   margin-bottom: 25px;
   box-shadow: 0px 4px 4px ${(props) => props.theme.color700};
