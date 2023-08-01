@@ -4,12 +4,6 @@ import { createRoot } from "react-dom/client"
 import "./Pretendard/web/static/pretendard.css"
 import "./PyeongChangPeace/PyeongChangPeace.css"
 import "../src/index.css"
-import {
-  universeDarkTheme,
-  universeLightTheme,
-  heartTheme,
-  marbleTheme,
-} from "./theme"
 import { Provider } from "react-redux"
 import Store from "./store/Store"
 
