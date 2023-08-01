@@ -43,6 +43,7 @@ public class UserController {
     public DataResponse<Map<String, Object>> regist(@RequestPart("user") UserOriginRegistDTO userOriginRegistDTO,
                                     @RequestPart("profileImage") MultipartFile profileImage){
         try {
+            System.out.println(userOriginRegistDTO.toString());
             User savedUser = userService.regist(userOriginRegistDTO, profileImage);
             DataResponse<Map<String, Object>> response = new DataResponse<>(201, "회원가입 완료");
             return response;
