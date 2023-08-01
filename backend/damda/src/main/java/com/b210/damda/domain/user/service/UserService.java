@@ -70,16 +70,15 @@ public class UserService {
         String fileUri = "";
 
         if(multipartFile.isEmpty() && multipartFile.getSize() == 0){
-            fileUri = "profile.jpg";
+            fileUri = "https://damda.s3.ap-northeast-2.amazonaws.com/profile.jpg";
         }else{
             fileUri = s3UploadService.saveFile(multipartFile);
-            System.out.println(fileUri);
         }
         String encode = encoder.encode(userOriginRegistDTO.getUserPw()); // 비밀번호 암호화
 
         userOriginRegistDTO.setUserPw(encode);
-        if (fileUri.equals("profile.jpg")) {
-            userOriginRegistDTO.setUri("profile.jpg");
+        if (fileUri.equals("https://damda.s3.ap-northeast-2.amazonaws.com/profile.jpg")) {
+            userOriginRegistDTO.setUri("https://damda.s3.ap-northeast-2.amazonaws.com/profile.jpg");
             User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
             return savedUser;
         } else {
