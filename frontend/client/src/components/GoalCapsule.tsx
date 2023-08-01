@@ -139,7 +139,7 @@ const GoalCapsule = function () {
   const navigate = useNavigate()
 
   const data: DataItem[] = [
-    { id: 0, title: "없음" },
+    { id: 0, title: "없음" }, // Monday 이런식으로 바꾸기
     { id: 1, title: "월" },
     { id: 2, title: "화" },
     { id: 3, title: "수" },
@@ -156,10 +156,10 @@ const GoalCapsule = function () {
     if (id === 0) {
       setCheckItems([0])
     } else {
-      // If "없음" is not selected, remove it from checkItems if present
+      // 없음이 선택됐을 때, checkItem 배열안에 item이 있다면 비우기
       const updatedCheckItems = checkItems.filter((item) => item !== 0)
 
-      // Toggle other checkboxes on/off
+      // 토글
       if (updatedCheckItems.includes(id)) {
         setCheckItems(updatedCheckItems.filter((item) => item !== id))
       } else {
