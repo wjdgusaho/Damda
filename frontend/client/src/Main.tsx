@@ -1,8 +1,7 @@
-import React, { useState } from "react"
+import React from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { RootState } from "./store/Store"
-import Store from "./store/Store"
-import { Provider, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { CookiesProvider } from "react-cookie"
 
 import MainPage from "./components/MainPage"
@@ -26,58 +25,57 @@ import { UserInfoChange } from "./components/Auth/UserInfoChange"
 import SelectType from "./components/SelectType"
 import ClassicCapsule from "./components/ClassicCapsule"
 import { ThemeProvider } from "styled-components"
-import {
-  universeDarkTheme,
-  universeLightTheme,
-  heartTheme,
-  marbleTheme,
-} from "./theme"
 import RecordCapsule from "./components/RecordCapsule"
 import GoalCapsule from "./components/GoalCapsule"
 import SelectTheme from "./components/SelectTheme"
 
 function Main() {
+  const themeState = useSelector((state: RootState) => state.theme)
+
+  const styleElement = document.createElement("style")
+  styleElement.innerHTML = `
+    html {
+      background: ${themeState.colorTheme} no-repeat center fixed;
+      background-size: cover;
+    }
+  `
+  document.head.appendChild(styleElement)
   return (
-    <ThemeProvider theme={universeDarkTheme}>
+    <ThemeProvider theme={themeState}>
       <div className="Main">
         <CookiesProvider>
-          <Provider store={Store}>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<LandingPage />}></Route>
-                <Route path="/user/" element={<CheckPassword />}></Route>
-                <Route path="/user-info/" element={<UserInfoChange />}></Route>
-                <Route path="/shop/" element={<ShopPage />}></Route>
-                <Route
-                  path="/timecapsule/"
-                  element={<TimecapsulePage />}
-                ></Route>
-                <Route path="/card/" element={<Card />}></Route>
-                <Route path="/friend/" element={<Friend />}>
-                  <Route path="list" element={<List />}></Route>
-                  <Route path="request" element={<Request />}></Route>
-                </Route>
-                <Route path="/login/" element={<Login />}></Route>
-                <Route path="/signup/" element={<SignUp />}></Route>
-                <Route path="/logout/" element={<Logout />}></Route>
-                <Route path="/main/" element={<MainPage />}></Route>
-                <Route path="/findPassword/" element={<FindPassword />}></Route>
-                <Route path="/tutorial/" element={<Tutorial />}></Route>
-                <Route path="/dummykakao/" element={<DummyKakao />}></Route>
-                <Route path="/menu/" element={<Menu />}></Route>
-                <Route
-                  path="/savetimecapsule/"
-                  element={<SavedTimecapsule />}
-                ></Route>
-                <Route path="/participate/" element={<Participate />}></Route>
-                <Route path="/selecttype/" element={<SelectType />}></Route>
-                <Route path="/classic/" element={<ClassicCapsule />}></Route>
-                <Route path="/record/" element={<RecordCapsule />}></Route>
-                <Route path="/goal/" element={<GoalCapsule />}></Route>
-                <Route path="/selecttheme/" element={<SelectTheme />}></Route>
-              </Routes>
-            </BrowserRouter>
-          </Provider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<LandingPage />}></Route>
+              <Route path="/user/" element={<CheckPassword />}></Route>
+              <Route path="/user-info/" element={<UserInfoChange />}></Route>
+              <Route path="/shop/" element={<ShopPage />}></Route>
+              <Route path="/timecapsule/" element={<TimecapsulePage />}></Route>
+              <Route path="/card/" element={<Card />}></Route>
+              <Route path="/friend/" element={<Friend />}>
+                <Route path="list" element={<List />}></Route>
+                <Route path="request" element={<Request />}></Route>
+              </Route>
+              <Route path="/login/" element={<Login />}></Route>
+              <Route path="/signup/" element={<SignUp />}></Route>
+              <Route path="/logout/" element={<Logout />}></Route>
+              <Route path="/main/" element={<MainPage />}></Route>
+              <Route path="/findPassword/" element={<FindPassword />}></Route>
+              <Route path="/tutorial/" element={<Tutorial />}></Route>
+              <Route path="/dummykakao/" element={<DummyKakao />}></Route>
+              <Route path="/menu/" element={<Menu />}></Route>
+              <Route
+                path="/savetimecapsule/"
+                element={<SavedTimecapsule />}
+              ></Route>
+              <Route path="/participate/" element={<Participate />}></Route>
+              <Route path="/selecttype/" element={<SelectType />}></Route>
+              <Route path="/classic/" element={<ClassicCapsule />}></Route>
+              <Route path="/record/" element={<RecordCapsule />}></Route>
+              <Route path="/goal/" element={<GoalCapsule />}></Route>
+              <Route path="/selecttheme/" element={<SelectTheme />}></Route>
+            </Routes>
+          </BrowserRouter>
         </CookiesProvider>
       </div>
     </ThemeProvider>

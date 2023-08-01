@@ -10,17 +10,14 @@ import {
   heartTheme,
   marbleTheme,
 } from "./theme"
+import { Provider } from "react-redux"
+import Store from "./store/Store"
 
 const container = document.getElementById("root")
 const root = createRoot(container!)
 
-const styleElement = document.createElement("style")
-styleElement.innerHTML = `
-  html {
-    background: ${heartTheme.colorTheme} no-repeat center fixed;
-    background-size: cover;
-  }
-`
-document.head.appendChild(styleElement)
-
-root.render(<Main />)
+root.render(
+  <Provider store={Store}>
+    <Main />
+  </Provider>
+)
