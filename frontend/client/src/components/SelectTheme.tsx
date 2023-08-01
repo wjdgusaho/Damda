@@ -1,8 +1,7 @@
-import React, { useState } from "react"
+import React from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
-import { useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
 import {
   changeUniverseDarkTheme,
@@ -10,7 +9,7 @@ import {
   changeHeartTheme,
   changeMarbleTheme,
 } from "../store/Theme"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 
 const Box = styled.div`
   display: flex;
@@ -27,11 +26,7 @@ const ImgBtn = styled.img`
 
 const SelectTheme = function () {
   let dispatch = useDispatch()
-  let state = useSelector((state) => {
-    return state
-  })
 
-  console.log(state)
   return (
     <>
       <SubHeader />
