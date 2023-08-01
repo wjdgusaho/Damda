@@ -28,6 +28,7 @@ import { ThemeProvider } from "styled-components"
 import RecordCapsule from "./components/RecordCapsule"
 import GoalCapsule from "./components/GoalCapsule"
 import SelectTheme from "./components/SelectTheme"
+import UserSearch from "./components/UserSearch"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
@@ -56,6 +57,7 @@ function Main() {
                 <Route path="list" element={<List />}></Route>
                 <Route path="request" element={<Request />}></Route>
               </Route>
+              <Route path="/friend/search" element={<UserSearch />}></Route>
               <Route path="/login/" element={<Login />}></Route>
               <Route path="/signup/" element={<SignUp />}></Route>
               <Route path="/logout/" element={<Logout />}></Route>
