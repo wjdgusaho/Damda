@@ -7,6 +7,8 @@ import { useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
 import { getCookieToken } from "../../store/Cookie"
 import { GetNewTokens } from "./RefreshTokenApi"
+import { ThemeProvider, styled } from "styled-components"
+import { SubHeader } from "../inc/SubHeader"
 
 const Box = tw.div`
   flex
@@ -17,14 +19,39 @@ const Box = tw.div`
   text-center
   w-96
 `
-const InputText = tw.input`
-  mt-5 ml-7 w-80
-  bg-transparent
-  focus:outline-none
-  border-b-2
-`
-const Button = tw.button`bg-lilac-100 ml-24 text-black shadow-md w-48 border rounded-full mt-96 h-10`
 
+const InputText = styled.input`
+  margin-top: 5px;
+  display: flex;
+  margin: auto;
+  width: 320px;
+  background-color: transparent;
+  outline: none;
+  border-bottom: 1px solid ${(props) => props.theme.colorCommon};
+`
+
+const Text = styled.p`
+  color: ${(props) => props.theme.colorCommon};
+`
+const AmphText = styled.span`
+  color: ${(props) => props.theme.colorEtc};
+`
+
+const Button = styled.div`
+  border-radius: 30px;
+  font-family: "pretendard";
+  font-size: 20px;
+  font-weight: 400;
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: ${(props) => props.theme.color100};
+  background-color: ${(props) => props.theme.color900};
+  &:hover {
+    transition: 0.2s;
+    transform: scale(0.95);
+    color: ${(props) => props.theme.color100};
+    background-color: ${(props) => props.theme.color700};
+  }
+`
 export const CheckPassword = function () {
   const [userPw, setUserPw] = useState("")
   let Token = useSelector((state: RootState) => state.auth.accessToken)
@@ -79,57 +106,31 @@ export const CheckPassword = function () {
   }
 
   return (
-    <Box style={{ color: "#CFD4EE" }}>
-      <div className="flex flex-initial justify-between">
-        <Link
-          to={"/menu"}
-          style={{ fontSize: "30px", color: "white", marginLeft: "30px" }}
-        >
-          <svg
-            className="w-6 h-6 text-black-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 8 14"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
-            />
-          </svg>
-        </Link>
-        <Link to={"/main"} className="grid grid-cols-2 text-center">
-          <img
-            style={{ marginLeft: "13px" }}
-            src="/assets/icons/home.png"
-            alt="home"
-            width={25}
-          />
-          <p>홈으로</p>
-        </Link>
-      </div>
-      <img
-        src="assets/Planet-3.png"
-        alt="planet"
-        width={200}
-        style={{ marginLeft: "auto", marginRight: "auto" }}
-      />
-      <div style={{ marginLeft: "auto", marginRight: "auto" }}>
-        <p>
-          회원님의 개인정보를 안전하게 보호하기 위해
-          <br />
-          <span className="text-lilac-500">2차 인증 후 변경이 가능</span>
-          합니다.
-        </p>
-      </div>
-      <form className="mt-10 text-left h-20" onSubmit={handlePwSubmit}>
-        <p className="ml-7">비밀번호</p>
-        <InputText className="" type="password" onChange={handlePwChange} />
-        <Button>확인</Button>
-      </form>
-    </Box>
+    <div>
+      <SubHeader></SubHeader>
+      <Box>
+        <img
+          src="assets/Planet-3.png"
+          alt="planet"
+          width={200}
+          style={{ marginLeft: "auto", marginRight: "auto" }}
+        />
+        <div style={{ marginLeft: "auto", marginRight: "auto" }}>
+          <p>
+            회원님의 개인정보를 안전하게 보호하기 위해
+            <br />
+            <AmphText>2차 인증 후 변경이 가능</AmphText>
+            합니다.
+          </p>
+        </div>
+        <form className="mt-10 text-left h-20" onSubmit={handlePwSubmit}>
+          <p className="ml-7">비밀번호</p>
+          <InputText className="" type="password" onChange={handlePwChange} />
+          <Button className="fixed bottom-12 left-0 right-0 w-64 h-16 flex items-center justify-center m-auto">
+            확인
+          </Button>
+        </form>
+      </Box>
+    </div>
   )
 }

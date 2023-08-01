@@ -103,11 +103,7 @@ const MainPage = function () {
           // 타임캡슐이 하나도 없을 때
           <div className="text-center mt-20">
             <TextStyle>타임캡슐이 없어요... 아직은요! </TextStyle>
-            <img
-              className="w-72 m-auto mt-12"
-              src="assets/Astronaut-3.png"
-              alt="Astronaut-3"
-            />
+            <EmptyImage className="w-72 m-auto mt-12" />
             <CapsuleShadow className="m-auto"></CapsuleShadow>
           </div>
         ) : (
@@ -217,7 +213,7 @@ const TextStyle = styled.div`
   font-family: "pretendard";
   font-size: 20px;
   font-weight: 200;
-  color: ${(props) => props.theme.color400};
+  color: ${(props) => props.theme.colorCommon};
 `
 const MakeCapsuleButton = styled.div`
   border-radius: 30px;
@@ -246,6 +242,26 @@ const MakeCapsuleCode = styled.div`
   }
 `
 
+const EmptyImage = styled.div`
+  position: relative;
+  background-image: url(${(props) => props.theme.emptyImg_1});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 250px;
+  height: 250px;
+  @keyframes floatingAnimation {
+    0% {
+      transform: translateY(0); /* 시작 위치 (위치 이동 없음) */
+    }
+    50% {
+      transform: translateY(-10px); /* 위로 10px 이동 */
+    }
+    100% {
+      transform: translateY(0); /* 다시 원래 위치로 이동 */
+    }
+  }
+  animation: floatingAnimation 2s ease-in-out infinite;
+`
 const FloatingImage = styled.div<{ capsuleNum: string }>`
   position: relative;
   background-image: url(${(props) => props.theme[props.capsuleNum]});
