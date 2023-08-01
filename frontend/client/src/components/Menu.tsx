@@ -15,7 +15,7 @@ const UserData = {
 }
 
 const Background = styled.div`
-  background-image: url("../../Background.png");
+  background-image: url(${(props) => props.theme.bgImg});
   background-size: 540px;
   background-position-x: center;
   background-position-y: 60px;
@@ -39,7 +39,7 @@ const MenuBtn = styled.button`
   height: 70px;
   font-size: 20px;
   border-radius: 15px;
-  color: ${(props) => props.theme.colorCommon};
+  color: ${(props) => props.theme.color900};
   font-weight: 400;
   margin-bottom: 25px;
   box-shadow: 0px 4px 4px ${(props) => props.theme.color700};

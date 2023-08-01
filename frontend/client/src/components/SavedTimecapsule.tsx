@@ -25,7 +25,7 @@ const capsuleList: CapsuleType[] = [
     sDate: "2023-01-01",
     eDate: "2023-06-01",
     name: "클래식1",
-    imgsrc: "assets/Planet-6.png",
+    imgsrc: "capsule9",
     curCard: 0,
     goalCard: 0,
     state: "openable",
@@ -37,7 +37,7 @@ const capsuleList: CapsuleType[] = [
     sDate: "2023-01-01",
     eDate: "2023-02-30",
     name: "기록1",
-    imgsrc: "assets/Planet-7.png",
+    imgsrc: "capsule7",
     curCard: 0,
     goalCard: 0,
     state: "openable",
@@ -49,14 +49,17 @@ const Box = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: ${(props) => props.theme.colorCommon};
   font-family: "Pretendard";
+`
+const DateDiv = styled.div`
+  color: ${(props) => props.theme.colorCommon};
 `
 
 const Title = tw.div`
     mt-14
     text-xl
-    font-extralight
+    font-normal
 `
 
 const Card = styled.div`
@@ -69,7 +72,11 @@ const Card = styled.div`
   align-items: center;
 `
 
-const CapsuleImg = styled.img`
+const CapsuleImg = styled.div<{ capsuleNum: string }>`
+  position: relative;
+  background-image: url(${(props) => props.theme[props.capsuleNum]});
+  background-repeat: no-repeat;
+  background-size: cover;
   width: 87px;
   height: 87px;
   margin-left: 20px;
@@ -97,7 +104,7 @@ const SavedTimecapsule = function () {
         {capsuleList.map((capsule) => (
           <React.Fragment key={capsule.id}>
             <Card>
-              <CapsuleImg src={`${capsule.imgsrc}`} alt="capsuleImg" />
+              <CapsuleImg capsuleNum={capsule.imgsrc} />
               <div style={{ marginLeft: "15px" }}>
                 <div
                   style={{
@@ -116,13 +123,13 @@ const SavedTimecapsule = function () {
                     style={{ width: "20px", height: "20.5px" }}
                   />
                 </div>
-                <div
+                <DateDiv
                   className="text-sm font-thin"
-                  style={{ color: "white", opacity: "56%" }}
+                  style={{ opacity: "56%" }}
                 >
                   {capsule.sDate.split("-").join(".")} ~{" "}
                   {capsule.eDate.split("-").join(".")}
-                </div>
+                </DateDiv>
                 <CapsuleTitle className="text-xl font-thin">
                   {capsule.title}
                 </CapsuleTitle>

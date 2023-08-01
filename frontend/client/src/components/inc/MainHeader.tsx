@@ -13,7 +13,13 @@ export const MainHeader = function () {
     <div>
       <div className="w-10/12 m-auto mt-12 flex justify-between">
         <div className="bg-victoria-50 text-victoria-900 opacity-80 flex justify-center items-center w-20 rounded-lg">
-          <TextStyle>테마설정</TextStyle>
+          <TextStyle
+            onClick={() => {
+              navigate("/selecttheme")
+            }}
+          >
+            테마설정
+          </TextStyle>
         </div>
         <div className="flex items-center">
           <img src="/assets/icons/alerm.png" alt="알림" className="mr-6" />

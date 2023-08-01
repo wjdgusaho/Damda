@@ -17,7 +17,7 @@ const root = createRoot(container!)
 const styleElement = document.createElement("style")
 styleElement.innerHTML = `
   html {
-    background: ${universeDarkTheme.colorTheme} no-repeat center fixed;
+    background: ${heartTheme.colorTheme} no-repeat center fixed;
     background-size: cover;
   }
 `
