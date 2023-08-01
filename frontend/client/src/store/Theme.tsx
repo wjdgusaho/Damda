@@ -1,20 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit"
+import {
+  universeDarkTheme,
+  universeLightTheme,
+  heartTheme,
+  marbleTheme,
+} from "../theme"
 
 let theme = createSlice({
   name: "theme",
-  initialState: "universeDarkTheme",
+  initialState: universeDarkTheme,
   reducers: {
     changeUniverseDarkTheme() {
-      return "universeDarkTheme"
+      return universeDarkTheme
     },
     changeUniverseLightTheme() {
-      return "universeLightTheme"
+      return universeLightTheme
     },
     changeHeartTheme() {
-      return "heartTheme"
+      return heartTheme
     },
     changeMarbleTheme() {
-      return "marbleTheme"
+      return marbleTheme
     },
   },
 })
