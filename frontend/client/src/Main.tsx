@@ -34,6 +34,7 @@ import {
 } from "./theme"
 import RecordCapsule from "./components/RecordCapsule"
 import GoalCapsule from "./components/GoalCapsule"
+import UserSearch from "./components/UserSearch"
 import SelectTheme from "./components/SelectTheme"
 
 function Main() {
@@ -57,6 +58,7 @@ function Main() {
                   <Route path="list" element={<List />}></Route>
                   <Route path="request" element={<Request />}></Route>
                 </Route>
+                <Route path="/friend/search" element={<UserSearch />}></Route>
                 <Route path="/login/" element={<Login />}></Route>
                 <Route path="/signup/" element={<SignUp />}></Route>
                 <Route path="/logout/" element={<Logout />}></Route>
