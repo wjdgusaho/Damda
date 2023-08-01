@@ -99,7 +99,6 @@ const MainPage = function () {
           alt="도움말"
         />
       </div>
-      <div className="bg-red-500 text-xl">자동배포 테스트</div>
       <div className="mt-14">
         {capsuleList.length === 0 ? (
           // 타임캡슐이 하나도 없을 때
