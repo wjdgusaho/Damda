@@ -28,9 +28,10 @@ const InputText = styled.input`
   background-color: transparent;
   outline: none;
   border-bottom: 1px solid ${(props) => props.theme.colorCommon};
+  color: ${(props) => props.theme.colorCommon};
 `
 
-const Text = styled.p`
+const TextStyle = styled.p`
   color: ${(props) => props.theme.colorCommon};
 `
 const AmphText = styled.span`
@@ -52,6 +53,28 @@ const Button = styled.button`
     background-color: ${(props) => props.theme.color700};
   }
 `
+
+const InfoImage = styled.div`
+  position: relative;
+  background-image: url(${(props) => props.theme.InfoImg_sm});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 200px;
+  height: 200px;
+  @keyframes floatingAnimation {
+    0% {
+      transform: translateY(0); /* 시작 위치 (위치 이동 없음) */
+    }
+    50% {
+      transform: translateY(-10px); /* 위로 10px 이동 */
+    }
+    100% {
+      transform: translateY(0); /* 다시 원래 위치로 이동 */
+    }
+  }
+  animation: floatingAnimation 2s ease-in-out infinite;
+`
+
 export const CheckPassword = function () {
   const [userPw, setUserPw] = useState("")
   let Token = useSelector((state: RootState) => state.auth.accessToken)
@@ -109,23 +132,18 @@ export const CheckPassword = function () {
     <div>
       <SubHeader></SubHeader>
       <Box>
-        <img
-          src="assets/Planet-3.png"
-          alt="planet"
-          width={200}
-          style={{ marginLeft: "auto", marginRight: "auto" }}
-        />
+        <InfoImage style={{ marginLeft: "auto", marginRight: "auto" }} />
         <div style={{ marginLeft: "auto", marginRight: "auto" }}>
-          <p>
+          <TextStyle>
             회원님의 개인정보를 안전하게 보호하기 위해
             <br />
             <AmphText>2차 인증 후 변경이 가능</AmphText>
             합니다.
-          </p>
+          </TextStyle>
         </div>
         <form className="mt-10 text-left h-20" onSubmit={handlePwSubmit}>
-          <p className="ml-7">비밀번호</p>
-          <InputText className="" type="password" onChange={handlePwChange} />
+          <TextStyle className="ml-7">비밀번호</TextStyle>
+          <InputText type="password" onChange={handlePwChange} />
           <Button className="fixed bottom-12 left-0 right-0 w-64 h-16 flex items-center justify-center m-auto">
             확인
           </Button>

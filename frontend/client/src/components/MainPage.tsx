@@ -28,46 +28,46 @@ type CapsuleType = {
 }
 
 // const capsuleList: CapsuleType[] = [
-// {
-//   id: 4,
-//   type: "new",
-//   sDate: "2023-01-01",
-//   eDate: "2023-06-01",
-//   name: "클래식1",
-//   imgsrc: "capsule1",
-//   curCard: 0,
-//   goalCard: 0,
-// },
-// {
-//   id: 1,
-//   type: "classic",
-//   sDate: "2023-01-01",
-//   eDate: "2023-06-01",
-//   name: "클래식1",
-//   imgsrc: "capsule2",
-//   curCard: 0,
-//   goalCard: 0,
-// },
-// {
-//   id: 2,
-//   type: "goal",
-//   sDate: "2023-01-01",
-//   eDate: "2024-01-01",
-//   name: "목표1",
-//   imgsrc: "capsule3",
-//   curCard: 50,
-//   goalCard: 100,
-// },
-// {
-//   id: 3,
-//   type: "memory",
-//   sDate: "2023-01-01",
-//   eDate: "2023-02-30",
-//   name: "기록1",
-//   imgsrc: "capsule1",
-//   curCard: 0,
-//   goalCard: 0,
-// },
+//   {
+//     id: 4,
+//     type: "new",
+//     sDate: "2023-01-01",
+//     eDate: "2023-06-01",
+//     name: "클래식1",
+//     imgsrc: "capsule1",
+//     curCard: 0,
+//     goalCard: 0,
+//   },
+//   {
+//     id: 1,
+//     type: "classic",
+//     sDate: "2023-01-01",
+//     eDate: "2023-06-01",
+//     name: "클래식1",
+//     imgsrc: "capsule2",
+//     curCard: 0,
+//     goalCard: 0,
+//   },
+//   {
+//     id: 2,
+//     type: "goal",
+//     sDate: "2023-01-01",
+//     eDate: "2024-01-01",
+//     name: "목표1",
+//     imgsrc: "capsule3",
+//     curCard: 50,
+//     goalCard: 100,
+//   },
+//   {
+//     id: 3,
+//     type: "memory",
+//     sDate: "2023-01-01",
+//     eDate: "2023-02-30",
+//     name: "기록1",
+//     imgsrc: "capsule1",
+//     curCard: 0,
+//     goalCard: 0,
+//   },
 // ]
 
 const MainPage = function () {
@@ -92,111 +92,114 @@ const MainPage = function () {
   return (
     <div>
       <MainHeader></MainHeader>
-      <div>
-        <img
-          className="absolute w-10 right-0 mr-10 mt-10"
-          src="assets/icons/questionMark.png"
-          alt="도움말"
-        />
-      </div>
-      <div className="mt-14">
-        {capsuleList.length === 0 ? (
-          // 타임캡슐이 하나도 없을 때
-          <div className="text-center mt-20">
-            <TextStyle>타임캡슐이 없어요... 아직은요! </TextStyle>
-            <EmptyImage className="w-72 m-auto mt-12" />
-            <CapsuleShadow className="m-auto"></CapsuleShadow>
-          </div>
-        ) : (
-          // 타임캡슐이 한개 이상 있을 때
-          <div className="">
-            <Slider ref={slickRef} {...settings} className="">
-              {capsuleList.map((c: CapsuleType) => (
-                <Capsule key={c.id} className="text-center">
-                  {c.type !== "new" && (
-                    <div className="relative">
-                      {c.type === "goal" && (
-                        // 목표 타임캡슐인 경우
-                        <div>
-                          <Dday className="m-auto">
-                            {c.curCard} / {c.goalCard}
-                          </Dday>
-                          <ProgressBar
-                            percentage={(c.curCard / c.goalCard) * 100}
-                          ></ProgressBar>
-                        </div>
-                      )}
-                      {c.type !== "goal" && (
-                        <div>
-                          <Dday className="m-auto">
-                            {calculateDday(c.eDate)}
-                          </Dday>
-                          <ProgressBar
-                            percentage={calculateProgressPercentage(
-                              c.sDate,
-                              c.eDate
-                            )}
-                          ></ProgressBar>
-                        </div>
-                      )}
-                      {/* 퍼센트가 다 찼을 때 */}
-                      {calculateProgressPercentage(c.sDate, c.eDate) >= 100 && (
-                        <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-white absolute"></div>
-                      )}
-                      <FloatingImage
-                        capsulenum={c.imgsrc}
-                        className="h-52 m-auto mt-10"
-                      />
-                    </div>
-                  )}
-                  {c.type === "new" && (
-                    // 24시간 내의 타임캡슐인 경우
-                    <div>
-                      <Dday className="m-auto !opacity-80 mt-2">NEW!</Dday>
-                      <FloatingImage
-                        capsulenum={c.imgsrc}
-                        className="h-52 m-auto mt-14 grayscale"
-                      />
-                    </div>
-                  )}
-                  <CapsuleShadow className="m-auto mt-2"></CapsuleShadow>
-                </Capsule>
-              ))}
-            </Slider>
-            <div onClick={previous}>
-              <img
-                className="fixed w-8 left-5 top-1/2"
-                src="assets/icons/arrow_l.png"
-                alt="왼쪽화살표"
-              />
+      <div className="flex flex-col h-screen justify-center">
+        <div className="-mt-60">
+          <img
+            className="absolute w-8 right-0 mr-10 mt-10"
+            src="assets/icons/questionMark.png"
+            alt="도움말"
+          />
+        </div>
+        <div className="mt-14">
+          {capsuleList.length === 0 ? (
+            // 타임캡슐이 하나도 없을 때
+            <div className="text-center mt-6">
+              <TextStyle>타임캡슐이 없어요... 아직은요! </TextStyle>
+              <EmptyImage className="w-72 m-auto mt-6" />
+              <CapsuleShadow className="m-auto"></CapsuleShadow>
             </div>
-            <div onClick={next}>
-              <img
-                className="fixed w-8 right-5 top-1/2"
-                src="assets/icons/arrow_r.png"
-                alt="오른쪽화살표"
-              />
+          ) : (
+            // 타임캡슐이 한개 이상 있을 때
+            <div className="">
+              <Slider ref={slickRef} {...settings} className="">
+                {capsuleList.map((c: CapsuleType) => (
+                  <Capsule key={c.id} className="text-center">
+                    {c.type !== "new" && (
+                      <div className="relative">
+                        {c.type === "goal" && (
+                          // 목표 타임캡슐인 경우
+                          <div>
+                            <Dday className="m-auto">
+                              {c.curCard} / {c.goalCard}
+                            </Dday>
+                            <ProgressBar
+                              percentage={(c.curCard / c.goalCard) * 100}
+                            ></ProgressBar>
+                          </div>
+                        )}
+                        {c.type !== "goal" && (
+                          <div>
+                            <Dday className="m-auto">
+                              {calculateDday(c.eDate)}
+                            </Dday>
+                            <ProgressBar
+                              percentage={calculateProgressPercentage(
+                                c.sDate,
+                                c.eDate
+                              )}
+                            ></ProgressBar>
+                          </div>
+                        )}
+                        {/* 퍼센트가 다 찼을 때 */}
+                        {calculateProgressPercentage(c.sDate, c.eDate) >=
+                          100 && (
+                          <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-white absolute"></div>
+                        )}
+                        <FloatingImage
+                          capsulenum={c.imgsrc}
+                          className="h-52 m-auto mt-10"
+                        />
+                      </div>
+                    )}
+                    {c.type === "new" && (
+                      // 24시간 내의 타임캡슐인 경우
+                      <div>
+                        <Dday className="m-auto !opacity-80 mt-2">NEW!</Dday>
+                        <FloatingImage
+                          capsulenum={c.imgsrc}
+                          className="h-52 m-auto mt-14 grayscale"
+                        />
+                      </div>
+                    )}
+                    <CapsuleShadow className="m-auto mt-2"></CapsuleShadow>
+                  </Capsule>
+                ))}
+              </Slider>
+              <div onClick={previous}>
+                <img
+                  className="fixed w-8 left-5 top-1/2"
+                  src="assets/icons/arrow_l.png"
+                  alt="왼쪽화살표"
+                />
+              </div>
+              <div onClick={next}>
+                <img
+                  className="fixed w-8 right-5 top-1/2"
+                  src="assets/icons/arrow_r.png"
+                  alt="오른쪽화살표"
+                />
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-      <div className="text-center mt-8 fixed bottom-4 left-0 right-0">
-        <MakeCapsuleButton
-          onClick={() => {
-            navigate("/selecttype")
-          }}
-          className=" w-64 h-16 flex items-center justify-center m-auto"
-        >
-          타임캡슐 만들기
-        </MakeCapsuleButton>
-        <MakeCapsuleCode
-          onClick={() => {
-            navigate("/participate")
-          }}
-          className="mt-4"
-        >
-          타임캡슐 코드로 참여하기
-        </MakeCapsuleCode>
+          )}
+        </div>
+        <div className="text-center mt-8 fixed bottom-4 left-0 right-0">
+          <MakeCapsuleButton
+            onClick={() => {
+              navigate("/selecttype")
+            }}
+            className=" w-64 h-16 flex items-center justify-center m-auto"
+          >
+            타임캡슐 만들기
+          </MakeCapsuleButton>
+          <MakeCapsuleCode
+            onClick={() => {
+              navigate("/participate")
+            }}
+            className="mt-4"
+          >
+            타임캡슐 코드로 참여하기
+          </MakeCapsuleCode>
+        </div>
       </div>
     </div>
   )

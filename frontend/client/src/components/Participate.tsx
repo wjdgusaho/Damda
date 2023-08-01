@@ -6,7 +6,7 @@ import { useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
 
 const Background = styled.div`
-  background-image: url("../../Background.png");
+  background-image: url(${(props) => props.theme.bgImg});
   background-size: 540px;
   background-position-x: center;
   background-position-y: 60px;
@@ -22,7 +22,7 @@ const Box = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #e4e6f5;
+  color: ${(props) => props.theme.colorCommon};
   font-family: "Pretendard";
   font-size: 20px;
 `
@@ -35,21 +35,28 @@ const InputCode = styled.input`
   margin-top: 40px;
   z-index: 1;
   outline: none;
+  border-color: ${(props) => props.theme.colorCommon};
 `
 
 const Btn = styled.button`
-  background-color: #f6eef9;
-  color: #441f4c;
-  width: 270px;
-  height: 66px;
+  width: 256px;
+  height: 64px;
   border-radius: 30px;
   font-size: 24px;
   font-weight: 500;
-  box-shadow: 0px 4px 4px #534177;
   font-family: "Pretendard";
   position: absolute;
   bottom: 10%;
-  z-index: 2;
+
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: ${(props) => props.theme.color100};
+  background-color: ${(props) => props.theme.color900};
+  &:hover {
+    transition: 0.2s;
+    transform: scale(0.95);
+    color: ${(props) => props.theme.color100};
+    background-color: ${(props) => props.theme.color700};
+  }
 `
 const HeaderWrap = styled.div`
   position: absolute;
