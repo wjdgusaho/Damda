@@ -2,6 +2,7 @@ package com.b210.damda.util.weatherAPI.controller;
 
 import com.b210.damda.domain.dto.WeatherDTO;
 import com.b210.damda.util.weatherAPI.service.WeatherAPIService;
+import com.b210.damda.util.weatherAPI.service.WeatherLocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,15 @@ import java.util.List;
 public class WeatherAPIController {
 
     private final WeatherAPIService weatherAPIService;
-    @PostMapping("/get")
+    private final WeatherLocationService weatherLocationService;
+    @PostMapping("/get-weather")
     public Mono<String> getNowWeatherInfos(@RequestBody WeatherDTO weatherDTO) throws Exception {
         return weatherAPIService.getNowWeatherInfos(weatherDTO);
     }
+
+    @PostMapping("/get-location")
+    public WeatherDTO getNowLocation(@RequestBody WeatherDTO weatherDTO) throws Exception {
+        return weatherLocationService.getNowLocation(weatherDTO);
+    }
+
 }
