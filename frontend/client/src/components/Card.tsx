@@ -83,7 +83,7 @@ const Card = function () {
           ></Content>
         </div>
       </CardContainer>
-      <div className="flex justify-between p-2 w-11/12 m-auto">
+      <div className="flex justify-between p-2 w-80 m-auto">
         {bgColorList.map((color) => (
           <ColorPicker
             color={color}
