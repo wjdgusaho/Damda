@@ -2,6 +2,7 @@ package com.b210.damda.domain.entity.Timecapsule;
 
 import com.b210.damda.domain.dto.Timecapsule.MainTimecapsuleListDTO;
 import com.b210.damda.domain.dto.Timecapsule.SaveTimecapsuleListDTO;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDetailDTO;
 import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -107,6 +108,21 @@ public class Timecapsule {
                 .capsuleIconNo(this.capsuleIconNo)
                 .goalCard(this.getType().equals("GOAL") ? this.goalCard : 0)
 
+                .build();
+    }
+
+    public TimecapsuleDetailDTO toTimecapsuleDetailDTO(){
+        return TimecapsuleDetailDTO.builder()
+                .timecapsuleNo(this.timecapsuleNo)
+                .registDate(this.registDate)
+                .openDate(this.openDate)
+                .title(this.title)
+                .description(this.description)
+                .capsuleIcon("capsule"+this.capsuleIconNo)
+                .capsuleType(this.type)
+                .goalCard(this.goalCard)
+                .penalty(this.timecapsulePenalty.getPenalty() == false ? null : this.timecapsulePenalty.toTimecapsulePenaltyDTO())
+                .criteriaInfo(this.timecapsuleCriteria.toTimecapsuleCriteriaDTO())
                 .build();
     }
 
