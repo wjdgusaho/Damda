@@ -164,7 +164,7 @@ const ClassicCapsule = function () {
     })
       .then((res) => {
         if (res.data.code === 200) {
-          navigate("/main")
+          navigate("/main") // 일단은 여기로 보내고 나중에 상세로
         }
       })
       .catch((err) => {
