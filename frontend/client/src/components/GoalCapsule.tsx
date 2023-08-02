@@ -254,6 +254,7 @@ const GoalCapsule = function () {
             type="radio"
             id="none"
             name="time"
+            defaultChecked
           />
           <RadioBtn htmlFor="none">없음</RadioBtn>
           <input
