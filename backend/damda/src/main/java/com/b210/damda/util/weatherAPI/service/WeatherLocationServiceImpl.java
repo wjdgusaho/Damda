@@ -3,11 +3,14 @@ package com.b210.damda.util.weatherAPI.service;
 import com.b210.damda.domain.dto.WeatherDTO;
 import com.b210.damda.domain.dto.WeatherLocationDTO;
 import com.b210.damda.domain.entity.WeatherLocation;
+import com.b210.damda.domain.entity.WeatherLocationList;
+import com.b210.damda.util.weatherAPI.repository.WeatherLocationListRepository;
 import com.b210.damda.util.weatherAPI.repository.WeatherLocationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,6 +19,7 @@ import java.util.List;
 public class WeatherLocationServiceImpl implements WeatherLocationService {
 
     private final WeatherLocationRepository weatherLocationRepository;
+    private final WeatherLocationListRepository weatherLocationListRepository;
     @Override
     public WeatherLocationDTO getNowLocation(WeatherDTO weatherDTO) throws Exception {
 
@@ -39,14 +43,27 @@ public class WeatherLocationServiceImpl implements WeatherLocationService {
 
         //최종 가장 근접한 지역의 결과값을 WeatherDTO 형태로 반출
         WeatherLocationDTO result = WeatherLocationDTO.builder()
-                .id(DistVal.result.getId())
                 .localBig(DistVal.result.getLocalBig())
                 .localMedium(DistVal.result.getLocalMedium())
-                .localSmall(DistVal.result.getLocalSmall())
                 .build();
 
         return result;
     }
+
+    @Override
+    public List<String> getBigLocations() throws Exception {
+        return null;
+    }
+    @Override
+    public List<String> getMediumLocations(String localBig) throws Exception {
+        List<WeatherLocationList> getValues = weatherLocationListRepository.findAllByLocalBig(localBig);
+        List<String> result = new ArrayList<>();
+        for (WeatherLocationList now : getValues) {
+            result.add(now.getLocalMedium());
+        }
+        return result;
+    }
+
 }
 
 class DistVal {

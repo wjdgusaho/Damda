@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface WeatherLocationRepository extends JpaRepository<WeatherLocation, Long> {
-    List<WeatherLocation> findByLanAndLat(double lan, double lat);
 
     List<WeatherLocation> findByNxAndNy(int nx, int ny);
 }
