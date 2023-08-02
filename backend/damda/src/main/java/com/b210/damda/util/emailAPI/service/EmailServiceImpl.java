@@ -2,7 +2,6 @@ package com.b210.damda.util.emailAPI.service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Random;
 
 import javax.mail.Message.RecipientType;
 import javax.mail.internet.InternetAddress;
@@ -10,10 +9,9 @@ import javax.mail.internet.MimeMessage;
 
 import com.b210.damda.domain.entity.EmailSendLog;
 import com.b210.damda.domain.entity.SignupEmailLog;
-import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.util.emailAPI.repository.EmailSendLogRepository;
 import com.b210.damda.util.emailAPI.repository.SignupEmailLogRepository;
-import com.b210.damda.util.exception.CommonException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;

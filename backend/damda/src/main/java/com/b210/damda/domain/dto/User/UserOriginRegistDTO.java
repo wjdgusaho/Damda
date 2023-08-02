@@ -1,10 +1,7 @@
-package com.b210.damda.domain.dto;
+package com.b210.damda.domain.dto.User;
 
-import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.entity.User.User;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.Entity;
 
 @Data
 public class UserOriginRegistDTO {

@@ -1,7 +1,7 @@
 package com.b210.damda.domain.user.controller;
 
-import com.b210.damda.domain.dto.*;
-import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.dto.User.*;
+import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.file.service.FileStoreService;
 import com.b210.damda.domain.user.service.UserService;
 import com.b210.damda.util.emailAPI.dto.TempCodeDTO;
@@ -10,6 +10,7 @@ import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.b210.damda.util.response.DataResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -190,9 +191,9 @@ public class UserController {
 
     // 유저 검색
     @GetMapping("search")
-    public DataResponse<Map<String, Object>> userSearch(@RequestBody UserSearchDTO userSearchDTO){
+    public DataResponse<Map<String, Object>> userSearch(@Param("query") String query, @Param("code") String code){
         try{
-            List<UserSearchResultDTO> userSearchResultDTO = userService.userSearch(userSearchDTO.getQuery(), userSearchDTO.getType());
+            List<UserSearchResultDTO> userSearchResultDTO = userService.userSearch(query, code);
 
             Map<String, Object> result = new HashMap<>();
             result.put("result" , userSearchResultDTO);
@@ -212,7 +213,6 @@ public class UserController {
     @PatchMapping("info")
     public DataResponse<Map<String, Object>> userInfoUpdate(@RequestPart("user") UserUpdateDTO userUpdateDTO,
                                             @RequestPart("profileImage") MultipartFile profileImage){
-
         try {
             User user = userService.userInfoUpdate(userUpdateDTO, profileImage);
 

@@ -1,13 +1,12 @@
 package com.b210.damda.util.kakaoAPI.service;
 
 
-import com.b210.damda.domain.entity.UserLog;
+import com.b210.damda.domain.entity.User.UserLog;
 
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.domain.user.service.UserService;
 import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,7 +15,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.entity.User.User;
 
 
 import java.util.Map;
