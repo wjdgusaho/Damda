@@ -26,10 +26,17 @@ public class TimecapsuleMapping {
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isSave;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isHost;
 
     private Timestamp deleteDate;
 
     private Timestamp openDate;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean card_able;
+
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean file_able;
 
 }

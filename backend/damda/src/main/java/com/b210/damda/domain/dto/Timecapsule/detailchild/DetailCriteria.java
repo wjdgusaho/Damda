@@ -12,8 +12,8 @@ import java.security.Timestamp;
 public class DetailCriteria {
 
     private String criteriaType;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private Integer startTime;
+    private Integer endTime;
     private String location;
     private String weatherStatus;
     private String timeKr;
