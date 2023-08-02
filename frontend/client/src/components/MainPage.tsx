@@ -1,8 +1,8 @@
-import React from "react"
+import React, { useState } from "react"
 import { MainHeader } from "./inc/MainHeader"
 import { SubHeader } from "./inc/SubHeader"
 
-import { styled } from "styled-components"
+import { ThemeProvider, styled } from "styled-components"
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
@@ -27,48 +27,48 @@ type CapsuleType = {
   goalCard: number
 }
 
-const capsuleList: CapsuleType[] = [
-  {
-    id: 4,
-    type: "new",
-    sDate: "2023-01-01",
-    eDate: "2023-06-01",
-    name: "클래식1",
-    imgsrc: "assets/Planet-6.png",
-    curCard: 0,
-    goalCard: 0,
-  },
-  {
-    id: 1,
-    type: "classic",
-    sDate: "2023-01-01",
-    eDate: "2023-06-01",
-    name: "클래식1",
-    imgsrc: "assets/Planet-6.png",
-    curCard: 0,
-    goalCard: 0,
-  },
-  {
-    id: 2,
-    type: "goal",
-    sDate: "2023-01-01",
-    eDate: "2024-01-01",
-    name: "목표1",
-    imgsrc: "assets/Planet-5.png",
-    curCard: 50,
-    goalCard: 100,
-  },
-  {
-    id: 3,
-    type: "memory",
-    sDate: "2023-01-01",
-    eDate: "2023-02-30",
-    name: "기록1",
-    imgsrc: "assets/Planet-7.png",
-    curCard: 0,
-    goalCard: 0,
-  },
-]
+// const capsuleList: CapsuleType[] = [
+//   {
+//     id: 4,
+//     type: "new",
+//     sDate: "2023-01-01",
+//     eDate: "2023-06-01",
+//     name: "클래식1",
+//     imgsrc: "capsule1",
+//     curCard: 0,
+//     goalCard: 0,
+//   },
+//   {
+//     id: 1,
+//     type: "classic",
+//     sDate: "2023-01-01",
+//     eDate: "2023-06-01",
+//     name: "클래식1",
+//     imgsrc: "capsule2",
+//     curCard: 0,
+//     goalCard: 0,
+//   },
+//   {
+//     id: 2,
+//     type: "goal",
+//     sDate: "2023-01-01",
+//     eDate: "2024-01-01",
+//     name: "목표1",
+//     imgsrc: "capsule3",
+//     curCard: 50,
+//     goalCard: 100,
+//   },
+//   {
+//     id: 3,
+//     type: "memory",
+//     sDate: "2023-01-01",
+//     eDate: "2023-02-30",
+//     name: "기록1",
+//     imgsrc: "capsule1",
+//     curCard: 0,
+//     goalCard: 0,
+//   },
+// ]
 
 const MainPage = function () {
   const slickRef = useRef<Slider>(null)
@@ -87,125 +87,119 @@ const MainPage = function () {
   }
 
   const navigate = useNavigate()
+  const [capsuleList, setCapsuleList] = useState([])
 
   return (
     <div>
       <MainHeader></MainHeader>
-      <div>
-        <img
-          className="absolute w-10 right-0 mr-10 mt-10"
-          src="assets/icons/questionMark.png"
-          alt="도움말"
-        />
-      </div>
-      <div className="mt-14">
-        {capsuleList.length === 0 ? (
-          // 타임캡슐이 하나도 없을 때
-          <div className="text-center mt-20">
-            <TextStyle className="text-victoria-400">
-              타임캡슐이 없어요... 아직은요!{" "}
-            </TextStyle>
-            <img
-              className="w-72 m-auto mt-12"
-              src="assets/Astronaut-3.png"
-              alt="Astronaut-3"
-            />
-            <CapsuleShadow className="m-auto"></CapsuleShadow>
-          </div>
-        ) : (
-          // 타임캡슐이 한개 이상 있을 때
-          <div className="">
-            <Slider ref={slickRef} {...settings} className="">
-              {capsuleList.map((c) => (
-                <Capsule key={c.id} className="text-center">
-                  {c.type !== "new" && (
-                    <div className="relative">
-                      {c.type === "goal" && (
-                        // 목표 타임캡슐인 경우
-                        <div>
-                          <Dday className="m-auto">
-                            {c.curCard} / {c.goalCard}
-                          </Dday>
-                          <ProgressBar
-                            percentage={(c.curCard / c.goalCard) * 100}
-                          ></ProgressBar>
-                        </div>
-                      )}
-                      {c.type !== "goal" && (
-                        <div>
-                          <Dday className="m-auto">
-                            {calculateDday(c.eDate)}
-                          </Dday>
-                          <ProgressBar
-                            percentage={calculateProgressPercentage(
-                              c.sDate,
-                              c.eDate
-                            )}
-                          ></ProgressBar>
-                        </div>
-                      )}
-                      {/* 퍼센트가 다 찼을 때 */}
-                      {calculateProgressPercentage(c.sDate, c.eDate) >= 100 && (
-                        <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-lilac-50 absolute"></div>
-                      )}
-                      <FloatingImage
-                        className="h-52 m-auto mt-20"
-                        src={c.imgsrc}
-                        alt="타임캡슐"
-                      />
-                    </div>
-                  )}
-                  {c.type === "new" && (
-                    // 24시간 내의 타임캡슐인 경우
-                    <div>
-                      <Dday className="m-auto !text-white !opacity-80 mt-2">
-                        NEW!
-                      </Dday>
-                      <FloatingImage
-                        className="h-52 m-auto mt-24 grayscale"
-                        src={c.imgsrc}
-                        alt="타임캡슐"
-                      />
-                    </div>
-                  )}
-                  <CapsuleShadow className="m-auto mt-2"></CapsuleShadow>
-                </Capsule>
-              ))}
-            </Slider>
-            <div onClick={previous}>
-              <img
-                className="fixed w-8 left-5 top-1/2"
-                src="assets/icons/arrow_l.png"
-                alt="왼쪽화살표"
-              />
+      <div className="flex flex-col h-screen justify-center">
+        <div className="-mt-60">
+          <img
+            className="absolute w-8 right-0 mr-10 mt-10"
+            src="assets/icons/questionMark.png"
+            alt="도움말"
+          />
+        </div>
+        <div className="mt-14">
+          {capsuleList.length === 0 ? (
+            // 타임캡슐이 하나도 없을 때
+            <div className="text-center mt-6">
+              <TextStyle>타임캡슐이 없어요... 아직은요! </TextStyle>
+              <EmptyImage className="w-72 m-auto mt-6" />
+              <CapsuleShadow className="m-auto"></CapsuleShadow>
             </div>
-            <div onClick={next}>
-              <img
-                className="fixed w-8 right-5 top-1/2"
-                src="assets/icons/arrow_r.png"
-                alt="오른쪽화살표"
-              />
+          ) : (
+            // 타임캡슐이 한개 이상 있을 때
+            <div className="">
+              <Slider ref={slickRef} {...settings} className="">
+                {capsuleList.map((c: CapsuleType) => (
+                  <Capsule key={c.id} className="text-center">
+                    {c.type !== "new" && (
+                      <div className="relative">
+                        {c.type === "goal" && (
+                          // 목표 타임캡슐인 경우
+                          <div>
+                            <Dday className="m-auto">
+                              {c.curCard} / {c.goalCard}
+                            </Dday>
+                            <ProgressBar
+                              percentage={(c.curCard / c.goalCard) * 100}
+                            ></ProgressBar>
+                          </div>
+                        )}
+                        {c.type !== "goal" && (
+                          <div>
+                            <Dday className="m-auto">
+                              {calculateDday(c.eDate)}
+                            </Dday>
+                            <ProgressBar
+                              percentage={calculateProgressPercentage(
+                                c.sDate,
+                                c.eDate
+                              )}
+                            ></ProgressBar>
+                          </div>
+                        )}
+                        {/* 퍼센트가 다 찼을 때 */}
+                        {calculateProgressPercentage(c.sDate, c.eDate) >=
+                          100 && (
+                          <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-white absolute"></div>
+                        )}
+                        <FloatingImage
+                          capsulenum={c.imgsrc}
+                          className="h-52 m-auto mt-10"
+                        />
+                      </div>
+                    )}
+                    {c.type === "new" && (
+                      // 24시간 내의 타임캡슐인 경우
+                      <div>
+                        <Dday className="m-auto !opacity-80 mt-2">NEW!</Dday>
+                        <FloatingImage
+                          capsulenum={c.imgsrc}
+                          className="h-52 m-auto mt-14 grayscale"
+                        />
+                      </div>
+                    )}
+                    <CapsuleShadow className="m-auto mt-2"></CapsuleShadow>
+                  </Capsule>
+                ))}
+              </Slider>
+              <div onClick={previous}>
+                <img
+                  className="fixed w-8 left-5 top-1/2"
+                  src="assets/icons/arrow_l.png"
+                  alt="왼쪽화살표"
+                />
+              </div>
+              <div onClick={next}>
+                <img
+                  className="fixed w-8 right-5 top-1/2"
+                  src="assets/icons/arrow_r.png"
+                  alt="오른쪽화살표"
+                />
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-      <div className="text-center mt-8 fixed bottom-4 left-0 right-0">
-        <MakeCapsuleButton
-          onClick={() => {
-            navigate("/selecttype")
-          }}
-          className=" w-64 h-16 flex items-center justify-center m-auto text-lilac-950 hover:bg-lilac-500"
-        >
-          타임캡슐 만들기
-        </MakeCapsuleButton>
-        <MakeCapsuleCode
-          onClick={() => {
-            navigate("/participate")
-          }}
-          className="mt-4 hover:text-lilac-900"
-        >
-          타임캡슐 코드로 참여하기
-        </MakeCapsuleCode>
+          )}
+        </div>
+        <div className="text-center mt-8 fixed bottom-4 left-0 right-0">
+          <MakeCapsuleButton
+            onClick={() => {
+              navigate("/selecttype")
+            }}
+            className=" w-64 h-16 flex items-center justify-center m-auto"
+          >
+            타임캡슐 만들기
+          </MakeCapsuleButton>
+          <MakeCapsuleCode
+            onClick={() => {
+              navigate("/participate")
+            }}
+            className="mt-4"
+          >
+            타임캡슐 코드로 참여하기
+          </MakeCapsuleCode>
+        </div>
       </div>
     </div>
   )
@@ -223,34 +217,62 @@ const TextStyle = styled.div`
   font-family: "pretendard";
   font-size: 20px;
   font-weight: 200;
+  color: ${(props) => props.theme.colorCommon};
 `
 const MakeCapsuleButton = styled.div`
   border-radius: 30px;
   font-family: "pretendard";
   font-size: 20px;
   font-weight: 400;
-  box-shadow: 0px 4px 4px #534177;
-
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: ${(props) => props.theme.color100};
+  background-color: ${(props) => props.theme.color900};
   &:hover {
     transition: 0.2s;
     transform: scale(0.95);
+    color: ${(props) => props.theme.color100};
+    background-color: ${(props) => props.theme.color700};
   }
-  background-color: ${(props) => props.theme.color500};
 `
 const MakeCapsuleCode = styled.div`
   border-radius: 30px;
   font-family: "pretendard";
   font-size: 18px;
   font-weight: 200;
-  color: #ffffff;
+  color: ${(props) => props.theme.colorCommon};
   text-decoration-line: underline;
+  &:hover {
+    color: ${(props) => props.theme.color900};
+  }
 `
 
-const FloatingImage = styled.img`
-  /* 기본 위치를 설정합니다. */
+const EmptyImage = styled.div`
   position: relative;
-  top: 0;
-
+  background-image: url(${(props) => props.theme.emptyImg_1});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 250px;
+  height: 250px;
+  @keyframes floatingAnimation {
+    0% {
+      transform: translateY(0); /* 시작 위치 (위치 이동 없음) */
+    }
+    50% {
+      transform: translateY(-10px); /* 위로 10px 이동 */
+    }
+    100% {
+      transform: translateY(0); /* 다시 원래 위치로 이동 */
+    }
+  }
+  animation: floatingAnimation 2s ease-in-out infinite;
+`
+const FloatingImage = styled.div<{ capsulenum: string }>`
+  position: relative;
+  background-image: url(${(props) => props.theme[props.capsulenum]});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 250px;
+  height: 250px;
   @keyframes floatingAnimation {
     0% {
       transform: translateY(0); /* 시작 위치 (위치 이동 없음) */
@@ -267,16 +289,16 @@ const FloatingImage = styled.img`
 
 const Dday = styled.div`
   font-family: "PyeongChangPeaceBold";
-  background: linear-gradient(90deg, #a247c1 -19.12%, #ffb86c 117.65%);
+  background: ${(props) => props.theme.colorDday};
   background-clip: text; /* 텍스트 색상을 배경에 맞추기 위해 설정 */
   -webkit-background-clip: text; /* 크로스 브라우저 지원을 위해 -webkit- 접두사 사용 (일부 브라우저에 필요) */
-  color: transparent; /* 텍스트 색상을 투명하게 설정 */
+  color: transparent;
   font-size: 40px;
 `
 
 const ProgressContainer = styled.div`
   height: 15px;
-  background-color: #efe0f4;
+  background-color: ${(props) => props.theme.color100};
   border-radius: 10px;
   overflow: hidden;
   width: 200px;
@@ -285,10 +307,10 @@ const ProgressContainer = styled.div`
 
 const Progress = styled.div`
   height: 100%;
-  background: linear-gradient(90deg, #a247c1 -19.12%, #ffb86c 117.65%);
+  background: ${(props) => props.theme.colorProgressBar};
   border-radius: 10px;
   transition: width 3s;
-  border: 2px solid #ded1e3;
+  border: 2px solid ${(props) => props.theme.color100};
   box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
 `
 
@@ -302,7 +324,7 @@ const CapsuleShadow = styled.div`
   width: 205px;
   height: 80px;
   border-radius: 50%;
-  background: #513a71;
+  background: ${(props) => props.theme.colorShadow};
   filter: blur(5px);
 `
 

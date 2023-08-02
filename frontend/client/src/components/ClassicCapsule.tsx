@@ -4,6 +4,10 @@ import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
 import { useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import "./datePicker.css"
+import { ko } from "date-fns/esm/locale"
 
 const Box = styled.div`
   display: flex;
@@ -55,11 +59,55 @@ const HelpIcon = styled.img`
 const Info = styled.img`
   position: absolute;
   width: 353px;
-  right: 180px;
+  left: 50%;
+  margin-left: -175px;
+`
+
+const RadioBtn = styled.label`
+  display: inline-block;
+  width: 62px;
+  height: 30px;
+  border-radius: 30px;
+  background-color: rgb(255, 255, 255, 0.38);
+  text-align: center;
+  line-height: 30px;
+  font-size: 18px;
+  font-weight: 200;
+  cursor: pointer;
+  margin-left: 1px;
+  margin-right: 1px;
+  input[type="radio"]:checked + & {
+    background-color: rgb(0, 0, 0, 0.38);
+  }
+`
+
+const SubmitBtn = styled.button`
+  width: 130px;
+  height: 49px;
+  background-color: #f6eef9; // lilac 100
+  color: #431f4c; // lilac 950
+  border-radius: 30px;
+  font-size: 24px;
+  box-shadow: 0px 4px 4px #534177;
+`
+
+const CancelBtn = styled(SubmitBtn)`
+  background-color: rgb(255, 255, 255, 0.05);
+`
+
+const BtnWrap = tw.div`
+  w-80
+  my-16
+  flex
+  justify-evenly
 `
 
 const ClassicCapsule = function () {
   let [isHelp, setIsHelp] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
+  const currentDate = new Date()
+  const dateString = currentDate.toISOString().slice(0, 10)
+  const navigate = useNavigate()
   return (
     <>
       <SubHeader />
@@ -82,7 +130,15 @@ const ClassicCapsule = function () {
         <ContentWrap>
           <Content>캡슐 공개일</Content>
         </ContentWrap>
-        <InputBox className="w-80" type="date" name="date" id="date" />
+        <DatePicker
+          className="datePicker w-80"
+          formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
+          dateFormat="yyyy-MM-dd"
+          locale={ko}
+          minDate={new Date(dateString)}
+          selected={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
+        />
         <ContentWrap>
           <Content>
             캡슐 공개시간
@@ -95,26 +151,55 @@ const ClassicCapsule = function () {
           />
         </ContentWrap>
         <div>
-          {isHelp ? <Info src="../../helptimeinfo.png" alt="" /> : null}
+          {isHelp ? <Info src="../../helptimeinfo.png" alt="helpinfo" /> : null}
         </div>
-        <div>
-          <label>
-            <input type="radio" name="time" />
-            <span>새벽</span>
-          </label>
-          <label>
-            <input type="radio" name="time" />
-            <span>아침</span>
-          </label>
-          <label>
-            <input type="radio" name="time" />
-            <span>오후</span>
-          </label>
-          <label>
-            <input type="radio" name="time" />
-            <span>밤</span>
-          </label>
+        <div className="mt-6">
+          <input
+            style={{ display: "none" }}
+            type="radio"
+            id="none"
+            name="time"
+          />
+          <RadioBtn htmlFor="none">없음</RadioBtn>
+          <input
+            style={{ display: "none" }}
+            type="radio"
+            id="dawn"
+            name="time"
+          />
+          <RadioBtn htmlFor="dawn">새벽</RadioBtn>
+          <input
+            style={{ display: "none" }}
+            type="radio"
+            id="morning"
+            name="time"
+          />
+          <RadioBtn htmlFor="morning">아침</RadioBtn>
+          <input
+            style={{ display: "none" }}
+            type="radio"
+            id="afternoon"
+            name="time"
+          />
+          <RadioBtn htmlFor="afternoon">오후</RadioBtn>
+          <input
+            style={{ display: "none" }}
+            type="radio"
+            id="night"
+            name="time"
+          />
+          <RadioBtn htmlFor="night">밤</RadioBtn>
         </div>
+        <BtnWrap>
+          <CancelBtn
+            onClick={() => {
+              navigate(-1)
+            }}
+          >
+            취소
+          </CancelBtn>
+          <SubmitBtn>생성</SubmitBtn>
+        </BtnWrap>
       </Box>
     </>
   )

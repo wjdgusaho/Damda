@@ -142,14 +142,14 @@ export const SignUp = function () {
           setuserEmailMatch(2)
         })
         .catch((error) => {
-          // 이메일 사용 불가
-          if (error.response.status === 409) {
-            setuserEmailMatch(1)
-          }
-          // 서버오류
-          else {
-            alert("중복확인에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
-          }
+          // // 이메일 사용 불가
+          // if (error.response.status === 409) {
+          //   setuserEmailMatch(1)
+          // }
+          // // 서버오류
+          // else {
+          alert("중복확인에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
+          // }
         })
     }
   }

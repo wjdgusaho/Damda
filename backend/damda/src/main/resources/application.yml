@@ -1,9 +1,18 @@
 spring:
+  mvc:
+    static-path-pattern: /uploads/**
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://i9b210.p.ssafy.io:7777/damda?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: b210shinchanghak
+
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
+  #    url: jdbc:mysql://localhost:3306/damda?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+  #    username: ssafy
+  #    password: ssafy
+
+
 
   jpa:
     open-in-view: false
@@ -49,7 +58,7 @@ spring:
               - account_email
               - profile_nickname
             authorization-grant-type: authorization_code
-            redirect-uri: http://i9b210.p.ssafy.io:8081/login/oauth2/code/kakao
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             client-name: Kakao
             client-authentication-method: POST
 
@@ -59,14 +68,14 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+  web:
+    resources:
+      static-locations: file:/C:/new/
 
 logging:
   level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
     org.hibernate.SQL: debug
-
-
-
-
-
-
-

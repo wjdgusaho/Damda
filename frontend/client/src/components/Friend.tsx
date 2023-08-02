@@ -1,24 +1,26 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { SubHeader } from "./inc/SubHeader"
 import { styled } from "styled-components"
-import { NavLink, Navigate, Outlet } from "react-router-dom"
+import { NavLink, Navigate, Outlet, Link } from "react-router-dom"
 import Modal from "react-modal"
 import { useNavigate } from "react-router-dom"
+import axios from "axios"
+import { serverUrl } from "../urls"
+import { useSelector } from "react-redux"
+import { RootState } from "../store/Store"
 
 const Friend = function () {
   return (
     <div>
       <SubHeader></SubHeader>
-      <div className="text-white">
+      <div>
         <div className="text-center mt-10">
           <TextStyle className="text-xl">내 친구</TextStyle>
         </div>
         <div className="flex">
-          <img
-            className="w-6 ml-auto mr-14"
-            src="/assets/icons/friendAdd.png"
-            alt=""
-          />
+          <Link to="/friend/search" className="w-6 ml-auto mr-14">
+            <img src="/assets/icons/friendAdd.png" alt="add" />
+          </Link>
         </div>
       </div>
       <div className="flex justify-evenly mt-6 mb-8">
@@ -31,6 +33,23 @@ const Friend = function () {
 }
 
 export const List = function () {
+  const [friendList, setFriendList] = useState([])
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  useEffect(() => {
+    axios({
+      method: "GET",
+      url: serverUrl + "friend/list",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => {
+        // 해당 데이터 어떻게 들어오는지 확인한 후 데이터 friendlist에 넣기.
+        console.log(response.data)
+      })
+      .catch((error) => console.error(error))
+  }, [])
   return (
     <div>
       {friendList.length === 0 && (
@@ -48,7 +67,7 @@ export const List = function () {
       )}
       {friendList.length !== 0 && (
         <div>
-          {friendList.map((f) => (
+          {friendList.map((f: FriendType) => (
             <FriendCard key={f.id} friend={f}></FriendCard>
           ))}
         </div>
@@ -58,9 +77,26 @@ export const List = function () {
 }
 
 export const Request = function () {
+  const [requestList, setRequestList] = useState([])
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  useEffect(() => {
+    axios({
+      method: "GET",
+      url: serverUrl + "friend/request",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => {
+        // 해당 데이터 어떻게 들어오는지 확인한 후 데이터 requestList에 넣기.
+        console.log(response.data)
+      })
+      .catch((error) => console.error(error))
+  }, [])
   return (
     <div>
-      {friendList.length === 0 && (
+      {requestList.length === 0 && (
         <div className="text-center mt-20">
           <TextStyle className="text-victoria-400">
             친구요청이 없어요... 아직은요!
@@ -73,9 +109,9 @@ export const Request = function () {
           <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
         </div>
       )}
-      {friendList.length !== 0 && (
+      {requestList.length !== 0 && (
         <div>
-          {friendList.map((f) => (
+          {requestList.map((f: FriendType) => (
             <RequestCard key={f.id} friend={f}></RequestCard>
           ))}
         </div>
@@ -125,27 +161,16 @@ const RequestCard = function ({ friend }: { friend: FriendType }) {
   )
 }
 
-const TextStyle7 = styled.div`
-  font-family: "pretendard";
-  font-weight: 700;
-`
-const TextStyle5 = styled.div`
-  font-family: "pretendard";
-  font-weight: 500;
-`
-const TextStyle3 = styled.div`
-  font-family: "pretendard";
-  font-weight: 300;
-`
 const TextStyle = styled.div`
   font-family: "pretendard";
   font-weight: 400;
+  color: ${(props) => props.theme.colorCommon};
 `
 const CapsuleShadow = styled.div`
   width: 205px;
   height: 80px;
   border-radius: 50%;
-  background: #513a71;
+  background: ${(props) => props.theme.colorShadow};
   filter: blur(5px);
 `
 
@@ -154,7 +179,7 @@ const NavLink2 = styled(NavLink)`
   text-decoration: none;
   font-family: "pretendard";
   font-weight: 200;
-  color: #ffffffac;
+  color: ${(props) => props.theme.colorCommon};
   transition: color 0.2s;
   display: inline-flex;
   align-items: center; /* Align the text and underline vertically */
@@ -162,7 +187,7 @@ const NavLink2 = styled(NavLink)`
   justify-content: center;
   &.active {
     font-weight: 400;
-    color: #ffffff;
+    color: ${(props) => props.theme.colorCommon};
 
     &::after {
       content: "";
@@ -170,55 +195,55 @@ const NavLink2 = styled(NavLink)`
       bottom: -10px; /* Adjust the value to control the underline's position */
       width: 100%;
       height: 1px;
-      background-color: #ffffff;
+      background-color: ${(props) => props.theme.colorCommon};
     }
   }
 `
 
 type FriendType = {
-  id: string
+  id: number
   nickname: string
   profile_image: string
   isFavorite: boolean
 }
 
-const friendList: FriendType[] = [
-  {
-    id: "1",
-    nickname: "달토끼맛쿠키",
-    profile_image: "/assets/icons/popup.png",
-    isFavorite: true,
-  },
-  {
-    id: "2",
-    nickname: "달토끼맛쿠키",
-    profile_image: "/assets/icons/popup.png",
-    isFavorite: true,
-  },
-  {
-    id: "3",
-    nickname: "달토끼맛쿠키",
-    profile_image: "/assets/icons/popup.png",
-    isFavorite: true,
-  },
-  {
-    id: "4",
-    nickname: "달토끼맛쿠키",
-    profile_image: "/assets/icons/profile_1.png",
-    isFavorite: false,
-  },
-  {
-    id: "5",
-    nickname: "달토끼맛쿠키",
-    profile_image: "/assets/icons/profile_1.png",
-    isFavorite: false,
-  },
-  {
-    id: "6",
-    nickname: "달토끼맛쿠키",
-    profile_image: "/assets/icons/profile_1.png",
-    isFavorite: false,
-  },
-]
+// const friendList: FriendType[] = [
+//   {
+//     id: "1",
+//     nickname: "달토끼맛쿠키",
+//     profile_image: "/assets/icons/popup.png",
+//     isFavorite: true,
+//   },
+//   {
+//     id: "2",
+//     nickname: "달토끼맛쿠키",
+//     profile_image: "/assets/icons/popup.png",
+//     isFavorite: true,
+//   },
+//   {
+//     id: "3",
+//     nickname: "달토끼맛쿠키",
+//     profile_image: "/assets/icons/popup.png",
+//     isFavorite: true,
+//   },
+//   {
+//     id: "4",
+//     nickname: "달토끼맛쿠키",
+//     profile_image: "/assets/icons/profile_1.png",
+//     isFavorite: false,
+//   },
+//   {
+//     id: "5",
+//     nickname: "달토끼맛쿠키",
+//     profile_image: "/assets/icons/profile_1.png",
+//     isFavorite: false,
+//   },
+//   {
+//     id: "6",
+//     nickname: "달토끼맛쿠키",
+//     profile_image: "/assets/icons/profile_1.png",
+//     isFavorite: false,
+//   },
+// ]
 
 export default Friend

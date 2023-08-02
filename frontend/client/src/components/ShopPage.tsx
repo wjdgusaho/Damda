@@ -72,12 +72,12 @@ export const ShopPage = function () {
   return (
     <div>
       <SubHeader></SubHeader>
-      <div className="text-white">
+      <div>
         <div className="text-center mt-10">
           <TextStyle className="text-xl">상점</TextStyle>
         </div>
         <CoinContainer>
-          <TextStyle className="text-sm text-white">30코인 보유중</TextStyle>
+          <TextStyle className="text-sm">30코인 보유중</TextStyle>
         </CoinContainer>
       </div>
       <div className="flex justify-evenly mt-6 mb-8">
@@ -126,7 +126,7 @@ export const Sticker: React.FC<StickerProps> = ({ decoItemList }) => {
       <div className="ml-8 mb-4">
         <input type="checkbox" name="" id="" />
         <label htmlFor="">
-          <TextStyle className="inline text-white ml-2 opacity-70">
+          <TextStyle className="inline ml-2 opacity-70">
             보유중인 상품만
           </TextStyle>
         </label>
@@ -156,7 +156,7 @@ export const Theme: React.FC<ThemeProps> = ({ themeList }) => {
       <div className="ml-8 mb-4">
         <input type="checkbox" name="" id="" />
         <label htmlFor="">
-          <TextStyle className="inline text-white ml-2 opacity-70">
+          <TextStyle className="inline ml-2 opacity-70">
             보유중인 상품만
           </TextStyle>
         </label>
@@ -242,16 +242,16 @@ export const Card: React.FC<CardProps> = ({ name, price, desc, isHave }) => {
         style={customStyles}
         contentLabel="BUY Modal"
       >
-        {name === "용량증가" && <ModalCapsuleInner></ModalCapsuleInner>}
-        {name === "캡슐 추가" && <ModalCapsuleInner></ModalCapsuleInner>}
-        {name !== "캡슐 추가" && name !== "용량증가" && (
+        {name === "용량추가" && <ModalCapsuleInner></ModalCapsuleInner>}
+        {name === "캡슐추가" && <ModalCapsuleInner></ModalCapsuleInner>}
+        {name !== "캡슐추가" && name !== "용량추가" && (
           <ModalBuyInner name={name}></ModalBuyInner>
         )}
         <div className="flex mt-4 w-48 m-auto justify-between">
-          <ModalButton className="bg-black bg-opacity-10" onClick={closeModal}>
+          <ModalButton className="bg-black bg-opacity-0" onClick={closeModal}>
             취소
           </ModalButton>
-          <ModalButton className="bg-lilac-500" onClick={closeModal}>
+          <ModalButton className="bg-black bg-opacity-10" onClick={closeModal}>
             구매
           </ModalButton>
         </div>
@@ -289,7 +289,7 @@ const ModalCapsuleInner = function () {
       <TextStyle7 className="opacity-70 text-lg mb-4">
         타임캡슐을 선택해주세요
       </TextStyle7>
-      <div className="border-solid border-lilac-900 border rounded-2xl w-full p-4">
+      <div className="border-solid border-gray-700 border rounded-2xl w-full p-4">
         <MyCapsule />
         <MyCapsule />
         <MyCapsule />
@@ -301,7 +301,7 @@ const ModalCapsuleInner = function () {
 // 내가 가진 타임캡슐
 const MyCapsule = function () {
   return (
-    <div className="flex m-auto mb-1 bg-lilac-100 rounded-lg p-2 justify-around items-center">
+    <div className="flex m-auto mb-1 rounded-lg p-2 justify-around items-center">
       <div className="w-2/12">
         <img
           className="filter drop-shadow-md"
@@ -311,7 +311,7 @@ const MyCapsule = function () {
       </div>
       <div className="w-8/12 text-left pl-3">
         <TextStyle5 className="">우리 1년 뒤 보자!</TextStyle5>
-        <TextStyle3 className="text-xs text-lilac-800">300 / 500 MB</TextStyle3>
+        <TextStyle3 className="text-xs ">300 / 500 MB</TextStyle3>
       </div>
       <div className="w-2/12">
         <input type="radio" name="" id="" />
@@ -344,24 +344,28 @@ const ModalButton = styled.div`
   height: 26px;
   border-radius: 30px;
   text-align: center;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
   color: #000000b1;
 `
 const TextStyle7 = styled.div`
   font-family: "pretendard";
   font-weight: 700;
+  color: ${(props) => props.theme.colorCommon};
 `
 const TextStyle5 = styled.div`
   font-family: "pretendard";
   font-weight: 500;
+  color: ${(props) => props.theme.colorCommon};
 `
 const TextStyle3 = styled.div`
   font-family: "pretendard";
   font-weight: 300;
+  color: ${(props) => props.theme.colorCommon};
 `
 const TextStyle = styled.div`
   font-family: "pretendard";
   font-weight: 400;
+  color: ${(props) => props.theme.colorCommon};
 `
 
 const CoinContainer = styled.div`
@@ -378,8 +382,8 @@ const Nav = styled.div<{ isActive: boolean }>`
   position: relative;
   text-decoration: none;
   font-family: "pretendard";
-  font-weight: 200;
-  color: #ffffffac;
+  font-weight: 400;
+  color: ${(props) => props.theme.colorCommon};
   transition: color 0.2s;
   display: inline-flex;
   align-items: center;
@@ -392,7 +396,7 @@ const Nav = styled.div<{ isActive: boolean }>`
     bottom: -10px;
     width: 100%;
     height: 1px;
-    background-color: #ffffff;
+    background-color: ${(props) => props.theme.colorCommon};
     display: ${(props) => (props.isActive ? "block" : "none")};
   }
 `
@@ -400,7 +404,7 @@ const Nav = styled.div<{ isActive: boolean }>`
 const CardLine = styled.div`
   width: 300px;
   height: 1px;
-  background-color: white;
+  background-color: ${(props) => props.theme.colorCommon};
   margin: 20px auto 20px auto;
 `
 

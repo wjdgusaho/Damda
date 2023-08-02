@@ -35,7 +35,7 @@
         private String profileImage;
         @Builder.Default
         @Column(nullable = false, columnDefinition = "integer default 0")
-        private int coin = 0;
+        private int coin = 1000;
         @Builder.Default
         @Column(nullable = false, columnDefinition = "integer default 0")
         private int nowTheme = 0;
