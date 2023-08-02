@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { MainHeader } from "./inc/MainHeader"
 import { SubHeader } from "./inc/SubHeader"
 
@@ -88,6 +88,8 @@ const MainPage = function () {
 
   const navigate = useNavigate()
   const [capsuleList, setCapsuleList] = useState([])
+
+  useEffect(() => {}, [])
 
   return (
     <div>
