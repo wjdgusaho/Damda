@@ -6,6 +6,7 @@ import "./PyeongChangPeace/PyeongChangPeace.css"
 import "../src/index.css"
 import { Provider } from "react-redux"
 import Store from "./store/Store"
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration"
 
 const container = document.getElementById("root")
 const root = createRoot(container!)
@@ -15,3 +16,5 @@ root.render(
     <Main />
   </Provider>
 )
+
+serviceWorkerRegistration.register()
