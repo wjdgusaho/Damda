@@ -7,7 +7,13 @@ import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import tw from "tailwind-styled-components"
 
-const keywordRegex = /^(?=.*[a-zA-Z가-힣]).{2,15}$/
+const keywordRegex = /[a-zA-Z0-9가-힣]/
+
+const isValid = (str: string) => {
+  // '#' 를 제외한 모든 특수문자를 포함하고 있으면 true를 반환
+  const regex = /[^A-Za-z0-9가-힣_# ]/g
+  return !regex.test(str)
+}
 
 const UserSearch = function () {
   const [searchList, setSearchList] = useState<UserInfo[]>([])
@@ -34,6 +40,10 @@ const UserSearch = function () {
     let type = ""
     if (!searchKeyword) {
       alert("검색어를 입력해주세요.")
+    } else if (!isValid(searchKeyword)) {
+      alert(
+        "특수문자는 '#'을 제외하고 허용하지 않습니다. 또는 검색어를 제대로 입력했는지 확인해주세요."
+      )
     } else {
       if (searchKeyword.includes("#")) {
         type = "all"
@@ -56,6 +66,8 @@ const UserSearch = function () {
         },
       })
         .then((response) => {
+          console.log(response)
+
           setSearchList(response.data.data.result)
         })
         .catch((error) => console.error(error))
@@ -122,6 +134,27 @@ const UserSearch = function () {
 }
 
 const UserItem = function ({ User }: { User: UserInfo }) {
+  let token = useSelector((state: RootState) => state.auth.accessToken)
+
+  const handleRequest = function (event: React.MouseEvent<HTMLButtonElement>) {
+    axios({
+      method: "POST",
+      url: serverUrl + "user/request-friend",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        id: User.id,
+      },
+    })
+      .then((response) => {
+        // 응답값 확인 후 적용하기.
+        console.log(response)
+        User.status = "REQUESTED"
+      })
+      .catch((error) => console.error(error))
+  }
   return (
     <div
       className="grid items-center w-96 mt-2"
@@ -130,7 +163,7 @@ const UserItem = function ({ User }: { User: UserInfo }) {
       <img
         className="rounded-full"
         style={{ width: "75px", height: "75px" }}
-        src="/assets/icons/profile_1.png"
+        src={User.profileImage}
         alt="testimg"
       />
       <p className="text-white ml-2">
@@ -138,7 +171,9 @@ const UserItem = function ({ User }: { User: UserInfo }) {
         <span className="text-gray-400">#{User.id}</span>
       </p>
       {(User.status === "" || User.status === "REJECTED") && (
-        <Button $state={true}>추가</Button>
+        <Button $state={true} onClick={handleRequest}>
+          추가
+        </Button>
       )}
       {User.status === "REQUESTED" && (
         <Button $state={false} disabled={true}>
