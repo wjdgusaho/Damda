@@ -277,6 +277,7 @@ const ClassicCapsule = function () {
           </div>
           <BtnWrap>
             <CancelBtn
+              type="button"
               onClick={() => {
                 navigate(-1)
               }}
