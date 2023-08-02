@@ -1,0 +1,16 @@
+{
+  "name": "담다",
+  "short_name": "담다",
+  "icons": [
+    {
+      "src": "/damda.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#fff",
+  "theme_color": "#fff",
+  "start_url": "/"
+}
