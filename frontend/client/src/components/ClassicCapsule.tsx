@@ -108,18 +108,22 @@ const BtnWrap = tw.div`
 
 const ClassicCapsule = function () {
   let [isHelp, setIsHelp] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
   const currentDate = new Date()
-  const dateString = currentDate.toISOString().slice(0, 10)
+  const oneDayAheadDate = new Date(currentDate)
+  const nextDayOfMonth = currentDate.getDate() + 1
   const navigate = useNavigate()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
+  const [selectedDate, setSelectedDate] = useState<Date | null>(oneDayAheadDate)
   const [timeValue, setTimeValue] = useState<[string, string, string]>([
     "",
     "",
     "",
   ])
+
+  oneDayAheadDate.setDate(nextDayOfMonth)
+  const oneDayAheadDateString = oneDayAheadDate.toISOString().slice(0, 10)
 
   function inputTitle(e: React.FormEvent<HTMLInputElement>) {
     setTitle(e.currentTarget.value)
@@ -209,7 +213,7 @@ const ClassicCapsule = function () {
             formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
             dateFormat="yyyy-MM-dd"
             locale={ko}
-            minDate={new Date(dateString)}
+            minDate={new Date(oneDayAheadDateString)}
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
           />
