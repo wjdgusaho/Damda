@@ -1,5 +1,6 @@
-package com.b210.damda.domain.friend;
+package com.b210.damda.domain.friend.service;
 
+import com.b210.damda.domain.dto.Friend.FriendListDTO;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.friend.repository.FriendRepository;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,5 +85,26 @@ public class FriendService {
             UserFriend newFriend = new UserFriend(null, friendUser, currentUser, false, "REQUESTED", LocalDateTime.now(), null);
             friendRepository.save(newFriend);
         }
+    }
+
+    // 내 친구 목록 조회
+    public List<FriendListDTO> friendList(){
+
+        List<FriendListDTO> friendListDTO = new ArrayList<>();
+
+        Long userNo = getUserNo(); // 현재 유저를 찾음
+        User currentUser = userRepository.findById(userNo).get();
+
+        List<UserFriend> userFriendByUser = friendRepository.getUserFriendByUser(currentUser);
+
+        if(userFriendByUser.size() > 0){
+            for(UserFriend uf : userFriendByUser){ // 유저의 친구 목록을 하나씩 꺼내서
+                if(uf.getStatus().equals("ACCEPTED")){ // 만약에 수락받은 상태면
+                    friendListDTO.add(new FriendListDTO(uf, uf.getFriend()));
+                }
+            }
+        }
+
+        return friendListDTO;
     }
 }
