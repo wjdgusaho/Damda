@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react"
 import { MainHeader } from "./inc/MainHeader"
 import { SubHeader } from "./inc/SubHeader"
-
+import axios, { Axios } from "axios"
 import { ThemeProvider, styled } from "styled-components"
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 import { useRef, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
+import { RootState } from "../store/Store"
+import { serverUrl, reqUrl } from "../urls"
+import { useSelector } from "react-redux"
 
 /*
 1. 모든 타임캡슐의 조건 만족 여부와 밑의 3가지 경우로 나뉨.
@@ -16,17 +19,18 @@ import { useNavigate } from "react-router-dom"
 4. 목표(달성률[백에서 계산해서 전송], 이름, 현재 용량, 최대 용량)
 */
 
-type CapsuleType = {
-  id: number
+interface CapsuleType {
+  timecapsuleNo: number
   type: string
   sDate: string
   eDate: string
   name: string
-  imgsrc: string
+  capsuleIconNo: string
   curCard: number
   goalCard: number
 }
 
+const capsuleList: CapsuleType[] = []
 // const capsuleList: CapsuleType[] = [
 //   {
 //     id: 4,
@@ -38,43 +42,14 @@ type CapsuleType = {
 //     curCard: 0,
 //     goalCard: 0,
 //   },
-//   {
-//     id: 1,
-//     type: "classic",
-//     sDate: "2023-01-01",
-//     eDate: "2023-06-01",
-//     name: "클래식1",
-//     imgsrc: "capsule2",
-//     curCard: 0,
-//     goalCard: 0,
-//   },
-//   {
-//     id: 2,
-//     type: "goal",
-//     sDate: "2023-01-01",
-//     eDate: "2024-01-01",
-//     name: "목표1",
-//     imgsrc: "capsule3",
-//     curCard: 50,
-//     goalCard: 100,
-//   },
-//   {
-//     id: 3,
-//     type: "memory",
-//     sDate: "2023-01-01",
-//     eDate: "2023-02-30",
-//     name: "기록1",
-//     imgsrc: "capsule1",
-//     curCard: 0,
-//     goalCard: 0,
-//   },
 // ]
 
-const MainPage = function () {
+export const MainPage = function () {
   const slickRef = useRef<Slider>(null)
-
+  const token = useSelector((state: RootState) => state.auth.accessToken)
   const previous = useCallback(() => slickRef.current?.slickPrev(), [])
   const next = useCallback(() => slickRef.current?.slickNext(), [])
+  const [capsuleList, setCapsuleList] = useState<CapsuleType[]>([])
 
   const settings = {
     centerMode: false,
@@ -87,9 +62,25 @@ const MainPage = function () {
   }
 
   const navigate = useNavigate()
-  const [capsuleList, setCapsuleList] = useState([])
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    console.log("token", token)
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(serverUrl + "timecapsule/view", {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        console.log(response)
+        setCapsuleList(response.data.data.timecapsuleList)
+        console.log("CapsuleList", response.data.data.timecapsuleList)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchData()
+  }, [])
 
   return (
     <div>
@@ -115,10 +106,10 @@ const MainPage = function () {
             <div className="">
               <Slider ref={slickRef} {...settings} className="">
                 {capsuleList.map((c: CapsuleType) => (
-                  <Capsule key={c.id} className="text-center">
+                  <Capsule key={c.timecapsuleNo} className="text-center">
                     {c.type !== "new" && (
                       <div className="relative">
-                        {c.type === "goal" && (
+                        {c.type === "GOAL" && (
                           // 목표 타임캡슐인 경우
                           <div>
                             <Dday className="m-auto">
@@ -129,7 +120,7 @@ const MainPage = function () {
                             ></ProgressBar>
                           </div>
                         )}
-                        {c.type !== "goal" && (
+                        {c.type !== "GOAL" && (
                           <div>
                             <Dday className="m-auto">
                               {calculateDday(c.eDate)}
@@ -148,7 +139,7 @@ const MainPage = function () {
                           <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-white absolute"></div>
                         )}
                         <FloatingImage
-                          capsulenum={c.imgsrc}
+                          capsulenum={"capsule" + c.capsuleIconNo}
                           className="h-52 m-auto mt-10"
                         />
                       </div>
@@ -158,7 +149,7 @@ const MainPage = function () {
                       <div>
                         <Dday className="m-auto !opacity-80 mt-2">NEW!</Dday>
                         <FloatingImage
-                          capsulenum={c.imgsrc}
+                          capsulenum={"capsule" + c.capsuleIconNo}
                           className="h-52 m-auto mt-14 grayscale"
                         />
                       </div>
