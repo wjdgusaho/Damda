@@ -49,14 +49,14 @@ const Shadow = styled.div`
 
 const Shooting1 = styled.img`
   position: absolute;
-  top: -40px;
+  top: -10px;
   left: -90px;
   width: 65px;
   height: 65px;
 `
 const Shooting2 = styled.img`
   position: absolute;
-  top: -70px;
+  top: -30px;
   left: 15px;
   width: 41px;
   height: 41px;
@@ -154,9 +154,9 @@ const Login = function () {
         style={{ fontFamily: "PyeongChangPeaceBold", position: "relative" }}
       >
         담다
-        <Shooting1 src="assets/Shooting.png" alt="Shooting" />
-        <Shooting2 src="assets/Shooting.png" alt="Shooting" />
-        <Shooting3 src="assets/Shooting.png" alt="Shooting" />
+        <Shooting1 src="assets/universe/Shooting.png" alt="Shooting" />
+        <Shooting2 src="assets/universe/Shooting.png" alt="Shooting" />
+        <Shooting3 src="assets/universe/Shooting.png" alt="Shooting" />
       </span>
       <p
         className="text-victoria-400 mt-5"
@@ -168,9 +168,14 @@ const Login = function () {
         우리의 추억을 타임캡슐에 담아요어쩌구
       </p>
       <div style={{ marginTop: "-20px" }}>
-        <img src="assets/UFO.png" alt="UFO" width="300px" height="169px" />
+        <img
+          src="assets/universe/UFO.png"
+          alt="UFO"
+          width="300px"
+          height="169px"
+        />
         <Person
-          src="assets/Astronaut-1.png"
+          src="assets/universe/Astronaut-1.png"
           alt="Astronaut"
           width="130px"
           height="130px"
