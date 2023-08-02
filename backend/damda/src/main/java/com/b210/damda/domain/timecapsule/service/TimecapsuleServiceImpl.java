@@ -8,6 +8,7 @@ import com.b210.damda.domain.entity.Timecapsule.CirteriaDay;
 import com.b210.damda.domain.entity.Timecapsule.Timecapsule;
 import com.b210.damda.domain.entity.Timecapsule.TimecapsuleCard;
 import com.b210.damda.domain.entity.Timecapsule.TimecapsuleMapping;
+import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.timecapsule.repository.*;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
@@ -153,6 +154,16 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public TimecapsuleDTO createTimecapsule(TimecapsuleCreateDTO timecapsuleCreateDTO) {
 
+        Long userNo = getUserNo();
+        //타임캡슐 생성 불가 로직
+        User user = userRepository.findByUserNo(userNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER));
+
+        if(user.getMaxCapsuleCount() <= user.getNowCapsuleCount()){
+            throw new CommonException(CustomExceptionStatus.NOT_CREATE_TIMECAPSULE_USERLIMIT);
+        }
+
+
          //DTO Entitiy 변환
          Timecapsule createTimecapsule = timecapsuleCreateDTO.toEntity();
 
@@ -200,7 +211,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
          }
 
          //타임캡슐 유저 맵핑
-         Long userNo = getUserNo();
          TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping();
          timecapsuleMapping.setUser(userRepository.findByUserNo(userNo).orElseThrow(
                  () -> new CommonException(CustomExceptionStatus.NOT_USER)));
@@ -214,6 +224,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
          if(saveMapping.getTimecapsuleMappingNo() == null){
              throw new CommonException(CustomExceptionStatus.CREATE_TIMECAPSULEUSERMAPPING);
          }
+
+         //유저의 현재 타임캡슐 갯수 증가
+         user.setNowCapsuleCount(user.getNowCapsuleCount() + 1);
+         userRepository.save(user);
 
          // 상세페이지 불러오기 
          // 상세페이지 만들고 리턴해줘야함

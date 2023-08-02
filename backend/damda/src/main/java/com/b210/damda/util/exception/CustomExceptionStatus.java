@@ -52,7 +52,8 @@ public enum CustomExceptionStatus {
     //생성 관련
     CREATE_TIMECAPSULE(-4001, "타임캡슐 생성 오류 발생"),
     CREATE_CIRTERIADAY( -4002, "타임캡슐 요일조건 생성 에러 발생"),
-    CREATE_TIMECAPSULEUSERMAPPING(-4003, "타임캡슐 유저 매핑 에러 발생");
+    CREATE_TIMECAPSULEUSERMAPPING(-4003, "타임캡슐 유저 매핑 에러 발생"),
+    NOT_CREATE_TIMECAPSULE_USERLIMIT(-4004, "생성 및 참여 할 수 있는 타임캡슐의 공간이 부족합니다.");
 
     private final int code;
     private final String message;
