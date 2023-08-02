@@ -1,9 +1,8 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.Timecapsule;
 
 import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
 import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
-import com.b210.damda.domain.dto.ThemeShopDTO;
-import com.b210.damda.domain.dto.TimecapsuleShopDTO;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +10,6 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.sql.Timestamp;
 
 @Entity

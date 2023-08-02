@@ -2,9 +2,12 @@ package com.b210.damda.domain.timecapsule.service;
 
 import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
 import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
-import com.b210.damda.domain.dto.TimecapsuleCreateDTO;
-import com.b210.damda.domain.dto.TimecapsuleDTO;
-import com.b210.damda.domain.entity.*;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleCreateDTO;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDTO;
+import com.b210.damda.domain.entity.Timecapsule.CirteriaDay;
+import com.b210.damda.domain.entity.Timecapsule.Timecapsule;
+import com.b210.damda.domain.entity.Timecapsule.TimecapsuleCard;
+import com.b210.damda.domain.entity.Timecapsule.TimecapsuleMapping;
 import com.b210.damda.domain.timecapsule.repository.*;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
@@ -16,7 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -219,7 +221,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         return null;
     }
 
-    public static String createKey() {
+    public String createKey() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         int length = 6;
         SecureRandom rnd = new SecureRandom();
@@ -231,4 +233,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         return key.toString();
     }
+
+
 }

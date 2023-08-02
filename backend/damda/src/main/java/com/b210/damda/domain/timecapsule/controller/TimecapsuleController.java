@@ -2,8 +2,8 @@ package com.b210.damda.domain.timecapsule.controller;
 
 import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
 import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
-import com.b210.damda.domain.dto.TimecapsuleCreateDTO;
-import com.b210.damda.domain.dto.TimecapsuleDTO;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleCreateDTO;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDTO;
 import com.b210.damda.domain.timecapsule.service.TimecapsuleService;
 import com.b210.damda.util.response.DataResponse;
 import lombok.RequiredArgsConstructor;
@@ -60,8 +60,6 @@ public class TimecapsuleController {
     public DataResponse<Map<String, Object>> createTimecapsule(@RequestBody TimecapsuleCreateDTO timecapsuleCreateDTO){
         log.info(timecapsuleCreateDTO.toString());
         TimecapsuleDTO timacapsule = timecapsuleService.createTimecapsule(timecapsuleCreateDTO);
-
-
 
         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 생성 완료");
         return response;
