@@ -56,7 +56,7 @@ const Shooting1 = styled.img`
 `
 const Shooting2 = styled.img`
   position: absolute;
-  top: -30px;
+  top: -60px;
   left: 15px;
   width: 41px;
   height: 41px;
