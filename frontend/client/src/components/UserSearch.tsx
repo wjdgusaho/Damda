@@ -73,7 +73,7 @@ const UserSearch = function () {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
-        data: {
+        params: {
           query: searchKeyword,
           type: type,
         },
