@@ -13,5 +13,5 @@ public class WeatherDTO {
     double lat;
     double lan;
     int id;
-    
+
 }
