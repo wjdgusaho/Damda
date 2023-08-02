@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react"
 import { SubHeader } from "./inc/SubHeader"
 import styled from "styled-components"
+import axios from "axios"
+import { serverUrl } from "../urls"
+import { useSelector } from "react-redux"
+import { RootState } from "../store/Store"
+import tw from "tailwind-styled-components"
+
+const keywordRegex = /^(?=.*[a-zA-Z가-힣]).{2,15}$/
 
 const UserSearch = function () {
   const [searchList, setSearchList] = useState<UserInfo[]>([])
+  const [searchKeyword, setSearchKeyword] = useState("")
+  let token = useSelector((state: RootState) => state.auth.accessToken)
 
   useEffect(() => {
     setSearchList([
@@ -11,16 +20,70 @@ const UserSearch = function () {
         id: 1,
         nickname: "달토끼맛쿠키",
         profileImage: "/assets/icons/profile_1.png",
-        status: "NOTREAD",
+        status: "REJECTED",
       },
       {
         id: 2,
         nickname: "달토끼맛쿠키",
         profileImage: "/assets/icons/profile_1.png",
-        status: "NOTREAD",
+        status: "ACCEPTED",
+      },
+      {
+        id: 3,
+        nickname: "달토끼맛쿠키",
+        profileImage: "/assets/icons/profile_1.png",
+        status: "REQUESTED",
       },
     ])
   }, [])
+
+  const handleSearch = function (event: React.ChangeEvent<HTMLInputElement>) {
+    setSearchKeyword(event.target.value)
+  }
+
+  const handlekeydown = function (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) {
+    if (event.code === "Enter") {
+      getResult()
+    }
+  }
+
+  const handleClick = function (event: React.MouseEvent<HTMLButtonElement>) {
+    getResult()
+  }
+
+  const getResult = function () {
+    let type = ""
+    if (!searchKeyword) {
+      alert("검색어를 입력해주세요.")
+    } else {
+      if (searchKeyword.includes("#")) {
+        type = "all"
+      } else if (keywordRegex.test(searchKeyword)) {
+        type = "nickname"
+      } else {
+        type = "code"
+      }
+
+      axios({
+        method: "GET",
+        url: serverUrl + "user/search",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        data: {
+          query: searchKeyword,
+          type: type,
+        },
+      })
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((error) => console.error(error))
+    }
+  }
 
   return (
     <div>
@@ -34,13 +97,21 @@ const UserSearch = function () {
             <img
               src="/assets/icons/search.png"
               alt="search"
-              style={{ width: "40px", height: "40px" }}
+              style={{ width: "30px", height: "30px", marginLeft: "5px" }}
             />
             <SearchInput
               className="focus:outline-none"
               type="text"
               placeholder="닉네임"
+              onChange={handleSearch}
+              onKeyDown={handlekeydown}
             />
+            <button
+              className="mr-3 rounded-full bg-lilac-300 w-12 h-8"
+              onClick={handleClick}
+            >
+              검색
+            </button>
           </div>
         </div>
         <div className="opacity-60 text-white text-center pr-80 mt-4">
@@ -89,7 +160,19 @@ const UserItem = function ({ User }: { User: UserInfo }) {
         {User.nickname}
         <span className="text-gray-400">#{User.id}</span>
       </p>
-      <button className="bg-lilac-300 rounded-full mr-5 h-8">추가</button>
+      {(User.status === "" || User.status === "REJECTED") && (
+        <Button $state={true}>추가</Button>
+      )}
+      {User.status === "REQUESTED" && (
+        <Button $state={false} disabled={true}>
+          요청됨
+        </Button>
+      )}
+      {User.status === "ACCEPTED" && (
+        <Button $state={false} disabled={true}>
+          친구
+        </Button>
+      )}
     </div>
   )
 }
@@ -102,13 +185,21 @@ const TextStyle = styled.div`
 
 const SearchInput = styled.input`
   background-color: transparent;
-  width: 21rem;
+  width: 16rem;
   height: inherit;
   color: #3b396f;
   &::placeholder {
     color: #3b396f;
     opacity: 0.6;
   }
+`
+
+interface ButtonProps {
+  $state: boolean
+}
+
+const Button = tw.button<ButtonProps>`rounded-full ml-2 h-8
+${(props) => (props.$state ? "bg-lilac-300" : "bg-gray-400")}
 `
 
 const CapsuleShadow = styled.div`
