@@ -22,14 +22,24 @@ public class WeatherAPIController {
 
     private final WeatherAPIService weatherAPIService;
     private final WeatherLocationService weatherLocationService;
-    @PostMapping("/get-weather")
+    @PostMapping("/now/weather")
     public Mono<String> getNowWeatherInfos(@RequestBody WeatherDTO weatherDTO) throws Exception {
         return weatherAPIService.getNowWeatherInfos(weatherDTO);
     }
 
-    @PostMapping("/get-location")
+    @PostMapping("/now/location")
     public WeatherLocationDTO getNowLocation(@RequestBody WeatherDTO weatherDTO) throws Exception {
         return weatherLocationService.getNowLocation(weatherDTO);
+    }
+
+    @GetMapping("/location/big")
+    public List<String> getBigLocations() throws Exception {
+        //서울특별시, 충청남도, .. 등 1차 지명 얻기
+        return weatherLocationService.getBigLocations();
+    }
+    @GetMapping("/location/medium")
+    public List<String> getMediumLocations(@RequestBody String bigLocation) throws Exception {
+        return weatherLocationService.getMediumLocations(bigLocation);
     }
 
 }

@@ -6,11 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class WeatherLocationDTO {
-
-    long id;
     String localBig;
     String localMedium;
-    String localSmall;
-
-
 }
