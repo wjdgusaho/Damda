@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { SubHeader } from "./inc/SubHeader"
 import styled from "styled-components"
 import axios from "axios"
@@ -13,29 +13,6 @@ const UserSearch = function () {
   const [searchList, setSearchList] = useState<UserInfo[]>([])
   const [searchKeyword, setSearchKeyword] = useState("")
   let token = useSelector((state: RootState) => state.auth.accessToken)
-
-  useEffect(() => {
-    setSearchList([
-      {
-        id: 1,
-        nickname: "달토끼맛쿠키",
-        profileImage: "/assets/icons/profile_1.png",
-        status: "REJECTED",
-      },
-      {
-        id: 2,
-        nickname: "달토끼맛쿠키",
-        profileImage: "/assets/icons/profile_1.png",
-        status: "ACCEPTED",
-      },
-      {
-        id: 3,
-        nickname: "달토끼맛쿠키",
-        profileImage: "/assets/icons/profile_1.png",
-        status: "REQUESTED",
-      },
-    ])
-  }, [])
 
   const handleSearch = function (event: React.ChangeEvent<HTMLInputElement>) {
     setSearchKeyword(event.target.value)
@@ -73,13 +50,13 @@ const UserSearch = function () {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
-        data: {
+        params: {
           query: searchKeyword,
           type: type,
         },
       })
         .then((response) => {
-          console.log(response)
+          setSearchList(response.data.data.result)
         })
         .catch((error) => console.error(error))
     }
