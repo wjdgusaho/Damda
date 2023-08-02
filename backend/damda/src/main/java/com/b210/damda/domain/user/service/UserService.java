@@ -1,10 +1,10 @@
 package com.b210.damda.domain.user.service;
 
+import com.b210.damda.domain.dto.UserLoginSuccessDTO;
 import com.b210.damda.domain.dto.UserOriginRegistDTO;
 import com.b210.damda.domain.dto.UserSearchResultDTO;
 import com.b210.damda.domain.dto.UserUpdateDTO;
 import com.b210.damda.domain.entity.*;
-import com.b210.damda.domain.file.service.FileStoreService;
 import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.friend.repository.FriendRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
@@ -16,17 +16,10 @@ import com.b210.damda.util.emailAPI.repository.SignupEmailLogRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
-import com.b210.damda.util.response.DataResponse;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +83,7 @@ public class UserService {
 
     // 로그인
     @Transactional
-    public Map<String, Object> login(String email, String password) {
+    public UserLoginSuccessDTO login(String email, String password) {
 
         Optional<User> findUser = Optional.ofNullable(userRepository.findByEmail(email)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
@@ -133,10 +126,17 @@ public class UserService {
             refreshTokenRepository.save(refreshTokenUser); // 리프레시 토큰 저장.
         }
 
-        Map<String, Object> response = new HashMap<>();
+        UserLoginSuccessDTO response = UserLoginSuccessDTO.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .accountType("ORIGIN")
+                .nickname(user.getNickname())
+                .profileImage(user.getProfileImage())
+                .userNo(user.getUserNo())
+                .nowTheme(user.getNowTheme())
+                .coin(user.getCoin())
+                .build();
 
-        response.put("accessToken", accessToken);
-        response.put("refreshToken", refreshToken);
 
         // 로그인 log 기록
         UserLog userLog = new UserLog();

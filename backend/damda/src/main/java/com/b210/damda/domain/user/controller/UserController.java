@@ -9,19 +9,13 @@ import com.b210.damda.util.emailAPI.service.EmailService;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.b210.damda.util.response.DataResponse;
-import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -93,19 +87,12 @@ public class UserController {
 
     // 로그인 요청
     @PostMapping("login")
-    public DataResponse<Map<String, Object>> login(@RequestBody UserLoginDTO userLoginDTO){
+    public DataResponse<UserLoginSuccessDTO> login(@RequestBody UserLoginDTO userLoginDTO){
         try {
-            Map<String, Object> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getUserPw());
-            User user = userService.fineByUser(userLoginDTO.getEmail());
-            System.out.println(user.getCoin());
+            UserLoginSuccessDTO login = userService.login(userLoginDTO.getEmail(), userLoginDTO.getUserPw());
 
-            loginUser.put("accountType", "ORIGIN");
-            loginUser.put("nickname", user.getNickname());
-            loginUser.put("profileImage", user.getProfileImage());
-            loginUser.put("userNo", user.getUserNo());
-
-            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "로그인 성공");
-            response.setData(loginUser);
+            DataResponse<UserLoginSuccessDTO> response = new DataResponse<>(200, "로그인 성공");
+            response.setData(login);
 
             return response;
         }catch (CommonException e){
