@@ -1,5 +1,6 @@
 package com.b210.damda.domain.entity;
 
+import com.b210.damda.domain.entity.User.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

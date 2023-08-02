@@ -1,6 +1,6 @@
 package com.b210.damda.util.kakaoAPI.service;
 
-import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.entity.User.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

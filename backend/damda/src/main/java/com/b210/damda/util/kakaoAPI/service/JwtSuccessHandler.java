@@ -1,6 +1,6 @@
 package com.b210.damda.util.kakaoAPI.service;
 
-import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.entity.User.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;

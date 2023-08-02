@@ -1,19 +1,12 @@
-    package com.b210.damda.domain.entity;
+    package com.b210.damda.domain.entity.User;
 
-    import com.b210.damda.domain.dto.UserDTO;
-    import com.b210.damda.domain.dto.UserUpdateDTO;
+    import com.b210.damda.domain.dto.User.UserDTO;
     import lombok.*;
-    import lombok.extern.slf4j.Slf4j;
     import org.springframework.data.annotation.CreatedDate;
-    import org.springframework.data.annotation.LastModifiedDate;
     import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-    import reactor.util.annotation.Nullable;
 
     import javax.persistence.*;
-    import java.sql.Timestamp;
     import java.time.LocalDateTime;
-    import java.util.ArrayList;
-    import java.util.List;
 
     @Entity
     @Setter

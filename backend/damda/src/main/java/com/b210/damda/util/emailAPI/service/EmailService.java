@@ -1,7 +1,6 @@
 package com.b210.damda.util.emailAPI.service;
 
-import com.b210.damda.domain.entity.User;
-import org.springframework.stereotype.Service;
+import com.b210.damda.domain.entity.User.User;
 
 public interface EmailService {
 

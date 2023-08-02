@@ -1,10 +1,13 @@
 package com.b210.damda.domain.user.service;
 
-import com.b210.damda.domain.dto.UserLoginSuccessDTO;
-import com.b210.damda.domain.dto.UserOriginRegistDTO;
-import com.b210.damda.domain.dto.UserSearchResultDTO;
-import com.b210.damda.domain.dto.UserUpdateDTO;
+import com.b210.damda.domain.dto.User.UserLoginSuccessDTO;
+import com.b210.damda.domain.dto.User.UserOriginRegistDTO;
+import com.b210.damda.domain.dto.User.UserSearchResultDTO;
+import com.b210.damda.domain.dto.User.UserUpdateDTO;
 import com.b210.damda.domain.entity.*;
+import com.b210.damda.domain.entity.User.User;
+import com.b210.damda.domain.entity.User.UserFriend;
+import com.b210.damda.domain.entity.User.UserLog;
 import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.friend.repository.FriendRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
