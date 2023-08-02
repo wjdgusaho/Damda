@@ -1,0 +1,55 @@
+package com.b210.damda.util.weatherAPI.service;
+
+import com.b210.damda.domain.dto.WeatherDTO;
+import com.b210.damda.domain.dto.WeatherLocationDTO;
+import com.b210.damda.domain.entity.WeatherLocation;
+import com.b210.damda.util.weatherAPI.repository.WeatherLocationRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class WeatherLocationServiceImpl implements WeatherLocationService {
+
+    private final WeatherLocationRepository weatherLocationRepository;
+    @Override
+    public WeatherLocationDTO getNowLocation(WeatherDTO weatherDTO) throws Exception {
+
+        //DTO에서 위경도값과 변환 모드 넣고 변환하는 클래스에 돌린 뒤, LatXLngY 인스턴스에 값 대입
+        double lat = weatherDTO.getLat();
+        double lan = weatherDTO.getLan();
+        LatXLngY latXLngY = ConvertGRID_GPS.converting(weatherDTO.isMode(), lat, lan);
+
+        //격자값 변환한 nx,ny와 동일한 값 찾고, 이 중 위경도와 가장 유사한 값을 찾음
+        List<WeatherLocation> weatherLocations = weatherLocationRepository.findByNxAndNy((int)latXLngY.x, (int)latXLngY.y);
+
+        for (int i = 0; i < weatherLocations.size(); i++) {
+            WeatherLocation now = weatherLocations.get(i);
+            //현재좌표와 같은 격자값들을 가진 장소들의 좌표값 차이를 비교
+            double nowVal = Math.abs(lat - now.getLat()) + Math.abs(lan - now.getLan());
+            if(DistVal.maxVal >= nowVal) {
+                DistVal.maxVal = nowVal;
+                DistVal.result = now;
+            }
+        }
+
+        //최종 가장 근접한 지역의 결과값을 WeatherDTO 형태로 반출
+        WeatherLocationDTO result = WeatherLocationDTO.builder()
+                .id(DistVal.result.getId())
+                .localBig(DistVal.result.getLocalBig())
+                .localMedium(DistVal.result.getLocalMedium())
+                .localSmall(DistVal.result.getLocalSmall())
+                .build();
+
+        return result;
+    }
+}
+
+class DistVal {
+    static double maxVal = Double.MAX_VALUE;
+    static WeatherLocation result = new WeatherLocation();
+}
