@@ -25,10 +25,13 @@ const RefreshTokenApi = async function (refreshToken: string) {
 // refreshTokens 함수는 서버로 리프레시 토큰을 보내고 새로운 토큰들을 받아옵니다.
 export const GetNewTokens = () => {
   const dispatch = useDispatch()
-  const GetNewTokenComponent = async (refreshToken: string) => {
+  const GetNewTokenComponent = async (
+    refreshToken: string
+  ): Promise<string> => {
     try {
       const { accessToken } = await RefreshTokenApi(refreshToken)
       dispatch(SET_TOKEN(accessToken))
+      return accessToken
     } catch (error) {
       throw error
     }

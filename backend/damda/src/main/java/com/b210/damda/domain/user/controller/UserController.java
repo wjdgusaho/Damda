@@ -59,6 +59,7 @@ public class UserController {
     public DataResponse<Map<String, Object>> emailSend(@RequestBody UserOriginRegistDTO userOriginRegistDTO) throws Exception {
         try {
             String email = userOriginRegistDTO.getEmail();
+            System.out.println(email);
             User user = userService.fineByUser(email);
             if (user != null) {
                 return new DataResponse<>(409, "이미 가입된 이메일입니다.");
