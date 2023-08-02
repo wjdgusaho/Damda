@@ -5,6 +5,7 @@ import axios from "axios"
 import { serverUrl } from "../../urls"
 import { Link } from "react-router-dom"
 import tw from "tailwind-styled-components"
+import Modal from "react-modal"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -33,6 +34,35 @@ const InputCSS = tw.input`
     my-2
     focus:outline-none
 `
+const successCode = Math.floor(Math.random() * 10000)
+
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    borderRadius: "20px",
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.733)",
+  },
+}
+
+const ModalButton = styled.div`
+  font-family: "pretendard";
+  font-weight: 400;
+  font-size: 18px;
+  width: 80px;
+  height: 26px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: #000000b1;
+`
 
 export const SignUp = function () {
   const navigate = useNavigate()
@@ -50,12 +80,21 @@ export const SignUp = function () {
   const [userEmailMessage, setuserEmailMessage] = useState("")
   const [userEmailMatch, setuserEmailMatch] = useState(0)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [getCode, setGetCode] = useState(false)
+  const [userCode, setUserCode] = useState("")
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setUserdata({
       ...userdata,
       [event.currentTarget.name]: event.currentTarget.value,
     })
+  }
+  function handleCodeChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setUserCode(event.currentTarget.value)
+  }
+
+  function handleClose() {
+    setGetCode(false)
   }
 
   function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -122,6 +161,68 @@ export const SignUp = function () {
     fileinput.click()
   }
 
+  async function sleep(sec: number) {
+    return new Promise<void>((resolve) => setTimeout(resolve, sec * 1000))
+  }
+  let seconds = 0
+
+  function startCountdown(minute: number) {
+    const countdownElement = document.querySelector(
+      "#countdown"
+    ) as HTMLSpanElement
+
+    if (!countdownElement) {
+      console.error("요소가 존재하지 않습니다.")
+      return
+    }
+
+    seconds = minute * 60
+
+    const interval = setInterval(() => {
+      const minuteRemaining = Math.floor(seconds / 60)
+      const secondRemaining = seconds % 60
+
+      countdownElement.textContent = `${String(minuteRemaining).padStart(
+        2,
+        "0"
+      )}:${String(secondRemaining).padStart(2, "0")}`
+
+      if (seconds === 0) {
+        clearInterval(interval)
+        countdownElement.textContent = "인증번호 만료"
+        countdownElement.style.color = "red"
+      }
+
+      seconds--
+    }, 1000)
+  }
+
+  function handleSubmitCode(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    axios({
+      method: "POST",
+      url: serverUrl + "user/check-email",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        email: userdata.email,
+        code: userCode,
+      },
+    })
+      .then((response) => {
+        const code = response.data.code
+        alert(response.data.message)
+        if (code === 200) {
+          setGetCode(false)
+          setUserCode("success" + successCode.toString())
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
   function checkEmailOverlap(event: React.MouseEvent<HTMLButtonElement>) {
     if (!userdata.email) {
       setuserEmailMessage("이메일을 입력해주세요.")
@@ -134,12 +235,15 @@ export const SignUp = function () {
     } else {
       axios({
         method: "POST",
-        url: serverUrl + "user/check-email",
+        url: serverUrl + "user/send-email",
         data: { email: userdata.email },
       })
-        .then(() => {
+        .then(async () => {
           setuserEmailMessage("")
           setuserEmailMatch(2)
+          setGetCode(true)
+          await sleep(1)
+          startCountdown(10)
         })
         .catch((error) => {
           // // 이메일 사용 불가
@@ -176,6 +280,12 @@ export const SignUp = function () {
       alert("이메일을 입력해주세요.")
     } else if (userdata.email && userEmailMatch !== 2) {
       alert("이메일 중복확인을 해주세요.")
+    } else if (
+      userdata.email &&
+      userEmailMatch === 2 &&
+      userCode !== "success" + successCode.toString()
+    ) {
+      alert("이메일 인증이 되지 않았습니다.")
     } else if (!userdata.nickname) {
       alert("닉네임을 입력해주세요.")
     } else if (userdata.nickname && userNicknameCondition !== 1) {
@@ -244,6 +354,28 @@ export const SignUp = function () {
       ) : (
         <div></div>
       )}
+
+      <Modal isOpen={getCode} onRequestClose={handleClose} style={customStyles}>
+        <Form onSubmit={handleSubmitCode}>
+          <p className="grid grid-cols-2 justify-between">
+            인증번호
+            <span id="countdown" className="text-end">
+              10:00
+            </span>
+          </p>
+          <input
+            className="bg-transparent focus:outline-none border-b-2"
+            type="text"
+            onChange={handleCodeChange}
+          />
+          <button
+            className="text-sm rounded-full shadow-md w-48 mx-auto"
+            style={{ backgroundColor: "#EFE0F4", color: "black" }}
+          >
+            확인
+          </button>
+        </Form>
+      </Modal>
       <Form className="grid grid-cols-1 w-full mx-auto" onSubmit={handleSubmit}>
         <div className="w-full justify-center">
           <img
