@@ -1,10 +1,69 @@
 import React, { useState } from "react"
 import { styled } from "styled-components"
 
+interface StickerType {
+  no: number
+  name: string
+  icon: string
+  sticker: {
+    s1?: string
+    s2?: string
+    s3?: string
+    s4?: string
+    s5?: string
+    s6?: string
+    s7?: string
+    s8?: string
+    s9?: string
+    s10?: string
+    s11?: string
+    s12?: string
+  }
+}
+
+const stickerList: StickerType[] = [
+  {
+    no: 1,
+    name: "confetti",
+    icon: "assets/stickers/confetti/icon.png",
+    sticker: {
+      s1: "assets/stickers/confetti/1.png",
+      s2: "assets/stickers/confetti/2.png",
+      s3: "assets/stickers/confetti/3.png",
+      s4: "assets/stickers/confetti/4.png",
+      s5: "assets/stickers/confetti/5.png",
+      s6: "assets/stickers/confetti/6.png",
+      s7: "assets/stickers/confetti/7.png",
+      s8: "assets/stickers/confetti/8.png",
+      s9: "assets/stickers/confetti/9.png",
+      s10: "assets/stickers/confetti/10.png",
+    },
+  },
+  {
+    no: 2,
+    name: "colorface",
+    icon: "assets/stickers/colorface/icon.png",
+    sticker: {
+      s1: "assets/stickers/colorface/1.png",
+      s2: "assets/stickers/colorface/2.png",
+      s3: "assets/stickers/colorface/3.png",
+      s4: "assets/stickers/colorface/4.png",
+      s5: "assets/stickers/colorface/5.png",
+      s6: "assets/stickers/colorface/6.png",
+      s7: "assets/stickers/colorface/7.png",
+      s8: "assets/stickers/colorface/8.png",
+      s9: "assets/stickers/colorface/9.png",
+      s10: "assets/stickers/colorface/10.png",
+      s11: "assets/stickers/colorface/11.png",
+    },
+  },
+]
+
 const Card = function () {
   const [inputValue, setInputValue] = useState("")
   const [bgcolor, setBgcolor] = useState("#C4C5F4")
   const [font, setFont] = useState("pretendard")
+  const [stickerNo, setSticker] = useState(stickerList[0].no)
 
   const handleChange = (e: { target: { value: any } }) => {
     const value = e.target.value
@@ -19,6 +78,14 @@ const Card = function () {
     const selectedFont = event.target.value
     setFont(selectedFont)
   }
+  const selectSticker = (no: number) => {
+    const value = no
+    setSticker(value)
+  }
+
+  const matchingSticker = stickerList.find(
+    (sticker) => sticker.no === stickerNo
+  )
 
   const bgColorList = [
     "white",
@@ -113,9 +180,29 @@ const Card = function () {
         </FontSelect>
       </div>
       <div>
-        <div className="bg-slate-50 mt-4 h-7">스티커팩 목록</div>
-        <div className="flex">
-          <div className="bg-slate-500 flex-1">스티커 목록</div>
+        <div className="bg-black bg-opacity-10 mt-4 flex flex-nowrap overflow-y-auto">
+          {stickerList.length !== 0 &&
+            stickerList.map((s: StickerType) => (
+              <img
+                className="w-16 m-3"
+                src={s.icon}
+                onClick={() => selectSticker(s.no)}
+                alt="icon"
+              />
+            ))}
+        </div>
+        <div className="flex h-64 w-full flex-wrap overflow-x-auto content-start">
+          {matchingSticker &&
+            Object.values(matchingSticker.sticker).map(
+              (stickerImage, index) => (
+                <img
+                  className="w-16 m-4"
+                  key={index}
+                  src={stickerImage}
+                  alt={`Sticker ${index + 1}`}
+                />
+              )
+            )}
         </div>
       </div>
     </BackGround>
@@ -130,6 +217,7 @@ const BackGround = styled.div<BackGroundProps>`
   background-color: ${(props) => props.bgColor};
   width: 100vw;
   height: 100vh;
+  overflow-x: hidden;
 `
 
 const CardContainer = styled.div`
