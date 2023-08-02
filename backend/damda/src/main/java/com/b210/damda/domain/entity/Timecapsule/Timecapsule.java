@@ -22,7 +22,7 @@ public class Timecapsule {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long timecapsuleNo;
 
-    private Timestamp endDate;
+    private Timestamp openDate;
 
     private String type;
 
@@ -85,7 +85,7 @@ public class Timecapsule {
                 .timecapsuleNo(this.timecapsuleNo)
                 .type(this.type)
                 .sDate(this.registDate)
-                .eDate(this.endDate)
+                .eDate(this.openDate)
                 .name(this.title)
                 .capsuleIconNo(this.capsuleIconNo)
                 .goalCard(this.goalCard)
@@ -97,7 +97,7 @@ public class Timecapsule {
                 .timecapsuleNo(this.timecapsuleNo)
                 .type(this.type)
                 .startDate(this.registDate)
-                .endDate(this.getType().equals("GOAL") ? null : this.endDate)
+                .endDate(this.getType().equals("GOAL") ? null : this.openDate)
                 .title(this.title)
                 .capsuleIconNo(this.capsuleIconNo)
                 .goalCard(this.getType().equals("GOAL") ? this.goalCard : 0)

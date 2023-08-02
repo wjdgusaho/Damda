@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -23,6 +24,8 @@ public class TimecapsuleCreateDTO {
 
     private int goalCard;
 
+    private Timestamp openDate;
+
     private TimecapsulePenaltyDTO penalty;
 
     private TimecapsuleCriteriaDTO criteria;
@@ -34,6 +37,7 @@ public class TimecapsuleCreateDTO {
         Timecapsule timecapsule = Timecapsule.builder()
                 .title(this.title)
                 .type(this.type)
+                .openDate(this.openDate != null ? this.openDate : null)
                 .description(this.description)
                 .goalCard(this.type.equals("GOAL") ? this.goalCard : 0)
                 .build();
