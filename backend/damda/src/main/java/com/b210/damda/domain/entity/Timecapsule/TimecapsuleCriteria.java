@@ -22,15 +22,15 @@ public class TimecapsuleCriteria {
 
     private String weatherStatus;
 
-    private Date cardInputStart;
+    private Integer startTime;
 
-    private Date cardInputEnd;
+    private Integer endTime;
 
-    private int nx;
+    private String localBig;
 
-    private int ny;
+    private String localMedium;
 
-    private String location;
+    private String timeKr;
 
     public TimecapsuleCriteria() {
 
