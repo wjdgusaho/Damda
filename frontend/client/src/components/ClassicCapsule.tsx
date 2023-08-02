@@ -107,7 +107,7 @@ const BtnWrap = tw.div`
 `
 
 const ClassicCapsule = function () {
-  let [isHelp, setIsHelp] = useState(false)
+  const [isHelp, setIsHelp] = useState(false)
   const currentDate = new Date()
   const oneDayAheadDate = new Date(currentDate)
   const nextDayOfMonth = currentDate.getDate() + 1
