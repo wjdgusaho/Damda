@@ -1,8 +1,8 @@
-package com.b210.damda.domain.dto;
+package com.b210.damda.domain.dto.Timecapsule;
 
-import com.b210.damda.domain.entity.Timecapsule;
-import com.b210.damda.domain.entity.TimecapsuleCriteria;
-import com.b210.damda.domain.entity.TimecapsulePenalty;
+import com.b210.damda.domain.entity.Timecapsule.Timecapsule;
+import com.b210.damda.domain.entity.Timecapsule.TimecapsuleCriteria;
+import com.b210.damda.domain.entity.Timecapsule.TimecapsulePenalty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;

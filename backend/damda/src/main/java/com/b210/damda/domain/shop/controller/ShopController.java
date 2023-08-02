@@ -1,18 +1,14 @@
 package com.b210.damda.domain.shop.controller;
 
 import com.b210.damda.domain.dto.ThemeShopDTO;
-import com.b210.damda.domain.dto.TimecapsuleShopDTO;
-import com.b210.damda.domain.shop.repository.ThemeRepository;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
 import com.b210.damda.domain.shop.service.ShopService;
-import com.b210.damda.domain.user.service.UserService;
 import com.b210.damda.util.response.CommonResponse;
 import com.b210.damda.util.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

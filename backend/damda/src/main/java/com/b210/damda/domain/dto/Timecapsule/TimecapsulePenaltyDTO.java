@@ -1,6 +1,6 @@
-package com.b210.damda.domain.dto;
+package com.b210.damda.domain.dto.Timecapsule;
 
-import com.b210.damda.domain.entity.TimecapsulePenalty;
+import com.b210.damda.domain.entity.Timecapsule.TimecapsulePenalty;
 import lombok.*;
 
 @Data
