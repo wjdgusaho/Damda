@@ -176,6 +176,31 @@ const GoalCapsule = function () {
     setSelectedPenalty(penalty[randomIndex])
   }
 
+  const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
+    const value = e.currentTarget.value
+
+    if (value === "") {
+      e.currentTarget.value = ""
+    } else {
+      let parsedValue = parseInt(value, 10)
+
+      // 최소값과 최대값 사이로 조정
+      if (parsedValue < 1) {
+        parsedValue = 1
+      } else if (parsedValue > 1000) {
+        parsedValue = 1000
+      }
+
+      // 숫자가 아닌 입력을 처리
+      if (isNaN(parsedValue)) {
+        e.currentTarget.value = "1"
+      } else {
+        // 값 적용
+        e.currentTarget.value = parsedValue.toString()
+      }
+    }
+  }
+
   return (
     <>
       <SubHeader />
@@ -201,7 +226,13 @@ const GoalCapsule = function () {
             <span>최대 1000개</span>
           </Content>
         </ContentWrap>
-        <InputBox className="w-80" type="number" max={1000} min={1} />
+        <InputBox
+          className="w-80"
+          type="number"
+          max={1000}
+          min={1}
+          onInput={handleInput}
+        />
 
         <ContentWrap>
           <Content>
@@ -223,6 +254,7 @@ const GoalCapsule = function () {
             type="radio"
             id="none"
             name="time"
+            defaultChecked
           />
           <RadioBtn htmlFor="none">없음</RadioBtn>
           <input
