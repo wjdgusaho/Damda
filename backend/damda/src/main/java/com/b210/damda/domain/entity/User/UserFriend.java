@@ -51,4 +51,14 @@ public class UserFriend {
         this.user = user;
         this.friend = friend;
     }
+
+    // 즐겨찾기 추가
+    public void updateFavoriteAdd(){
+        this.isFavorite = true;
+    }
+
+    // 즐겨찾기 제거
+    public void updateFavoriteDel(){
+        this.isFavorite = false;
+    }
 }

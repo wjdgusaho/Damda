@@ -23,6 +23,7 @@ public class FriendController {
         this.friendService = friendService;
     }
 
+    // 친구 요청
     @PatchMapping("request")
     public DataResponse<Map<String, Object>> friendRequest(@RequestBody UserDTO userDTO){
         try{
@@ -53,7 +54,26 @@ public class FriendController {
         }
     }
 
-//    @PatchMapping("favorite")
-//    public DataResponse<Map<String, Object>> friendFavorite()
+    // 즐겨찾기 추가
+    @PatchMapping("favorite-add")
+    public DataResponse<Map<String, Object>> friendFavoriteAdd(@RequestBody FriendListDTO friendListDTO){
+        try{
+            friendService.friendRequestFavoriteAdd(friendListDTO.getUserNo());
+            return new DataResponse<>(200, "즐겨찾기 추가 성공");
+        }catch (Exception e){
+            return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
+    }
+
+    // 즐겨찾기 해제
+    @PatchMapping("favorite-del")
+    public DataResponse<Map<String, Object>> friendFavoriteDel(@RequestBody FriendListDTO friendListDTO){
+        try{
+            friendService.friendRequestFavoriteDel(friendListDTO.getUserNo());
+            return new DataResponse<>(200, "즐겨찾기 삭제 성공");
+        }catch (Exception e){
+            return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
+    }
 
 }
