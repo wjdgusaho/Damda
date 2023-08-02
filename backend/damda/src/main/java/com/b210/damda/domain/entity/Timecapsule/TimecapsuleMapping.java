@@ -1,9 +1,11 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.Timecapsule;
 
+import com.b210.damda.domain.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -21,10 +23,13 @@ public class TimecapsuleMapping {
     @JoinColumn(name = "user_no")
     private User user;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isSave;
 
     private boolean isHost;
 
-    private String deleteDate;
+    private Timestamp deleteDate;
+
+    private Timestamp openDate;
 
 }
