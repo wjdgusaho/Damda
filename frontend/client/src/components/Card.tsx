@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { styled } from "styled-components"
+import html2canvas from "html2canvas"
 
 interface StickerType {
   no: number
@@ -61,13 +62,22 @@ const stickerList: StickerType[] = [
 
 const Card = function () {
   const [inputValue, setInputValue] = useState("")
+  const [inputContentValue, setInputContentValue] = useState("")
   const [bgcolor, setBgcolor] = useState("#C4C5F4")
   const [font, setFont] = useState("pretendard")
   const [stickerNo, setSticker] = useState(stickerList[0].no)
+  const [title, setTitle] = useState("오늘의 제목")
+  const [cardContent, setCardContent] = useState("오늘의 내용을 입력해주세요!")
 
   const handleChange = (e: { target: { value: any } }) => {
     const value = e.target.value
+    setTitle(value)
     setInputValue(value)
+  }
+  const handleChangeContent = (e: { target: { value: any } }) => {
+    const value = e.target.value
+    setCardContent(value)
+    setInputContentValue(value)
   }
   const bgColorChange = (color: string) => {
     const value = color
@@ -101,19 +111,42 @@ const Card = function () {
   ]
 
   const inputWidth =
-    inputValue.length <= 5 ? "100px" : `${inputValue.length * 10 + 100}px`
+    inputValue.length <= 5 ? "100px" : `${inputValue.length * 8 + 100}px`
+
+  const saveAsImageHandler = () => {
+    const target = document.getElementById("saveImgContainer")
+    if (!target) {
+      return alert("결과 저장에 실패했습니다.")
+    }
+    html2canvas(target, {
+      useCORS: true, // 크로스 오리진 요청 허용
+      scale: 2, // 해상도 높이기
+    }).then((canvas) => {
+      const link = document.createElement("a")
+      document.body.appendChild(link)
+      link.href = canvas.toDataURL("image/png")
+      link.download = "result.png"
+      link.click()
+      document.body.removeChild(link)
+    })
+  }
 
   return (
     <BackGround bgColor={bgcolor}>
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
         <img className="w-6 h-6" src="/assets/icons/x_dark.png" alt="X" />
         <img
+          onClick={saveAsImageHandler}
           className="w-8 h-6"
           src="/assets/icons/check_dark.png"
           alt="체크"
         />
       </div>
-      <CardContainer className="mt-4 m-auto overflow-hidden">
+      <CardContainer
+        bgColor={bgcolor}
+        id="saveImgContainer"
+        className="mt-4 m-auto overflow-hidden"
+      >
         <div className="flex justify-between p-2 text-sm">
           <div className="flex">
             <img
@@ -129,33 +162,51 @@ const Card = function () {
             <Text font={font}>2023.02.03</Text>
           </div>
         </div>
-        <div className="text-center -mt-2">
+        <div className="relative text-center -mt-2">
           <Title
-            className="w-fit bg-white bg-opacity-0 text-center"
+            id="inputTitle"
+            className="w-full h-4 opacity-0 overflow-hidden"
             type="text"
             value={inputValue}
             onChange={handleChange}
             placeholder={inputValue ? "" : "오늘의 제목"}
             width={inputWidth}
             font={font}
+            maxLength={15}
           />
           <TitleBG width={inputWidth} className="m-auto"></TitleBG>
+          <label
+            className="block text-center -mt-6 absolute w-full"
+            htmlFor="inputTitle"
+          >
+            <InputResult font={font}>{title}</InputResult>
+          </label>
         </div>
-        <div className="flex w-40 h-40 items-center m-auto mt-4 bg-white bg-opacity-25">
+        <div className="flex w-40 h-40 items-center m-auto mt-4 bg-black bg-opacity-20 mb-1">
           <img
             className="w-8 h-8 m-auto opacity-80"
+            onClick={saveAsImageHandler}
             src="/assets/icons/img_select.png"
             alt="사진"
           />
         </div>
         <div className="text-center">
-          <Content
-            className="bg-white bg-opacity-0 !text-xs mt-2"
-            placeholder="어떤 일을 기록하고 싶으신가요?"
-            rows={5}
-            maxLength={150}
-            font={font}
-          ></Content>
+          <div className="relative text-center -mt-2">
+            <label
+              className="block text-center opacity-70 !text-xs mt-2 absolute w-full"
+              htmlFor="inputContent"
+            >
+              <InputResult font={font}>{cardContent}</InputResult>
+            </label>
+            <Content
+              className="bg-white opacity-0 !text-xs mt-2 w-full"
+              rows={5}
+              maxLength={150}
+              font={font}
+              id="inputContent"
+              onChange={handleChangeContent}
+            ></Content>
+          </div>
         </div>
       </CardContainer>
       <div className="flex justify-between p-2 w-80 m-auto">
@@ -195,7 +246,7 @@ const Card = function () {
           {matchingSticker &&
             Object.values(matchingSticker.sticker).map(
               (stickerImage, index) => (
-                <img
+                <Sticker
                   className="w-16 m-4"
                   key={index}
                   src={stickerImage}
@@ -220,10 +271,11 @@ const BackGround = styled.div<BackGroundProps>`
   overflow-x: hidden;
 `
 
-const CardContainer = styled.div`
+const CardContainer = styled.div<BackGroundProps>`
+  background-color: ${(props) => props.bgColor};
   border: 1px solid #545454;
-  width: 90vw;
-  height: 90vw;
+  width: 350px;
+  height: 350px;
 `
 
 interface TitleProps {
@@ -233,22 +285,23 @@ interface TitleProps {
 }
 
 const Title = styled.input<TitleProps>`
-  color: #00000089;
   width: ${(props) => props.width};
   outline: none;
   font-family: ${(props) => props.font};
-  font-weight: 700;
-  font-size: 15px;
-
+  font-size: 4px;
+  text-align: left;
   &::placeholder {
     color: #80808081;
   }
 `
+const InputResult = styled.div<ContentProps>`
+  font-family: ${(props) => props.font};
+`
+
 const TitleBG = styled.div<TitleProps>`
   width: ${(props) => props.width};
-  background-color: #ffffff7c;
+  background-color: #ff4a4a7b;
   height: 7px;
-  margin-top: -15px;
 `
 interface ContentProps {
   font?: string
@@ -306,5 +359,5 @@ const Option = styled.option<FontProps>`
 const Text = styled.div<FontProps>`
   font-family: ${(props) => props.font};
 `
-
+const Sticker = styled.img``
 export default Card
