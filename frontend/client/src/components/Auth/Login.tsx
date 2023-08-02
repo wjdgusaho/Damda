@@ -149,7 +149,6 @@ const Login = function () {
 
   return (
     <Box>
-      <p className="text-red-500">죽어라</p>
       <span
         className="text-victoria-200 text-8xl mt-12"
         style={{ fontFamily: "PyeongChangPeaceBold", position: "relative" }}
