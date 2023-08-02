@@ -3,8 +3,8 @@
   "short_name": "담다",
   "icons": [
     {
-      "src": "/damda.png",
-      "sizes": "512x512",
+      "src": "damda.png",
+      "sizes": "176x82",
       "type": "image/png"
     }
   ],
