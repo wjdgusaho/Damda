@@ -2,9 +2,9 @@ package com.b210.damda.domain.timecapsule.service;
 
 import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
 import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
-import com.b210.damda.domain.dto.TimecapsuleCreateDTO;
-import com.b210.damda.domain.dto.TimecapsuleDTO;
-import com.b210.damda.domain.entity.TimecapsuleMapping;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleCreateDTO;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDTO;
+import com.b210.damda.domain.entity.Timecapsule.TimecapsuleMapping;
 
 import java.util.List;
 import java.util.Map;
