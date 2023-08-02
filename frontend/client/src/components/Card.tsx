@@ -74,8 +74,12 @@ const Card = function () {
           />
           <TitleBG width={inputWidth} className="m-auto"></TitleBG>
         </div>
-        <div className="w-40 h-40 m-auto mt-4 bg-white bg-opacity-25">
-          <img src="/assets/Astronaut-4.png" alt="사진" />
+        <div className="flex w-40 h-40 items-center m-auto mt-4 bg-white bg-opacity-25">
+          <img
+            className="w-8 h-8 m-auto opacity-80"
+            src="/assets/icons/img_select.png"
+            alt="사진"
+          />
         </div>
         <div className="text-center">
           <Content
