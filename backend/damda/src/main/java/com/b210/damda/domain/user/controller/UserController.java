@@ -191,15 +191,21 @@ public class UserController {
     // 유저 검색
     @GetMapping("search")
     public DataResponse<Map<String, Object>> userSearch(@RequestBody UserSearchDTO userSearchDTO){
-        List<UserSearchResultDTO> userSearchResultDTO = userService.userSearch(userSearchDTO.getQuery(), userSearchDTO.getType());
+        try{
+            List<UserSearchResultDTO> userSearchResultDTO = userService.userSearch(userSearchDTO.getQuery(), userSearchDTO.getType());
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("result" , userSearchResultDTO);
+            Map<String, Object> result = new HashMap<>();
+            result.put("result" , userSearchResultDTO);
 
-        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "유저 검색 결과");
-        response.setData(result);
+            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "유저 검색 결과");
+            response.setData(result);
 
-        return response;
+            return response;
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch (Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
     }
 
     // 유저 회원정보 수정

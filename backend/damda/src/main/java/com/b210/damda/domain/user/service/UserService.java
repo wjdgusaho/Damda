@@ -56,6 +56,17 @@ public class UserService {
         this.signupEmailLogRepository = signupEmailLogRepository;
     }
 
+    /*
+        유저정보 불러오기
+     */
+    public Long getUserNo(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        Long userNo = (Long) principal;
+
+        return userNo;
+    }
+
 
     // 회원가입
     @Transactional
@@ -249,9 +260,7 @@ public class UserService {
     // 비밀번호 확인
     public User passwordCheck(String password){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        Long userNo = (Long) principal;
+        Long userNo = getUserNo();
 
         Optional<User> byId = Optional.ofNullable(userRepository.findById(userNo)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
@@ -269,88 +278,137 @@ public class UserService {
     // 회원 검색
     public List<UserSearchResultDTO> userSearch(String query, String type){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        Long userNo = (Long) principal;
+        Long userNo = getUserNo(); // 현재 액세스 토큰의 유저pk
 
         List<UserSearchResultDTO> result = new ArrayList<>();
         List<User> users = new ArrayList<>();
 
         if(type.equals("nickname")){ // 닉네임으로 검색
-            users = userRepository.findByNicknameContaining(query);
+            // 검색값, 로그인유저의 값으로 검색 -> 현재 로그인 유저의 값은 제외한 유저 리스트 뽑음
+            List<User> byNicknameContaining = userRepository.findByNicknameContainingAndUserNoNot(query, userNo);
+
+            if(byNicknameContaining.isEmpty()){ // 유저가 없으면
+                return result;
+            }
+
+            // 현재 유저 꺼냄
+            User currentUser = userRepository.findByUserNo(userNo)
+                    .orElseThrow(
+                            () -> new CommonException(CustomExceptionStatus.NOT_USER)
+                    );
+
+            // 현재 유저의 친구 목록을 전부 꺼냄
+            List<UserFriend> userFriendByUser = friendRepository.getUserFriendByUser(currentUser);
+
+            for(User searchUser : byNicknameContaining){
+                boolean isFriend = false;
+                for(UserFriend userFriend : userFriendByUser){
+                    if(searchUser.getUserNo().equals(userFriend.getFriend().getUserNo())) {
+                        // 유저가 현재 유저의 친구라면
+                        UserSearchResultDTO resultDTO = new UserSearchResultDTO(searchUser, userFriend);
+                        result.add(resultDTO);
+                        isFriend = true;
+                        break;
+                    }
+                }
+                if(!isFriend) {
+                    // 유저가 현재 유저의 친구가 아니라면
+                    UserSearchResultDTO resultDTO = new UserSearchResultDTO();
+                    resultDTO.setId(searchUser.getUserNo());
+                    resultDTO.setNickname(searchUser.getNickname());
+                    resultDTO.setProfileImage(searchUser.getProfileImage());
+                    resultDTO.setStatus("");
+                    result.add(resultDTO);
+                }
+            }
+
+            return result;
 
         }else if(type.equals("code")){ // 코드로 검색
             long targetNo = Long.parseLong(query.replace("#", "")); // #을 빈공백으로 바꾸고 롱으로 전환
             Optional<User> byId = userRepository.findById(targetNo);
 
-            if(byId.isEmpty()){ // 유저가 없으면
+            if(byId.isPresent() && byId.get().getUserNo() == userNo){ // 검색한 유저의 번호가 나와 같으면 리턴
                 return result;
-
-            }else{ // 유저가 있으면
-
+            }
+            else if(byId.isPresent()){ // 유저가 있으면
                 // 현재 유저 꺼냄
                 User currentUser = userRepository.findByUserNo(userNo)
                         .orElseThrow(
                         () -> new CommonException(CustomExceptionStatus.NOT_USER)
                         );
 
+
                 // 현재 유저의 친구 목록을 전부 꺼냄
-                List<userFriend> userFriendByUser = friendRepository.getUserFriendByUser(currentUser);
+                List<UserFriend> userFriendByUser = friendRepository.getUserFriendByUser(currentUser);
 
-                // 찾는 대상의 유저 번호와 일치하는 유저 하나를 꺼냄
-                userFriend userFriend = userFriendByUser.stream()
-                        .filter(uf -> uf.getFriendNo() == targetNo)
-                        .findFirst()
-                        .orElse(null);
-
-                if(userFriend == null){
-                    return result;
+                User user = byId.get(); // 내가 검색한 유저의 정보
+                for(UserFriend userFriend : userFriendByUser){
+                    if(userFriend.getFriend().getUserNo() == user.getUserNo()){ // 친구 목록의 친구와 내가 검색한 유저의 키값이 같으면
+                        UserSearchResultDTO resultDTO = new UserSearchResultDTO(user, userFriend); // 검색 유저의 정보, 현재 친구의 상태를 넣음
+                        result.add(resultDTO);
+                        break;
+                    }
                 }
-
-                User byUserNo = userRepository.findByUserNo(userFriend.getUserFriendNo())
-                        .orElseThrow(
-                                () -> new CommonException(CustomExceptionStatus.NOT_USER)
-                        );
-
-
-                UserSearchResultDTO userSearchResultDTO = new UserSearchResultDTO(byUserNo, userFriend);
-
-                result.add(userSearchResultDTO);
-
-                return result;
+                if(result.size()==0){
+                    UserSearchResultDTO build = UserSearchResultDTO.builder()
+                            .id(user.getUserNo())
+                            .nickname(user.getNickname())
+                            .profileImage(user.getProfileImage())
+                            .status("").build();
+                    result.add(build);
+                }
             }
+            return result;
         }else{ // 닉네임#코드로 검색
             String[] parts = query.split("#");
-            long targetNo = Long.parseLong(parts[0]);
-            Optional<User> byId = userRepository.findById(userNo);
-            if(byId.isEmpty()){ // 코드와 일치하는 유저가 없으면
+            if(parts.length < 2){
+                throw new CommonException(CustomExceptionStatus.BAD_QUERY_FORMAT);
+            }
+            long targetNo = Long.parseLong(parts[1]); // 코드
+            String targetNickname = parts[0]; // 닉네임
+
+
+            Optional<User> byId = userRepository.findById(targetNo);// 코드로 검색한 유저의 정보
+
+            if(byId.isPresent() && byId.get().getUserNo() == userNo){ // 코드로 검색한 유저가 존재하고 그 유저가 나와 같다면
                 return result;
-            }else{ // 코드와 일치하는 유저가 있으면
-                User user = byId.get();
-                if(user.getNickname().equals(parts[0])){ // 코드의 유저와 닉네임이 같으면
-                    users.add(user);
-                }else{ // 코드의 유저와 닉네임이 다르면
-                    return result;
+            }else if(byId.isPresent()){
+                User targetUser = byId.get();
+
+                User currentUser = userRepository.findById(userNo).get(); // 현재 로그인 유저의 정보
+
+                if(targetUser != null){ // 코드로 먼저 검색했을 때 유저의 정보가 있으면
+                    if(targetUser.getNickname().equals(targetNickname)){ // 해당 유저의 닉네임과 검색어로 받은 닉네임이 일치하면
+                        List<UserFriend> userFriendByUser = friendRepository.getUserFriendByUser(currentUser); // 현재 로그인 유저의 친구 목록 가져옴.
+
+                        for(UserFriend userFriend : userFriendByUser){
+                            if(userFriend.getFriend().getUserNo() == targetUser.getUserNo()){ // 친구 목록의 유저 번호와 검색한 번호가 일치하면(친구 목록에 있다는 뜻)
+                                UserSearchResultDTO userSearchResultDTO = new UserSearchResultDTO(targetUser, userFriend);
+
+                                result.add(userSearchResultDTO); // 리스트에 넣고
+                                break;
+                            }
+                        }
+                        if(result.size()==0){
+                            UserSearchResultDTO build = UserSearchResultDTO.builder()
+                                    .id(targetUser.getUserNo())
+                                    .nickname(targetUser.getNickname())
+                                    .profileImage(targetUser.getProfileImage())
+                                    .status("").build();
+                            result.add(build);
+                        }
+                    }
                 }
             }
         }
-
-//        for(User user : users){
-//            Optional<userFriend> userFriendByUser = friendRepository.getUserFriendByUser(user);
-//            if (userFriendByUser.isPresent()) {
-//                UserSearchResultDTO results = new UserSearchResultDTO(user, userFriendByUser.get());
-//                result.add(results);
-//            }
-//        }
         return result;
     }
 
     @Transactional
     // 유저 정보 업데이트
     public User userInfoUpdate(UserUpdateDTO userUpdateDTO, MultipartFile multipartFile) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        Long userNo = (Long) principal;
+        Long userNo = getUserNo();
 
         Optional<User> byId = Optional.ofNullable(userRepository.findById(userNo)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
@@ -374,9 +432,7 @@ public class UserService {
 
     @Transactional
     public void userWithdrawal(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        Long userNo = (Long) principal;
+        Long userNo = getUserNo();
 
         Optional<User> byId = Optional.ofNullable(userRepository.findById(userNo)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
