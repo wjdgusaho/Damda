@@ -1,4 +1,4 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.User;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

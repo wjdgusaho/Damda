@@ -1,6 +1,5 @@
-package com.b210.damda.domain.dto;
+package com.b210.damda.domain.dto.User;
 
-import com.b210.damda.domain.entity.User;
 import lombok.Data;
 
 @Data

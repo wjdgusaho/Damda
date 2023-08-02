@@ -1,6 +1,6 @@
 package com.b210.damda.domain.user.repository;
 
-import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.entity.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,6 +1,6 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
-import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.entity.User.User;
 import lombok.Getter;
 import lombok.Setter;
 
