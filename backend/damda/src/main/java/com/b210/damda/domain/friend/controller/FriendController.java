@@ -1,6 +1,7 @@
 package com.b210.damda.domain.friend.controller;
 
 import com.b210.damda.domain.dto.Friend.FriendListDTO;
+import com.b210.damda.domain.dto.Friend.FriendRequestListDTO;
 import com.b210.damda.domain.dto.User.UserDTO;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.friend.service.FriendService;
@@ -74,6 +75,24 @@ public class FriendController {
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
+    }
+
+    // 친구 요청 목록 불러오기
+    @GetMapping("request")
+    public DataResponse<Map<String, Object>> friendRequestList(){
+        try{
+            Map<String, Object> result = new HashMap<>();
+            List<FriendRequestListDTO> friendRequestListDTOS = friendService.friendRequestList();
+            result.put("result" , friendRequestListDTOS);
+
+            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "요청 목록 조회 성공");
+            response.setData(result);
+
+            return response;
+        }catch (Exception e){
+            return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
+
     }
 
 }
