@@ -15,4 +15,8 @@ public interface FriendRepository extends JpaRepository<UserFriend, Long> {
     @Query("SELECT u FROM UserFriend u WHERE u.user = :user")
     List<UserFriend> getUserFriendByUser(@Param("user") User user);
 
+
+    @Query("SELECT u FROM UserFriend u WHERE u.user = :user AND u.friend = :friend")
+    UserFriend getUserFriendByUserAndFriend(@Param("user") User user, @Param("friend") User friend);
+
 }

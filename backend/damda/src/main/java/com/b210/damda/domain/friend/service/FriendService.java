@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class FriendService {
         return userNo;
     }
 
+    @Transactional
     // 친구 추가
     public void friendRequest(Long FriendNo){
         System.out.println(123);
@@ -106,5 +108,31 @@ public class FriendService {
         }
 
         return friendListDTO;
+    }
+
+    @Transactional
+    // 즐겨찾기 추가
+    public void friendRequestFavoriteAdd(Long friendNo){
+        Long userNo = getUserNo(); // 현재 유저 꺼냄
+        User currentUser = userRepository.findById(userNo).get();
+
+        User friendUser = userRepository.findById(friendNo).get(); // 친구 유저 꺼냄
+
+        UserFriend findFriend = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser); // 나와 친구인 UserFriend를 하나 찾음.
+
+        findFriend.updateFavoriteAdd(); // 즐겨찾기 추가
+    }
+
+    @Transactional
+    // 즐겨찾기 삭제
+    public void friendRequestFavoriteDel(Long friendNo){
+        Long userNo = getUserNo(); // 현재 유저 꺼냄
+        User currentUser = userRepository.findById(userNo).get();
+
+        User friendUser = userRepository.findById(friendNo).get(); // 친구 유저 꺼냄
+
+        UserFriend findFriend = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser); // 나와 친구인 UserFriend를 하나 찾음.
+
+        findFriend.updateFavoriteDel(); // 즐겨찾기 추가
     }
 }

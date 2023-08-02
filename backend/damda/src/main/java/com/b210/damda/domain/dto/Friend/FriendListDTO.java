@@ -11,7 +11,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class FriendListDTO {
 
-    private Long id;
+    private Long userNo;
     private String nickname;
     private String profileImage;
     private boolean isFavorite;
@@ -20,7 +20,7 @@ public class FriendListDTO {
     }
 
     public FriendListDTO(UserFriend userFriend, User friend) {
-        this.id = friend.getUserNo();
+        this.userNo = friend.getUserNo();
         this.nickname = friend.getNickname();
         this.profileImage = friend.getProfileImage();
         this.isFavorite = userFriend.isFavorite();
