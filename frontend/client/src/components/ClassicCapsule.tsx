@@ -138,7 +138,7 @@ const ClassicCapsule = function () {
 
     axios({
       method: "POST",
-      url: serverUrl + "/timecapsule/create",
+      url: serverUrl + "timecapsule/create",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
@@ -147,7 +147,7 @@ const ClassicCapsule = function () {
         title: title,
         type: "CLASSIC",
         description: description,
-        goalCard: null,
+        goalCard: 0,
         openDate: selectedDate,
         criteria: {
           type: "OPEN",
