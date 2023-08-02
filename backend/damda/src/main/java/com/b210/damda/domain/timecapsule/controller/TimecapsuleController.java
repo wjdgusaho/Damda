@@ -1,9 +1,6 @@
 package com.b210.damda.domain.timecapsule.controller;
 
-import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
-import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
-import com.b210.damda.domain.dto.Timecapsule.TimecapsuleCreateDTO;
-import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDTO;
+import com.b210.damda.domain.dto.Timecapsule.*;
 import com.b210.damda.domain.timecapsule.service.TimecapsuleService;
 import com.b210.damda.util.response.DataResponse;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +62,19 @@ public class TimecapsuleController {
         return response;
     }
 
+
+    @PostMapping("detail")
+    public DataResponse<TimecapsuleDetailDTO> timecapsuleDetail(@RequestBody  Map<String, Object> data){
+
+        Long timecapsuleNo = Long.parseLong((String) data.get("timecapsuleNo"));
+
+        TimecapsuleDetailDTO timecapsule = timecapsuleService.getTimecapsuleDetail(timecapsuleNo);
+
+        DataResponse<TimecapsuleDetailDTO> response = new DataResponse<>(200, "타임캡슐 상세정보 조회 성공");
+        response.setData(timecapsule);
+        return response;
+        
+    }
 
 }
 

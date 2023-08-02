@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class TimecapsulePenaltyDTO {
 
-    private Long timecapsulePenaltyNo;
+    private Long penaltyNo;
 
     private Boolean penalty;
 

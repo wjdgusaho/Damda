@@ -1,5 +1,6 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
+import com.b210.damda.domain.dto.Timecapsule.TimecapsulePenaltyDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,5 +26,13 @@ public class TimecapsulePenalty {
 
     public TimecapsulePenalty() {
 
+    }
+
+    public TimecapsulePenaltyDTO toTimecapsulePenaltyDTO(){
+        return TimecapsulePenaltyDTO.builder()
+                .penaltyNo(this.timecapsulePenaltyNo)
+                .penalty(this.penalty)
+                .penaltyDescription(this.penaltyDescription)
+                .build();
     }
 }

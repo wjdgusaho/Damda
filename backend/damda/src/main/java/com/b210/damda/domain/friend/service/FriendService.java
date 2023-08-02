@@ -1,5 +1,7 @@
-package com.b210.damda.domain.friend;
+package com.b210.damda.domain.friend.service;
 
+import com.b210.damda.domain.dto.Friend.FriendListDTO;
+import com.b210.damda.domain.dto.Friend.FriendRequestListDTO;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.friend.repository.FriendRepository;
@@ -9,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +37,7 @@ public class FriendService {
         return userNo;
     }
 
+    @Transactional
     // 친구 추가
     public void friendRequest(Long FriendNo){
         System.out.println(123);
@@ -83,5 +88,68 @@ public class FriendService {
             UserFriend newFriend = new UserFriend(null, friendUser, currentUser, false, "REQUESTED", LocalDateTime.now(), null);
             friendRepository.save(newFriend);
         }
+    }
+
+    // 내 친구 목록 조회
+    public List<FriendListDTO> friendList(){
+
+        List<FriendListDTO> friendListDTO = new ArrayList<>();
+
+        Long userNo = getUserNo(); // 현재 유저를 찾음
+        User currentUser = userRepository.findById(userNo).get();
+
+        List<UserFriend> userFriendByUser = friendRepository.getUserFriendByUser(currentUser);
+
+        if(userFriendByUser.size() > 0){
+            for(UserFriend uf : userFriendByUser){ // 유저의 친구 목록을 하나씩 꺼내서
+                if(uf.getStatus().equals("ACCEPTED")){ // 만약에 수락받은 상태면
+                    friendListDTO.add(new FriendListDTO(uf, uf.getFriend()));
+                }
+            }
+        }
+
+        return friendListDTO;
+    }
+
+    @Transactional
+    // 즐겨찾기 추가
+    public void friendRequestFavoriteAdd(Long friendNo){
+        Long userNo = getUserNo(); // 현재 유저 꺼냄
+        User currentUser = userRepository.findById(userNo).get();
+
+        User friendUser = userRepository.findById(friendNo).get(); // 친구 유저 꺼냄
+
+        UserFriend findFriend = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser); // 나와 친구인 UserFriend를 하나 찾음.
+
+        findFriend.updateFavoriteAdd(); // 즐겨찾기 추가
+    }
+
+    @Transactional
+    // 즐겨찾기 삭제
+    public void friendRequestFavoriteDel(Long friendNo){
+        Long userNo = getUserNo(); // 현재 유저 꺼냄
+        User currentUser = userRepository.findById(userNo).get();
+
+        User friendUser = userRepository.findById(friendNo).get(); // 친구 유저 꺼냄
+
+        UserFriend findFriend = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser); // 나와 친구인 UserFriend를 하나 찾음.
+
+        findFriend.updateFavoriteDel(); // 즐겨찾기 추가
+    }
+
+    public List<FriendRequestListDTO> friendRequestList(){
+        List<FriendRequestListDTO> FriendRequestListDTO = new ArrayList<>();
+
+        Long userNo = getUserNo(); // 현재 유저 꺼냄
+        User currentUser = userRepository.findById(userNo).get();
+        String str = "REQUESTED";
+
+        List<UserFriend> userFriendByFriend = friendRepository.getUserFriendByFriend(currentUser, str); // 현재 유저와 요청중인 상태를 보내서 요청받은 리스트 꺼냄
+
+        for(UserFriend uf : userFriendByFriend){ // 하나씩 꺼내서 친구의 정보를 dto로 생성해서 리스트에 추가.
+            FriendRequestListDTO.add(new FriendRequestListDTO(uf.getUser()));
+        }
+
+        return FriendRequestListDTO;
     }
 }
