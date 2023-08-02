@@ -1,11 +1,15 @@
 package com.b210.damda.domain.friend.controller;
 
+import com.b210.damda.domain.dto.Friend.FriendListDTO;
 import com.b210.damda.domain.dto.User.UserDTO;
-import com.b210.damda.domain.friend.FriendService;
+import com.b210.damda.domain.entity.User.UserFriend;
+import com.b210.damda.domain.friend.service.FriendService;
 import com.b210.damda.util.response.DataResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,8 +33,27 @@ public class FriendController {
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
-
     }
 
+    // 친구 목록 조회
+    @GetMapping("list")
+    public DataResponse<Map<String, Object>> friendList(){
+        try{
+            List<FriendListDTO> friendListDTO = friendService.friendList();
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("result", friendListDTO); // 친구 목록을 맵에 넣음
+
+            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "친구 목록");
+
+            response.setData(result);
+            return response;
+        }catch (Exception e){
+            return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
+    }
+
+//    @PatchMapping("favorite")
+//    public DataResponse<Map<String, Object>> friendFavorite()
 
 }
