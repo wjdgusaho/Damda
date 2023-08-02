@@ -11,4 +11,7 @@ public interface TimecapsuleCardRepository extends JpaRepository<TimecapsuleCard
 
     List<TimecapsuleCard> findByTimecapsuleTimecapsuleNo(Long timecapsuleNo);
 
+    long countByTimecapsuleTimecapsuleNo(Long timecapsuleNo);
+
+
 }

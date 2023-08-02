@@ -1,22 +1,35 @@
 package com.b210.damda.domain.dto.Timecapsule;
 
-import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailCriteria;
-import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailMyInfo;
-import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailPartInfo;
-import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailTimecapsule;
+import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailMyInfoDTO;
+import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailPartInfoDTO;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @Getter @Setter
 @Builder
 public class TimecapsuleDetailDTO {
 
-    private DetailTimecapsule timecapsuleInfo;
-    private DetailCriteria criteriaInfo;
-    private DetailMyInfo myInfo;
-    private DetailPartInfo partInfo;
-
+    private Long timecapsuleNo;
+    private String capsuleType;
+    private Timestamp registDate;
+    private Timestamp openDate;
+    private String title;
+    private String description;
+    private String capsuleIcon;
+    private Integer goalCard;
+    private Long nowCard;
+    //벌칙
+    private TimecapsulePenaltyDTO penalty;
+    //조건
+    private TimecapsuleCriteriaDTO criteriaInfo;
+    //해당타임캡슐의 나의 정보
+    private DetailMyInfoDTO myInfo;
+    //참가자 목록
+    private List<DetailPartInfoDTO> partInfo;
 }

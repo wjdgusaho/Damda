@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Data
-@Setter @Getter
+@Getter @Setter
 @Builder
-public class DetailPartInfo {
+public class DetailMyInfoDTO {
 
     private Long userNo;
-    private String nickname;
-    private String profileImage;
+    private boolean cardAble;
+    private boolean fileAble;
+    private boolean isHost;
 
 }

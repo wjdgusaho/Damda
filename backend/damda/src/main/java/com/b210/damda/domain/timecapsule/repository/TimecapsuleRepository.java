@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface TimecapsuleRepository extends JpaRepository<Timecapsule, Long> {
 
-    //Optional<Timecapsule> findById (Long timecapsuleNo);
+    @Override
+    Optional<Timecapsule> findById (Long timecapsuleNo);
 }
