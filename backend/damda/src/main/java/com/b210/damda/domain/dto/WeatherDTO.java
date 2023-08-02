@@ -12,6 +12,6 @@ public class WeatherDTO {
     boolean mode;
     double lat;
     double lan;
-    int id;
-
+    double nx;
+    double ny;
 }
