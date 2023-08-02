@@ -1,6 +1,7 @@
 package com.b210.damda.util.weatherAPI.service;
 
 import com.b210.damda.domain.dto.WeatherDTO;
+import com.b210.damda.domain.dto.WeatherLocationDTO;
 import com.b210.damda.domain.entity.WeatherLocation;
 import com.b210.damda.util.weatherAPI.repository.WeatherLocationRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class WeatherLocationServiceImpl implements WeatherLocationService {
 
     private final WeatherLocationRepository weatherLocationRepository;
     @Override
-    public WeatherDTO getNowLocation(WeatherDTO weatherDTO) throws Exception {
+    public WeatherLocationDTO getNowLocation(WeatherDTO weatherDTO) throws Exception {
 
         //DTO에서 위경도값과 변환 모드 넣고 변환하는 클래스에 돌린 뒤, LatXLngY 인스턴스에 값 대입
         double lat = weatherDTO.getLat();
@@ -34,16 +35,14 @@ public class WeatherLocationServiceImpl implements WeatherLocationService {
                 DistVal.maxVal = nowVal;
                 DistVal.result = now;
             }
-            log.info("{}, {}", weatherLocations.get(i).getLocalMedium(), weatherLocations.get(i).getLocalSmall());
         }
 
         //최종 가장 근접한 지역의 결과값을 WeatherDTO 형태로 반출
-        WeatherDTO result = WeatherDTO.builder()
-                .nx(DistVal.result.getNx())
-                .ny(DistVal.result.getNy())
-                .lat(DistVal.result.getLat())
-                .lan(DistVal.result.getLan())
-                .content(DistVal.result.getLocalBig() + " " + DistVal.result.getLocalMedium() + " " + DistVal.result.getLocalSmall())
+        WeatherLocationDTO result = WeatherLocationDTO.builder()
+                .id(DistVal.result.getId())
+                .localBig(DistVal.result.getLocalBig())
+                .localMedium(DistVal.result.getLocalMedium())
+                .localSmall(DistVal.result.getLocalSmall())
                 .build();
 
         return result;

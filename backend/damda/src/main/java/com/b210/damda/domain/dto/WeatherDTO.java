@@ -12,16 +12,6 @@ public class WeatherDTO {
     boolean mode;
     double lat;
     double lan;
-    int nx;
-    int ny;
-    String content;
-
-    @Builder
-    public WeatherDTO(double lat, double lan, int nx, int ny, String content) {
-        this.lan = lan;
-        this.lat = lat;
-        this.nx = nx;
-        this.ny = ny;
-        this.content = content;
-    }
+    int id;
+    
 }

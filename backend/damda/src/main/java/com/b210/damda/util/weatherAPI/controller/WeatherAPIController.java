@@ -1,6 +1,7 @@
 package com.b210.damda.util.weatherAPI.controller;
 
 import com.b210.damda.domain.dto.WeatherDTO;
+import com.b210.damda.domain.dto.WeatherLocationDTO;
 import com.b210.damda.util.weatherAPI.service.WeatherAPIService;
 import com.b210.damda.util.weatherAPI.service.WeatherLocationService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class WeatherAPIController {
     }
 
     @PostMapping("/get-location")
-    public WeatherDTO getNowLocation(@RequestBody WeatherDTO weatherDTO) throws Exception {
+    public WeatherLocationDTO getNowLocation(@RequestBody WeatherDTO weatherDTO) throws Exception {
         return weatherLocationService.getNowLocation(weatherDTO);
     }
 
