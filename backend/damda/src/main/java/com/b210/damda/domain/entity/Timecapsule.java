@@ -1,24 +1,30 @@
 package com.b210.damda.domain.entity;
 
+import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
+import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
 import com.b210.damda.domain.dto.ThemeShopDTO;
 import com.b210.damda.domain.dto.TimecapsuleShopDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
+@AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
+@Builder
 public class Timecapsule {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long timecapsuleNo;
+    private Long timecapsuleNo;
 
-    private String openDate;
+    private Timestamp endDate;
 
     private String type;
 
@@ -26,13 +32,15 @@ public class Timecapsule {
 
     private String description;
 
-    private String removeDate;
+    private Timestamp removeDate;
 
-    private String registDate;
+    private Timestamp registDate;
 
-    private long maxFileSize;
+    private Long maxFileSize;
 
-    private long nowFileSize;
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long nowFileSize = 0L;
 
     private int maxParticipant;
 
@@ -40,11 +48,27 @@ public class Timecapsule {
 
     private String inviteCode;
 
-    private boolean penalty;
-
     private int capsuleIconNo;
 
-    //캡슐 아이콘 no 변경해줘야함!
+    @Builder.Default
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private int goalCard = 0;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "criteria_id")
+    private TimecapsuleCriteria timecapsuleCriteria;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "timecapsule_penalty_no")
+    private TimecapsulePenalty timecapsulePenalty;
+
+    public Timecapsule(){
+
+    }
+
+    /*
+        상점에서 타임캡슐 목록 불러올경우
+     */
     public TimecapsuleShopDTO toTimecapsuleShopDTO(){
         return TimecapsuleShopDTO.builder()
                 .timecapsuleNo(this.timecapsuleNo)
@@ -55,5 +79,32 @@ public class Timecapsule {
                 .build();
     }
 
+    /*
+        메인화면에서 타임캡슐 목록 불러올경우
+     */
+    public MainTimecapsuleListDTO toMainTimecapsuleListDTO(){
+        return MainTimecapsuleListDTO.builder()
+                .timecapsuleNo(this.timecapsuleNo)
+                .type(this.type)
+                .sDate(this.registDate)
+                .eDate(this.endDate)
+                .name(this.title)
+                .capsuleIconNo(this.capsuleIconNo)
+                .goalCard(this.goalCard)
+                .build();
+    }
+
+    public SaveTimecapsuleListDTO toSaveTimecapsuleListDTO(){
+        return SaveTimecapsuleListDTO.builder()
+                .timecapsuleNo(this.timecapsuleNo)
+                .type(this.type)
+                .startDate(this.registDate)
+                .endDate(this.getType().equals("GOAL") ? null : this.endDate)
+                .title(this.title)
+                .capsuleIconNo(this.capsuleIconNo)
+                .goalCard(this.getType().equals("GOAL") ? this.goalCard : 0)
+
+                .build();
+    }
 
 }

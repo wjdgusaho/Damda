@@ -28,7 +28,7 @@ public class RefreshTokenController {
     @PostMapping("refresh-token")
     public DataResponse<Map<String, Object>> reloadRefresh(@RequestHeader(value = "RefreshToken") String refreshToken){
 
-        String parsingToken = refreshToken.split(" ")[1];
+        String parsingToken = refreshToken.split(" ")[0];
 
         String token = refreshTokenService.findByRefreshToken(parsingToken);
 

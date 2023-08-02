@@ -1,12 +1,14 @@
 package com.b210.damda.domain.friend.repository;
 
 import com.b210.damda.domain.entity.User;
-import com.b210.damda.domain.entity.userFriend;
+import com.b210.damda.domain.entity.UserFriend;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
-public interface FriendRepository extends JpaRepository<userFriend, Long> {
+@Repository
+public interface FriendRepository extends JpaRepository<UserFriend, Long> {
 
-    Optional<userFriend> getUserFriendByUser(User user);
+    List<UserFriend> getUserFriendByUser(User user);
 }

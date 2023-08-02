@@ -74,7 +74,7 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
                 .queryParam("base_time", baseTime)
                 .queryParam("nx", nx)
                 .queryParam("ny", ny)
-                .build().toUriString();
+                .build(true).toUriString();
 
         Mono<String> response = WEBCLIENT.get()
                 .uri(mainUrl)
@@ -86,4 +86,5 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
 
         return response;
     }
+
 }
