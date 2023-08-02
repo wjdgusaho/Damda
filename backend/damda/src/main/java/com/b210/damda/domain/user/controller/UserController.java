@@ -9,19 +9,13 @@ import com.b210.damda.util.emailAPI.service.EmailService;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.b210.damda.util.response.DataResponse;
-import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -43,8 +37,9 @@ public class UserController {
     public DataResponse<Map<String, Object>> regist(@RequestPart("user") UserOriginRegistDTO userOriginRegistDTO,
                                     @RequestPart("profileImage") MultipartFile profileImage){
         try {
+            System.out.println(userOriginRegistDTO.toString());
             User savedUser = userService.regist(userOriginRegistDTO, profileImage);
-            DataResponse<Map<String, Object>> response = new     DataResponse<>(201, "회원가입 완료");
+            DataResponse<Map<String, Object>> response = new DataResponse<>(201, "회원가입 완료");
             return response;
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
@@ -58,6 +53,7 @@ public class UserController {
     public DataResponse<Map<String, Object>> emailSend(@RequestBody UserOriginRegistDTO userOriginRegistDTO) throws Exception {
         try {
             String email = userOriginRegistDTO.getEmail();
+            System.out.println(email);
             User user = userService.fineByUser(email);
             if (user != null) {
                 return new DataResponse<>(409, "이미 가입된 이메일입니다.");
@@ -87,18 +83,16 @@ public class UserController {
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
         }
-
     }
 
     // 로그인 요청
     @PostMapping("login")
-    public DataResponse<Map<String, Object>> login(@RequestBody UserLoginDTO userLoginDTO){
+    public DataResponse<UserLoginSuccessDTO> login(@RequestBody UserLoginDTO userLoginDTO){
         try {
-            Map<String, Object> loginUser = userService.login(userLoginDTO.getEmail(), userLoginDTO.getUserPw());
+            UserLoginSuccessDTO login = userService.login(userLoginDTO.getEmail(), userLoginDTO.getUserPw());
 
-            loginUser.put("accountType", "ORIGIN");
-            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "로그인 성공");
-            response.setData(loginUser);
+            DataResponse<UserLoginSuccessDTO> response = new DataResponse<>(200, "로그인 성공");
+            response.setData(login);
 
             return response;
         }catch (CommonException e){
@@ -184,7 +178,8 @@ public class UserController {
     @PostMapping("info")
     public DataResponse<Map<String, Object>> passwordCheck(@RequestBody UserLoginDTO userLoginDTO){
         try {
-            userService.passwordCheck(userLoginDTO.getUserPw());
+            User user = userService.passwordCheck(userLoginDTO.getUserPw());
+
             return new DataResponse<>(200, "비밀번호가 일치합니다.");
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
@@ -195,18 +190,39 @@ public class UserController {
 
     // 유저 검색
     @GetMapping("search")
-    public ResponseEntity<?> userSearch(@RequestBody UserSearchDTO userSearchDTO){
-        List<UserSearchResultDTO> userSearchResultDTOS = userService.userSearch(userSearchDTO.getQuery(), userSearchDTO.getType());
-        return new ResponseEntity<>(userSearchResultDTOS, HttpStatus.OK);
+    public DataResponse<Map<String, Object>> userSearch(@RequestBody UserSearchDTO userSearchDTO){
+        try{
+            List<UserSearchResultDTO> userSearchResultDTO = userService.userSearch(userSearchDTO.getQuery(), userSearchDTO.getType());
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("result" , userSearchResultDTO);
+
+            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "유저 검색 결과");
+            response.setData(result);
+
+            return response;
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch (Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
     }
 
     // 유저 회원정보 수정
     @PatchMapping("info")
     public DataResponse<Map<String, Object>> userInfoUpdate(@RequestPart("user") UserUpdateDTO userUpdateDTO,
                                             @RequestPart("profileImage") MultipartFile profileImage){
+
         try {
-            userService.userInfoUpdate(userUpdateDTO, profileImage);
-            return new DataResponse<>(200, "회원정보 변경에 성공하였습니다.");
+            User user = userService.userInfoUpdate(userUpdateDTO, profileImage);
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("nickname", user.getNickname());
+            result.put("profileImage", user.getProfileImage());
+
+            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "회원정보 변경에 성공하였습니다.");
+            response.setData(result);
+            return response;
 
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
