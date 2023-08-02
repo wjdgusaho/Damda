@@ -1,12 +1,11 @@
 package com.b210.damda.util.kakaoAPI.controller;
 
 import com.b210.damda.domain.entity.RefreshToken;
-import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
 import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

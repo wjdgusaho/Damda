@@ -1,7 +1,7 @@
-package com.b210.damda.domain.dto;
+package com.b210.damda.domain.dto.User;
 
-import com.b210.damda.domain.entity.User;
-import com.b210.damda.domain.entity.UserFriend;
+import com.b210.damda.domain.entity.User.User;
+import com.b210.damda.domain.entity.User.UserFriend;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
