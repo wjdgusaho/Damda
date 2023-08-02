@@ -5,7 +5,7 @@ FROM adoptopenjdk:11-jdk-hotspot AS build
 WORKDIR /app
 
 # 호스트의 빌드된 JAR 파일을 이미지에 복사합니다.
-COPY damda-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY /build/libs/damda-0.0.1-SNAPSHOT.jar /app/app.jar
 
 # 애플리케이션 실행을 위해 필요한 의존성을 설치합니다.
 # (예: 따로 필요한 경우만 추가하세요)
