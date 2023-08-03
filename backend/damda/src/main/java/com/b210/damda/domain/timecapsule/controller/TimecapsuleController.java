@@ -68,8 +68,8 @@ public class TimecapsuleController {
     }
 
 
-    @PostMapping("detail")
-    public DataResponse<Map<String, Object>> timecapsuleDetail(@RequestBody  Map<String, Object> data){
+    @GetMapping("detail")
+    public DataResponse<Map<String, Object>> timecapsuleDetail(@RequestParam  Map<String, Object> data){
 
         Long timecapsuleNo = Long.parseLong((String) data.get("timecapsuleNo"));
 

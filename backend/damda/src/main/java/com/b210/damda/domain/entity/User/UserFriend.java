@@ -61,4 +61,23 @@ public class UserFriend {
     public void updateFavoriteDel(){
         this.isFavorite = false;
     }
+
+    // 친구 수락
+    public void acceptFriendRequest(){
+        this.responseDate = LocalDateTime.now();
+        this.status = "ACCEPTED";
+    }
+
+    // 친구 거절
+    public void rejectFriendRequest(){
+        this.responseDate = null;
+        this.status = "REJECTED";
+    }
+
+    // 친구 삭제
+    public void FriendDelete(){
+        this.isFavorite = false;
+        this.status = "";
+        this.responseDate = null;
+    }
 }
