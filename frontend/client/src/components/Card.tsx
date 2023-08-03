@@ -239,10 +239,10 @@ const Card = function () {
             ></Content>
           </div>
         </div>
-        <StickerContainer
+        {/* <StickerContainer
           countList={countList}
           onDeleteCardSticker={this.onDeleteCardSticker}
-        />
+        /> */}
       </CardContainer>
       <div className="flex justify-between p-2 w-80 m-auto">
         {bgColorList.map((color) => (
