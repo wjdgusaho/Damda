@@ -288,7 +288,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       <ExitImg src="../../assets/icons/bin_dark.png" alt="bin" />
       <TimerWrap>
         {timer}
-        <div>뒤에 등록돼요</div>
+        <div className="-mt-1">뒤에 등록돼요</div>
       </TimerWrap>
 
       <div className="text-2xl font-bold mt-28">
