@@ -1,4 +1,4 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.weather;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +14,7 @@ public class WeatherLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "weather_location_info_no")
     private long id;
 
     @Column(name = "local_big")

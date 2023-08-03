@@ -1,4 +1,4 @@
-package com.b210.damda.domain.dto;
+package com.b210.damda.domain.dto.weather;
 
 import lombok.*;
 
