@@ -8,6 +8,7 @@ import axios from "axios"
 import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
+import { textAlign } from "html2canvas/dist/types/css/property-descriptors/text-align"
 
 interface DataType {
   timecapsuleNo: number
@@ -82,6 +83,8 @@ const Box = styled.div`
   border-radius: 50px;
   font-family: "Pretendard";
   margin-top: 150px;
+  box-shadow: 0px 4px 4px 4px rgb(0, 0, 0, 0.25);
+  color: ${(props) => props.theme.colorShadow};
 `
 
 const HightLight = styled.div`
@@ -95,12 +98,52 @@ const HightLight = styled.div`
 `
 
 const CapsuleImg = styled.div<{ capsuleIcon: string }>`
-  /* position: absolute; */
-  background-image: url(${(props) => props.theme[props.capsuleIcon]});
+  position: absolute;
+  top: -102px;
+  background-image: url(/${(props) => props.theme[props.capsuleIcon]});
   background-repeat: no-repeat;
   background-size: cover;
-  width: 250px;
-  height: 250px;
+  width: 204px;
+  height: 204px;
+`
+
+const CardBtn = styled.button`
+  width: 270px;
+  height: 54px;
+  border-radius: 30px;
+  background-color: ${(props) => props.theme.color200};
+  color: ${(props) => props.theme.color950};
+  font-size: 24px;
+  box-shadow: 0px 4px 4px rgb(0, 0, 0, 0.5);
+`
+
+const CardCompleteBtn = styled(CardBtn)`
+  background-color: #aeaeae;
+  color: #fff;
+`
+
+const BackBtn = styled.div`
+  color: ${(props) => props.theme.color950};
+  font-size: 16px;
+`
+
+const FileIcon = styled.img`
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  margin-right: 5px;
+`
+
+const InviteBtn = styled.button`
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: ${(props) => props.theme.color200};
+  box-shadow: 0px 4px 4px rgb(0, 0, 0, 0.25);
+  font-size: 50px;
+  font-weight: 200;
+  text-align: center;
+  line-height: 44px;
 `
 
 const TimeCapsuleDetail = function () {
@@ -160,8 +203,6 @@ const TimeCapsuleDetail = function () {
         setCapsuleData(response.data.data.timecapsule)
       } catch (error) {
         console.log("Error fetching data:", error)
-        // 오류 발생 시 에러 처리를 원하는 방식으로 처리해주세요.
-        // 예를 들어, 오류 메시지를 콘솔에 출력하거나 에러 상태를 설정하는 등의 처리가 가능합니다.
       }
     }
 
@@ -169,22 +210,130 @@ const TimeCapsuleDetail = function () {
   }, [capsuleId, token])
 
   console.log(capsuleData)
+  const currentDate = new Date()
+  const oneDayLater = new Date(capsuleData.registDate)
+  oneDayLater.setHours(oneDayLater.getHours() + 24).toString()
+
+  const isRegistered = currentDate < oneDayLater
 
   return (
     <>
       <SubHeader />
-      <Box>
-        <CapsuleImg capsuleIcon={capsuleData.capsuleIcon} />
-        <div className="text-2xl font-bold">
-          {calculateDday(capsuleData.openDate)}
-        </div>
-        <div className="text-2xl font-bold relative">
-          {capsuleData.title}
-          <HightLight></HightLight>
-        </div>
-        <div>{capsuleData.description}</div>
-      </Box>
+      {isRegistered ? <Unregistered capsuleData={capsuleData} /> : null}
     </>
+  )
+}
+
+interface CapsuleProps {
+  capsuleData: DataType
+}
+
+export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
+  const endDateString = capsuleData.openDate.toString().slice(0, 10)
+  const isHost = capsuleData.myInfo.host
+  const isCardAble = capsuleData.myInfo.cardAble
+  const isFileAble = capsuleData.myInfo.fileAble
+  const navigate = useNavigate()
+
+  return (
+    <Box>
+      <CapsuleImg capsuleIcon={capsuleData.capsuleIcon} className="grayscale" />
+      <div className="text-2xl font-bold mt-28">
+        {calculateDday(capsuleData.openDate)}
+      </div>
+      <div className="text-2xl font-bold relative">
+        {capsuleData.title}
+        <HightLight />
+      </div>
+      <div>{capsuleData.description}</div>
+      <div className="my-3">
+        <span className="font-bold">
+          {endDateString} {capsuleData.criteriaInfo.timeKr}
+        </span>{" "}
+        에 공개됩니다
+      </div>
+      <div>
+        {isHost ? (
+          <div className="flex justify-center align-middle">
+            {capsuleData.partInfo.map((part, idx) => (
+              <div key={part.userNo} className="flex flex-col">
+                {idx === 0 ? (
+                  <>
+                    <div className="relative">
+                      <img
+                        style={{
+                          backgroundColor: "#fff",
+                          borderRadius: "50%",
+                          width: "44px",
+                          height: "44px",
+                          boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                          margin: "8px",
+                        }}
+                        src={part.profileImage}
+                        alt="profilepic"
+                      />
+                      <img
+                        src="../../assets/icons/crown.png"
+                        alt="crown"
+                        width="27px"
+                        height="22px"
+                        style={{
+                          position: "absolute",
+                          top: "-7px",
+                          left: "16px",
+                        }}
+                      />
+                    </div>
+                    <span style={{ fontSize: "12px", textAlign: "center" }}>
+                      {part.nickname}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <div className="relative">
+                      <img
+                        style={{
+                          backgroundColor: "#fff",
+                          borderRadius: "50%",
+                          width: "44px",
+                          height: "44px",
+                          boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                          margin: "8px",
+                        }}
+                        src={part.profileImage}
+                        alt="profilepic"
+                      />
+                    </div>
+                    <span style={{ fontSize: "12px", textAlign: "center" }}>
+                      {part.nickname}
+                    </span>
+                  </>
+                )}
+              </div>
+            ))}
+            <InviteBtn>+</InviteBtn>
+          </div>
+        ) : null}
+        {/* 여기 일단 임시로 null */}
+      </div>
+      <div className="flex w-56 my-2">
+        <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
+        <span>파일 첨부하기</span>
+      </div>
+      {isCardAble ? (
+        <CardBtn
+          onClick={() => {
+            navigate("/card")
+          }}
+        >
+          카드 작성하기
+        </CardBtn>
+      ) : (
+        <CardCompleteBtn>카드 작성완료</CardCompleteBtn>
+      )}
+
+      <BackBtn className="my-5">돌아가기</BackBtn>
+    </Box>
   )
 }
 
