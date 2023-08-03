@@ -40,7 +40,7 @@ public class TimecapsuleCriteria {
     public TimecapsuleCriteriaDTO toTimecapsuleCriteriaDTO(){
         return TimecapsuleCriteriaDTO.builder()
                 .criteriaId(this.criteriaId)
-                .criteriaType(this.type)
+                .type(this.type)
                 .weatherStatus(this.weatherStatus)
                 .startTime(this.startTime)
                 .endTime(this.endTime)

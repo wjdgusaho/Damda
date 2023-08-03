@@ -150,7 +150,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     }
 
     @Override
-    public TimecapsuleDTO createTimecapsule(TimecapsuleCreateDTO timecapsuleCreateDTO) {
+    public Long createTimecapsule(TimecapsuleCreateDTO timecapsuleCreateDTO) {
 
         Long userNo = getUserNo();
         //타임캡슐 생성 불가 로직
@@ -224,10 +224,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
          user.setNowCapsuleCount(user.getNowCapsuleCount() + 1);
          userRepository.save(user);
 
-         // 상세페이지 불러오기 
-         // 상세페이지 만들고 리턴해줘야함
-
-        return null;
+        return saveTimecapsule.getTimecapsuleNo();
     }
 
     @Override
