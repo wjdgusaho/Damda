@@ -219,7 +219,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
          createTimecapsule.setMaxFileSize(MAX_FILESIZE);
          createTimecapsule.setMaxParticipant(MAX_PARTICIOPANT);
          createTimecapsule.setInviteCode(createKey());
-         createTimecapsule.setCapsuleIconNo(new Random().nextInt(10));
+         createTimecapsule.setCapsuleIconNo(new Random().nextInt(10)+1);
 
          //타임캡슐 저장 후 No값 받아오기
          Timecapsule saveTimecapsule = timecapsuleRepository.save(createTimecapsule);
