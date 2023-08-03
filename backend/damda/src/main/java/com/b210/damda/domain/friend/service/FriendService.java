@@ -40,7 +40,6 @@ public class FriendService {
     @Transactional
     // 친구 추가
     public void friendRequest(Long FriendNo){
-        System.out.println(123);
         Long userNo = getUserNo(); // 현재 유저의 키 값
         Optional<User> byId = userRepository.findById(userNo);// 현재 유저를 꺼냄
         User currentUser = byId.get();
@@ -48,14 +47,8 @@ public class FriendService {
         Optional<User> byId1 = userRepository.findById(FriendNo); // 친구 유저를 꺼냄
         User friendUser = byId1.get();
 
-        System.out.println(currentUser);
-        System.out.println(friendUser);
-
         List<UserFriend> currentUserList = friendRepository.getUserFriendByUser(currentUser); // 현재 유저의 친구 목록 꺼냄
         List<UserFriend> friendUserList = friendRepository.getUserFriendByUser(friendUser); // 친구의 친구 목록을 꺼냄
-
-        System.out.println(currentUserList);
-        System.out.println(friendUserList);
 
         boolean friendExist = false; // 친구목록에 존재하는지 판단
         if(currentUserList.size() != 0){ // 친구목록이 있으면
@@ -77,7 +70,7 @@ public class FriendService {
         friendExist = false;
         for(UserFriend uf : friendUserList){
             if(uf.getFriend().getUserNo() == userNo){
-                uf.updateRequest(friendUser, currentUser); // 친구 컬럼 업데이트
+                uf.updateReceive(friendUser, currentUser); // 친구 컬럼 업데이트
                 friendRepository.save(uf); // 저장
                 friendExist = true;
                 break;
@@ -85,7 +78,7 @@ public class FriendService {
         }
 
         if (!friendExist) { // 친구 유저의 친구 목록에 현재 유저가 없으면 새 항목을 생성
-            UserFriend newFriend = new UserFriend(null, friendUser, currentUser, false, "REQUESTED", LocalDateTime.now(), null);
+            UserFriend newFriend = new UserFriend(null, friendUser, currentUser, false, "RECEIVED", LocalDateTime.now(), null);
             friendRepository.save(newFriend);
         }
     }
@@ -143,12 +136,12 @@ public class FriendService {
 
         Long userNo = getUserNo(); // 현재 유저 꺼냄
         User currentUser = userRepository.findById(userNo).get();
-        String str = "REQUESTED";
+        String str = "RECEIVED";
 
-        List<UserFriend> userFriendByFriend = friendRepository.getUserFriendByFriend(currentUser, str); // 현재 유저와 요청중인 상태를 보내서 요청받은 리스트 꺼냄
+        List<UserFriend> userFriendByFriend = friendRepository.findUserFriendByUser(currentUser, str); // 현재 유저와 요청중인 상태를 보내서 요청받은 리스트 꺼냄
 
         for(UserFriend uf : userFriendByFriend){ // 하나씩 꺼내서 친구의 정보를 dto로 생성해서 리스트에 추가.
-            FriendRequestListDTO.add(new FriendRequestListDTO(uf.getUser()));
+            FriendRequestListDTO.add(new FriendRequestListDTO(uf.getFriend()));
         }
 
         return FriendRequestListDTO;

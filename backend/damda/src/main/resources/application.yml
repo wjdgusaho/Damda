@@ -31,8 +31,10 @@ spring:
     include: secret
 
   AdminMail:
-    id: "damdaCop"
-    password: "vizahyecgncvsdch"
+#    id: "damdaCop"
+#    password: "vizahyecgncvsdch"
+    id: "damdaCop1"
+    password: "dpcsrjoggcjzwuct"
 
   mail:
     smtp:
