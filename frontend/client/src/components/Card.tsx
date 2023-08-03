@@ -161,7 +161,7 @@ const Card = function () {
   }
 
   return (
-    <BackGround bgColor={bgcolor}>
+    <BackGround bgColor={bgcolor} className="overflow-hidden">
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
         <img className="w-6 h-6" src="/assets/icons/x_dark.png" alt="X" />
         <img
@@ -239,10 +239,10 @@ const Card = function () {
             ></Content>
           </div>
         </div>
-        {/* <StickerContainer
+        <StickerContainer
           countList={countList}
-          onDeleteCardSticker={this.onDeleteCardSticker}
-        /> */}
+          onDeleteCardSticker={onDeleteCardSticker}
+        />
       </CardContainer>
       <div className="flex justify-between p-2 w-80 m-auto">
         {bgColorList.map((color) => (

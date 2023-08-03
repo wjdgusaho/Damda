@@ -1,6 +1,5 @@
 import styled from "styled-components"
 import React, { useState, useEffect, useRef } from "react"
-import { Props } from "react-modal"
 
 const StickerContainer = (props: {
   countList: { no: number; url: string }[]
@@ -61,14 +60,16 @@ const StickerContainer = (props: {
             stickerURL={item.url}
             onClick={() => handleStickerClick(i)}
           >
-            {/* {selectedStickerIndex === null || */}
-            {/* (selectedStickerIndex === i && ( */}
-            <div
-              className="w-6 h-6 absolute right-0 top-0 -mt-3 -mr-3 rounded-full bg-red-500"
-              onClick={() => props.onDeleteCardSticker(item.no)}
-            ></div>
-            <div className="w-6 h-6 absolute right-0 bottom-0 -m-3 -mr-3 rounded-full bg-green-500"></div>
-            {/* ))} */}
+            {selectedStickerIndex === null ||
+              (selectedStickerIndex === i && (
+                <div>
+                  <div
+                    className="w-6 h-6 absolute right-0 top-0 -mt-3 -mr-3 rounded-full bg-red-500"
+                    onClick={() => props.onDeleteCardSticker(item.no)}
+                  ></div>
+                  <div className="w-6 h-6 absolute right-0 bottom-0 -m-3 -mr-3 rounded-full bg-green-500"></div>
+                </div>
+              ))}
           </StickerImg>
         ))}
     </div>
