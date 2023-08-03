@@ -1,5 +1,6 @@
 package com.b210.damda.domain.dto.Timecapsule;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -17,7 +18,9 @@ public class MainTimecapsuleListDTO {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long timecapsuleNo;
     private String type;
+    @JsonProperty("sDate")
     private String sDate;
+    @JsonProperty("eDate")
     private String eDate;
     //private String sTime;
     //private String eTime;
