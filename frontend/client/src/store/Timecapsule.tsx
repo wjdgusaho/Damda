@@ -25,6 +25,6 @@ export const timecapsuleSlice = createSlice({
   },
 })
 
-export const {} = timecapsuleSlice.actions
+export const { SET_TIMECAPSULE, DELETE_TIMECAPSULE } = timecapsuleSlice.actions
 
 export default timecapsuleSlice.reducer

@@ -120,7 +120,7 @@ export default function Tutorial() {
         <Slider {...settings}>
           <div>
             <img
-              src="assets/Planet-pretty.png"
+              src="assets/universe/Planet-pretty.png"
               alt=""
               style={{
                 width: "288.66px",
@@ -139,7 +139,7 @@ export default function Tutorial() {
           </div>
           <div>
             <img
-              src="assets/Shake.png"
+              src="assets/universe/Shake.png"
               alt=""
               style={{
                 width: "310px",
@@ -159,7 +159,7 @@ export default function Tutorial() {
           </div>
           <div>
             <img
-              src="assets/Solar System.png"
+              src="assets/universe/Solar System.png"
               alt=""
               style={{
                 width: "300px",
