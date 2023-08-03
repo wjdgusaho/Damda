@@ -13,7 +13,7 @@ public interface TimecapsuleService {
 
     List<SaveTimecapsuleListDTO> saveTimecapsule();
 
-    TimecapsuleDTO createTimecapsule(TimecapsuleCreateDTO timecapsuleCreateDTO);
+    Long createTimecapsule(TimecapsuleCreateDTO timecapsuleCreateDTO);
 
     TimecapsuleDetailDTO getTimecapsuleDetail(Long timecapsuleNo);
 }
