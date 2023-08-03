@@ -388,7 +388,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         <CardCompleteBtn>카드 작성완료</CardCompleteBtn>
       )}
 
-      <BackBtn className="my-5">돌아가기</BackBtn>
+      <BackBtn
+        onClick={() => {
+          navigate(-1)
+        }}
+        className="my-5"
+      >
+        돌아가기
+      </BackBtn>
     </Box>
   )
 }
