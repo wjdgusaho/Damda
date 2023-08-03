@@ -6,6 +6,7 @@ import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
 import { SET_USER } from "../../store/Auth"
+import Modal from "react-modal"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -34,6 +35,22 @@ const InputCSS = tw.input`
     focus:outline-none
 `
 
+const ModalStyle = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    width: "50%",
+    borderRadius: "20px",
+  },
+  overlay: {
+    backgroundColor: "rgba(0,0,0,0.7333)",
+  },
+}
+
 export const UserInfoChange = () => {
   const navigate = useNavigate()
   const [profileImage, setProfileImage] = useState<File | null>(null)
@@ -51,6 +68,7 @@ export const UserInfoChange = () => {
   const [userPwCondition, setUserPwCondition] = useState(0)
   const [userPwMatch, setuserPwMatch] = useState(0)
   let token = useSelector((state: RootState) => state.auth.accessToken)
+  const [modalOpen, setModalOpen] = useState(false)
   const dispatch = useDispatch()
 
   const handleCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,7 +188,15 @@ export const UserInfoChange = () => {
     }
   }
 
-  function userDelete(event: React.MouseEvent<HTMLParagraphElement>) {
+  function ModalOpen() {
+    setModalOpen(true)
+  }
+
+  function ModalClose() {
+    setModalOpen(false)
+  }
+
+  function handleUserDelete(event: React.MouseEvent<HTMLButtonElement>) {
     axios({
       method: "PATCH",
       url: serverUrl + "user/delete",
@@ -328,11 +354,19 @@ export const UserInfoChange = () => {
         </button>
       </Form>
       <p
-        className="relative mt-10 underline underline-offset-1 cursor-pointer text-gray-500 text-center"
-        onClick={userDelete}
+        className="relative mt-10 underline underline-offset-1 cursor-pointer text-gray-400 text-center"
+        onClick={ModalOpen}
       >
         회원 탈퇴
       </p>
+      <Modal
+        isOpen={modalOpen}
+        onRequestClose={ModalClose}
+        style={ModalStyle}
+        shouldCloseOnOverlayClick={false}
+      >
+        <div></div>
+      </Modal>
     </div>
   )
 }
