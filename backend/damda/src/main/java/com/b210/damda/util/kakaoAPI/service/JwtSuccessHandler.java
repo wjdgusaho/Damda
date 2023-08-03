@@ -22,6 +22,6 @@ public class JwtSuccessHandler implements AuthenticationSuccessHandler {
 
         String userCode = UserInfo.getUserPw();
 
-        response.sendRedirect("http://i9b210.p.ssafy.io:3001/dummykakao?code=" + userCode);
+        response.sendRedirect("https://i9b210.p.ssafy.io/dummykakao?code=" + userCode);
     }
 }
