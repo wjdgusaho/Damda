@@ -2,10 +2,7 @@ package com.b210.damda.domain.dto.Timecapsule;
 
 import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailMyInfoDTO;
 import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailPartInfoDTO;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -13,6 +10,7 @@ import java.util.List;
 @Data
 @Getter @Setter
 @Builder
+@AllArgsConstructor
 public class TimecapsuleDetailDTO {
 
     private Long timecapsuleNo;
@@ -32,4 +30,8 @@ public class TimecapsuleDetailDTO {
     private DetailMyInfoDTO myInfo;
     //참가자 목록
     private List<DetailPartInfoDTO> partInfo;
+
+    public TimecapsuleDetailDTO(){
+
+    }
 }

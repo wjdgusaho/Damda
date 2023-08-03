@@ -1,16 +1,14 @@
 package com.b210.damda.domain.dto.Timecapsule;
 
 import com.b210.damda.domain.entity.Timecapsule.TimecapsuleCriteria;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
 @Data
 @Getter @Setter
 @Builder
+@AllArgsConstructor
 public class TimecapsuleCriteriaDTO {
 
     private Long criteriaId;
@@ -28,6 +26,9 @@ public class TimecapsuleCriteriaDTO {
     private String localMedium;
 
     private String timeKr;
+
+    public TimecapsuleCriteriaDTO(){
+    }
 
 
     public TimecapsuleCriteria toEntity(){
