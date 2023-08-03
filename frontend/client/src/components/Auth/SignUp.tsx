@@ -57,7 +57,7 @@ const customStyles = {
   },
 }
 
-const ModalButton = styled.div`
+const ModalButton = styled.button`
   font-family: "pretendard";
   font-weight: 400;
   font-size: 18px;
@@ -392,7 +392,7 @@ export const SignUp = function () {
             onChange={handleCodeChange}
           />
           <div className="flex justify-between mt-5">
-            <ModalButton>확인</ModalButton>
+            <ModalButton onSubmit={() => handleSubmitCode}>확인</ModalButton>
             <ModalButton onClick={() => handleClose()}>닫기</ModalButton>
           </div>
         </ModalForm>
