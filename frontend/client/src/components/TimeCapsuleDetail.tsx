@@ -9,6 +9,47 @@ import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 
+interface DataeType {
+  timecapsule: {
+    timecapsuleNo: number
+    capsuleType: string
+    registDate: string
+    openDate: string
+    title: string
+    description: string
+    capsuleIcon: string
+    goalCard: number
+    nowCard: number
+    penalty: {
+      penaltyNo: number
+      penalty: boolean
+      penaltyDescription: string
+    }
+  }
+  criteriaInfo: {
+    criteriaId: number
+    criteriaType: string
+    weatherStatus: string
+    startTime: string
+    endTime: string
+    localMedium: string
+    timeKr: string
+  }
+  myInfo: {
+    userNo: number
+    cardAble: boolean
+    fileAble: boolean
+    host: boolean
+  }
+  partInfo: [
+    {
+      userNo: number
+      nickname: string
+      profileImage: string
+    }
+  ]
+}
+
 const TimeCapsuleDetail = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)

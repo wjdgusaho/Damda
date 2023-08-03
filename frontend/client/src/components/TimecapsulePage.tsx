@@ -1,73 +1,22 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
-import { styled } from "styled-components"
+import { styled, css } from "styled-components"
 import { useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
+import { useSelector } from "react-redux"
+import { RootState } from "../store/Store"
+import axios from "axios"
+import { serverUrl } from "../urls"
+import { CapsuleType } from "./MainPage"
 
-type CapsuleType = {
-  id: number
-  type: string
-  sDate: string
-  eDate: string
-  name: string
-  imgsrc: string
-  curCard: number
-  goalCard: number
-  state: string
-  title: string
+const calculateProgressPercentage = (startDate: string, endDate: string) => {
+  const currentDate = new Date()
+  const dateString = currentDate.toISOString().slice(0, 10)
+  const total = calculateDateDifference(startDate, endDate)
+  const ratio = calculateDateDifference(startDate, dateString)
+  return (ratio / total) * 100
 }
-
-const capsuleList: CapsuleType[] = [
-  {
-    id: 1,
-    type: "classic",
-    sDate: "2023-01-01",
-    eDate: "2023-06-01",
-    name: "클래식1",
-    imgsrc: "capsule1",
-    curCard: 0,
-    goalCard: 0,
-    state: "openable",
-    title: "싸피 친구들 타임캡슐",
-  },
-  {
-    id: 3,
-    type: "memory",
-    sDate: "2023-01-01",
-    eDate: "2023-02-30",
-    name: "기록1",
-    imgsrc: "capsule10",
-    curCard: 0,
-    goalCard: 0,
-    state: "openable",
-    title: "퇴사하고 싶은 사람들",
-  },
-  {
-    id: 4,
-    type: "new",
-    sDate: "2023-01-01",
-    eDate: "2023-06-01",
-    name: "클래식1",
-    imgsrc: "capsule3",
-    curCard: 0,
-    goalCard: 0,
-    state: "unregistered",
-    title: "눈올때마다 기록하기",
-  },
-  {
-    id: 2,
-    type: "goal",
-    sDate: "2023-01-01",
-    eDate: "2024-01-01",
-    name: "목표1",
-    imgsrc: "capsule5",
-    curCard: 50,
-    goalCard: 100,
-    state: "proceeding",
-    title: "우리 1년 뒤 만나",
-  },
-]
 
 const Box = styled.div`
   display: flex;
@@ -115,27 +64,108 @@ const CapsuleTitle = styled.div`
   text-overflow: ellipsis;
   word-break: break-all;
 `
-const CapsuleImg = styled.div<{ capsuleNum: string }>`
+
+const CapsuleImg = styled.div<{ capsulenum: string }>`
   position: relative;
-  background-image: url(${(props) => props.theme[props.capsuleNum]});
+  background-image: url(${(props) =>
+    props.theme["capsule" + props.capsulenum]});
   background-repeat: no-repeat;
   background-size: cover;
   width: 87px;
   height: 87px;
   margin-left: 20px;
 `
+
 const DateDiv = styled.div`
   color: ${(props) => props.theme.colorCommon};
 `
 const TimecapsulePage = function () {
+  // const [capsuleList, setCapsuleList] = useState<CapsuleType[]>([])
+  const navigate = useNavigate()
+
+  const capsuleList = useSelector(
+    (state: RootState) => state.timecapsule.timecapsules
+  )
+
+  console.log(capsuleList)
+
   return (
     <>
       <SubHeader />
       <Box>
         <Title>진행 중인 타임캡슐</Title>
         {capsuleList.map((capsule) => (
-          <React.Fragment key={capsule.id}>
-            {capsule.state === "openable" ? (
+          <React.Fragment key={capsule.timecapsuleNo}>
+            <Card
+              onClick={() => {
+                navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
+              }}
+            >
+              <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+              <div style={{ marginLeft: "15px" }}>
+                <CapsuleState>
+                  {calculateDday(capsule.eDate)}
+                  <DateDiv
+                    className="text-sm font-thin"
+                    style={{ opacity: "56%" }}
+                  >
+                    {capsule.eDate}
+                  </DateDiv>
+                </CapsuleState>
+                <CapsuleTitle className="text-xl font-thin">
+                  {capsule.name}
+                </CapsuleTitle>
+              </div>
+            </Card>
+            {calculateProgressPercentage(capsule.sDate, capsule.eDate) >=
+              100 && (
+              <OpenableCard
+                onClick={() => {
+                  navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
+                }}
+              >
+                <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+                <div style={{ marginLeft: "15px" }}>
+                  <CapsuleState>
+                    오픈가능
+                    <DateDiv
+                      className="text-sm font-thin"
+                      style={{ opacity: "56%" }}
+                    >
+                      {capsule.eDate}
+                    </DateDiv>
+                  </CapsuleState>
+                  <CapsuleTitle className="text-xl font-thin">
+                    {capsule.name}
+                  </CapsuleTitle>
+                </div>
+              </OpenableCard>
+            )}
+            {capsule.type === "new" && (
+              // 24시간 내의 타임캡슐인 경우
+              <UnregisteredCard
+                onClick={() => {
+                  navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
+                }}
+              >
+                <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+                <div style={{ marginLeft: "15px" }}>
+                  <CapsuleState>
+                    등록 전
+                    <DateDiv
+                      className="text-sm font-thin"
+                      style={{ opacity: "56%" }}
+                    >
+                      {capsule.eDate}
+                    </DateDiv>
+                  </CapsuleState>
+                  <CapsuleTitle className="text-xl font-thin">
+                    {capsule.name}
+                  </CapsuleTitle>
+                </div>
+              </UnregisteredCard>
+            )}
+            {/* {capsule.state === "openable" ? (
               <OpenableCard>
                 <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
@@ -189,7 +219,7 @@ const TimecapsulePage = function () {
                   </CapsuleTitle>
                 </div>
               </Card>
-            )}
+            )} */}
           </React.Fragment>
         ))}
       </Box>
