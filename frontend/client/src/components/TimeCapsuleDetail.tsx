@@ -96,7 +96,7 @@ const HightLight = styled.div`
 
 const CapsuleImg = styled.div<{ capsuleIcon: string }>`
   /* position: absolute; */
-  background-image: url(${(props) => props.theme[props.capsuleIcon]});
+  background-image: url(/${(props) => props.theme[props.capsuleIcon]});
   background-repeat: no-repeat;
   background-size: cover;
   width: 250px;
@@ -160,8 +160,6 @@ const TimeCapsuleDetail = function () {
         setCapsuleData(response.data.data.timecapsule)
       } catch (error) {
         console.log("Error fetching data:", error)
-        // 오류 발생 시 에러 처리를 원하는 방식으로 처리해주세요.
-        // 예를 들어, 오류 메시지를 콘솔에 출력하거나 에러 상태를 설정하는 등의 처리가 가능합니다.
       }
     }
 
@@ -169,22 +167,54 @@ const TimeCapsuleDetail = function () {
   }, [capsuleId, token])
 
   console.log(capsuleData)
+  const currentDate = new Date()
+  const oneDayLater = new Date(capsuleData.registDate)
+  oneDayLater.setHours(oneDayLater.getHours() + 24).toString()
+
+  const isRegistered = currentDate < oneDayLater
 
   return (
     <>
       <SubHeader />
-      <Box>
-        <CapsuleImg capsuleIcon={capsuleData.capsuleIcon} />
-        <div className="text-2xl font-bold">
-          {calculateDday(capsuleData.openDate)}
-        </div>
-        <div className="text-2xl font-bold relative">
-          {capsuleData.title}
-          <HightLight></HightLight>
-        </div>
-        <div>{capsuleData.description}</div>
-      </Box>
+      {isRegistered ? <Unregistered capsuleData={capsuleData} /> : null}
     </>
+  )
+}
+
+interface CapsuleProps {
+  capsuleData: DataType
+}
+
+export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
+  const endDateString = capsuleData.openDate.toString().slice(0, 10)
+  const isHost = capsuleData.myInfo.host
+
+  return (
+    <Box>
+      <CapsuleImg capsuleIcon={capsuleData.capsuleIcon} className="grayscale" />
+      <div className="text-2xl font-bold">
+        {calculateDday(capsuleData.openDate)}
+      </div>
+      <div className="text-2xl font-bold relative">
+        {capsuleData.title}
+        <HightLight></HightLight>
+      </div>
+      <div>{capsuleData.description}</div>
+      <div className="mt-3">
+        <span className="font-bold">
+          {endDateString} {capsuleData.criteriaInfo.timeKr}
+        </span>{" "}
+        에 공개됩니다
+      </div>
+      <div>
+        {capsuleData.partInfo.map((part) => (
+          <div key={part.userNo}>
+            <img src={part.profileImage} alt="" />
+            {part.nickname}
+          </div>
+        ))}
+      </div>
+    </Box>
   )
 }
 
