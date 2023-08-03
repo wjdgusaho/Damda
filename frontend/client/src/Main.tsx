@@ -29,6 +29,7 @@ import RecordCapsule from "./components/RecordCapsule"
 import GoalCapsule from "./components/GoalCapsule"
 import SelectTheme from "./components/SelectTheme"
 import UserSearch from "./components/UserSearch"
+import TimeCapsuleDetail from "./components/TimeCapsuleDetail"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
@@ -76,6 +77,10 @@ function Main() {
               <Route path="/record/" element={<RecordCapsule />}></Route>
               <Route path="/goal/" element={<GoalCapsule />}></Route>
               <Route path="/selecttheme/" element={<SelectTheme />}></Route>
+              <Route
+                path="/timecapsule/detail/:capsuleId/"
+                element={<TimeCapsuleDetail />}
+              ></Route>
             </Routes>
           </BrowserRouter>
         </CookiesProvider>
