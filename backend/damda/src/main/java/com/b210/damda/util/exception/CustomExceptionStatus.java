@@ -22,6 +22,7 @@ public enum CustomExceptionStatus {
     NOT_USER(-6006, "없는 유저입니다."),
     BAD_QUERY_FORMAT(-6007, "(닉네임)#(번호) 양식에 맞춰서 검색해주세요."),
     DELETE_TIMECAPSULE(-6008, "삭제하신 타임캡슐입니다"),
+    NOT_LOCATION_FIND(-6009, "서비스 불가 위치입니다."),
 
 
     //상점 관련
