@@ -137,6 +137,10 @@ const ClassicCapsule = function () {
     setTimeValue(value)
   }
 
+  function handleDatePickerKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    e.preventDefault()
+  }
+
   function FormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -216,6 +220,7 @@ const ClassicCapsule = function () {
             minDate={new Date(oneDayAheadDateString)}
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
+            onKeyDown={handleDatePickerKeyDown}
           />
           <ContentWrap>
             <Content>
@@ -240,6 +245,7 @@ const ClassicCapsule = function () {
               id="none"
               name="time"
               onChange={() => handleTimeChange(["", "", ""])}
+              defaultChecked
             />
             <RadioBtn htmlFor="none">없음</RadioBtn>
             <input

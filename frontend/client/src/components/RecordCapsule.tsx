@@ -112,10 +112,15 @@ const BtnWrap = tw.div`
 
 const RecordCapsule = function () {
   let [isHelp, setIsHelp] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
   const currentDate = new Date()
-  const dateString = currentDate.toISOString().slice(0, 10)
+  const nextDayOfMonth = currentDate.getDate() + 1
   const navigate = useNavigate()
+  const oneDayAheadDate = new Date(currentDate)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(oneDayAheadDate)
+
+  oneDayAheadDate.setDate(nextDayOfMonth)
+  const oneDayAheadDateString = oneDayAheadDate.toISOString().slice(0, 10)
+
   return (
     <>
       <SubHeader />
@@ -143,7 +148,7 @@ const RecordCapsule = function () {
           formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
           dateFormat="yyyy-MM-dd"
           locale={ko}
-          minDate={new Date(dateString)}
+          minDate={new Date(oneDayAheadDateString)}
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
         />
