@@ -15,7 +15,7 @@ public class TimecapsuleCriteriaDTO {
 
     private Long criteriaId;
 
-    private String type;
+    private String criteriaType;
 
     private String weatherStatus;
 
@@ -32,7 +32,7 @@ public class TimecapsuleCriteriaDTO {
 
     public TimecapsuleCriteria toEntity(){
         return TimecapsuleCriteria.builder()
-                .type(this.type)
+                .type(this.criteriaType)
                 .weatherStatus(this.weatherStatus)
                 .startTime(this.startTime)
                 .endTime(this.endTime)

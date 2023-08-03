@@ -21,6 +21,7 @@ public enum CustomExceptionStatus {
     NOT_CARD(-6005, "작성된 카드가 없습니다"),
     NOT_USER(-6006, "없는 유저입니다."),
     BAD_QUERY_FORMAT(-6007, "(닉네임)#(번호) 양식에 맞춰서 검색해주세요."),
+    DELETE_TIMECAPSULE(-6008, "삭제하신 타임캡슐입니다"),
 
 
     //상점 관련
@@ -52,8 +53,11 @@ public enum CustomExceptionStatus {
     //생성 관련
     CREATE_TIMECAPSULE(-4001, "타임캡슐 생성 오류 발생"),
     CREATE_CIRTERIADAY( -4002, "타임캡슐 요일조건 생성 에러 발생"),
-    CREATE_TIMECAPSULEUSERMAPPING(-4003, "타임캡슐 유저 매핑 에러 발생");
+    CREATE_TIMECAPSULEUSERMAPPING(-4003, "타임캡슐 유저 매핑 에러 발생"),
+    NOT_CREATE_TIMECAPSULE_USERLIMIT(-4004, "생성 및 참여 할 수 있는 타임캡슐의 공간이 부족합니다."),
 
+    // 타임캡슐
+    NOT_ALLOW_PARTICIPATE(-3000, "참가 불가능한 타임캡슐입니다.");
     private final int code;
     private final String message;
 

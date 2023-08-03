@@ -1,5 +1,6 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleCriteriaDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,5 +35,18 @@ public class TimecapsuleCriteria {
 
     public TimecapsuleCriteria() {
 
+    }
+
+    public TimecapsuleCriteriaDTO toTimecapsuleCriteriaDTO(){
+        return TimecapsuleCriteriaDTO.builder()
+                .criteriaId(this.criteriaId)
+                .criteriaType(this.type)
+                .weatherStatus(this.weatherStatus)
+                .startTime(this.startTime)
+                .endTime(this.endTime)
+                .localBig(this.localBig)
+                .localMedium(this.localMedium)
+                .timeKr(this.timeKr)
+                .build();
     }
 }

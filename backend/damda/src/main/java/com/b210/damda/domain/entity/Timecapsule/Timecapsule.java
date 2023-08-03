@@ -1,7 +1,8 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
-import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
-import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
+import com.b210.damda.domain.dto.Timecapsule.MainTimecapsuleListDTO;
+import com.b210.damda.domain.dto.Timecapsule.SaveTimecapsuleListDTO;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDetailDTO;
 import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter @Setter
@@ -81,11 +83,15 @@ public class Timecapsule {
         메인화면에서 타임캡슐 목록 불러올경우
      */
     public MainTimecapsuleListDTO toMainTimecapsuleListDTO(){
+        DateTimeFormatter Dateformatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         return MainTimecapsuleListDTO.builder()
                 .timecapsuleNo(this.timecapsuleNo)
                 .type(this.type)
-                .sDate(this.registDate)
-                .eDate(this.openDate)
+                .sDate(this.registDate.toLocalDateTime().format(Dateformatter))
+                .eDate(this.openDate == null ? null : this.openDate.toLocalDateTime().format(Dateformatter))
+                //.sTime(this.registDate.toLocalDateTime().format(timeFormatter))
+                //.eTime(this.openDate == null ? null : this.openDate.toLocalDateTime().format(timeFormatter))
                 .name(this.title)
                 .capsuleIconNo(this.capsuleIconNo)
                 .goalCard(this.goalCard)
@@ -102,6 +108,21 @@ public class Timecapsule {
                 .capsuleIconNo(this.capsuleIconNo)
                 .goalCard(this.getType().equals("GOAL") ? this.goalCard : 0)
 
+                .build();
+    }
+
+    public TimecapsuleDetailDTO toTimecapsuleDetailDTO(){
+        return TimecapsuleDetailDTO.builder()
+                .timecapsuleNo(this.timecapsuleNo)
+                .registDate(this.registDate)
+                .openDate(this.openDate)
+                .title(this.title)
+                .description(this.description)
+                .capsuleIcon("capsule"+this.capsuleIconNo)
+                .capsuleType(this.type)
+                .goalCard(this.goalCard)
+                .penalty(this.timecapsulePenalty.getPenalty() == false ? null : this.timecapsulePenalty.toTimecapsulePenaltyDTO())
+                .criteriaInfo(this.timecapsuleCriteria.toTimecapsuleCriteriaDTO())
                 .build();
     }
 

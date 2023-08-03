@@ -43,19 +43,23 @@ public class EmailServiceImpl implements EmailService {
         message.setSubject("(담다) 비밀번호 재설정 이메일입니다.");//제목
 
         String msgg="";
-        msgg+= "<div style='margin:20px;'>";
-        msgg+= "<h1> 안녕하세요 담다입니다. </h1>";
-        msgg+= "<br>";
-        msgg+= "<p>아래 코드를 복사해 입력해주세요<p>";
-        msgg+= "<br>";
-        msgg+= "<p>감사합니다.<p>";
-        msgg+= "<br>";
-        msgg+= "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgg+= "<h3 style='color:blue;'>비밀번호 찾기 인증코드입니다. 해당 코드는 10분만 유효합니다.</h3>";
-        msgg+= "<div style='font-size:130%'>";
-        msgg+= "CODE : <strong>";
-        msgg+= authCode + "</strong><div><br/> ";
-        msgg+= "</div>";
+        msgg += "<table style='    width: 100% !important;    background: #ffffff;    margin: 0;    padding: 0;    min-width: 100%;    font-family: 'Malgun Gothic', 'Dotum', 'sans-serif';   '>";
+        msgg += "<tr><td style='text-align: center;'>";
+        msgg += "<img src='https://www.jobflex.com/static/desktopResource/mailTemplate/resources/header.jpg' alt='header' loading='lazy'>";
+        msgg += "</td></tr><tr><td style='text-align: center;'>";
+        msgg += "<div style='margin-top: 60px; margin-bottom: 30px;'>";
+        msgg += "<h1 style='margin-bottom: 40px;'>계정 인증 안내</h1>";
+        msgg += "<p style='margin-top: 0; margin-bottom: 15px; line-height:2;'>";
+        msgg += "담다 계정 본인 확인 메일입니다.<br>";
+        msgg += "아래 인증번호를 입력하시고 본인 인증을 완료해주세요.<br>";
+        msgg += "(인증번호는 10분간 유효합니다.)";
+        msgg += "</p></div></td></tr><tr><td style='text-align: center;'>";
+        msgg += "<div style='margin-bottom: 60px;'>";
+        msgg += "<p style='display:inline-block;padding:20px 80px;font-size:16px;font-weight:bold;color:#fff;background:#9a50ff;'>";
+        msgg += "인증번호: " + authCode;
+        msgg += "</p></div></td></tr><tr><td style='text-align: center;'>";
+        msgg += "<img src='https://www.jobflex.com/static/desktopResource/mailTemplate/resources/footer.jpg' alt='footer' loading='lazy'>";
+        msgg += "</td></tr></tbody></table>";
         message.setText(msgg, "utf-8", "html");//내용
         message.setFrom(new InternetAddress("damdaCop@gmail.com","담다"));//보내는 사람
 
@@ -71,19 +75,23 @@ public class EmailServiceImpl implements EmailService {
         message.setSubject("(담다) 회원가입 인증번호 이메일입니다.");//제목
 
         String msgg="";
-        msgg+= "<div style='margin:20px;'>";
-        msgg+= "<h1> 안녕하세요 담다입니다. </h1>";
-        msgg+= "<br>";
-        msgg+= "<p>아래 코드를 복사해 입력해주세요<p>";
-        msgg+= "<br>";
-        msgg+= "<p>감사합니다.<p>";
-        msgg+= "<br>";
-        msgg+= "<div align='center' style='border:1px solid black; font-family:verdana';>";
-        msgg+= "<h3 style='color:blue;'>회원가입 인증코드입니다. 해당 코드는 10분만 유효합니다.</h3>";
-        msgg+= "<div style='font-size:130%'>";
-        msgg+= "CODE : <strong>";
-        msgg+= authCode + "</strong><div><br/> ";
-        msgg+= "</div>";
+        msgg += "<table style='    width: 100% !important;    background: #ffffff;    margin: 0;    padding: 0;    min-width: 100%;    font-family: 'Malgun Gothic', 'Dotum', 'sans-serif';   '>";
+        msgg += "<tr><td style='text-align: center;'>";
+        msgg += "<img src='https://www.jobflex.com/static/desktopResource/mailTemplate/resources/header.jpg' alt='header' loading='lazy'>";
+        msgg += "</td></tr><tr><td style='text-align: center;'>";
+        msgg += "<div style='margin-top: 60px; margin-bottom: 30px;'>";
+        msgg += "<h1 style='margin-bottom: 40px;'>계정 인증 안내</h1>";
+        msgg += "<p style='margin-top: 0; margin-bottom: 15px; line-height:2;'>";
+        msgg += "담다 계정 본인 확인 메일입니다.<br>";
+        msgg += "아래 인증번호를 입력하시고 본인 인증을 완료해주세요.<br>";
+        msgg += "(인증번호는 10분간 유효합니다.)";
+        msgg += "</p></div></td></tr><tr><td style='text-align: center;'>";
+        msgg += "<div style='margin-bottom: 60px;'>";
+        msgg += "<p style='display:inline-block;padding:20px 80px;font-size:16px;font-weight:bold;color:#fff;background:#9a50ff;'>";
+        msgg += "인증번호: " + authCode;
+        msgg += "</p></div></td></tr><tr><td style='text-align: center;'>";
+        msgg += "<img src='https://www.jobflex.com/static/desktopResource/mailTemplate/resources/footer.jpg' alt='footer' loading='lazy'>";
+        msgg += "</td></tr></tbody></table>";
         message.setText(msgg, "utf-8", "html");//내용
         message.setFrom(new InternetAddress("damdaCop@gmail.com","담다"));//보내는 사람
 
