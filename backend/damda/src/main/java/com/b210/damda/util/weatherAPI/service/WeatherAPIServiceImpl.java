@@ -1,6 +1,6 @@
 package com.b210.damda.util.weatherAPI.service;
 
-import com.b210.damda.domain.dto.weather.WeatherDTO;
+import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -33,10 +34,13 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
     }
 
     @Override
-    public Mono<String> getNowWeatherInfos(WeatherDTO weatherDTO) throws Exception {
+    public Mono<String> getNowWeatherInfos(WeatherLocationDTO weatherDTO) throws Exception {
         //URL Encoding Issue로 인한 문자열 대체
-//        String EncodeServiceKey = serviceKey.replace("+", "%2B");
-        String EncodeServiceKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8.toString());
+        //String EncodeServiceKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8.toString());
+        String EncodeServiceKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8.toString())
+                .replace("+", "%2B")
+                .replace("/", "%2F")
+                .replace("=", "%3D");
 
         String baseUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst";
         String pageNo = "1";
@@ -65,7 +69,7 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
         String baseDate = tempBaseDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         //요소들 조합하여 최종 요청 URL 작성
-        String mainUrl = UriComponentsBuilder.fromHttpUrl(baseUrl)
+        URI mainUrl = UriComponentsBuilder.fromHttpUrl(baseUrl)
                 .queryParam("serviceKey", EncodeServiceKey)
                 .queryParam("pageNo", pageNo)
                 .queryParam("numOfRows", numOfRows)
@@ -74,8 +78,8 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
                 .queryParam("base_time", baseTime)
                 .queryParam("nx", nx)
                 .queryParam("ny", ny)
-                .build(true).toUriString();
-
+                .build(true).toUri();
+        //01hXuOcwgTo8a6g4AIpQLW7RYpmLcATl2OcGuzUHEc4oYQ1sSXd7b1etdhb908cP4QZUlqAWz4O+moUQH1o2kg==
         Mono<String> response = WEBCLIENT.get()
                 .uri(mainUrl)
                 .retrieve()
