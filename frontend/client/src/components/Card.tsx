@@ -1,6 +1,7 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { styled } from "styled-components"
 import html2canvas from "html2canvas"
+import StickerContainer from "./StickerContainer"
 
 interface StickerType {
   no: number
@@ -68,6 +69,7 @@ const Card = function () {
   const [stickerNo, setSticker] = useState(stickerList[0].no)
   const [title, setTitle] = useState("오늘의 제목")
   const [cardContent, setCardContent] = useState("오늘의 내용을 입력해주세요!")
+  const [countList, setCountList] = useState<{ no: number; url: string }[]>([])
 
   const handleChange = (e: { target: { value: any } }) => {
     const value = e.target.value
@@ -96,6 +98,33 @@ const Card = function () {
   const matchingSticker = stickerList.find(
     (sticker) => sticker.no === stickerNo
   )
+
+  const onAddCardSticker = (stickerImage: string) => {
+    console.log("스티커클릭", countList)
+
+    // 새로운 스티커 정보 생성
+    const newSticker = { no: countList.length, url: stickerImage }
+
+    // 기존 스티커 배열과 새로운 스티커 정보를 합쳐서 새로운 배열을 만듦
+    const updatedStickers = [...countList, newSticker]
+
+    // 새로운 배열을 상태로 설정
+    setCountList(updatedStickers)
+  }
+  const onDeleteCardSticker = (no: number) => {
+    console.log("스티커삭제", countList)
+
+    // countList에서 no에 해당하는 원소를 제외한 새로운 배열 생성
+    const updatedStickers = countList.filter((sticker) => sticker.no !== no)
+
+    // 새로운 배열을 상태로 설정
+    setCountList(updatedStickers)
+  }
+
+  useEffect(() => {
+    // countList가 변경되면 호출됨
+    console.log(countList)
+  }, [countList])
 
   const bgColorList = [
     "white",
@@ -179,7 +208,9 @@ const Card = function () {
             className="block text-center -mt-6 absolute w-full"
             htmlFor="inputTitle"
           >
-            <InputResult font={font}>{title}</InputResult>
+            <InputResult className="ml-2" font={font}>
+              {title}
+            </InputResult>
           </label>
         </div>
         <div className="flex w-40 h-40 items-center m-auto mt-4 bg-black bg-opacity-20 mb-1">
@@ -193,7 +224,7 @@ const Card = function () {
         <div className="text-center">
           <div className="relative text-center -mt-2">
             <label
-              className="block text-center opacity-70 !text-xs mt-2 absolute w-full"
+              className="block text-center opacity-70 !text-xs mt-2 absolute w-full ml-2"
               htmlFor="inputContent"
             >
               <InputResult font={font}>{cardContent}</InputResult>
@@ -208,6 +239,10 @@ const Card = function () {
             ></Content>
           </div>
         </div>
+        {/* <StickerContainer
+          countList={countList}
+          onDeleteCardSticker={this.onDeleteCardSticker}
+        /> */}
       </CardContainer>
       <div className="flex justify-between p-2 w-80 m-auto">
         {bgColorList.map((color) => (
@@ -235,6 +270,7 @@ const Card = function () {
           {stickerList.length !== 0 &&
             stickerList.map((s: StickerType) => (
               <img
+                key={s.no}
                 className="w-16 m-3"
                 src={s.icon}
                 onClick={() => selectSticker(s.no)}
@@ -251,6 +287,7 @@ const Card = function () {
                   key={index}
                   src={stickerImage}
                   alt={`Sticker ${index + 1}`}
+                  onClick={() => onAddCardSticker(stickerImage)}
                 />
               )
             )}
@@ -296,6 +333,7 @@ const Title = styled.input<TitleProps>`
 `
 const InputResult = styled.div<ContentProps>`
   font-family: ${(props) => props.font};
+  width: 330px;
 `
 
 const TitleBG = styled.div<TitleProps>`
