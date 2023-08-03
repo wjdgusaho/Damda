@@ -191,9 +191,9 @@ public class UserController {
 
     // 유저 검색
     @GetMapping("search")
-    public DataResponse<Map<String, Object>> userSearch(@Param("query") String query, @Param("code") String code){
+    public DataResponse<Map<String, Object>> userSearch(@RequestParam("query") String query, @RequestParam("type") String type){
         try{
-            List<UserSearchResultDTO> userSearchResultDTO = userService.userSearch(query, code);
+            List<UserSearchResultDTO> userSearchResultDTO = userService.userSearch(query, type);
 
             Map<String, Object> result = new HashMap<>();
             result.put("result" , userSearchResultDTO);

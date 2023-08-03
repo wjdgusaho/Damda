@@ -150,7 +150,7 @@ const GoalCapsule = function () {
   ]
 
   // 체크된 아이템을 담을 배열
-  const [checkItems, setCheckItems] = useState<number[]>([])
+  const [checkItems, setCheckItems] = useState<number[]>([0])
 
   const handleCheckboxChange = (id: number) => {
     if (id === 0) {

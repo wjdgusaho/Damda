@@ -8,9 +8,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import axios from "axios"
 import { serverUrl } from "../urls"
-import { CapsuleType } from "./MainPage"
 
-<<<<<<< Updated upstream
 const calculateProgressPercentage = (startDate: string, endDate: string) => {
   const currentDate = new Date()
   const dateString = currentDate.toISOString().slice(0, 10)
@@ -19,7 +17,6 @@ const calculateProgressPercentage = (startDate: string, endDate: string) => {
   return (ratio / total) * 100
 }
 
-=======
 type CapsuleType = {
   id: number
   type: string
@@ -84,7 +81,6 @@ const capsuleList: CapsuleType[] = [
   },
 ]
 
->>>>>>> Stashed changes
 const Box = styled.div`
   display: flex;
   flex-direction: column;
@@ -132,10 +128,10 @@ const CapsuleTitle = styled.div`
   word-break: break-all;
 `
 
-const CapsuleImg = styled.div<{ capsulenum: string }>`
+const CapsuleImg = styled.div<{ capsuleNum: string }>`
   position: relative;
   background-image: url(${(props) =>
-    props.theme["capsule" + props.capsulenum]});
+    props.theme["capsule" + props.capsuleNum]});
   background-repeat: no-repeat;
   background-size: cover;
   width: 87px;
@@ -147,7 +143,6 @@ const DateDiv = styled.div`
   color: ${(props) => props.theme.colorCommon};
 `
 const TimecapsulePage = function () {
-  // const [capsuleList, setCapsuleList] = useState<CapsuleType[]>([])
   const navigate = useNavigate()
 
   const capsuleList = useSelector(
@@ -162,14 +157,13 @@ const TimecapsulePage = function () {
       <Box>
         <Title>진행 중인 타임캡슐</Title>
         {capsuleList.map((capsule) => (
-<<<<<<< Updated upstream
           <React.Fragment key={capsule.timecapsuleNo}>
             <Card
               onClick={() => {
                 navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
               }}
             >
-              <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+              <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
               <div style={{ marginLeft: "15px" }}>
                 <CapsuleState>
                   {calculateDday(capsule.eDate)}
@@ -192,7 +186,7 @@ const TimecapsulePage = function () {
                   navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
                 }}
               >
-                <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+                <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
                 <div style={{ marginLeft: "15px" }}>
                   <CapsuleState>
                     오픈가능
@@ -216,7 +210,7 @@ const TimecapsulePage = function () {
                   navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
                 }}
               >
-                <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+                <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
                 <div style={{ marginLeft: "15px" }}>
                   <CapsuleState>
                     등록 전
@@ -233,11 +227,7 @@ const TimecapsulePage = function () {
                 </div>
               </UnregisteredCard>
             )}
-            {/* {capsule.state === "openable" ? (
-=======
-          <React.Fragment key={capsule.id}>
             {capsule.state ? (
->>>>>>> Stashed changes
               <OpenableCard>
                 <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
@@ -251,7 +241,7 @@ const TimecapsulePage = function () {
                     </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
-                    {capsule.title}
+                    {capsule.name}
                   </CapsuleTitle>
                 </div>
               </OpenableCard>
@@ -269,7 +259,7 @@ const TimecapsulePage = function () {
                     </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
-                    {capsule.title}
+                    {capsule.name}
                   </CapsuleTitle>
                 </div>
               </UnregisteredCard>
@@ -287,17 +277,18 @@ const TimecapsulePage = function () {
                     </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
-                    {capsule.title}
+                    {capsule.name}
                   </CapsuleTitle>
                 </div>
               </Card>
-            )} */}
+            )}
           </React.Fragment>
         ))}
       </Box>
     </>
   )
 }
+
 const dataCheck = (startDate: string): boolean => {
   if (startDate) {
     const targetDate = new Date(startDate)

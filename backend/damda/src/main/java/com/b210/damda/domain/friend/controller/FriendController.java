@@ -28,8 +28,6 @@ public class FriendController {
     @PatchMapping("request")
     public DataResponse<Map<String, Object>> friendRequest(@RequestBody UserDTO userDTO){
         try{
-            Long userNo = userDTO.getUserNo();
-
             friendService.friendRequest(userDTO.getUserNo());
             return new DataResponse<>(200, "친구 신청이 완료되었습니다.");
         }catch (Exception e){
@@ -77,7 +75,7 @@ public class FriendController {
         }
     }
 
-    // 친구 요청 목록 불러오기
+    // 친구 요청받은 목록 불러오기
     @GetMapping("request")
     public DataResponse<Map<String, Object>> friendRequestList(){
         try{
