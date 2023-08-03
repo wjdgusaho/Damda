@@ -185,6 +185,9 @@ const ClassicCapsule = function () {
         console.log(err)
       })
   }
+
+  console.log(selectedDate)
+  console.log(selectedDate?.toISOString().slice(0, 10))
   return (
     <>
       <SubHeader />
