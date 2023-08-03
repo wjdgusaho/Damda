@@ -1,7 +1,7 @@
 package com.b210.damda.util.weatherAPI.service;
 
-import com.b210.damda.domain.dto.WeatherDTO;
-import com.b210.damda.domain.dto.WeatherLocationDTO;
+import com.b210.damda.domain.dto.weather.WeatherDTO;
+import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

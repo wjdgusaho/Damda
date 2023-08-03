@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled, css } from "styled-components"
@@ -6,6 +6,9 @@ import { useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
+import axios from "axios"
+import { serverUrl } from "../urls"
+import { CapsuleType } from "./MainPage"
 
 const calculateProgressPercentage = (startDate: string, endDate: string) => {
   const currentDate = new Date()
@@ -215,7 +218,7 @@ const TimecapsulePage = function () {
                   </CapsuleTitle>
                 </div>
               </Card>
-            )}
+            )} */}
           </React.Fragment>
         ))}
       </Box>
