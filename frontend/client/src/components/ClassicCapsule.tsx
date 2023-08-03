@@ -172,7 +172,13 @@ const ClassicCapsule = function () {
     })
       .then((res) => {
         if (res.data.code === 200) {
-          navigate("/main") // 일단은 여기로 보내고 나중에 상세로
+          console.log(res.data)
+          navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
+        } else if (res.data.code === -4004) {
+          alert(
+            "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
+          )
+          navigate("/main")
         }
       })
       .catch((err) => {
