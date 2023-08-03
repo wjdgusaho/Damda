@@ -255,22 +255,21 @@ export const SignUp = function () {
         url: serverUrl + "user/send-email",
         data: { email: userdata.email },
       })
-        .then(async () => {
-          setuserEmailMessage("")
-          setuserEmailMatch(2)
-          setGetCode(true)
-          await sleep(1)
-          startCountdown(10)
+        .then(async (response) => {
+          if(response.data.code === 200){
+            setuserEmailMessage("")
+            setuserEmailMatch(2)
+            setGetCode(true)
+            await sleep(1)
+            startCountdown(10)
+          }
+          else {
+            setuserEmailMatch(1)
+            alert(response.data.message)
+          }
         })
         .catch((error) => {
-          // // 이메일 사용 불가
-          // if (error.response.status === 409) {
-          //   setuserEmailMatch(1)
-          // }
-          // // 서버오류
-          // else {
           alert("중복확인에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
-          // }
         })
     }
   }
