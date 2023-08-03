@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import React, { useState, useEffect, useRef } from "react"
+import { motion } from "framer-motion"
 
 const StickerContainer = (props: {
   countList: { no: number; url: string }[]
@@ -52,6 +53,7 @@ const StickerContainer = (props: {
       {props.countList &&
         props.countList.map((item, i) => (
           <StickerImg
+            drag
             id={"sticker" + item.no}
             className={`w-16 h-16 absolute left-1/2 right-1/2 top-1/4 -ml-8 ${
               selectedStickerIndex === i ? "border border-black" : ""
@@ -76,7 +78,7 @@ const StickerContainer = (props: {
   )
 }
 
-const StickerImg = styled.button<{ stickerURL: string }>`
+const StickerImg = styled(motion.button)<{ stickerURL: string }>`
   background-image: url(${(props) => props.stickerURL});
   background-repeat: no-repeat;
   background-size: cover;
