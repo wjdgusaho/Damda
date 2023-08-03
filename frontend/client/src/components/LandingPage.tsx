@@ -56,9 +56,14 @@ export const LandingPage = function () {
 
   return (
     <Box>
-      <img src="assets/UFO.png" alt="UFO" width="250px" height="250px" />
+      <img
+        src="assets/universe/UFO.png"
+        alt="UFO"
+        width="250px"
+        height="250px"
+      />
       <Person
-        src="assets/Astronaut-1.png"
+        src="assets/universe/Astronaut-1.png"
         alt="Astronaut"
         width="130px"
         height="130px"

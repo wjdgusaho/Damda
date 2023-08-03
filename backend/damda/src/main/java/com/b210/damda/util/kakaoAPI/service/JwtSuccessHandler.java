@@ -1,6 +1,6 @@
 package com.b210.damda.util.kakaoAPI.service;
 
-import com.b210.damda.domain.entity.User;
+import com.b210.damda.domain.entity.User.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -22,6 +22,6 @@ public class JwtSuccessHandler implements AuthenticationSuccessHandler {
 
         String userCode = UserInfo.getUserPw();
 
-        response.sendRedirect("http://i9b210.p.ssafy.io:3001/dummykakao?code=" + userCode);
+        response.sendRedirect("https://i9b210.p.ssafy.io/dummykakao?code=" + userCode);
     }
 }

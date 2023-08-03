@@ -1,9 +1,6 @@
 package com.b210.damda.domain.timecapsule.controller;
 
-import com.b210.damda.domain.dto.MainTimecapsuleListDTO;
-import com.b210.damda.domain.dto.SaveTimecapsuleListDTO;
-import com.b210.damda.domain.dto.Timecapsule.TimecapsuleCreateDTO;
-import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDTO;
+import com.b210.damda.domain.dto.Timecapsule.*;
 import com.b210.damda.domain.timecapsule.service.TimecapsuleService;
 import com.b210.damda.util.response.DataResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +15,7 @@ import java.util.Map;
 @RequestMapping("/timecapsule")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class TimecapsuleController {
 
     private final TimecapsuleService timecapsuleService;
@@ -59,12 +57,33 @@ public class TimecapsuleController {
     @PostMapping("create")
     public DataResponse<Map<String, Object>> createTimecapsule(@RequestBody TimecapsuleCreateDTO timecapsuleCreateDTO){
         log.info(timecapsuleCreateDTO.toString());
-        TimecapsuleDTO timacapsule = timecapsuleService.createTimecapsule(timecapsuleCreateDTO);
+        Long timecapsuleNo = timecapsuleService.createTimecapsule(timecapsuleCreateDTO);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("timecapsuleNo", timecapsuleNo);
 
         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 생성 완료");
+        response.setData(result);
         return response;
     }
 
+
+    @GetMapping("detail")
+    public DataResponse<Map<String, Object>> timecapsuleDetail(@RequestParam  Map<String, Object> data){
+
+        Long timecapsuleNo = Long.parseLong((String) data.get("timecapsuleNo"));
+
+        TimecapsuleDetailDTO timecapsule = timecapsuleService.getTimecapsuleDetail(timecapsuleNo);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("timecapsule", timecapsule);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 상세정보 조회 성공");
+        response.setData(result);
+
+        return response;
+        
+    }
 
 }
 

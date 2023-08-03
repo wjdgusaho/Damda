@@ -1,5 +1,6 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleCriteriaDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,17 +23,30 @@ public class TimecapsuleCriteria {
 
     private String weatherStatus;
 
-    private Date cardInputStart;
+    private Integer startTime;
 
-    private Date cardInputEnd;
+    private Integer endTime;
 
-    private int nx;
+    private String localBig;
 
-    private int ny;
+    private String localMedium;
 
-    private String location;
+    private String timeKr;
 
     public TimecapsuleCriteria() {
 
+    }
+
+    public TimecapsuleCriteriaDTO toTimecapsuleCriteriaDTO(){
+        return TimecapsuleCriteriaDTO.builder()
+                .criteriaId(this.criteriaId)
+                .type(this.type)
+                .weatherStatus(this.weatherStatus)
+                .startTime(this.startTime)
+                .endTime(this.endTime)
+                .localBig(this.localBig)
+                .localMedium(this.localMedium)
+                .timeKr(this.timeKr)
+                .build();
     }
 }

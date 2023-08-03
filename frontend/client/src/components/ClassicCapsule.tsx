@@ -8,6 +8,10 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import "./datePicker.css"
 import { ko } from "date-fns/esm/locale"
+import axios from "axios"
+import { serverUrl } from "../urls"
+import { useSelector } from "react-redux"
+import { RootState } from "../store/Store"
 
 const Box = styled.div`
   display: flex;
@@ -103,103 +107,198 @@ const BtnWrap = tw.div`
 `
 
 const ClassicCapsule = function () {
-  let [isHelp, setIsHelp] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
+  const [isHelp, setIsHelp] = useState(false)
   const currentDate = new Date()
-  const dateString = currentDate.toISOString().slice(0, 10)
+  const oneDayAheadDate = new Date(currentDate)
+  const nextDayOfMonth = currentDate.getDate() + 1
   const navigate = useNavigate()
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [selectedDate, setSelectedDate] = useState<Date | null>(oneDayAheadDate)
+  const [timeValue, setTimeValue] = useState<[string, string, string]>([
+    "",
+    "",
+    "",
+  ])
+
+  oneDayAheadDate.setDate(nextDayOfMonth)
+  const oneDayAheadDateString = oneDayAheadDate.toISOString().slice(0, 10)
+
+  function inputTitle(e: React.FormEvent<HTMLInputElement>) {
+    setTitle(e.currentTarget.value)
+  }
+
+  function inputDescription(e: React.FormEvent<HTMLInputElement>) {
+    setDescription(e.currentTarget.value)
+  }
+
+  function handleTimeChange(value: [string, string, string]) {
+    setTimeValue(value)
+  }
+
+  function handleDatePickerKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    e.preventDefault()
+  }
+
+  function FormSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    axios({
+      method: "POST",
+      url: serverUrl + "timecapsule/create",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        title: title,
+        type: "CLASSIC",
+        description: description,
+        goalCard: 0,
+        openDate: selectedDate,
+        criteria: {
+          type: "OPEN",
+          localBig: null,
+          localMedium: null,
+          weatherStatus: null,
+          startTime: timeValue[0],
+          endTime: timeValue[1],
+          timeKr: timeValue[2],
+        },
+        cardInputDay: [],
+        penalty: null,
+      },
+    })
+      .then((res) => {
+        if (res.data.code === 200) {
+          console.log(res.data)
+          navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
+        } else if (res.data.code === -4004) {
+          alert(
+            "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
+          )
+          navigate("/main")
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
   return (
     <>
       <SubHeader />
       <Box className="w-80 m-auto">
         <Title>클래식 타임캡슐을 만들어요</Title>
-        <ContentWrap>
-          <Content>
-            이름
-            <span>최대 10자</span>
-          </Content>
-        </ContentWrap>
-        <InputBox className="w-80" type="text" maxLength={10} />
-        <ContentWrap>
-          <Content>
-            한줄설명
-            <span>최대 30자</span>
-          </Content>
-        </ContentWrap>
-        <InputBox className="w-80" type="text" maxLength={30} />
-        <ContentWrap>
-          <Content>캡슐 공개일</Content>
-        </ContentWrap>
-        <DatePicker
-          className="datePicker w-80"
-          formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
-          dateFormat="yyyy-MM-dd"
-          locale={ko}
-          minDate={new Date(dateString)}
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-        />
-        <ContentWrap>
-          <Content>
-            캡슐 공개시간
-            <span>캡슐이 열릴 시간대를 설정해요</span>
-          </Content>
-          <HelpIcon
-            onClick={() => setIsHelp(!isHelp)}
-            src="assets/icons/questionMark.png"
-            alt="helpicon"
+        <form onSubmit={FormSubmit}>
+          <ContentWrap>
+            <Content>
+              이름
+              <span>최대 10자</span>
+            </Content>
+          </ContentWrap>
+          <InputBox
+            onChange={inputTitle}
+            className="w-80"
+            type="text"
+            maxLength={10}
           />
-        </ContentWrap>
-        <div>
-          {isHelp ? <Info src="../../helptimeinfo.png" alt="helpinfo" /> : null}
-        </div>
-        <div className="mt-6">
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="none"
-            name="time"
+          <ContentWrap>
+            <Content>
+              한줄설명
+              <span>최대 30자</span>
+            </Content>
+          </ContentWrap>
+          <InputBox
+            onChange={inputDescription}
+            className="w-80"
+            type="text"
+            maxLength={30}
           />
-          <RadioBtn htmlFor="none">없음</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="dawn"
-            name="time"
+          <ContentWrap>
+            <Content>캡슐 공개일</Content>
+          </ContentWrap>
+          <DatePicker
+            className="datePicker w-80"
+            formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
+            dateFormat="yyyy-MM-dd"
+            locale={ko}
+            minDate={new Date(oneDayAheadDateString)}
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            onKeyDown={handleDatePickerKeyDown}
           />
-          <RadioBtn htmlFor="dawn">새벽</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="morning"
-            name="time"
-          />
-          <RadioBtn htmlFor="morning">아침</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="afternoon"
-            name="time"
-          />
-          <RadioBtn htmlFor="afternoon">오후</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="night"
-            name="time"
-          />
-          <RadioBtn htmlFor="night">밤</RadioBtn>
-        </div>
-        <BtnWrap>
-          <CancelBtn
-            onClick={() => {
-              navigate(-1)
-            }}
-          >
-            취소
-          </CancelBtn>
-          <SubmitBtn>생성</SubmitBtn>
-        </BtnWrap>
+          <ContentWrap>
+            <Content>
+              캡슐 공개시간
+              <span>캡슐이 열릴 시간대를 설정해요</span>
+            </Content>
+            <HelpIcon
+              onClick={() => setIsHelp(!isHelp)}
+              src="assets/icons/questionMark.png"
+              alt="helpicon"
+            />
+          </ContentWrap>
+          <div>
+            {isHelp ? (
+              <Info src="../../helptimeinfo.png" alt="helpinfo" />
+            ) : null}
+          </div>
+          <div className="mt-6">
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="none"
+              name="time"
+              onChange={() => handleTimeChange(["", "", ""])}
+              defaultChecked
+            />
+            <RadioBtn htmlFor="none">없음</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="dawn"
+              name="time"
+              onChange={() => handleTimeChange(["00", "06", "새벽"])}
+            />
+            <RadioBtn htmlFor="dawn">새벽</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="morning"
+              name="time"
+              onChange={() => handleTimeChange(["06", "12", "아침"])}
+            />
+            <RadioBtn htmlFor="morning">아침</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="afternoon"
+              name="time"
+              onChange={() => handleTimeChange(["12", "18", "오후"])}
+            />
+            <RadioBtn htmlFor="afternoon">오후</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="night"
+              name="time"
+              onChange={() => handleTimeChange(["18", "24", "밤"])}
+            />
+            <RadioBtn htmlFor="night">밤</RadioBtn>
+          </div>
+          <BtnWrap>
+            <CancelBtn
+              type="button"
+              onClick={() => {
+                navigate(-1)
+              }}
+            >
+              취소
+            </CancelBtn>
+            <SubmitBtn type="submit">생성</SubmitBtn>
+          </BtnWrap>
+        </form>
       </Box>
     </>
   )

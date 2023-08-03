@@ -19,27 +19,26 @@ public class TimecapsuleCriteriaDTO {
 
     private String weatherStatus;
 
-    private Date cardInputStart;
+    private Integer startTime;
 
-    private Date cardInputEnd;
+    private Integer endTime;
 
-    private int nx;
+    private String localBig;
 
-    private int ny;
+    private String localMedium;
 
-    private String location;
-
+    private String timeKr;
 
 
     public TimecapsuleCriteria toEntity(){
         return TimecapsuleCriteria.builder()
                 .type(this.type)
                 .weatherStatus(this.weatherStatus)
-                .cardInputStart(this.cardInputStart)
-                .cardInputEnd(this.cardInputEnd)
-                .nx(this.nx)
-                .ny(this.ny)
-                .location(this.location)
+                .startTime(this.startTime)
+                .endTime(this.endTime)
+                .localBig(this.localBig)
+                .localMedium(this.localMedium)
+                .timeKr(this.timeKr)
                 .build();
     }
 

@@ -1,6 +1,5 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.User;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
@@ -44,5 +43,22 @@ public class UserFriend {
         this.status = status;
         this.requestDate = requestDate;
         this.responseDate = responseDate;
+    }
+
+    public void updateRequest(User user, User friend){
+        this.status = "REQUESTED";
+        this.requestDate = LocalDateTime.now();
+        this.user = user;
+        this.friend = friend;
+    }
+
+    // 즐겨찾기 추가
+    public void updateFavoriteAdd(){
+        this.isFavorite = true;
+    }
+
+    // 즐겨찾기 제거
+    public void updateFavoriteDel(){
+        this.isFavorite = false;
     }
 }
