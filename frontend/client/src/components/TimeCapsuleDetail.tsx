@@ -71,7 +71,6 @@ const calculateDateDifference = (startDate: string, endDate: string) => {
 }
 
 const Box = styled.div`
-  z-index: -2;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -87,9 +86,14 @@ const Box = styled.div`
   color: ${(props) => props.theme.color900};
 `
 
+const Title = styled.div`
+  z-index: 1;
+  position: absolute;
+  top: 144px;
+`
+
 const HightLight = styled.div`
   position: absolute;
-  z-index: -1;
   width: calc(100% + 10px);
   height: 13px;
   background-color: ${(props) => props.theme.color200};
@@ -117,7 +121,6 @@ const ExitImg = styled.img`
 const TimerWrap = styled.div`
   position: absolute;
   color: #fff;
-  z-index: 1;
   font-size: 36px;
   top: -32px;
   font-weight: 700;
@@ -273,9 +276,10 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         const minutes = Math.floor(
           (timeDiffer % (1000 * 60 * 60)) / (1000 * 60)
         )
-        setTimer(`${hours}:${minutes}`)
+        const formattedMinutes = minutes.toString().padStart(2, "0")
+        setTimer(`${hours}:${formattedMinutes}`)
       }
-    }, 60000)
+    }, 1000)
   })
 
   return (
@@ -284,14 +288,17 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       <ExitImg src="../../assets/icons/bin_dark.png" alt="bin" />
       <TimerWrap>
         {timer}
-        <div>뒤에 등록돼요</div>
+        <div className="-mt-1">뒤에 등록돼요</div>
       </TimerWrap>
 
       <div className="text-2xl font-bold mt-28">
         {calculateDday(capsuleData.openDate)}
       </div>
-      <div className="text-2xl font-bold relative mb-1">
+      <Title className="text-2xl font-bold relative mb-1">
         {capsuleData.title}
+      </Title>
+      <div className="text-2xl font-bold relative mb-1">
+        <div>{capsuleData.title}</div>
         <HightLight />
       </div>
       <div style={{ fontSize: "14px" }}>{capsuleData.description}</div>
@@ -381,7 +388,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         <CardCompleteBtn>카드 작성완료</CardCompleteBtn>
       )}
 
-      <BackBtn className="my-5">돌아가기</BackBtn>
+      <BackBtn
+        onClick={() => {
+          navigate(-1)
+        }}
+        className="my-5"
+      >
+        돌아가기
+      </BackBtn>
     </Box>
   )
 }
