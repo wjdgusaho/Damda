@@ -195,7 +195,7 @@ export const FindPassword = function () {
   return (
     <Box style={{ color: "#CFD4EE" }}>
       <img
-        src="assets/Planet-3.png"
+        src="assets/universe/Planet-3.png"
         alt="planet"
         width={200}
         style={{ marginLeft: "auto", marginRight: "auto" }}

@@ -217,7 +217,7 @@ export const Card: React.FC<CardProps> = ({ name, price, desc, isHave }) => {
   return (
     <div className="w-80 h-40 bg-white bg-opacity-10 m-auto rounded-3xl flex shadow-2xl">
       <div className="w-40 h-40 bg-white opacity-100 rounded-3xl">
-        <img src="/assets/Planet-3.png" alt="카드이미지" />
+        <img src="/assets/universe/Planet-3.png" alt="카드이미지" />
       </div>
       <div className="w-40 h-40 text-center">
         <TextStyle className="mt-1 text-white text-lg">{name}</TextStyle>
@@ -270,7 +270,7 @@ export const ModalBuyInner: React.FC<ModalBuyInnerProps> = ({ name, icon }) => {
   return (
     <div className="flex items-center justify-around">
       <div className="w-1/3 p-2 rounded-2xl mr-2 shadow-lg">
-        <img src="/assets/Planet-2.png" alt="모달이미지" />
+        <img src="/assets/universe/Planet-2.png" alt="모달이미지" />
       </div>
       <div className="w-2/3 p-2">
         <TextStyle7 className="opacity-70 text-lg">
@@ -305,7 +305,7 @@ const MyCapsule = function () {
       <div className="w-2/12">
         <img
           className="filter drop-shadow-md"
-          src="/assets/Planet-5.png"
+          src="/assets/universe/Planet-5.png"
           alt=""
         />
       </div>
