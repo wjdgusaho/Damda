@@ -57,22 +57,30 @@ public class TimecapsuleController {
     @PostMapping("create")
     public DataResponse<Map<String, Object>> createTimecapsule(@RequestBody TimecapsuleCreateDTO timecapsuleCreateDTO){
         log.info(timecapsuleCreateDTO.toString());
-        TimecapsuleDTO timacapsule = timecapsuleService.createTimecapsule(timecapsuleCreateDTO);
+        Long timecapsuleNo = timecapsuleService.createTimecapsule(timecapsuleCreateDTO);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("timecapsuleNo", timecapsuleNo);
 
         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 생성 완료");
+        response.setData(result);
         return response;
     }
 
 
     @PostMapping("detail")
-    public DataResponse<TimecapsuleDetailDTO> timecapsuleDetail(@RequestBody  Map<String, Object> data){
+    public DataResponse<Map<String, Object>> timecapsuleDetail(@RequestBody  Map<String, Object> data){
 
         Long timecapsuleNo = Long.parseLong((String) data.get("timecapsuleNo"));
 
         TimecapsuleDetailDTO timecapsule = timecapsuleService.getTimecapsuleDetail(timecapsuleNo);
 
-        DataResponse<TimecapsuleDetailDTO> response = new DataResponse<>(200, "타임캡슐 상세정보 조회 성공");
-        response.setData(timecapsule);
+        Map<String, Object> result = new HashMap<>();
+        result.put("timecapsule", timecapsule);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 상세정보 조회 성공");
+        response.setData(result);
+
         return response;
         
     }
