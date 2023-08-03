@@ -26,6 +26,11 @@ const Form = styled.form`
   margin-right: auto;
 `
 
+const ModalForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+`
+
 const InputCSS = tw.input`
     w-full
     bg-transparent
@@ -44,7 +49,7 @@ const customStyles = {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "80%",
+    width: "50%",
     borderRadius: "20px",
   },
   overlay: {
@@ -62,6 +67,7 @@ const ModalButton = styled.div`
   text-align: center;
   box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
   color: #000000b1;
+  cursor: pointer;
 `
 
 export const SignUp = function () {
@@ -167,30 +173,32 @@ export const SignUp = function () {
   let seconds = 0
 
   function startCountdown(minute: number) {
-    const countdownElement = document.querySelector(
-      "#countdown"
-    ) as HTMLSpanElement
-
-    if (!countdownElement) {
-      console.error("요소가 존재하지 않습니다.")
-      return
-    }
-
     seconds = minute * 60
 
     const interval = setInterval(() => {
+      const countdownElement = document.querySelector(
+        "#countdown"
+      ) as HTMLSpanElement
       const minuteRemaining = Math.floor(seconds / 60)
       const secondRemaining = seconds % 60
 
-      countdownElement.textContent = `${String(minuteRemaining).padStart(
-        2,
-        "0"
-      )}:${String(secondRemaining).padStart(2, "0")}`
+      if (countdownElement) {
+        countdownElement.textContent =
+          "남은시간 " +
+          `${String(minuteRemaining).padStart(2, "0")}:${String(
+            secondRemaining
+          ).padStart(2, "0")}`
+        if (seconds < 120) {
+          countdownElement.style.color = "red"
+        }
+        if (seconds === 0) {
+          countdownElement.textContent = "인증번호 만료"
+        }
+      }
 
       if (seconds === 0) {
         clearInterval(interval)
-        countdownElement.textContent = "인증번호 만료"
-        countdownElement.style.color = "red"
+        setuserEmailMatch(0)
       }
 
       seconds--
@@ -215,6 +223,7 @@ export const SignUp = function () {
         alert(response.data.message)
         if (code === 200) {
           setGetCode(false)
+          setuserEmailMatch(3)
           setUserCode("success" + successCode.toString())
         }
       })
@@ -278,11 +287,11 @@ export const SignUp = function () {
 
     if (!userdata.email) {
       alert("이메일을 입력해주세요.")
-    } else if (userdata.email && userEmailMatch !== 2) {
+    } else if (userdata.email && userEmailMatch < 2) {
       alert("이메일 중복확인을 해주세요.")
     } else if (
       userdata.email &&
-      userEmailMatch === 2 &&
+      userEmailMatch !== 3 &&
       userCode !== "success" + successCode.toString()
     ) {
       alert("이메일 인증이 되지 않았습니다.")
@@ -333,10 +342,19 @@ export const SignUp = function () {
           />
         </svg>
       </Link>
-      {userEmailMatch === 2 ? (
-        <div className="p-2 px-4 text-sm rounded-full shadow-md text-green-500 w-24 relative top-40 left-48">
-          중복없음
+      {userEmailMatch === 3 ? (
+        <div className="p-2 px-4 text-sm text-green-500 w-24 relative top-40 left-48">
+          인증완료
         </div>
+      ) : userEmailMatch === 2 ? (
+        <button
+          className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-28 relative top-40 left-48"
+          onClick={() => {
+            setGetCode(true)
+          }}
+        >
+          이메일인증
+        </button>
       ) : userEmailMatch === 1 ? (
         <button
           className="p-2 px-4 text-sm rounded-full shadow-md bg-red-500 w-24 relative top-40 left-48"
@@ -355,26 +373,29 @@ export const SignUp = function () {
         <div></div>
       )}
 
-      <Modal isOpen={getCode} onRequestClose={handleClose} style={customStyles}>
-        <Form onSubmit={handleSubmitCode}>
+      <Modal
+        isOpen={getCode}
+        onRequestClose={handleClose}
+        shouldCloseOnOverlayClick={false}
+        style={customStyles}
+      >
+        <ModalForm onSubmit={handleSubmitCode}>
           <p className="grid grid-cols-2 justify-between">
-            인증번호
+            인증번호를 입력하세요.
             <span id="countdown" className="text-end">
-              10:00
+              남은시간 10:00
             </span>
           </p>
           <input
-            className="bg-transparent focus:outline-none border-b-2"
+            className="bg-transparent focus:outline-none border-b-2 ml-2"
             type="text"
             onChange={handleCodeChange}
           />
-          <button
-            className="text-sm rounded-full shadow-md w-48 mx-auto"
-            style={{ backgroundColor: "#EFE0F4", color: "black" }}
-          >
-            확인
-          </button>
-        </Form>
+          <div className="flex justify-between mt-5">
+            <ModalButton>확인</ModalButton>
+            <ModalButton onClick={() => handleClose()}>닫기</ModalButton>
+          </div>
+        </ModalForm>
       </Modal>
       <Form className="grid grid-cols-1 w-full mx-auto" onSubmit={handleSubmit}>
         <div className="w-full justify-center">
@@ -437,12 +458,10 @@ export const SignUp = function () {
           <></>
         )}
 
-        <p>
-          비밀번호
-          <span style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}>
-            5~25자, 영문숫자 필수, 특수문자(!@#$%^*+=-) 가능
-          </span>
-        </p>
+        <p>비밀번호</p>
+        <span style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}>
+          5~25자, 영문숫자 필수, 특수문자(!@#$%^*+=-) 가능
+        </span>
         <InputCSS
           name="userPw"
           type="password"
@@ -475,7 +494,7 @@ export const SignUp = function () {
         )}
 
         <button
-          className="p-2 px-4 text-sm rounded-full shadow-md w-full mx-auto"
+          className="p-2 px-4 text-sm rounded-full shadow-md w-48 mt-10 mx-auto"
           style={{ backgroundColor: "#EFE0F4", color: "black" }}
         >
           확인
