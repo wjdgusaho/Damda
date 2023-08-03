@@ -137,6 +137,7 @@ public class FriendService {
         findFriend.updateFavoriteDel(); // 즐겨찾기 추가
     }
 
+    // 받은 친구요청 조회
     public List<FriendRequestListDTO> friendRequestList(){
         List<FriendRequestListDTO> FriendRequestListDTO = new ArrayList<>();
 
@@ -151,5 +152,67 @@ public class FriendService {
         }
 
         return FriendRequestListDTO;
+    }
+
+    // 친구 수락
+    public void friendReqeustAccept(Long friendNo){
+
+        Long userNo = getUserNo();
+        User currentUser = userRepository.findById(userNo).get(); // 현재 유저를 찾음.
+
+        User friendUser = userRepository.findById(friendNo).get(); // 친구 유저를 찾음,
+
+
+        // 현재 유저와 친구의 데이터를 꺼냄
+        UserFriend FindByCurrentUser = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser);
+        // 친구 유저와 현재 유저의 데이터를 꺼냄
+        UserFriend FindByFriendUser = friendRepository.getUserFriendByUserAndFriend(friendUser, currentUser);
+
+        FindByCurrentUser.acceptFriendRequest(); // 둘 다 "ACCEPTED"로 바꾸고 응답시간 추가
+        FindByFriendUser.acceptFriendRequest();
+
+        friendRepository.save(FindByCurrentUser); // 수동 저장
+        friendRepository.save(FindByFriendUser);
+    }
+
+    // 친구 거절
+    public void friendReqeustReject(Long friendNo){
+
+        Long userNo = getUserNo();
+        User currentUser = userRepository.findById(userNo).get(); // 현재 유저를 찾음.
+
+        User friendUser = userRepository.findById(friendNo).get(); // 친구 유저를 찾음,
+
+
+        // 현재 유저와 친구의 데이터를 꺼냄
+        UserFriend FindByCurrentUser = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser);
+        // 친구 유저와 현재 유저의 데이터를 꺼냄
+        UserFriend FindByFriendUser = friendRepository.getUserFriendByUserAndFriend(friendUser, currentUser);
+
+        FindByCurrentUser.rejectFriendRequest(); // 둘 다 "ACCEPTED"로 바꾸고 응답시간 추가
+        FindByFriendUser.rejectFriendRequest();
+
+        friendRepository.save(FindByCurrentUser); // 수동 저장
+        friendRepository.save(FindByFriendUser);
+    }
+
+    public void friendDelete(Long friendNo){
+        Long userNo = getUserNo();
+        User currentUser = userRepository.findById(userNo).get(); // 현재 유저를 찾음.
+
+        User friendUser = userRepository.findById(friendNo).get(); // 친구 유저를 찾음,
+
+
+        // 현재 유저와 친구의 데이터를 꺼냄
+        UserFriend FindByCurrentUser = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser);
+        // 친구 유저와 현재 유저의 데이터를 꺼냄
+        UserFriend FindByFriendUser = friendRepository.getUserFriendByUserAndFriend(friendUser, currentUser);
+
+        FindByCurrentUser.FriendDelete(); // 둘 다 "ACCEPTED"로 바꾸고 응답시간 추가
+        FindByFriendUser.FriendDelete();
+
+        friendRepository.save(FindByCurrentUser); // 수동 저장
+        friendRepository.save(FindByFriendUser);
+
     }
 }
