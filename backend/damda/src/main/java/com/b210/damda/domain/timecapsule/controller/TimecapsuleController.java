@@ -1,7 +1,7 @@
 package com.b210.damda.domain.timecapsule.controller;
 
 import com.b210.damda.domain.dto.Timecapsule.*;
-import com.b210.damda.domain.dto.weather.WeatherDTO;
+import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.timecapsule.service.TimecapsuleService;
 import com.b210.damda.util.response.DataResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +25,8 @@ public class TimecapsuleController {
         진행중인 타임캡슐 리스트 (메인 및 보관함)
      */
     @PostMapping("view")
-    public DataResponse<Map<String, Object>> workTimecapsuleList(@RequestBody WeatherDTO weatherDto) {
-        List<MainTimecapsuleListDTO> workTimecapsuleList = timecapsuleService.workTimecapsule(weatherDto);
+    public DataResponse<Map<String, Object>> workTimecapsuleList(@RequestBody WeatherLocationDTO weatherLocationDto) {
+        List<MainTimecapsuleListDTO> workTimecapsuleList = timecapsuleService.workTimecapsule(weatherLocationDto);
         Map<String, Object> result = new HashMap<>();
         result.put("timecapsuleList", workTimecapsuleList);
 
