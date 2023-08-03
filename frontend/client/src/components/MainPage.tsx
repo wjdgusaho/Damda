@@ -57,11 +57,19 @@ export const MainPage = function () {
     console.log("token", token)
     const fetchData = async () => {
       try {
-        const response = await axios.get(serverUrl + "timecapsule/view", {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
+        const body = {
+          lat: "123",
+          lan: "123",
+        }
+        const response = await axios.post(
+          serverUrl + "timecapsule/view",
+          body,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
         console.log(response)
         setCapsuleList(response.data.data.timecapsuleList)
         console.log("CapsuleList", response.data.data.timecapsuleList)
