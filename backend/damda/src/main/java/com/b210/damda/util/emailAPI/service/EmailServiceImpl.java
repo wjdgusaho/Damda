@@ -45,7 +45,7 @@ public class EmailServiceImpl implements EmailService {
         String msgg="";
         msgg += "<table style='    width: 100% !important;    background: #ffffff;    margin: 0;    padding: 0;    min-width: 100%;    font-family: 'Malgun Gothic', 'Dotum', 'sans-serif';   '>";
         msgg += "<tr><td style='text-align: center;'>";
-        msgg += "<img src='https://www.jobflex.com/static/desktopResource/mailTemplate/resources/header.jpg' alt='header' loading='lazy'>";
+        msgg += "<img src='https://damda.s3.ap-northeast-2.amazonaws.com/EMAIL_CONFIRM/EMAIL_CONFIRM.png' alt='header' loading='lazy'>";
         msgg += "</td></tr><tr><td style='text-align: center;'>";
         msgg += "<div style='margin-top: 60px; margin-bottom: 30px;'>";
         msgg += "<h1 style='margin-bottom: 40px;'>계정 인증 안내</h1>";
@@ -58,7 +58,7 @@ public class EmailServiceImpl implements EmailService {
         msgg += "<p style='display:inline-block;padding:20px 80px;font-size:16px;font-weight:bold;color:#fff;background:#9a50ff;'>";
         msgg += "인증번호: " + authCode;
         msgg += "</p></div></td></tr><tr><td style='text-align: center;'>";
-        msgg += "<img src='https://www.jobflex.com/static/desktopResource/mailTemplate/resources/footer.jpg' alt='footer' loading='lazy'>";
+        msgg += "<img src='https://damda.s3.ap-northeast-2.amazonaws.com/EMAIL_CONFIRM/DAMDA.png' alt='footer' loading='lazy'>";
         msgg += "</td></tr></tbody></table>";
         message.setText(msgg, "utf-8", "html");//내용
         message.setFrom(new InternetAddress("damdaCop@gmail.com","담다"));//보내는 사람
@@ -77,7 +77,7 @@ public class EmailServiceImpl implements EmailService {
         String msgg="";
         msgg += "<table style='    width: 100% !important;    background: #ffffff;    margin: 0;    padding: 0;    min-width: 100%;    font-family: 'Malgun Gothic', 'Dotum', 'sans-serif';   '>";
         msgg += "<tr><td style='text-align: center;'>";
-        msgg += "<img src='https://www.jobflex.com/static/desktopResource/mailTemplate/resources/header.jpg' alt='header' loading='lazy'>";
+        msgg += "<img src='https://damda.s3.ap-northeast-2.amazonaws.com/EMAIL_CONFIRM/EMAIL_CONFIRM.png' alt='header' loading='lazy'>";
         msgg += "</td></tr><tr><td style='text-align: center;'>";
         msgg += "<div style='margin-top: 60px; margin-bottom: 30px;'>";
         msgg += "<h1 style='margin-bottom: 40px;'>계정 인증 안내</h1>";
@@ -90,7 +90,7 @@ public class EmailServiceImpl implements EmailService {
         msgg += "<p style='display:inline-block;padding:20px 80px;font-size:16px;font-weight:bold;color:#fff;background:#9a50ff;'>";
         msgg += "인증번호: " + authCode;
         msgg += "</p></div></td></tr><tr><td style='text-align: center;'>";
-        msgg += "<img src='https://www.jobflex.com/static/desktopResource/mailTemplate/resources/footer.jpg' alt='footer' loading='lazy'>";
+        msgg += "<img src='https://damda.s3.ap-northeast-2.amazonaws.com/EMAIL_CONFIRM/DAMDA.png' alt='footer' loading='lazy'>";
         msgg += "</td></tr></tbody></table>";
         message.setText(msgg, "utf-8", "html");//내용
         message.setFrom(new InternetAddress("damdaCop@gmail.com","담다"));//보내는 사람
