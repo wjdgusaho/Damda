@@ -25,7 +25,7 @@ const persistedReducer = persistReducer(persistConfig, reducers)
 
 const Store = configureStore({
   reducer: persistedReducer,
-  middleware: [...getDefaultMiddleware(), thunk],
+  middleware: [...getDefaultMiddleware({ serializableCheck: false }), thunk],
 })
 
 export type RootState = ReturnType<typeof Store.getState>
