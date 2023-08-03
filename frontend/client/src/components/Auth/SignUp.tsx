@@ -207,17 +207,24 @@ export const SignUp = function () {
 
   function handleSubmitCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    axios({
-      method: "POST",
-      url: serverUrl + "user/check-email",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: {
-        email: userdata.email,
-        code: userCode,
-      },
-    })
+    if(!userCode){
+      alert('인증번호를 입력해주세요.')
+    }
+    else if(userCode && seconds <= 0){
+      alert('인증번호가 만료되었습니다. 재발급 요청을 해주세요.')
+    }
+    else{
+      axios({
+        method: "POST",
+        url: serverUrl + "user/check-email",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          email: userdata.email,
+          code: userCode,
+        },
+      })
       .then((response) => {
         const code = response.data.code
         alert(response.data.message)
@@ -230,6 +237,7 @@ export const SignUp = function () {
       .catch((error) => {
         console.error(error)
       })
+    }
   }
 
   function checkEmailOverlap(event: React.MouseEvent<HTMLButtonElement>) {
