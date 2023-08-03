@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { styled } from "styled-components"
 import html2canvas from "html2canvas"
 import StickerContainer from "./StickerContainer"
@@ -160,8 +160,10 @@ const Card = function () {
     })
   }
 
+  const StickerContainerArea = useRef<HTMLDivElement>(null)
+
   return (
-    <BackGround bgColor={bgcolor} className="overflow-hidden">
+    <BackGround bgColor={bgcolor} className="overflow-hidden w-full h-full">
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
         <img className="w-6 h-6" src="/assets/icons/x_dark.png" alt="X" />
         <img
@@ -191,58 +193,61 @@ const Card = function () {
             <Text font={font}>2023.02.03</Text>
           </div>
         </div>
-        <div className="relative text-center -mt-2">
-          <Title
-            id="inputTitle"
-            className="w-full h-4 opacity-0 overflow-hidden"
-            type="text"
-            value={inputValue}
-            onChange={handleChange}
-            placeholder={inputValue ? "" : "오늘의 제목"}
-            width={inputWidth}
-            font={font}
-            maxLength={15}
-          />
-          <TitleBG width={inputWidth} className="m-auto"></TitleBG>
-          <label
-            className="block text-center -mt-6 absolute w-full"
-            htmlFor="inputTitle"
-          >
-            <InputResult className="ml-2" font={font}>
-              {title}
-            </InputResult>
-          </label>
-        </div>
-        <div className="flex w-40 h-40 items-center m-auto mt-4 bg-black bg-opacity-20 mb-1">
-          <img
-            className="w-8 h-8 m-auto opacity-80"
-            onClick={saveAsImageHandler}
-            src="/assets/icons/img_select.png"
-            alt="사진"
-          />
-        </div>
-        <div className="text-center">
+        <div ref={StickerContainerArea}>
           <div className="relative text-center -mt-2">
-            <label
-              className="block text-center opacity-70 !text-xs mt-2 absolute w-full ml-2"
-              htmlFor="inputContent"
-            >
-              <InputResult font={font}>{cardContent}</InputResult>
-            </label>
-            <Content
-              className="bg-white opacity-0 !text-xs mt-2 w-full"
-              rows={5}
-              maxLength={150}
+            <Title
+              id="inputTitle"
+              className="w-full h-4 opacity-0 overflow-hidden"
+              type="text"
+              value={inputValue}
+              onChange={handleChange}
+              placeholder={inputValue ? "" : "오늘의 제목"}
+              width={inputWidth}
               font={font}
-              id="inputContent"
-              onChange={handleChangeContent}
-            ></Content>
+              maxLength={15}
+            />
+            <TitleBG width={inputWidth} className="m-auto"></TitleBG>
+            <label
+              className="block text-center -mt-6 absolute w-full"
+              htmlFor="inputTitle"
+            >
+              <InputResult className="ml-2" font={font}>
+                {title}
+              </InputResult>
+            </label>
           </div>
+          <div className="flex w-40 h-40 items-center m-auto mt-4 bg-black bg-opacity-20 mb-1">
+            <img
+              className="w-8 h-8 m-auto opacity-80"
+              onClick={saveAsImageHandler}
+              src="/assets/icons/img_select.png"
+              alt="사진"
+            />
+          </div>
+          <div className="text-center">
+            <div className="relative text-center -mt-2">
+              <label
+                className="block text-center opacity-70 !text-xs mt-2 absolute w-full ml-2"
+                htmlFor="inputContent"
+              >
+                <InputResult font={font}>{cardContent}</InputResult>
+              </label>
+              <Content
+                className="bg-white opacity-0 !text-xs mt-2 w-full"
+                rows={5}
+                maxLength={150}
+                font={font}
+                id="inputContent"
+                onChange={handleChangeContent}
+              ></Content>
+            </div>
+          </div>
+          <StickerContainer
+            countList={countList}
+            onDeleteCardSticker={onDeleteCardSticker}
+            StickerContainerArea={StickerContainerArea}
+          />
         </div>
-        <StickerContainer
-          countList={countList}
-          onDeleteCardSticker={onDeleteCardSticker}
-        />
       </CardContainer>
       <div className="flex justify-between p-2 w-80 m-auto">
         {bgColorList.map((color) => (
