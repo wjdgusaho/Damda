@@ -1,10 +1,11 @@
 import styled from "styled-components"
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, RefObject } from "react"
 import { motion } from "framer-motion"
 
 const StickerContainer = (props: {
   countList: { no: number; url: string }[]
   onDeleteCardSticker: (no: number) => void // onDeleteCardSticker는 no를 인자로 받고 반환값이 없는 함수입니다.
+  StickerContainerArea: RefObject<HTMLDivElement>
 }) => {
   const [selectedStickerIndex, setSelectedStickerIndex] = useState<number>(
     props.countList.length === 0 ? -1 : props.countList[0].no
@@ -54,9 +55,13 @@ const StickerContainer = (props: {
         props.countList.map((item, i) => (
           <StickerImg
             drag
+            dragMomentum={false}
+            dragConstraints={props.StickerContainerArea}
             id={"sticker" + item.no}
             className={`w-16 h-16 absolute left-1/2 right-1/2 top-1/4 -ml-8 ${
-              selectedStickerIndex === i ? "border border-black" : ""
+              selectedStickerIndex === i
+                ? "border border-black border-opacity-60"
+                : ""
             }`}
             key={i}
             stickerURL={item.url}
@@ -66,10 +71,12 @@ const StickerContainer = (props: {
               (selectedStickerIndex === i && (
                 <div>
                   <div
-                    className="w-6 h-6 absolute right-0 top-0 -mt-3 -mr-3 rounded-full bg-red-500"
+                    className="w-6 h-6 absolute right-0 top-0 -mt-3 -mr-3 rounded-full bg-white font-pretendard"
                     onClick={() => props.onDeleteCardSticker(item.no)}
-                  ></div>
-                  <div className="w-6 h-6 absolute right-0 bottom-0 -m-3 -mr-3 rounded-full bg-green-500"></div>
+                  >
+                    X
+                  </div>
+                  {/* <div className="w-6 h-6 absolute right-0 bottom-0 -m-3 -mr-3 rounded-full bg-green-500"></div> */}
                 </div>
               ))}
           </StickerImg>
