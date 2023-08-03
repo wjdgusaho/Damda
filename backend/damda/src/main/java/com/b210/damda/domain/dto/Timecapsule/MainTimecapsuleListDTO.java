@@ -1,9 +1,7 @@
 package com.b210.damda.domain.dto.Timecapsule;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,12 +12,15 @@ import java.sql.Timestamp;
 @Data
 @Builder
 @Getter @Setter
+@AllArgsConstructor
 public class MainTimecapsuleListDTO {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long timecapsuleNo;
     private String type;
+    @JsonProperty("sDate")
     private String sDate;
+    @JsonProperty("eDate")
     private String eDate;
     //private String sTime;
     //private String eTime;
@@ -29,4 +30,7 @@ public class MainTimecapsuleListDTO {
     private int goalCard;
     private boolean state;
 
+    public MainTimecapsuleListDTO(){
+
+    }
 }

@@ -38,13 +38,7 @@ export const authSlice = createSlice({
       state.accessToken = null
     },
     DELETE_USER: (state) => {
-      state.userInfo = {
-        accountType: "",
-        coin: 0,
-        userNo: 0,
-        nickname: "",
-        profileImage: "",
-      }
+      state.userInfo = initialState.userInfo
     },
   },
 })

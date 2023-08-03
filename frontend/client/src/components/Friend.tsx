@@ -45,8 +45,7 @@ export const List = function () {
       },
     })
       .then((response) => {
-        // 해당 데이터 어떻게 들어오는지 확인한 후 데이터 friendlist에 넣기.
-        console.log(response.data)
+        setFriendList(response.data.data.result)
       })
       .catch((error) => console.error(error))
   }, [])
@@ -89,8 +88,7 @@ export const Request = function () {
       },
     })
       .then((response) => {
-        // 해당 데이터 어떻게 들어오는지 확인한 후 데이터 requestList에 넣기.
-        console.log(response.data)
+        // setRequestList(response.data.data.result)
       })
       .catch((error) => console.error(error))
   }, [])
@@ -123,7 +121,11 @@ export const Request = function () {
 const FriendCard = function ({ friend }: { friend: FriendType }) {
   return (
     <div className="flex w-10/12 items-center m-auto p-2">
-      <img className="w-16" src={friend.profile_image} alt="프로필사진" />
+      <img
+        className="w-16 rounded-full h-16"
+        src={friend.profileImage}
+        alt="프로필사진"
+      />
       <TextStyle className="ml-4 text-white">{friend.nickname}</TextStyle>
       <div className="flex ml-auto mr-3">
         {friend.isFavorite ? (
@@ -147,7 +149,7 @@ const FriendCard = function ({ friend }: { friend: FriendType }) {
 const RequestCard = function ({ friend }: { friend: FriendType }) {
   return (
     <div className="flex w-10/12 items-center m-auto p-2">
-      <img className="w-16" src={friend.profile_image} alt="프로필사진" />
+      <img className="w-16" src={friend.profileImage} alt="프로필사진" />
       <TextStyle className="ml-4 text-white">{friend.nickname}</TextStyle>
       <div className="flex ml-auto mr-3">
         <img
@@ -203,47 +205,8 @@ const NavLink2 = styled(NavLink)`
 type FriendType = {
   id: number
   nickname: string
-  profile_image: string
+  profileImage: string
   isFavorite: boolean
 }
-
-// const friendList: FriendType[] = [
-//   {
-//     id: "1",
-//     nickname: "달토끼맛쿠키",
-//     profile_image: "/assets/icons/popup.png",
-//     isFavorite: true,
-//   },
-//   {
-//     id: "2",
-//     nickname: "달토끼맛쿠키",
-//     profile_image: "/assets/icons/popup.png",
-//     isFavorite: true,
-//   },
-//   {
-//     id: "3",
-//     nickname: "달토끼맛쿠키",
-//     profile_image: "/assets/icons/popup.png",
-//     isFavorite: true,
-//   },
-//   {
-//     id: "4",
-//     nickname: "달토끼맛쿠키",
-//     profile_image: "/assets/icons/profile_1.png",
-//     isFavorite: false,
-//   },
-//   {
-//     id: "5",
-//     nickname: "달토끼맛쿠키",
-//     profile_image: "/assets/icons/profile_1.png",
-//     isFavorite: false,
-//   },
-//   {
-//     id: "6",
-//     nickname: "달토끼맛쿠키",
-//     profile_image: "/assets/icons/profile_1.png",
-//     isFavorite: false,
-//   },
-// ]
 
 export default Friend

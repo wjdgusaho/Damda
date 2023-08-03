@@ -1,13 +1,11 @@
 package com.b210.damda.domain.dto.Timecapsule.detailchild;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Data
 @Getter @Setter
 @Builder
+@AllArgsConstructor
 public class DetailMyInfoDTO {
 
     private Long userNo;
@@ -15,4 +13,6 @@ public class DetailMyInfoDTO {
     private boolean fileAble;
     private boolean isHost;
 
+    public DetailMyInfoDTO(){
+    }
 }

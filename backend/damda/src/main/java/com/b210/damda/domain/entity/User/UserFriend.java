@@ -52,6 +52,15 @@ public class UserFriend {
         this.friend = friend;
     }
 
+    public void updateReceive(User user, User friend){
+        this.status = "RECEIVED";
+        this.requestDate = LocalDateTime.now();
+        this.user = user;
+        this.friend = friend;
+    }
+
+
+
     // 즐겨찾기 추가
     public void updateFavoriteAdd(){
         this.isFavorite = true;
@@ -60,5 +69,24 @@ public class UserFriend {
     // 즐겨찾기 제거
     public void updateFavoriteDel(){
         this.isFavorite = false;
+    }
+
+    // 친구 수락
+    public void acceptFriendRequest(){
+        this.responseDate = LocalDateTime.now();
+        this.status = "ACCEPTED";
+    }
+
+    // 친구 거절
+    public void rejectFriendRequest(){
+        this.responseDate = null;
+        this.status = "REJECTED";
+    }
+
+    // 친구 삭제
+    public void FriendDelete(){
+        this.isFavorite = false;
+        this.status = "";
+        this.responseDate = null;
     }
 }

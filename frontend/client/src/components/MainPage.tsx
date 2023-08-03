@@ -10,7 +10,8 @@ import { useRef, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { RootState } from "../store/Store"
 import { serverUrl, reqUrl } from "../urls"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { SET_TIMECAPSULE } from "../store/Timecapsule"
 
 /*
 1. 모든 타임캡슐의 조건 만족 여부와 밑의 3가지 경우로 나뉨.
@@ -50,6 +51,7 @@ export const MainPage = function () {
   const previous = useCallback(() => slickRef.current?.slickPrev(), [])
   const next = useCallback(() => slickRef.current?.slickNext(), [])
   const [capsuleList, setCapsuleList] = useState<CapsuleType[]>([])
+  const dispatch = useDispatch()
 
   const settings = {
     centerMode: false,
@@ -75,6 +77,7 @@ export const MainPage = function () {
         console.log(response)
         setCapsuleList(response.data.data.timecapsuleList)
         console.log("CapsuleList", response.data.data.timecapsuleList)
+        dispatch(SET_TIMECAPSULE(response.data.data.timecapsuleList))
       } catch (error) {
         console.error(error)
       }
