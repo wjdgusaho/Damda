@@ -13,6 +13,7 @@
     "@types/redux-persist": "^4.3.1",
     "axios": "^1.4.0",
     "date-fns": "^2.30.0",
+    "event-source-polyfill": "^1.0.31",
     "html2canvas": "^1.4.1",
     "react": "^18.2.0",
     "react-cookie": "^4.1.1",
