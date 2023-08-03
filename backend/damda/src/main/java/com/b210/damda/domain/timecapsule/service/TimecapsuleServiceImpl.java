@@ -1,8 +1,8 @@
 package com.b210.damda.domain.timecapsule.service;
 
 import com.b210.damda.domain.dto.Timecapsule.*;
-import com.b210.damda.domain.dto.weather.WeatherDTO;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
+import com.b210.damda.domain.dto.weather.WeatherLocationNameDTO;
 import com.b210.damda.domain.entity.Timecapsule.*;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.timecapsule.repository.*;
@@ -88,7 +88,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         메인화면 타임캡슐 리스트 불러오기
      */
     @Override
-    public List<MainTimecapsuleListDTO> workTimecapsule(WeatherDTO weatherDto) {
+    public List<MainTimecapsuleListDTO> workTimecapsule(WeatherLocationDTO weatherLocationDto) {
         Long userNo = getUserNo();
         log.info(userNo.toString());
         Map<String,List<TimecapsuleMapping>> allTimecapsuleList = getTimecapsuleList(userNo);
@@ -120,10 +120,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 //타임캡슐 조건 테이블 받아오기
                 TimecapsuleCriteria timecapsuleCriteria = timecapsule.getTimecapsule().getTimecapsuleCriteria();
                 if(timecapsuleCriteria.getWeatherStatus() != null || timecapsuleCriteria.getLocalBig() != null) {
-                    weatherDto.setMode(true);
-                    WeatherLocationDTO location = null;
+                    weatherLocationDto.setMode(true);
+                    WeatherLocationNameDTO location = null;
                     //현재 위치값 받기
-                    try { location = weatherLocationService.getNowLocation(weatherDto); } 
+                    try { location = weatherLocationService.getNowLocation(weatherLocationDto); }
                     catch (Exception e) { throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND); }
                     
                     //위치가 있을경우
