@@ -218,7 +218,7 @@ const TimecapsulePage = function () {
                   </CapsuleTitle>
                 </div>
               </Card>
-            )} */}
+            )}
           </React.Fragment>
         ))}
       </Box>
