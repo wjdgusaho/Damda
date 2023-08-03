@@ -1,9 +1,9 @@
 package com.b210.damda.util.weatherAPI.service;
 
-import com.b210.damda.domain.dto.WeatherDTO;
-import com.b210.damda.domain.dto.WeatherLocationDTO;
-import com.b210.damda.domain.entity.WeatherLocation;
-import com.b210.damda.domain.entity.WeatherLocationList;
+import com.b210.damda.domain.dto.weather.WeatherDTO;
+import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
+import com.b210.damda.domain.entity.weather.WeatherLocation;
+import com.b210.damda.domain.entity.weather.WeatherLocationList;
 import com.b210.damda.util.weatherAPI.repository.WeatherLocationListRepository;
 import com.b210.damda.util.weatherAPI.repository.WeatherLocationRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -52,11 +53,17 @@ public class WeatherLocationServiceImpl implements WeatherLocationService {
 
     @Override
     public List<String> getBigLocations() throws Exception {
-        return null;
+        List<WeatherLocationList> nowValues = weatherLocationListRepository.findAll();
+        HashSet<String> result = new HashSet<>();
+
+        for (WeatherLocationList nowValue : nowValues ) {
+            result.add(nowValue.getLocalBig());
+        }
+        return new ArrayList<>(result);
     }
     @Override
-    public List<String> getMediumLocations(String localBig) throws Exception {
-        List<WeatherLocationList> getValues = weatherLocationListRepository.findAllByLocalBig(localBig);
+    public List<String> getMediumLocations(String local_big) throws Exception {
+        List<WeatherLocationList> getValues = weatherLocationListRepository.findAllByLocalBig(local_big);
         List<String> result = new ArrayList<>();
         for (WeatherLocationList now : getValues) {
             result.add(now.getLocalMedium());

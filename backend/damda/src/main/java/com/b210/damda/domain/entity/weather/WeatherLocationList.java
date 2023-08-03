@@ -1,4 +1,4 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.weather;
 
 import lombok.Data;
 
@@ -9,6 +9,7 @@ import javax.persistence.*;
 public class WeatherLocationList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "weather_location_list_no")
     private long id;
 
     @Column(name = "local_big")
