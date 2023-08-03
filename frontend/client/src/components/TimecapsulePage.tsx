@@ -10,6 +10,7 @@ import axios from "axios"
 import { serverUrl } from "../urls"
 import { CapsuleType } from "./MainPage"
 
+<<<<<<< Updated upstream
 const calculateProgressPercentage = (startDate: string, endDate: string) => {
   const currentDate = new Date()
   const dateString = currentDate.toISOString().slice(0, 10)
@@ -18,6 +19,72 @@ const calculateProgressPercentage = (startDate: string, endDate: string) => {
   return (ratio / total) * 100
 }
 
+=======
+type CapsuleType = {
+  id: number
+  type: string
+  sDate: string
+  eDate: string
+  name: string
+  imgsrc: string
+  curCard: number
+  goalCard: number
+  state: boolean
+  title: string
+}
+
+const capsuleList: CapsuleType[] = [
+  {
+    id: 1,
+    type: "classic",
+    sDate: "2023-01-01",
+    eDate: "2023-06-01",
+    name: "클래식1",
+    imgsrc: "capsule1",
+    curCard: 0,
+    goalCard: 0,
+    state: true,
+    title: "싸피 친구들 타임캡슐",
+  },
+  {
+    id: 3,
+    type: "memory",
+    sDate: "2023-01-01",
+    eDate: "2023-02-30",
+    name: "기록1",
+    imgsrc: "capsule10",
+    curCard: 0,
+    goalCard: 0,
+    state: true,
+    title: "퇴사하고 싶은 사람들",
+  },
+  {
+    id: 4,
+    type: "new",
+    sDate: "2023-08-04",
+    eDate: "2023-06-01",
+    name: "클래식1",
+    imgsrc: "capsule3",
+    curCard: 0,
+    goalCard: 0,
+    state: false,
+    title: "눈올때마다 기록하기",
+  },
+  {
+    id: 2,
+    type: "goal",
+    sDate: "2023-01-01",
+    eDate: "2024-01-01",
+    name: "목표1",
+    imgsrc: "capsule5",
+    curCard: 50,
+    goalCard: 100,
+    state: false,
+    title: "우리 1년 뒤 만나",
+  },
+]
+
+>>>>>>> Stashed changes
 const Box = styled.div`
   display: flex;
   flex-direction: column;
@@ -95,6 +162,7 @@ const TimecapsulePage = function () {
       <Box>
         <Title>진행 중인 타임캡슐</Title>
         {capsuleList.map((capsule) => (
+<<<<<<< Updated upstream
           <React.Fragment key={capsule.timecapsuleNo}>
             <Card
               onClick={() => {
@@ -166,6 +234,10 @@ const TimecapsulePage = function () {
               </UnregisteredCard>
             )}
             {/* {capsule.state === "openable" ? (
+=======
+          <React.Fragment key={capsule.id}>
+            {capsule.state ? (
+>>>>>>> Stashed changes
               <OpenableCard>
                 <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
@@ -183,7 +255,7 @@ const TimecapsulePage = function () {
                   </CapsuleTitle>
                 </div>
               </OpenableCard>
-            ) : capsule.state === "unregistered" ? (
+            ) : dataCheck(capsule.sDate) ? (
               <UnregisteredCard>
                 <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
@@ -225,6 +297,17 @@ const TimecapsulePage = function () {
       </Box>
     </>
   )
+}
+const dataCheck = (startDate: string): boolean => {
+  if (startDate) {
+    const targetDate = new Date(startDate)
+    const nowDate = new Date()
+    const diffDate = nowDate.getTime() - targetDate.getTime()
+    if (diffDate < 0) {
+      return true
+    }
+  }
+  return false
 }
 
 const calculateDday = (endDate: string) => {
