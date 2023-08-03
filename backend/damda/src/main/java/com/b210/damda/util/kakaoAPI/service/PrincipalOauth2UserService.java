@@ -61,8 +61,6 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String profileImage = oAuth2UserInfo.getImagePath();
         if(profileImage == null){
             profileImage = "https://damda.s3.ap-northeast-2.amazonaws.com/profile.jpg";
-        }else{
-
         }
 
         log.info(email);

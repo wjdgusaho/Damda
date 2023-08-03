@@ -1,6 +1,6 @@
 package com.b210.damda.util.weatherAPI.service;
 
-import com.b210.damda.domain.dto.weather.WeatherDTO;
+import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +33,7 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
     }
 
     @Override
-    public Mono<String> getNowWeatherInfos(WeatherDTO weatherDTO) throws Exception {
+    public Mono<String> getNowWeatherInfos(WeatherLocationDTO weatherDTO) throws Exception {
         //URL Encoding Issue로 인한 문자열 대체
 //        String EncodeServiceKey = serviceKey.replace("+", "%2B");
         String EncodeServiceKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8.toString());
