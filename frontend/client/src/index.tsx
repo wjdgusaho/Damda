@@ -8,14 +8,20 @@ import { Provider } from "react-redux"
 import Store from "./store/Store"
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration"
 import ReactModal from "react-modal"
+import { PersistGate } from "redux-persist/integration/react"
+import { persistStore } from "redux-persist"
 
 const container = document.getElementById("root")
 const root = createRoot(container!)
 ReactModal.setAppElement("#root")
 
+export let persistor = persistStore(Store)
+
 root.render(
   <Provider store={Store}>
-    <Main />
+    <PersistGate loading={null} persistor={persistor}>
+      <Main />
+    </PersistGate>
   </Provider>
 )
 
