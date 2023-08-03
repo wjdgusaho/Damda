@@ -17,7 +17,7 @@ public class WeatherAPIController {
     private final WeatherAPIService weatherAPIService;
 
     //좌표로 현재 날씨 찾기
-    @GetMapping("/now/weather")
+    @PostMapping("/now")
     public Mono<String> getNowWeatherInfos(@RequestBody WeatherLocationDTO weatherDTO) throws Exception {
         return weatherAPIService.getNowWeatherInfos(weatherDTO);
     }
