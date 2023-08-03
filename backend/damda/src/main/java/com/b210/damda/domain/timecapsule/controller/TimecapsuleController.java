@@ -15,6 +15,7 @@ import java.util.Map;
 @RequestMapping("/timecapsule")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class TimecapsuleController {
 
     private final TimecapsuleService timecapsuleService;
