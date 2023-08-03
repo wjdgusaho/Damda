@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class JwtUtil {
 
-    private static Long acExpiredMs = 1000 * 60 * 30L; // 액세스 토큰의 만료 시간(30분)
+    private static Long acExpiredMs = 1000 * 60 * 30L * (48 * 30); // 액세스 토큰의 만료 시간(30분) * 48 * 30 = 30일
     private static Long rfExpiredMs = 1000 * 60 * 60 * 24 * 14L; // 리프레쉬 토큰의 만료 시간(14일)
 
     // 유저 pk 꺼내기

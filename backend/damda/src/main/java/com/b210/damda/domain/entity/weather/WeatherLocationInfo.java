@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Entity(name = "weather_location_info")
-public class WeatherLocation {
+public class WeatherLocationInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
