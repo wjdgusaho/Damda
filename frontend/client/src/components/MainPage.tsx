@@ -19,7 +19,7 @@ import { useSelector } from "react-redux"
 4. 목표(달성률[백에서 계산해서 전송], 이름, 현재 용량, 최대 용량)
 */
 
-interface CapsuleType {
+export interface CapsuleType {
   timecapsuleNo: number
   type: string
   sDate: string
