@@ -3,10 +3,7 @@ package com.b210.damda.domain.dto.Timecapsule;
 import com.b210.damda.domain.entity.Timecapsule.Timecapsule;
 import com.b210.damda.domain.entity.Timecapsule.TimecapsuleCriteria;
 import com.b210.damda.domain.entity.Timecapsule.TimecapsulePenalty;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.List;
 @Data
 @Getter @Setter
 @Builder
+@AllArgsConstructor
 public class TimecapsuleCreateDTO {
 
     private String title;
@@ -32,6 +30,9 @@ public class TimecapsuleCreateDTO {
 
     private List<String> cardInputDay;
 
+    public TimecapsuleCreateDTO(){
+        
+    }
 
     public Timecapsule toEntity(){
         Timecapsule timecapsule = Timecapsule.builder()
