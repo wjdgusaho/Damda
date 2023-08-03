@@ -84,7 +84,7 @@ const Box = styled.div`
   font-family: "Pretendard";
   margin-top: 150px;
   box-shadow: 0px 4px 4px 4px rgb(0, 0, 0, 0.25);
-  color: ${(props) => props.theme.colorShadow};
+  color: ${(props) => props.theme.color900};
 `
 
 const HightLight = styled.div`
@@ -314,7 +314,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
             <InviteBtn>+</InviteBtn>
           </div>
         ) : null}
-        {/* 여기 일단 임시로 null */}
+        {/* 여기 일단 임시로 null (방장 아닐 때) */}
       </div>
       <div className="flex w-56 my-2">
         <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
