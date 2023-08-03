@@ -92,7 +92,38 @@ public class FriendController {
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
-
     }
 
+    // 친구 수락
+    @PatchMapping("request-accept")
+    public DataResponse<Map<String, Object>> friendAccept(@RequestBody FriendListDTO friendListDTO){
+        try{
+            friendService.friendReqeustAccept(friendListDTO.getUserNo());
+            return new DataResponse<>(200, "친구 신청 수락");
+        }catch (Exception e){
+            return new DataResponse<>(500 ,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
+    }
+
+    // 친구 거절
+    @PatchMapping("request-reject")
+    public DataResponse<Map<String, Object>> friendReject(@RequestBody FriendListDTO friendListDTO){
+        try{
+            friendService.friendReqeustReject(friendListDTO.getUserNo());
+            return new DataResponse<>(200, "친구 신청 거절");
+        }catch (Exception e){
+            return new DataResponse<>(500 ,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
+    }
+
+    // 친구 삭제
+    @PatchMapping("delete")
+    public DataResponse<Map<String, Object>> friendDelete(@RequestBody FriendListDTO friendListDTO){
+        try{
+            friendService.friendDelete(friendListDTO.getUserNo());
+            return new DataResponse<>(200, "친구 삭제 완료");
+        }catch (Exception e){
+            return new DataResponse<>(500 ,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        }
+    }
 }

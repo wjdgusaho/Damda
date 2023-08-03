@@ -1,14 +1,12 @@
 package com.b210.damda.domain.dto.Timecapsule;
 
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Data
 @Builder
 @Getter @Setter
+@AllArgsConstructor
 public class TimecapsuleShopDTO {
 
     private long timecapsuleNo;
@@ -17,4 +15,6 @@ public class TimecapsuleShopDTO {
     private long nowFileSize;
     private int capsuleIconNo;
 
+    public TimecapsuleShopDTO(){
+    }
 }

@@ -1,9 +1,6 @@
 package com.b210.damda.domain.dto.Timecapsule;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +10,7 @@ import java.sql.Timestamp;
 @Data
 @Builder
 @Getter @Setter
+@AllArgsConstructor
 public class SaveTimecapsuleListDTO {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +22,7 @@ public class SaveTimecapsuleListDTO {
     private int capsuleIconNo;
     private int goalCard;
 
+    public SaveTimecapsuleListDTO(){
+
+    }
 }
