@@ -167,6 +167,7 @@ const RecordCapsule = function () {
             type="radio"
             id="none"
             name="time"
+            defaultChecked
           />
           <RadioBtn htmlFor="none">없음</RadioBtn>
           <input
@@ -227,6 +228,7 @@ const RecordCapsule = function () {
             type="radio"
             id="weather_none"
             name="weather"
+            defaultChecked
           />
           <RadioBtn htmlFor="weather_none">없음</RadioBtn>
           <input
