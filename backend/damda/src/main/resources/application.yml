@@ -79,3 +79,6 @@ logging:
         util:
           EC2MetadataUtils: error
     org.hibernate.SQL: debug
+
+server:
+  address: 127.0.0.1
