@@ -8,7 +8,6 @@ import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import axios from "axios"
 import { serverUrl } from "../urls"
-import { CapsuleType } from "./MainPage"
 
 const calculateProgressPercentage = (startDate: string, endDate: string) => {
   const currentDate = new Date()
@@ -17,6 +16,70 @@ const calculateProgressPercentage = (startDate: string, endDate: string) => {
   const ratio = calculateDateDifference(startDate, dateString)
   return (ratio / total) * 100
 }
+
+type CapsuleType = {
+  id: number
+  type: string
+  sDate: string
+  eDate: string
+  name: string
+  imgsrc: string
+  curCard: number
+  goalCard: number
+  state: boolean
+  title: string
+}
+
+const capsuleList: CapsuleType[] = [
+  {
+    id: 1,
+    type: "classic",
+    sDate: "2023-01-01",
+    eDate: "2023-06-01",
+    name: "클래식1",
+    imgsrc: "capsule1",
+    curCard: 0,
+    goalCard: 0,
+    state: true,
+    title: "싸피 친구들 타임캡슐",
+  },
+  {
+    id: 3,
+    type: "memory",
+    sDate: "2023-01-01",
+    eDate: "2023-02-30",
+    name: "기록1",
+    imgsrc: "capsule10",
+    curCard: 0,
+    goalCard: 0,
+    state: true,
+    title: "퇴사하고 싶은 사람들",
+  },
+  {
+    id: 4,
+    type: "new",
+    sDate: "2023-08-04",
+    eDate: "2023-06-01",
+    name: "클래식1",
+    imgsrc: "capsule3",
+    curCard: 0,
+    goalCard: 0,
+    state: false,
+    title: "눈올때마다 기록하기",
+  },
+  {
+    id: 2,
+    type: "goal",
+    sDate: "2023-01-01",
+    eDate: "2024-01-01",
+    name: "목표1",
+    imgsrc: "capsule5",
+    curCard: 50,
+    goalCard: 100,
+    state: false,
+    title: "우리 1년 뒤 만나",
+  },
+]
 
 const Box = styled.div`
   display: flex;
