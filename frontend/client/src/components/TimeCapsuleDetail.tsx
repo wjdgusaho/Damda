@@ -107,6 +107,28 @@ const CapsuleImg = styled.div<{ capsuleIcon: string }>`
   height: 204px;
 `
 
+const ExitImg = styled.img`
+  position: absolute;
+  top: 30px;
+  right: 25px;
+  filter: drop-shadow(0px 4px 4px rgb(0, 0, 0, 0.4));
+`
+
+const TimerWrap = styled.div`
+  position: absolute;
+  color: #fff;
+  z-index: 1;
+  font-size: 36px;
+  top: -32px;
+  font-weight: 700;
+  filter: drop-shadow(4px 4px 4px rgb(0, 0, 0));
+  text-align: center;
+  div {
+    font-size: 15px;
+    font-weight: 300;
+  }
+`
+
 const CardBtn = styled.button`
   width: 270px;
   height: 54px;
@@ -234,18 +256,45 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const isCardAble = capsuleData.myInfo.cardAble
   const isFileAble = capsuleData.myInfo.fileAble
   const navigate = useNavigate()
+  const currentDate = new Date()
+  const oneDayLater = new Date(capsuleData.registDate)
+  oneDayLater.setHours(oneDayLater.getHours() + 24).toString()
+  const [timer, setTimer] = useState<string>("")
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentTime = new Date()
+      const timeDiffer = oneDayLater.getTime() - currentTime.getTime()
+      if (timeDiffer <= 0) {
+        clearInterval(interval)
+        alert("타임캡슐 등록완료") // 이거 나중에 바꾸기
+      } else {
+        const hours = Math.floor(timeDiffer / (1000 * 60 * 60))
+        const minutes = Math.floor(
+          (timeDiffer % (1000 * 60 * 60)) / (1000 * 60)
+        )
+        setTimer(`${hours}:${minutes}`)
+      }
+    }, 60000)
+  })
 
   return (
     <Box>
       <CapsuleImg capsuleIcon={capsuleData.capsuleIcon} className="grayscale" />
+      <ExitImg src="../../assets/icons/bin_dark.png" alt="bin" />
+      <TimerWrap>
+        {timer}
+        <div>뒤에 등록돼요</div>
+      </TimerWrap>
+
       <div className="text-2xl font-bold mt-28">
         {calculateDday(capsuleData.openDate)}
       </div>
-      <div className="text-2xl font-bold relative">
+      <div className="text-2xl font-bold relative mb-1">
         {capsuleData.title}
         <HightLight />
       </div>
-      <div>{capsuleData.description}</div>
+      <div style={{ fontSize: "14px" }}>{capsuleData.description}</div>
       <div className="my-3">
         <span className="font-bold">
           {endDateString} {capsuleData.criteriaInfo.timeKr}
@@ -254,7 +303,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       </div>
       <div>
         {isHost ? (
-          <div className="flex justify-center align-middle">
+          <div className="flex justify-center flex-wrap w-80">
             {capsuleData.partInfo.map((part, idx) => (
               <div key={part.userNo} className="flex flex-col">
                 {idx === 0 ? (
