@@ -61,7 +61,7 @@ public class EmailServiceImpl implements EmailService {
         msgg += "<img src='https://damda.s3.ap-northeast-2.amazonaws.com/EMAIL_CONFIRM/DAMDA.png' alt='footer' loading='lazy'>";
         msgg += "</td></tr></tbody></table>";
         message.setText(msgg, "utf-8", "html");//내용
-        message.setFrom(new InternetAddress("damdaCop@gmail.com","담다"));//보내는 사람
+        message.setFrom(new InternetAddress("damdaCop1@gmail.com","담다"));//보내는 사람
 
         return message;
     }
@@ -93,7 +93,7 @@ public class EmailServiceImpl implements EmailService {
         msgg += "<img src='https://damda.s3.ap-northeast-2.amazonaws.com/EMAIL_CONFIRM/DAMDA.png' alt='footer' loading='lazy'>";
         msgg += "</td></tr></tbody></table>";
         message.setText(msgg, "utf-8", "html");//내용
-        message.setFrom(new InternetAddress("damdaCop@gmail.com","담다"));//보내는 사람
+        message.setFrom(new InternetAddress("damdaCop1@gmail.com","담다"));//보내는 사람
 
         return message;
     }
