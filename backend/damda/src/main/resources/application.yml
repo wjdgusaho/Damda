@@ -60,7 +60,7 @@ spring:
               - account_email
               - profile_nickname
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            redirect-uri: https://i9b210.p.ssafy.io/login/oauth2/code/kakao
             client-name: Kakao
             client-authentication-method: POST
 
