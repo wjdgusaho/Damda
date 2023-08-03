@@ -65,10 +65,10 @@ const CapsuleTitle = styled.div`
   word-break: break-all;
 `
 
-const CapsuleImg = styled.div<{ capsulenum: string }>`
+const CapsuleImg = styled.div<{ capsuleNum: string }>`
   position: relative;
   background-image: url(${(props) =>
-    props.theme["capsule" + props.capsulenum]});
+    props.theme["capsule" + props.capsuleNum]});
   background-repeat: no-repeat;
   background-size: cover;
   width: 87px;
@@ -80,7 +80,6 @@ const DateDiv = styled.div`
   color: ${(props) => props.theme.colorCommon};
 `
 const TimecapsulePage = function () {
-  // const [capsuleList, setCapsuleList] = useState<CapsuleType[]>([])
   const navigate = useNavigate()
 
   const capsuleList = useSelector(
@@ -101,7 +100,7 @@ const TimecapsulePage = function () {
                 navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
               }}
             >
-              <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+              <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
               <div style={{ marginLeft: "15px" }}>
                 <CapsuleState>
                   {calculateDday(capsule.eDate)}
@@ -124,7 +123,7 @@ const TimecapsulePage = function () {
                   navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
                 }}
               >
-                <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+                <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
                 <div style={{ marginLeft: "15px" }}>
                   <CapsuleState>
                     오픈가능
@@ -148,7 +147,7 @@ const TimecapsulePage = function () {
                   navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
                 }}
               >
-                <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+                <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
                 <div style={{ marginLeft: "15px" }}>
                   <CapsuleState>
                     등록 전
@@ -165,7 +164,7 @@ const TimecapsulePage = function () {
                 </div>
               </UnregisteredCard>
             )}
-            {/* {capsule.state === "openable" ? (
+            {capsule.state ? (
               <OpenableCard>
                 <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
@@ -179,11 +178,11 @@ const TimecapsulePage = function () {
                     </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
-                    {capsule.title}
+                    {capsule.name}
                   </CapsuleTitle>
                 </div>
               </OpenableCard>
-            ) : capsule.state === "unregistered" ? (
+            ) : dataCheck(capsule.sDate) ? (
               <UnregisteredCard>
                 <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
@@ -197,7 +196,7 @@ const TimecapsulePage = function () {
                     </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
-                    {capsule.title}
+                    {capsule.name}
                   </CapsuleTitle>
                 </div>
               </UnregisteredCard>
@@ -215,7 +214,7 @@ const TimecapsulePage = function () {
                     </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
-                    {capsule.title}
+                    {capsule.name}
                   </CapsuleTitle>
                 </div>
               </Card>
@@ -225,6 +224,18 @@ const TimecapsulePage = function () {
       </Box>
     </>
   )
+}
+
+const dataCheck = (startDate: string): boolean => {
+  if (startDate) {
+    const targetDate = new Date(startDate)
+    const nowDate = new Date()
+    const diffDate = nowDate.getTime() - targetDate.getTime()
+    if (diffDate < 0) {
+      return true
+    }
+  }
+  return false
 }
 
 const calculateDday = (endDate: string) => {

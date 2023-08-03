@@ -29,21 +29,9 @@ export interface CapsuleType {
   capsuleIconNo: string
   curCard: number
   goalCard: number
+  state: boolean
+  imgsrc: string
 }
-
-const capsuleList: CapsuleType[] = []
-// const capsuleList: CapsuleType[] = [
-//   {
-//     id: 4,
-//     type: "new",
-//     sDate: "2023-01-01",
-//     eDate: "2023-06-01",
-//     name: "클래식1",
-//     imgsrc: "capsule1",
-//     curCard: 0,
-//     goalCard: 0,
-//   },
-// ]
 
 export const MainPage = function () {
   const slickRef = useRef<Slider>(null)
