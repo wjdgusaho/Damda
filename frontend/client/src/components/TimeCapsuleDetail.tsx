@@ -171,8 +171,8 @@ const InviteBtn = styled.button`
   line-height: 44px;
 `
 
-const FileInput = styled.input`
-  color: ${(props) => props.theme.color900};
+const FileInput = tw.input`
+  ml-1
 `
 
 const FriendBox = styled.div`
@@ -391,10 +391,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
             ) : null}
             {/* 여기 일단 임시로 null (방장 아닐 때) */}
           </div>
-          <div className="flex w-56 my-2">
+          <div className="flex w-56 my-2 mt-5">
             <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
-            <FileInput type="file" name="file" id="file" />
-            {/* <span>파일 첨부하기</span> */}
+            <FileInput
+              type="file"
+              name="file"
+              id="file"
+              accept="audio/*, video/*"
+            />
           </div>
           {isCardAble ? (
             <CardBtn
@@ -419,7 +423,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       ) : (
         <>
           <div
-            className="text-2xl font-normal mt-28 "
+            className="text-2xl font-normal mt-28"
             style={{ fontSize: "14px" }}
           >
             참여코드
