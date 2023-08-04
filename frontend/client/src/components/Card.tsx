@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { styled } from "styled-components"
 import html2canvas from "html2canvas"
 import StickerContainer from "./StickerContainer"
+import { useNavigate } from "react-router-dom"
 
 interface StickerType {
   no: number
@@ -70,6 +71,17 @@ const Card = function () {
   const [title, setTitle] = useState("오늘의 제목")
   const [cardContent, setCardContent] = useState("오늘의 내용을 입력해주세요!")
   const [countList, setCountList] = useState<{ no: number; url: string }[]>([])
+
+  const navigate = useNavigate()
+
+  const goBack = () => {
+    navigate(-1) // 뒤로가기
+  }
+
+  function imgChange() {
+    const fileinput = document.getElementById("cardImage") as HTMLInputElement
+    fileinput.click()
+  }
 
   const handleChange = (e: { target: { value: any } }) => {
     const value = e.target.value
@@ -162,10 +174,44 @@ const Card = function () {
 
   const StickerContainerArea = useRef<HTMLDivElement>(null)
 
+  const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
+  const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
+
+  const [cardImage, setCardImage] = useState<File | null>(null)
+  const imageRef = useRef<HTMLInputElement>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  const isFileSizeValid = (file: File | null) => {
+    return file !== null && file.size <= FILE_SIZE_LIMIT_BYTES
+  }
+
+  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] || null
+    if (file && isFileSizeValid(file)) {
+      setCardImage(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    } else {
+      if (imageRef.current) {
+        imageRef.current.value = ""
+      }
+      setCardImage(null)
+      alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
+    }
+  }
+
   return (
     <BackGround bgColor={bgcolor} className="overflow-hidden w-full h-full">
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
-        <img className="w-6 h-6" src="/assets/icons/x_dark.png" alt="X" />
+        <img
+          className="w-6 h-6"
+          onClick={goBack}
+          src="/assets/icons/x_dark.png"
+          alt="X"
+        />
         <img
           onClick={saveAsImageHandler}
           className="w-8 h-6"
@@ -216,14 +262,22 @@ const Card = function () {
               </InputResult>
             </label>
           </div>
-          <div className="flex w-40 h-40 items-center m-auto mt-4 bg-black bg-opacity-20 mb-1">
-            <img
-              className="w-8 h-8 m-auto opacity-80"
-              onClick={saveAsImageHandler}
-              src="/assets/icons/img_select.png"
-              alt="사진"
-            />
-          </div>
+          <img
+            src={
+              selectedImage ? selectedImage : "/assets/icons/cardImgSelect.png"
+            }
+            onClick={imgChange}
+            alt="카드이미지"
+            className="flex w-40 h-40 items-center m-auto mt-4 mb-1"
+          />
+          <input
+            id="cardImage"
+            name="cardImage"
+            type="file"
+            className="hidden"
+            onChange={handleImageChange}
+            ref={imageRef}
+          />
           <div className="text-center">
             <div className="relative text-center -mt-2">
               <label
