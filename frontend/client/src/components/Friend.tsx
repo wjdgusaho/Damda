@@ -58,8 +58,8 @@ export const List = function () {
           </TextStyle>
           <img
             className="w-72 m-auto mt-12"
-            src="/assets/Astronaut-4.png"
-            alt="Astronaut-3"
+            src="/assets/universe/Astronaut-4.png"
+            alt="Astronaut-4"
           />
           <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
         </div>
@@ -88,7 +88,7 @@ export const Request = function () {
       },
     })
       .then((response) => {
-        // setRequestList(response.data.data.result)
+        setRequestList(response.data.data.result)
       })
       .catch((error) => console.error(error))
   }, [])
@@ -101,8 +101,8 @@ export const Request = function () {
           </TextStyle>
           <img
             className="w-72 m-auto mt-12"
-            src="/assets/Astronaut-4.png"
-            alt="Astronaut-3"
+            src="/assets/universe/Astronaut-4.png"
+            alt="Astronaut-4"
           />
           <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
         </div>
