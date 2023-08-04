@@ -7,14 +7,6 @@ import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import tw from "tailwind-styled-components"
 
-const keywordRegex = /[a-zA-Z0-9가-힣]/
-
-const isValid = (str: string) => {
-  // '#' 를 제외한 모든 특수문자를 포함하고 있으면 true를 반환
-  const regex = /[^A-Za-z0-9가-힣_# ]/g
-  return !regex.test(str)
-}
-
 const UserSearch = function () {
   const [searchList, setSearchList] = useState<UserInfo[]>([])
   const [searchKeyword, setSearchKeyword] = useState("")
@@ -37,22 +29,29 @@ const UserSearch = function () {
   }
 
   const getResult = function () {
-    let type = ""
+    let type = "invalid"
+    // 1. "닉네임" + "#" + "숫자코드"
+    const pattern1 = /^[a-zA-Z가-힣0-9]+#[0-9]+$/
+
+    // 2. "#" + "숫자코드"
+    const pattern2 = /^#[0-9]+$/
+
+    // 3. "닉네임"
+    const pattern3 = /^[a-zA-Z가-힣0-9]+$/
+
+    if (pattern1.test(searchKeyword)) {
+      type = "all"
+    } else if (pattern2.test(searchKeyword)) {
+      type = "code"
+    } else if (pattern3.test(searchKeyword)) {
+      type = "nickname"
+    }
+
     if (!searchKeyword) {
       alert("검색어를 입력해주세요.")
-    } else if (!isValid(searchKeyword)) {
-      alert(
-        "특수문자는 '#'을 제외하고 허용하지 않습니다. 또는 검색어를 제대로 입력했는지 확인해주세요."
-      )
+    } else if (type === "invalid") {
+      alert("검색어 형식이 올바르지 않습니다.")
     } else {
-      if (searchKeyword.includes("#")) {
-        type = "all"
-      } else if (keywordRegex.test(searchKeyword)) {
-        type = "nickname"
-      } else {
-        type = "code"
-      }
-
       axios({
         method: "GET",
         url: serverUrl + "user/search",
@@ -66,8 +65,6 @@ const UserSearch = function () {
         },
       })
         .then((response) => {
-          console.log(response)
-
           setSearchList(response.data.data.result)
         })
         .catch((error) => console.error(error))
@@ -113,7 +110,7 @@ const UserSearch = function () {
                 검색하려는 친구가 없어요
               </p>
               <img
-                src="/assets/Astronaut-1.png"
+                src="/assets/universe/Astronaut-1.png"
                 alt="목록없음"
                 style={{ width: "15rem" }}
                 className="mt-5"
@@ -123,7 +120,7 @@ const UserSearch = function () {
           ) : (
             <div>
               {searchList.map((user: UserInfo) => (
-                <UserItem key={user.id} User={user} />
+                <UserItem key={user.userNo} User={user} />
               ))}
             </div>
           )}
@@ -145,7 +142,7 @@ const UserItem = function ({ User }: { User: UserInfo }) {
         Authorization: "Bearer " + token,
       },
       data: {
-        id: User.id,
+        id: User.userNo,
       },
     })
       .then((response) => {
@@ -164,15 +161,20 @@ const UserItem = function ({ User }: { User: UserInfo }) {
         className="rounded-full"
         style={{ width: "75px", height: "75px" }}
         src={User.profileImage}
-        alt="testimg"
+        alt="profile"
       />
       <p className="text-white ml-2">
         {User.nickname}
-        <span className="text-gray-400">#{User.id}</span>
+        <span className="text-gray-400">#{User.userNo}</span>
       </p>
       {(User.status === "" || User.status === "REJECTED") && (
         <Button $state={true} onClick={handleRequest}>
           추가
+        </Button>
+      )}
+      {User.status === "RECEIVED" && (
+        <Button $state={false} disabled={true}>
+          요청받음
         </Button>
       )}
       {User.status === "REQUESTED" && (
@@ -223,7 +225,7 @@ const CapsuleShadow = styled.div`
 `
 
 type UserInfo = {
-  id: number
+  userNo: number
   nickname: string
   profileImage: string
   status: string
