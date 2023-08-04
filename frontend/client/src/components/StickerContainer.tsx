@@ -27,7 +27,6 @@ const StickerContainer = (props: {
 
   // document 클릭 이벤트를 추가합니다.
   useEffect(() => {
-    console.log("리스트변경!!!!")
     if (props.countList.length > 0) {
       const targetSticker = document.getElementById(
         "sticker" + (props.countList.length - 1)

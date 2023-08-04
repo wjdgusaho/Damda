@@ -3,6 +3,7 @@ import { styled } from "styled-components"
 import html2canvas from "html2canvas"
 import StickerContainer from "./StickerContainer"
 import { useNavigate } from "react-router-dom"
+import Modal from "react-modal"
 
 interface StickerType {
   no: number
@@ -61,6 +62,24 @@ const stickerList: StickerType[] = [
     },
   },
 ]
+
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    borderRadius: "20px",
+    backgroundColor: "rgb(255, 255, 255)",
+    color: "rgb(93, 93, 93)",
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.733)",
+  },
+}
 
 const Card = function () {
   const [inputValue, setInputValue] = useState("")
@@ -203,12 +222,22 @@ const Card = function () {
     }
   }
 
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+
+  function openModal() {
+    setIsOpen(true)
+  }
+
+  function closeModal() {
+    setIsOpen(false)
+  }
+
   return (
     <BackGround bgColor={bgcolor} className="overflow-hidden w-full h-full">
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
         <img
           className="w-6 h-6"
-          onClick={goBack}
+          onClick={openModal}
           src="/assets/icons/x_dark.png"
           alt="X"
         />
@@ -219,6 +248,26 @@ const Card = function () {
           alt="체크"
         />
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="BUY Modal"
+      >
+        <div className="text-center">
+          작성된 내용이 저장되지 않아요.
+          <br />
+          그래도 취소하시겠어요?
+        </div>
+        <div className="flex mt-4 w-48 m-auto justify-between">
+          <ModalButton className="bg-black bg-opacity-0" onClick={closeModal}>
+            닫기
+          </ModalButton>
+          <ModalButton className="bg-black bg-opacity-10" onClick={goBack}>
+            작성취소
+          </ModalButton>
+        </div>
+      </Modal>
       <CardContainer
         bgColor={bgcolor}
         id="saveImgContainer"
@@ -355,6 +404,18 @@ const Card = function () {
     </BackGround>
   )
 }
+
+const ModalButton = styled.div`
+  font-family: "pretendard";
+  font-weight: 400;
+  font-size: 18px;
+  width: 80px;
+  height: 26px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: #000000b1;
+`
 
 interface BackGroundProps {
   bgColor: string
