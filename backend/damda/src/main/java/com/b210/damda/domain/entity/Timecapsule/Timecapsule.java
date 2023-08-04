@@ -44,7 +44,8 @@ public class Timecapsule {
 
     private int maxParticipant;
 
-    private int nowParticipant;
+    @Column(columnDefinition = "기본은 방장 1명")
+    private int nowParticipant = 1;
 
     private String inviteCode;
 
