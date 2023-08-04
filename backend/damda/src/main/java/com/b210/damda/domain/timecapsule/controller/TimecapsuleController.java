@@ -69,6 +69,9 @@ public class TimecapsuleController {
     }
 
 
+    /*
+        타임캡슐 상세페이지
+     */
     @GetMapping("detail")
     public DataResponse<Map<String, Object>> timecapsuleDetail(@RequestParam  Map<String, Object> data){
 

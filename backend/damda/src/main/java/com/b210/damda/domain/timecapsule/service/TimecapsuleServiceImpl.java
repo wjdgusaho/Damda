@@ -296,6 +296,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
                 );
 
+        //삭제시간이 있다면
         if(myMapping.getDeleteDate() != null){
             if(myMapping.isSave())  throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
             else  throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
@@ -316,6 +317,15 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 participant.stream().map(TimecapsuleMapping::toDetailPartInfoDTO)
                         .collect(Collectors.toList())
         );
+
+        //캡슐 요일추가
+        List<CirteriaDayDTO> cirteriaDays = cirteriaDayRepository.findByTimecapsuleCriteriaCriteriaId(
+                timecapsuleDetail.getCriteriaInfo().getCriteriaId())
+                .stream()
+                .map(CirteriaDay::toCirteriaDayDTO).collect(Collectors.toList());
+
+        if(cirteriaDays.isEmpty()) timecapsuleDetail.getCriteriaInfo().setCirteriaDays(null);
+        else timecapsuleDetail.getCriteriaInfo().setCirteriaDays(cirteriaDays);
 
         return timecapsuleDetail;
     }
