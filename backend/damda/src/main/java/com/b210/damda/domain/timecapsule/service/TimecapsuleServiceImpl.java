@@ -323,7 +323,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     public String createKey() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        int length = 6;
+        int length = 10;
         SecureRandom rnd = new SecureRandom();
 
         StringBuilder key = new StringBuilder(length);
