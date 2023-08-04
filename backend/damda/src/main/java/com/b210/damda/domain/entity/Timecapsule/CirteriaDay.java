@@ -1,6 +1,8 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
+import com.b210.damda.domain.dto.Timecapsule.CirteriaDayDTO;
 import com.b210.damda.domain.entity.Timecapsule.TimecapsuleCriteria;
+import com.b210.damda.domain.timecapsule.repository.CirteriaDayRepository;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,4 +22,12 @@ public class CirteriaDay {
     private String dayKor;
 
     private String dayEn;
+
+    public CirteriaDayDTO toCirteriaDayDTO(){
+        return CirteriaDayDTO.builder()
+                .dayKr(this.dayKor)
+                .dayEn(this.dayEn)
+                .build();
+
+    }
 }
