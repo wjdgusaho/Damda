@@ -8,7 +8,7 @@ import axios from "axios"
 import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
-import { textAlign } from "html2canvas/dist/types/css/property-descriptors/text-align"
+import "./datePicker.css"
 
 interface DataType {
   timecapsuleNo: number
@@ -171,6 +171,17 @@ const InviteBtn = styled.button`
   line-height: 44px;
 `
 
+const FileInput = styled.input`
+  color: ${(props) => props.theme.color900};
+`
+
+const FriendBox = styled.div`
+  width: 17rem;
+  background-color: ${(props) => props.theme.color100};
+  border-radius: 50px;
+  padding: 30px;
+`
+
 const TimeCapsuleDetail = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
@@ -263,6 +274,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const oneDayLater = new Date(capsuleData.registDate)
   oneDayLater.setHours(oneDayLater.getHours() + 24).toString()
   const [timer, setTimer] = useState<string>("")
+  const [isInvite, setIsInvite] = useState(true)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -290,112 +302,153 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         {timer}
         <div className="-mt-1">뒤에 등록돼요</div>
       </TimerWrap>
-
-      <div className="text-2xl font-bold mt-28">
-        {calculateDday(capsuleData.openDate)}
-      </div>
-      <Title className="text-2xl font-bold relative mb-1">
-        {capsuleData.title}
-      </Title>
-      <div className="text-2xl font-bold relative mb-1">
-        <div>{capsuleData.title}</div>
-        <HightLight />
-      </div>
-      <div style={{ fontSize: "14px" }}>{capsuleData.description}</div>
-      <div className="my-3">
-        <span className="font-bold">
-          {endDateString} {capsuleData.criteriaInfo.timeKr}
-        </span>{" "}
-        에 공개됩니다
-      </div>
-      <div>
-        {isHost ? (
-          <div className="flex justify-center flex-wrap w-80">
-            {capsuleData.partInfo.map((part, idx) => (
-              <div key={part.userNo} className="flex flex-col">
-                {idx === 0 ? (
-                  <>
-                    <div className="relative">
-                      <img
-                        style={{
-                          backgroundColor: "#fff",
-                          borderRadius: "50%",
-                          width: "44px",
-                          height: "44px",
-                          boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
-                          margin: "8px",
-                        }}
-                        src={part.profileImage}
-                        alt="profilepic"
-                      />
-                      <img
-                        src="../../assets/icons/crown.png"
-                        alt="crown"
-                        width="27px"
-                        height="22px"
-                        style={{
-                          position: "absolute",
-                          top: "-7px",
-                          left: "16px",
-                        }}
-                      />
-                    </div>
-                    <span style={{ fontSize: "12px", textAlign: "center" }}>
-                      {part.nickname}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <div className="relative">
-                      <img
-                        style={{
-                          backgroundColor: "#fff",
-                          borderRadius: "50%",
-                          width: "44px",
-                          height: "44px",
-                          boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
-                          margin: "8px",
-                        }}
-                        src={part.profileImage}
-                        alt="profilepic"
-                      />
-                    </div>
-                    <span style={{ fontSize: "12px", textAlign: "center" }}>
-                      {part.nickname}
-                    </span>
-                  </>
-                )}
-              </div>
-            ))}
-            <InviteBtn>+</InviteBtn>
+      {isInvite ? (
+        <>
+          <div className="text-2xl font-bold mt-28">
+            {calculateDday(capsuleData.openDate)}
           </div>
-        ) : null}
-        {/* 여기 일단 임시로 null (방장 아닐 때) */}
-      </div>
-      <div className="flex w-56 my-2">
-        <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
-        <span>파일 첨부하기</span>
-      </div>
-      {isCardAble ? (
-        <CardBtn
-          onClick={() => {
-            navigate("/card")
-          }}
-        >
-          카드 작성하기
-        </CardBtn>
+          <Title className="text-2xl font-bold relative mb-1">
+            {capsuleData.title}
+          </Title>
+          <div className="text-2xl font-bold relative mb-1">
+            <div>{capsuleData.title}</div>
+            <HightLight />
+          </div>
+          <div style={{ fontSize: "14px" }}>{capsuleData.description}</div>
+          <div className="my-3">
+            <span className="font-bold">
+              {endDateString} {capsuleData.criteriaInfo.timeKr}
+            </span>{" "}
+            에 공개됩니다
+          </div>
+          <div>
+            {isHost ? (
+              <div className="flex justify-center flex-wrap w-80">
+                {capsuleData.partInfo.map((part, idx) => (
+                  <div key={part.userNo} className="flex flex-col">
+                    {idx === 0 ? (
+                      <>
+                        <div className="relative">
+                          <img
+                            style={{
+                              backgroundColor: "#fff",
+                              borderRadius: "50%",
+                              width: "44px",
+                              height: "44px",
+                              boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                              margin: "8px",
+                            }}
+                            src={part.profileImage}
+                            alt="profilepic"
+                          />
+                          <img
+                            src="../../assets/icons/crown.png"
+                            alt="crown"
+                            width="27px"
+                            height="22px"
+                            style={{
+                              position: "absolute",
+                              top: "-7px",
+                              left: "16px",
+                            }}
+                          />
+                        </div>
+                        <span style={{ fontSize: "12px", textAlign: "center" }}>
+                          {part.nickname}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="relative">
+                          <img
+                            style={{
+                              backgroundColor: "#fff",
+                              borderRadius: "50%",
+                              width: "44px",
+                              height: "44px",
+                              boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                              margin: "8px",
+                            }}
+                            src={part.profileImage}
+                            alt="profilepic"
+                          />
+                        </div>
+                        <span style={{ fontSize: "12px", textAlign: "center" }}>
+                          {part.nickname}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                ))}
+                <InviteBtn
+                  onClick={() => {
+                    setIsInvite(false)
+                  }}
+                >
+                  +
+                </InviteBtn>
+              </div>
+            ) : null}
+            {/* 여기 일단 임시로 null (방장 아닐 때) */}
+          </div>
+          <div className="flex w-56 my-2">
+            <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
+            <FileInput type="file" name="file" id="file" />
+            {/* <span>파일 첨부하기</span> */}
+          </div>
+          {isCardAble ? (
+            <CardBtn
+              onClick={() => {
+                navigate("/card")
+              }}
+            >
+              카드 작성하기
+            </CardBtn>
+          ) : (
+            <CardCompleteBtn>카드 작성완료</CardCompleteBtn>
+          )}
+          <BackBtn
+            onClick={() => {
+              navigate(-1)
+            }}
+            className="my-5"
+          >
+            돌아가기
+          </BackBtn>
+        </>
       ) : (
-        <CardCompleteBtn>카드 작성완료</CardCompleteBtn>
+        <>
+          <div
+            className="text-2xl font-normal mt-28 "
+            style={{ fontSize: "14px" }}
+          >
+            참여코드
+          </div>
+          {/* 임시 더미 코드 */}
+          <Title className="text-2xl font-bold relative mb-1">D12NR5</Title>
+          <div className="text-2xl font-bold relative mb-1">
+            <div>D12NR5</div>
+            <HightLight />
+          </div>
+          <FriendBox className="flex flex-col mt-2">
+            <div>친구목록</div>
+            생각이 많은 건 말이야 당연히 해야 할 일이야 나에겐 우리가 지금
+            일순위야 안전한 유리병을 핑계로 바람을 가둬 둔 것 같지만 기억나?
+            그날의 우리가 잡았던 그 손엔 말이야 설레임보다 커다란 믿음이 담겨서
+            난 함박웃음을 지었지만 울음이 날 것도 같았어 소중한 건 언제나
+            두려움이니까
+          </FriendBox>
+          <BackBtn
+            onClick={() => {
+              setIsInvite(true)
+            }}
+            className="my-5"
+          >
+            돌아가기
+          </BackBtn>
+        </>
       )}
-
-      <BackBtn
-        onClick={() => {
-          navigate(-1)
-        }}
-        className="my-5"
-      >
-        돌아가기
-      </BackBtn>
+      {/* 임시로 일단 이렇게 */}
     </Box>
   )
 }
