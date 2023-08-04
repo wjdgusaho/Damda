@@ -135,14 +135,14 @@ const UserItem = function ({ User }: { User: UserInfo }) {
 
   const handleRequest = function (event: React.MouseEvent<HTMLButtonElement>) {
     axios({
-      method: "POST",
-      url: serverUrl + "user/request-friend",
+      method: "PATCH",
+      url: serverUrl + "friend/request",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
       },
       data: {
-        id: User.userNo,
+        userNo: User.userNo,
       },
     })
       .then((response) => {
