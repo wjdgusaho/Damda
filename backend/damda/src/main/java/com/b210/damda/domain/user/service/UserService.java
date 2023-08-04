@@ -317,7 +317,7 @@ public class UserService {
                 if(!isFriend) {
                     // 유저가 현재 유저의 친구가 아니라면
                     UserSearchResultDTO resultDTO = new UserSearchResultDTO();
-                    resultDTO.setId(searchUser.getUserNo());
+                    resultDTO.setUserNo(searchUser.getUserNo());
                     resultDTO.setNickname(searchUser.getNickname());
                     resultDTO.setProfileImage(searchUser.getProfileImage());
                     resultDTO.setStatus("");
@@ -355,7 +355,7 @@ public class UserService {
                 }
                 if(result.size()==0){
                     UserSearchResultDTO build = UserSearchResultDTO.builder()
-                            .id(user.getUserNo())
+                            .userNo(user.getUserNo())
                             .nickname(user.getNickname())
                             .profileImage(user.getProfileImage())
                             .status("").build();
@@ -395,7 +395,7 @@ public class UserService {
                         }
                         if(result.size()==0){
                             UserSearchResultDTO build = UserSearchResultDTO.builder()
-                                    .id(targetUser.getUserNo())
+                                    .userNo(targetUser.getUserNo())
                                     .nickname(targetUser.getNickname())
                                     .profileImage(targetUser.getProfileImage())
                                     .status("").build();
