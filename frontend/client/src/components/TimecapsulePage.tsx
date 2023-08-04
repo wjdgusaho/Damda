@@ -8,7 +8,6 @@ import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import axios from "axios"
 import { serverUrl } from "../urls"
-import { CapsuleType } from "./MainPage"
 
 const calculateProgressPercentage = (startDate: string, endDate: string) => {
   const currentDate = new Date()
@@ -17,6 +16,70 @@ const calculateProgressPercentage = (startDate: string, endDate: string) => {
   const ratio = calculateDateDifference(startDate, dateString)
   return (ratio / total) * 100
 }
+
+type CapsuleType = {
+  id: number
+  type: string
+  sDate: string
+  eDate: string
+  name: string
+  imgsrc: string
+  curCard: number
+  goalCard: number
+  state: boolean
+  title: string
+}
+
+const capsuleList: CapsuleType[] = [
+  {
+    id: 1,
+    type: "classic",
+    sDate: "2023-01-01",
+    eDate: "2023-06-01",
+    name: "클래식1",
+    imgsrc: "capsule1",
+    curCard: 0,
+    goalCard: 0,
+    state: true,
+    title: "싸피 친구들 타임캡슐",
+  },
+  {
+    id: 3,
+    type: "memory",
+    sDate: "2023-01-01",
+    eDate: "2023-02-30",
+    name: "기록1",
+    imgsrc: "capsule10",
+    curCard: 0,
+    goalCard: 0,
+    state: true,
+    title: "퇴사하고 싶은 사람들",
+  },
+  {
+    id: 4,
+    type: "new",
+    sDate: "2023-08-04",
+    eDate: "2023-06-01",
+    name: "클래식1",
+    imgsrc: "capsule3",
+    curCard: 0,
+    goalCard: 0,
+    state: false,
+    title: "눈올때마다 기록하기",
+  },
+  {
+    id: 2,
+    type: "goal",
+    sDate: "2023-01-01",
+    eDate: "2024-01-01",
+    name: "목표1",
+    imgsrc: "capsule5",
+    curCard: 50,
+    goalCard: 100,
+    state: false,
+    title: "우리 1년 뒤 만나",
+  },
+]
 
 const Box = styled.div`
   display: flex;
@@ -65,10 +128,10 @@ const CapsuleTitle = styled.div`
   word-break: break-all;
 `
 
-const CapsuleImg = styled.div<{ capsulenum: string }>`
+const CapsuleImg = styled.div<{ capsuleNum: string }>`
   position: relative;
   background-image: url(${(props) =>
-    props.theme["capsule" + props.capsulenum]});
+    props.theme["capsule" + props.capsuleNum]});
   background-repeat: no-repeat;
   background-size: cover;
   width: 87px;
@@ -80,7 +143,6 @@ const DateDiv = styled.div`
   color: ${(props) => props.theme.colorCommon};
 `
 const TimecapsulePage = function () {
-  // const [capsuleList, setCapsuleList] = useState<CapsuleType[]>([])
   const navigate = useNavigate()
 
   const capsuleList = useSelector(
@@ -101,7 +163,7 @@ const TimecapsulePage = function () {
                 navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
               }}
             >
-              <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+              <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
               <div style={{ marginLeft: "15px" }}>
                 <CapsuleState>
                   {calculateDday(capsule.eDate)}
@@ -124,7 +186,7 @@ const TimecapsulePage = function () {
                   navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
                 }}
               >
-                <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+                <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
                 <div style={{ marginLeft: "15px" }}>
                   <CapsuleState>
                     오픈가능
@@ -148,7 +210,7 @@ const TimecapsulePage = function () {
                   navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
                 }}
               >
-                <CapsuleImg capsulenum={capsule.capsuleIconNo} />
+                <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
                 <div style={{ marginLeft: "15px" }}>
                   <CapsuleState>
                     등록 전
@@ -165,7 +227,7 @@ const TimecapsulePage = function () {
                 </div>
               </UnregisteredCard>
             )}
-            {/* {capsule.state === "openable" ? (
+            {capsule.state ? (
               <OpenableCard>
                 <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
@@ -179,11 +241,11 @@ const TimecapsulePage = function () {
                     </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
-                    {capsule.title}
+                    {capsule.name}
                   </CapsuleTitle>
                 </div>
               </OpenableCard>
-            ) : capsule.state === "unregistered" ? (
+            ) : dataCheck(capsule.sDate) ? (
               <UnregisteredCard>
                 <CapsuleImg capsuleNum={capsule.imgsrc} />
                 <div style={{ marginLeft: "15px" }}>
@@ -197,7 +259,7 @@ const TimecapsulePage = function () {
                     </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
-                    {capsule.title}
+                    {capsule.name}
                   </CapsuleTitle>
                 </div>
               </UnregisteredCard>
@@ -215,16 +277,28 @@ const TimecapsulePage = function () {
                     </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
-                    {capsule.title}
+                    {capsule.name}
                   </CapsuleTitle>
                 </div>
               </Card>
-            )} */}
+            )}
           </React.Fragment>
         ))}
       </Box>
     </>
   )
+}
+
+const dataCheck = (startDate: string): boolean => {
+  if (startDate) {
+    const targetDate = new Date(startDate)
+    const nowDate = new Date()
+    const diffDate = nowDate.getTime() - targetDate.getTime()
+    if (diffDate < 0) {
+      return true
+    }
+  }
+  return false
 }
 
 const calculateDday = (endDate: string) => {

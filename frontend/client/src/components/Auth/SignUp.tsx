@@ -57,7 +57,7 @@ const customStyles = {
   },
 }
 
-const ModalButton = styled.div`
+const ModalButton = styled.button`
   font-family: "pretendard";
   font-weight: 400;
   font-size: 18px;
@@ -207,29 +207,33 @@ export const SignUp = function () {
 
   function handleSubmitCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    axios({
-      method: "POST",
-      url: serverUrl + "user/check-email",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: {
-        email: userdata.email,
-        code: userCode,
-      },
-    })
-      .then((response) => {
-        const code = response.data.code
-        alert(response.data.message)
-        if (code === 200) {
-          setGetCode(false)
-          setuserEmailMatch(3)
-          setUserCode("success" + successCode.toString())
-        }
+    if (!userCode) {
+      alert("인증번호를 입력해주세요.")
+    } else {
+      axios({
+        method: "POST",
+        url: serverUrl + "user/check-email",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          email: userdata.email,
+          code: userCode,
+        },
       })
-      .catch((error) => {
-        console.error(error)
-      })
+        .then((response) => {
+          const code = response.data.code
+          alert(response.data.message)
+          if (code === 200) {
+            setGetCode(false)
+            setuserEmailMatch(4)
+            setUserCode("success" + successCode.toString())
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    }
   }
 
   function checkEmailOverlap(event: React.MouseEvent<HTMLButtonElement>) {
@@ -242,27 +246,26 @@ export const SignUp = function () {
     ) {
       setuserEmailMessage("이메일 형식으로 입력해주세요.")
     } else {
+      setuserEmailMatch(2)
       axios({
         method: "POST",
         url: serverUrl + "user/send-email",
         data: { email: userdata.email },
       })
-        .then(async () => {
-          setuserEmailMessage("")
-          setuserEmailMatch(2)
-          setGetCode(true)
-          await sleep(1)
-          startCountdown(10)
+        .then(async (response) => {
+          if (response.data.code === 200) {
+            setuserEmailMessage("")
+            setuserEmailMatch(3)
+            setGetCode(true)
+            await sleep(1)
+            startCountdown(10)
+          } else {
+            setuserEmailMatch(1)
+            alert(response.data.message)
+          }
         })
         .catch((error) => {
-          // // 이메일 사용 불가
-          // if (error.response.status === 409) {
-          //   setuserEmailMatch(1)
-          // }
-          // // 서버오류
-          // else {
           alert("중복확인에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
-          // }
         })
     }
   }
@@ -342,11 +345,11 @@ export const SignUp = function () {
           />
         </svg>
       </Link>
-      {userEmailMatch === 3 ? (
+      {userEmailMatch === 4 ? (
         <div className="p-2 px-4 text-sm text-green-500 w-24 relative top-40 left-48">
           인증완료
         </div>
-      ) : userEmailMatch === 2 ? (
+      ) : userEmailMatch === 3 ? (
         <button
           className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-28 relative top-40 left-48"
           onClick={() => {
@@ -355,6 +358,10 @@ export const SignUp = function () {
         >
           이메일인증
         </button>
+      ) : userEmailMatch === 2 ? (
+        <div className="p-2 px-4 text-sm w-48 relative top-40 left-48">
+          인증번호 전송중...
+        </div>
       ) : userEmailMatch === 1 ? (
         <button
           className="p-2 px-4 text-sm rounded-full shadow-md bg-red-500 w-24 relative top-40 left-48"
@@ -392,7 +399,7 @@ export const SignUp = function () {
             onChange={handleCodeChange}
           />
           <div className="flex justify-between mt-5">
-            <ModalButton>확인</ModalButton>
+            <ModalButton onSubmit={() => handleSubmitCode}>확인</ModalButton>
             <ModalButton onClick={() => handleClose()}>닫기</ModalButton>
           </div>
         </ModalForm>
@@ -401,10 +408,13 @@ export const SignUp = function () {
         <div className="w-full justify-center">
           <img
             className="mx-auto"
-            style={{ backgroundColor: "#AEB8E2", borderRadius: "50%" }}
+            style={{
+              backgroundColor: "#AEB8E2",
+              borderRadius: "50%",
+              width: "100px",
+              height: "100px",
+            }}
             src={selectedImage ? selectedImage : "/defalutprofile.png"}
-            width={100}
-            height={100}
             alt="profile"
           />
           <img

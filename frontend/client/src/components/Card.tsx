@@ -1,6 +1,7 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { styled } from "styled-components"
 import html2canvas from "html2canvas"
+import StickerContainer from "./StickerContainer"
 
 interface StickerType {
   no: number
@@ -68,6 +69,7 @@ const Card = function () {
   const [stickerNo, setSticker] = useState(stickerList[0].no)
   const [title, setTitle] = useState("오늘의 제목")
   const [cardContent, setCardContent] = useState("오늘의 내용을 입력해주세요!")
+  const [countList, setCountList] = useState<{ no: number; url: string }[]>([])
 
   const handleChange = (e: { target: { value: any } }) => {
     const value = e.target.value
@@ -96,6 +98,33 @@ const Card = function () {
   const matchingSticker = stickerList.find(
     (sticker) => sticker.no === stickerNo
   )
+
+  const onAddCardSticker = (stickerImage: string) => {
+    console.log("스티커클릭", countList)
+
+    // 새로운 스티커 정보 생성
+    const newSticker = { no: countList.length, url: stickerImage }
+
+    // 기존 스티커 배열과 새로운 스티커 정보를 합쳐서 새로운 배열을 만듦
+    const updatedStickers = [...countList, newSticker]
+
+    // 새로운 배열을 상태로 설정
+    setCountList(updatedStickers)
+  }
+  const onDeleteCardSticker = (no: number) => {
+    console.log("스티커삭제", countList)
+
+    // countList에서 no에 해당하는 원소를 제외한 새로운 배열 생성
+    const updatedStickers = countList.filter((sticker) => sticker.no !== no)
+
+    // 새로운 배열을 상태로 설정
+    setCountList(updatedStickers)
+  }
+
+  useEffect(() => {
+    // countList가 변경되면 호출됨
+    console.log(countList)
+  }, [countList])
 
   const bgColorList = [
     "white",
@@ -131,8 +160,10 @@ const Card = function () {
     })
   }
 
+  const StickerContainerArea = useRef<HTMLDivElement>(null)
+
   return (
-    <BackGround bgColor={bgcolor}>
+    <BackGround bgColor={bgcolor} className="overflow-hidden w-full h-full">
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
         <img className="w-6 h-6" src="/assets/icons/x_dark.png" alt="X" />
         <img
@@ -162,51 +193,60 @@ const Card = function () {
             <Text font={font}>2023.02.03</Text>
           </div>
         </div>
-        <div className="relative text-center -mt-2">
-          <Title
-            id="inputTitle"
-            className="w-full h-4 opacity-0 overflow-hidden"
-            type="text"
-            value={inputValue}
-            onChange={handleChange}
-            placeholder={inputValue ? "" : "오늘의 제목"}
-            width={inputWidth}
-            font={font}
-            maxLength={15}
-          />
-          <TitleBG width={inputWidth} className="m-auto"></TitleBG>
-          <label
-            className="block text-center -mt-6 absolute w-full"
-            htmlFor="inputTitle"
-          >
-            <InputResult font={font}>{title}</InputResult>
-          </label>
-        </div>
-        <div className="flex w-40 h-40 items-center m-auto mt-4 bg-black bg-opacity-20 mb-1">
-          <img
-            className="w-8 h-8 m-auto opacity-80"
-            onClick={saveAsImageHandler}
-            src="/assets/icons/img_select.png"
-            alt="사진"
-          />
-        </div>
-        <div className="text-center">
+        <div ref={StickerContainerArea}>
           <div className="relative text-center -mt-2">
-            <label
-              className="block text-center opacity-70 !text-xs mt-2 absolute w-full"
-              htmlFor="inputContent"
-            >
-              <InputResult font={font}>{cardContent}</InputResult>
-            </label>
-            <Content
-              className="bg-white opacity-0 !text-xs mt-2 w-full"
-              rows={5}
-              maxLength={150}
+            <Title
+              id="inputTitle"
+              className="w-full h-4 opacity-0 overflow-hidden"
+              type="text"
+              value={inputValue}
+              onChange={handleChange}
+              placeholder={inputValue ? "" : "오늘의 제목"}
+              width={inputWidth}
               font={font}
-              id="inputContent"
-              onChange={handleChangeContent}
-            ></Content>
+              maxLength={15}
+            />
+            <TitleBG width={inputWidth} className="m-auto"></TitleBG>
+            <label
+              className="block text-center -mt-6 absolute w-full"
+              htmlFor="inputTitle"
+            >
+              <InputResult className="ml-2" font={font}>
+                {title}
+              </InputResult>
+            </label>
           </div>
+          <div className="flex w-40 h-40 items-center m-auto mt-4 bg-black bg-opacity-20 mb-1">
+            <img
+              className="w-8 h-8 m-auto opacity-80"
+              onClick={saveAsImageHandler}
+              src="/assets/icons/img_select.png"
+              alt="사진"
+            />
+          </div>
+          <div className="text-center">
+            <div className="relative text-center -mt-2">
+              <label
+                className="block text-center opacity-70 !text-xs mt-2 absolute w-full ml-2"
+                htmlFor="inputContent"
+              >
+                <InputResult font={font}>{cardContent}</InputResult>
+              </label>
+              <Content
+                className="bg-white opacity-0 !text-xs mt-2 w-full"
+                rows={5}
+                maxLength={150}
+                font={font}
+                id="inputContent"
+                onChange={handleChangeContent}
+              ></Content>
+            </div>
+          </div>
+          <StickerContainer
+            countList={countList}
+            onDeleteCardSticker={onDeleteCardSticker}
+            StickerContainerArea={StickerContainerArea}
+          />
         </div>
       </CardContainer>
       <div className="flex justify-between p-2 w-80 m-auto">
@@ -235,6 +275,7 @@ const Card = function () {
           {stickerList.length !== 0 &&
             stickerList.map((s: StickerType) => (
               <img
+                key={s.no}
                 className="w-16 m-3"
                 src={s.icon}
                 onClick={() => selectSticker(s.no)}
@@ -251,6 +292,7 @@ const Card = function () {
                   key={index}
                   src={stickerImage}
                   alt={`Sticker ${index + 1}`}
+                  onClick={() => onAddCardSticker(stickerImage)}
                 />
               )
             )}
@@ -296,6 +338,7 @@ const Title = styled.input<TitleProps>`
 `
 const InputResult = styled.div<ContentProps>`
   font-family: ${(props) => props.font};
+  width: 330px;
 `
 
 const TitleBG = styled.div<TitleProps>`
