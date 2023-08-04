@@ -308,6 +308,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if(timecapsuleDetail.getCapsuleType().equals("GOAL")){
            timecapsuleDetail.setNowCard(timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsuleNo));
         }
+
         //해당 캡슐의 나의 정보 세팅
         timecapsuleDetail.setMyInfo(myMapping.toDetailMyInfoDTO());
         //참가자 세팅

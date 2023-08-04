@@ -64,6 +64,7 @@ public class TimecapsuleController {
 
         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 생성 완료");
         response.setData(result);
+
         return response;
     }
 

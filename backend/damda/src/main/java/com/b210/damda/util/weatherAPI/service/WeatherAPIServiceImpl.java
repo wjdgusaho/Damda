@@ -1,6 +1,9 @@
 package com.b210.damda.util.weatherAPI.service;
 
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -16,8 +20,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 기상청 데이터 :
- * 현재 지역의 날씨 현황
+ * 기상청 데이터 API 연동
+ * 현재 지역의 날씨 현황 수집
  */
 @Service
 @Slf4j
@@ -33,7 +37,7 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
     }
 
     @Override
-    public Mono<String> getNowWeatherInfos(WeatherLocationDTO weatherDTO) throws Exception {
+    public JsonNode getNowWeatherInfos(WeatherLocationDTO weatherDTO) throws Exception {
         //URL Encoding Issue로 인한 문자열 대체
 //        String EncodeServiceKey = serviceKey.replace("+", "%2B");
         String EncodeServiceKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8.toString());
@@ -65,7 +69,7 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
         String baseDate = tempBaseDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         //요소들 조합하여 최종 요청 URL 작성
-        String mainUrl = UriComponentsBuilder.fromHttpUrl(baseUrl)
+        URI mainUrl = UriComponentsBuilder.fromHttpUrl(baseUrl)
                 .queryParam("serviceKey", EncodeServiceKey)
                 .queryParam("pageNo", pageNo)
                 .queryParam("numOfRows", numOfRows)
@@ -74,7 +78,7 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
                 .queryParam("base_time", baseTime)
                 .queryParam("nx", nx)
                 .queryParam("ny", ny)
-                .build(true).toUriString();
+                .build(true).toUri();
 
         Mono<String> response = WEBCLIENT.get()
                 .uri(mainUrl)
@@ -84,7 +88,23 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
 
         log.info("현재 좌표 날씨 받아오는 중 . . . : {}", mainUrl);
 
-        return response;
+        return convertWeatherDTO(response);
     }
+
+    /**
+     * 기상청 API에서 받아온 값을 block하고,
+     * 읽을 수 있는 json 타입으로 변환하여 동기적으로 전송
+     */
+    @Override
+    public JsonNode convertWeatherDTO(Mono<String> response) throws JsonProcessingException {
+        // JSON 문자열을 JSON 객체로 파싱, response.block()을 통해 결과값이 나올때까지 대기
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(response.block());
+
+        // "body" 부분 추출
+        JsonNode bodyNode = jsonNode.get("response").get("body").get("items");
+        return bodyNode;
+    }
+
 
 }
