@@ -317,6 +317,7 @@ export const SignUp = function () {
         data: data,
       })
         .then(() => {
+          clearInterval(intervalRef.current)
           navigate("/login")
         })
         .catch(() => {
