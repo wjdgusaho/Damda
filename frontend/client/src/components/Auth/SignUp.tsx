@@ -199,7 +199,7 @@ export const SignUp = function () {
 
       if (seconds === 0) {
         clearInterval(intervalRef.current)
-        setuserEmailMatch(0)
+        setuserEmailMatch(3)
       }
 
       seconds--
@@ -293,7 +293,7 @@ export const SignUp = function () {
       alert("이메일 중복확인을 해주세요.")
     } else if (
       userdata.email &&
-      userEmailMatch !== 3 &&
+      userEmailMatch !== 4 &&
       userCode !== "success" + successCode.toString()
     ) {
       alert("이메일 인증이 되지 않았습니다.")
@@ -345,7 +345,7 @@ export const SignUp = function () {
         </svg>
       </Link>
       {userEmailMatch === 4 ? (
-        <div className="p-2 px-4 text-sm text-green-500 w-24 relative top-40 left-48">
+        <div className="p-2 px-4 text-sm text-green-500 w-24 relative top-40 left-52">
           인증완료
         </div>
       ) : userEmailMatch === 3 ? (
