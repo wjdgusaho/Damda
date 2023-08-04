@@ -64,6 +64,5 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 input[type="file"]::file-selector-button {
-  background-color: rgb(255, 255, 255, 0);
-  border: 0;
+  display: none;
 }
