@@ -65,8 +65,6 @@ const UserSearch = function () {
         },
       })
         .then((response) => {
-          console.log(response)
-
           setSearchList(response.data.data.result)
         })
         .catch((error) => console.error(error))
@@ -122,7 +120,7 @@ const UserSearch = function () {
           ) : (
             <div>
               {searchList.map((user: UserInfo) => (
-                <UserItem key={user.id} User={user} />
+                <UserItem key={user.userNo} User={user} />
               ))}
             </div>
           )}
@@ -144,7 +142,7 @@ const UserItem = function ({ User }: { User: UserInfo }) {
         Authorization: "Bearer " + token,
       },
       data: {
-        id: User.id,
+        id: User.userNo,
       },
     })
       .then((response) => {
@@ -163,15 +161,20 @@ const UserItem = function ({ User }: { User: UserInfo }) {
         className="rounded-full"
         style={{ width: "75px", height: "75px" }}
         src={User.profileImage}
-        alt="testimg"
+        alt="profile"
       />
       <p className="text-white ml-2">
         {User.nickname}
-        <span className="text-gray-400">#{User.id}</span>
+        <span className="text-gray-400">#{User.userNo}</span>
       </p>
       {(User.status === "" || User.status === "REJECTED") && (
         <Button $state={true} onClick={handleRequest}>
           추가
+        </Button>
+      )}
+      {User.status === "RECEIVED" && (
+        <Button $state={false} disabled={true}>
+          요청받음
         </Button>
       )}
       {User.status === "REQUESTED" && (
@@ -222,7 +225,7 @@ const CapsuleShadow = styled.div`
 `
 
 type UserInfo = {
-  id: number
+  userNo: number
   nickname: string
   profileImage: string
   status: string
