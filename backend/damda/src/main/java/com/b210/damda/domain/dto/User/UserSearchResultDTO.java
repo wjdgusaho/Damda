@@ -11,7 +11,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class UserSearchResultDTO {
 
-    private Long id;
+    private Long userNo;
     private String nickname;
     private String profileImage;
     private String status;
@@ -20,7 +20,7 @@ public class UserSearchResultDTO {
     }
 
     public UserSearchResultDTO(User user, UserFriend friend) {
-        this.id = user.getUserNo();
+        this.userNo = user.getUserNo();
         this.nickname = user.getNickname();
         this.profileImage = user.getProfileImage();
         this.status = friend.getStatus();
