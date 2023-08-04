@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -37,7 +39,7 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
     }
 
     @Override
-    public JsonNode getNowWeatherInfos(WeatherLocationDTO weatherDTO) throws Exception {
+    public ResponseEntity<JsonNode> getNowWeatherInfos(WeatherLocationDTO weatherDTO) throws Exception {
         //URL Encoding Issue로 인한 문자열 대체
 //        String EncodeServiceKey = serviceKey.replace("+", "%2B");
         String EncodeServiceKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8.toString());
@@ -96,14 +98,16 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
      * 읽을 수 있는 json 타입으로 변환하여 동기적으로 전송
      */
     @Override
-    public JsonNode convertWeatherDTO(Mono<String> response) throws JsonProcessingException {
+    public ResponseEntity<JsonNode> convertWeatherDTO(Mono<String> response) throws JsonProcessingException {
         // JSON 문자열을 JSON 객체로 파싱, response.block()을 통해 결과값이 나올때까지 대기
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response.block());
 
         // "body" 부분 추출
         JsonNode bodyNode = jsonNode.get("response").get("body").get("items");
-        return bodyNode;
+
+        //HTTP 성공 신호 전송
+        return ResponseEntity.status(HttpStatus.OK).body(bodyNode);
     }
 
 
