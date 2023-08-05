@@ -66,47 +66,59 @@ const SelectType = function () {
 
   return (
     <>
-      {isHelp ? <Help isHelp={isHelp} setIsHelp={setIsHelp} /> : null}
-      <Background className={isHelp ? "blur-sm" : ""}>
-        <HeaderWrap>
-          <SubHeader />
-        </HeaderWrap>
-        <Box>
-          <div className="flex">
-            <div className="mb-5 ml-9">어떤 타임캡슐을 만들어 볼까요?</div>
-            <HelpIcon
-              onClick={() => setIsHelp(!isHelp)}
-              className="mt-12 mb-8"
-              src="../../assets/icons/questionMark.png"
-              alt="questionMark"
-            />
-          </div>
-          <TypeBtn
-            onClick={() => {
-              navigate("/classic")
-            }}
-          >
-            클래식 타임캡슐
-          </TypeBtn>
-          <TypeBtn
-            onClick={() => {
-              navigate("/record")
-            }}
-          >
-            기록 타임캡슐
-          </TypeBtn>
-          <TypeBtn
-            onClick={() => {
-              navigate("/goal")
-            }}
-          >
-            목표 타임캡슐
-          </TypeBtn>
-        </Box>
-      </Background>
+      <BackgroundImg>
+        {isHelp ? <Help isHelp={isHelp} setIsHelp={setIsHelp} /> : null}
+        <Background className={isHelp ? "blur-sm" : ""}>
+          <HeaderWrap>
+            <SubHeader />
+          </HeaderWrap>
+          <Box>
+            <div className="flex">
+              <div className="mb-5 ml-9">어떤 타임캡슐을 만들어 볼까요?</div>
+              <HelpIcon
+                onClick={() => setIsHelp(!isHelp)}
+                className="mt-12 mb-8"
+                src="../../assets/icons/questionMark.png"
+                alt="questionMark"
+              />
+            </div>
+            <TypeBtn
+              onClick={() => {
+                navigate("/classic")
+              }}
+            >
+              클래식 타임캡슐
+            </TypeBtn>
+            <TypeBtn
+              onClick={() => {
+                navigate("/record")
+              }}
+            >
+              기록 타임캡슐
+            </TypeBtn>
+            <TypeBtn
+              onClick={() => {
+                navigate("/goal")
+              }}
+            >
+              목표 타임캡슐
+            </TypeBtn>
+          </Box>
+        </Background>
+      </BackgroundImg>
     </>
   )
 }
+
+const BackgroundImg = styled.div`
+  background-image: url(${(props) => props.theme.bgImg});
+  background-size: 540px;
+  background-position-x: center;
+  background-position-y: 60px;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100vh;
+`
 
 const BlurBg = styled.div`
   height: 100vh;
