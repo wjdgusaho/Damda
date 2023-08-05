@@ -62,7 +62,7 @@ public enum CustomExceptionStatus {
     NOT_ALLOW_PARTICIPATE(-3000, "참가 불가능한 타임캡슐입니다."),
     NOT_CARD_SAVE(-3001, "카드 저장에 실패했습니다"),
     NOT_S3_CARD_SAVE(-3002, "S3 카드값 저장 실패"),
-    NOT_CARDIMAGE(-3003, "입력받은 카드 이미지가 없습니다");
+    NOT_CARDIMAGE(-3003, "입력받은 카드 이미지가 없습니다"),
     ALREADY_PARTICIPATING(-3004, "이미 참여중인 타임캡슐입니다.");
 
 

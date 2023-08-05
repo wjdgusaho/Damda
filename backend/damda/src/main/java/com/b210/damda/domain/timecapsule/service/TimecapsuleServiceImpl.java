@@ -361,9 +361,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     public void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
         String fileUri = "";
 
-        if(cardImage.isEmpty() && cardImage.getSize() == 0){
+        if (cardImage.isEmpty() && cardImage.getSize() == 0) {
             throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
-        }else{
+        } else {
             try {
                 fileUri = s3UploadService.saveFile(cardImage);
             } catch (IOException e) {
@@ -384,11 +384,11 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         TimecapsuleCard saveCard = timecapsuleCardRepository.save(card);
 
         //에러메세지
-        if(saveCard.getTimecapsuleCardNo() == null){
+        if (saveCard.getTimecapsuleCardNo() == null) {
             throw new CommonException(CustomExceptionStatus.NOT_CARD_SAVE);
         }
 
-
+    }
     
     // 타임캡슐 참여코드로 참가
     @Override
