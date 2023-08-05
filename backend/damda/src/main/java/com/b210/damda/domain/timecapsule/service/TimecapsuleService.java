@@ -18,4 +18,6 @@ public interface TimecapsuleService {
     Long createTimecapsule(TimecapsuleCreateDTO timecapsuleCreateDTO);
 
     TimecapsuleDetailDTO getTimecapsuleDetail(Long timecapsuleNo);
+
+    TimecapsuleDetailDTO joinTimecalsule(String inviteCode);
 }

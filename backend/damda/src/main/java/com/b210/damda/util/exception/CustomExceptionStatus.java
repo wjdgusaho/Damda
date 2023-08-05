@@ -58,7 +58,10 @@ public enum CustomExceptionStatus {
     NOT_CREATE_TIMECAPSULE_USERLIMIT(-4004, "생성 및 참여 할 수 있는 타임캡슐의 공간이 부족합니다."),
 
     // 타임캡슐
-    NOT_ALLOW_PARTICIPATE(-3000, "참가 불가능한 타임캡슐입니다.");
+    NOT_ALLOW_PARTICIPATE(-3000, "참가 불가능한 타임캡슐입니다."),
+    ALREADY_PARTICIPATING(-3001, "이미 참여중인 타임캡슐입니다.");
+
+
     private final int code;
     private final String message;
 

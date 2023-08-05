@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.sql.Timestamp;
@@ -52,6 +53,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         return userNo;
     }
+
+    // 24시간이 지났는지 판단
+    long millisecondsInADay = 24 * 60 * 60 * 1000;  // 24시간을 밀리초로 변환
 
     /*
         타임캡슐 리스트 받아오기
@@ -330,6 +334,78 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         return timecapsuleDetail;
     }
 
+    
+    // 타임캡슐 참여코드로 참가
+    @Override
+    @Transactional
+    public TimecapsuleDetailDTO joinTimecalsule(String inviteCode) {
+        Timecapsule timecapsule = timecapsuleRepository.findByInviteCode(inviteCode);
+
+        // 타임캡슐이 없는 경우
+        if(timecapsule == null){
+            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
+        }
+
+        Long userNo = getUserNo(); // 현재 유저의 pk를 찾음
+        User user = userRepository.findById(userNo).get();
+
+        // 이미 유저가 나갔거나 추방당했다면
+        Optional<TimecapsuleMapping> mapping = timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsule.getTimecapsuleNo());
+        if(mapping.isPresent() && mapping.get().getDeleteDate() != null){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }else if (mapping.isPresent() && mapping.get().getUser().getUserNo() == userNo){ // 이미 참가중이라면
+            throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
+        }
+
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
+        // 타임캡슐이 생성된 지 24시간이 지나서 참여 불가
+        if(currentTimestamp.getTime() - timecapsule.getRegistDate().getTime() > millisecondsInADay){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        // 타임캡슐의 인원이 꽉 찼으면
+        if(timecapsule.getNowParticipant() >= 10){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        // 현재 타임캡슐의 인원 +1
+        timecapsule.updateNowParticipant();
+        timecapsuleRepository.save(timecapsule);
+        
+        // 타임캡슐 매핑 만들어서 저장
+        TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping(timecapsule, user);
+        timecapsuleMappingRepository.save(timecapsuleMapping);
+
+        //디테일 타임캡슐 생성
+        TimecapsuleDetailDTO timecapsuleDetail = timecapsule.toTimecapsuleDetailDTO();
+        if(timecapsuleDetail.getCapsuleType().equals("GOAL")){
+            timecapsuleDetail.setNowCard(timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo()));
+        }
+
+        //isSave가 false 이면서 deleteDate가 있는거를 제외한 참가자 조회
+        List<TimecapsuleMapping> participant = timecapsuleMappingRepository.findNotSavedButDeleted(timecapsule.getTimecapsuleNo());
+
+        //해당 캡슐의 나의 정보 세팅
+        timecapsuleDetail.setMyInfo(timecapsuleMapping.toDetailMyInfoDTO());
+        //참가자 세팅
+        timecapsuleDetail.setPartInfo(
+                participant.stream().map(TimecapsuleMapping::toDetailPartInfoDTO)
+                        .collect(Collectors.toList())
+        );
+
+        //캡슐 요일추가
+        List<CirteriaDayDTO> cirteriaDays = cirteriaDayRepository.findByTimecapsuleCriteriaCriteriaId(
+                        timecapsuleDetail.getCriteriaInfo().getCriteriaId())
+                .stream()
+                .map(CirteriaDay::toCirteriaDayDTO).collect(Collectors.toList());
+
+        if(cirteriaDays.isEmpty()) timecapsuleDetail.getCriteriaInfo().setCirteriaDays(null);
+        else timecapsuleDetail.getCriteriaInfo().setCirteriaDays(cirteriaDays);
+
+        return timecapsuleDetail;
+    }
+
 
     public String createKey() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -343,6 +419,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         return key.toString();
     }
+
+
 
 
 }

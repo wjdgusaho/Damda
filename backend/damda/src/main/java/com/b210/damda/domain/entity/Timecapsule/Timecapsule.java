@@ -4,10 +4,7 @@ import com.b210.damda.domain.dto.Timecapsule.MainTimecapsuleListDTO;
 import com.b210.damda.domain.dto.Timecapsule.SaveTimecapsuleListDTO;
 import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDetailDTO;
 import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -19,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Builder
+@ToString
 public class Timecapsule {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -127,6 +125,11 @@ public class Timecapsule {
                 .penalty(this.timecapsulePenalty.getPenalty() == false ? null : this.timecapsulePenalty.toTimecapsulePenaltyDTO())
                 .criteriaInfo(this.timecapsuleCriteria.toTimecapsuleCriteriaDTO())
                 .build();
+    }
+
+    // 현재 타임캡슐 인원 +1
+    public void updateNowParticipant(){
+        this.nowParticipant = nowParticipant + 1;
     }
 
 }
