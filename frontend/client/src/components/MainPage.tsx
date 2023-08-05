@@ -82,7 +82,7 @@ export const MainPage = function () {
   }, [])
 
   return (
-    <div>
+    <div className="h-screen overflow-hidden">
       <MainHeader></MainHeader>
       <div className="flex flex-col h-screen justify-center">
         <div className="-mt-60">

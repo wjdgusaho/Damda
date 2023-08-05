@@ -17,12 +17,12 @@ const Background = styled.div`
 `
 
 const TypeBtn = styled.button`
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: ${(props) => props.theme.colorShadow};
   width: 297px;
   height: 70px;
   font-size: 20px;
   border-radius: 15px;
-  color: #fff;
+  color: ${(props) => props.theme.colorCommon};
   font-weight: 100;
   margin-bottom: 55px;
   box-shadow: 0px 4px 4px rgb(33, 25, 74, 0.4);
@@ -43,7 +43,7 @@ const Box = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #e4e6f5;
+  color: ${(props) => props.theme.colorCommon};
   font-family: "Pretendard";
   font-size: 20px;
 `
