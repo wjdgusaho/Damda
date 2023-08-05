@@ -193,32 +193,19 @@ const Card = function () {
 
   const StickerContainerArea = useRef<HTMLDivElement>(null)
 
-  const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
-  const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
-
   const [cardImage, setCardImage] = useState<File | null>(null)
   const imageRef = useRef<HTMLInputElement>(null)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
-  const isFileSizeValid = (file: File | null) => {
-    return file !== null && file.size <= FILE_SIZE_LIMIT_BYTES
-  }
-
   function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] || null
-    if (file && isFileSizeValid(file)) {
+    if (file) {
       setCardImage(file)
       const reader = new FileReader()
       reader.onloadend = () => {
         setSelectedImage(reader.result as string)
       }
       reader.readAsDataURL(file)
-    } else {
-      if (imageRef.current) {
-        imageRef.current.value = ""
-      }
-      setCardImage(null)
-      alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
     }
   }
 
