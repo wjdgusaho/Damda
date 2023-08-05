@@ -64,10 +64,14 @@ public class TimecapsuleController {
 
         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 생성 완료");
         response.setData(result);
+
         return response;
     }
 
 
+    /*
+        타임캡슐 상세페이지
+     */
     @GetMapping("detail")
     public DataResponse<Map<String, Object>> timecapsuleDetail(@RequestParam  Map<String, Object> data){
 

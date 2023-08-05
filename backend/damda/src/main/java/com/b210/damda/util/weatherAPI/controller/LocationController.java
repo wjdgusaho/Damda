@@ -20,9 +20,12 @@ public class LocationController {
 
 
     //좌표로 현재 지역 찾기
-    @PostMapping("/now")
-    public WeatherLocationNameDTO getNowLocation(@RequestBody WeatherLocationDTO weatherDTO) throws Exception {
-        return weatherLocationService.getNowLocation(weatherDTO);
+    @GetMapping("/now")
+    public WeatherLocationNameDTO getNowLocation(@RequestParam double lan, @RequestParam double lat) throws Exception {
+        WeatherLocationDTO weatherLocationDTO = new WeatherLocationDTO();
+        weatherLocationDTO.setLan(lan);
+        weatherLocationDTO.setLat(lat);
+        return weatherLocationService.getNowLocation(weatherLocationDTO);
     }
 
     //1차 지명 얻기
@@ -32,14 +35,17 @@ public class LocationController {
         return weatherLocationService.getBigLocations();
     }
     //1차 지명 입력값으로 2차 지명 얻기
-    @PostMapping("/medium")
-    public List<String> getMediumLocations(@RequestBody String bigLocation) throws Exception {
+    @GetMapping("/medium")
+    public List<String> getMediumLocations(@RequestParam String bigLocation) throws Exception {
         return weatherLocationService.getMediumLocations(bigLocation);
     }
 
     //1차, 2차 값으로 해당 지역 좌표 얻어오기
-    @PostMapping("/get-by-name")
-    public WeatherLocationDTO getCoordinateByName(@RequestBody WeatherLocationNameDTO weatherLocationNameDTO) throws Exception {
+    @GetMapping("/get-by-name")
+    public WeatherLocationDTO getCoordinateByName(@RequestParam String localBig, @RequestParam String localMedium ) throws Exception {
+        WeatherLocationNameDTO weatherLocationNameDTO = new WeatherLocationNameDTO();
+        weatherLocationNameDTO.setLocalBig(localBig);
+        weatherLocationNameDTO.setLocalMedium(localMedium);
         return weatherLocationService.getCoordinateByName(weatherLocationNameDTO);
     }
 }

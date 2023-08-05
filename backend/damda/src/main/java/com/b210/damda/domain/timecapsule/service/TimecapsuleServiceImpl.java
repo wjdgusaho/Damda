@@ -296,6 +296,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
                 );
 
+        //삭제시간이 있다면
         if(myMapping.getDeleteDate() != null){
             if(myMapping.isSave())  throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
             else  throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
@@ -308,6 +309,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if(timecapsuleDetail.getCapsuleType().equals("GOAL")){
            timecapsuleDetail.setNowCard(timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsuleNo));
         }
+
         //해당 캡슐의 나의 정보 세팅
         timecapsuleDetail.setMyInfo(myMapping.toDetailMyInfoDTO());
         //참가자 세팅
@@ -316,13 +318,22 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         .collect(Collectors.toList())
         );
 
+        //캡슐 요일추가
+        List<CirteriaDayDTO> cirteriaDays = cirteriaDayRepository.findByTimecapsuleCriteriaCriteriaId(
+                timecapsuleDetail.getCriteriaInfo().getCriteriaId())
+                .stream()
+                .map(CirteriaDay::toCirteriaDayDTO).collect(Collectors.toList());
+
+        if(cirteriaDays.isEmpty()) timecapsuleDetail.getCriteriaInfo().setCirteriaDays(null);
+        else timecapsuleDetail.getCriteriaInfo().setCirteriaDays(cirteriaDays);
+
         return timecapsuleDetail;
     }
 
 
     public String createKey() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        int length = 6;
+        int length = 10;
         SecureRandom rnd = new SecureRandom();
 
         StringBuilder key = new StringBuilder(length);

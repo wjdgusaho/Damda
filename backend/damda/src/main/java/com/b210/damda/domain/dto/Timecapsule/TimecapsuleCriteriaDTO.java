@@ -3,7 +3,7 @@ package com.b210.damda.domain.dto.Timecapsule;
 import com.b210.damda.domain.entity.Timecapsule.TimecapsuleCriteria;
 import lombok.*;
 
-import java.util.Date;
+import java.util.List;
 
 @Data
 @Getter @Setter
@@ -26,6 +26,8 @@ public class TimecapsuleCriteriaDTO {
     private String localMedium;
 
     private String timeKr;
+
+    private List<CirteriaDayDTO> cirteriaDays;
 
     public TimecapsuleCriteriaDTO(){
     }

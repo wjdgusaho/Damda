@@ -36,10 +36,10 @@ public class TimecapsuleMapping {
     private Timestamp openDate;
 
     @Column(nullable = false, columnDefinition = "boolean default true")
-    private boolean cardAble;
+    private boolean cardAble = true;
 
     @Column(nullable = false, columnDefinition = "boolean default true")
-    private boolean fileAble;
+    private boolean fileAble = true;
 
 
     public DetailMyInfoDTO toDetailMyInfoDTO(){

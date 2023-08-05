@@ -1,17 +1,9 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import "../index.css"
 import { styled } from "styled-components"
 import { useNavigate } from "react-router"
-// import { Store } from "../store/Store"
-
-const UserData = {
-  // 주작된 데이터
-  user_no: 1234,
-  profile_image: "../../defalutprofile.png",
-  nickname: "달토끼맛쿠키",
-  now_capsule_count: 4,
-  saved_capsule_count: 6,
-}
+import { useSelector } from "react-redux"
+import { RootState } from "../store/Store"
 
 const Background = styled.div`
   background-image: url(${(props) => props.theme.bgImg});
@@ -57,6 +49,7 @@ const CloseBtn = styled(MenuBtn)`
 
 const Menu = function () {
   const navigate = useNavigate()
+  const UserData = useSelector((state:RootState) => state.auth.userInfo)
 
   return (
     <Background>
@@ -70,14 +63,14 @@ const Menu = function () {
             marginTop: "100px",
             marginBottom: "15px",
           }}
-          src={`${UserData.profile_image}`}
+          src={UserData.profileImage}
           alt="defautImg"
         />
         <div style={{ fontSize: "20px", fontWeight: "300" }}>
           {UserData.nickname}
         </div>
         <div style={{ opacity: "50%", fontSize: "15px", fontWeight: "100" }}>
-          #{UserData.user_no}
+          #{UserData.userNo}
         </div>
         <div className="grid grid-cols-2 text-base font-thin space-x-7 mt-6">
           <div
@@ -88,7 +81,7 @@ const Menu = function () {
           >
             진행중인 타임캡슐
             <div className="text-xl font-normal">
-              {UserData.now_capsule_count}개
+              {UserData.nowCapsuleCount? UserData.nowCapsuleCount:0}개
             </div>
           </div>
           <div
@@ -99,7 +92,7 @@ const Menu = function () {
           >
             저장된 타임캡슐
             <div className="text-xl font-normal">
-              {UserData.saved_capsule_count}개
+              {UserData.savedCapsuleCount? UserData.savedCapsuleCount:0}개
             </div>
           </div>
         </div>
