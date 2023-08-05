@@ -1,23 +1,27 @@
 package com.b210.damda.domain.timecapsule.service;
 
+import com.b210.damda.domain.dto.ItemsShopDTO;
 import com.b210.damda.domain.dto.Timecapsule.*;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.dto.weather.WeatherLocationNameDTO;
 import com.b210.damda.domain.entity.Timecapsule.*;
 import com.b210.damda.domain.entity.User.User;
+import com.b210.damda.domain.file.service.S3UploadService;
+import com.b210.damda.domain.shop.service.ShopService;
 import com.b210.damda.domain.timecapsule.repository.*;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
-import com.b210.damda.util.weatherAPI.service.WeatherAPIService;
 import com.b210.damda.util.weatherAPI.service.WeatherLocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -40,6 +44,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
+    private final ShopService shopService;
+    private S3UploadService s3UploadService;
 
     private final int MAX_PARTICIOPANT = 10;
     private final Long MAX_FILESIZE = 100L;
@@ -334,6 +340,55 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         return timecapsuleDetail;
     }
 
+
+    @Override
+    public List<MyItemListDTO> getMyCardList() {
+        Map<String, Object> itemList = shopService.getItemList();
+        List<ItemsShopDTO> decoItemList = (List<ItemsShopDTO>) itemList.get("decoItemList");
+
+        //구입한 데코 아이템이 없습니다!
+        if(decoItemList.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_BUY_DECOITEM);
+        }
+
+        List<MyItemListDTO> decoMyItemList = decoItemList.stream()
+                .map(ItemsShopDTO::toMyItemListDTO).collect(Collectors.toList());
+
+        return decoMyItemList;
+    }
+
+    @Override
+    public void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
+        String fileUri = "";
+
+        if(cardImage.isEmpty() && cardImage.getSize() == 0){
+            throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
+        }else{
+            try {
+                fileUri = s3UploadService.saveFile(cardImage);
+            } catch (IOException e) {
+                throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
+            }
+        }
+
+        TimecapsuleCard card = new TimecapsuleCard();
+        card.setTimecapsule(timecapsuleRepository.findById(
+                timecapsuleCardDTO.getTimecapsuleNo()).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)));
+
+        card.setUserNo(userRepository.findByUserNo(
+                timecapsuleCardDTO.getUserNo()).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER)));
+        card.setImagePath(fileUri);
+
+        TimecapsuleCard saveCard = timecapsuleCardRepository.save(card);
+
+        //에러메세지
+        if(saveCard.getTimecapsuleCardNo() == null){
+            throw new CommonException(CustomExceptionStatus.NOT_CARD_SAVE);
+        }
+
+
     
     // 타임캡슐 참여코드로 참가
     @Override
@@ -404,6 +459,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         else timecapsuleDetail.getCriteriaInfo().setCirteriaDays(cirteriaDays);
 
         return timecapsuleDetail;
+
     }
 
 
