@@ -72,13 +72,11 @@ const calculateDateDifference = (startDate: string, endDate: string) => {
   const start = new Date(startDate)
   const end = new Date(endDate)
   const differenceInTime = end.getTime() - start.getTime()
-  const differenceInDays = differenceInTime / (1000 * 3600 * 24) // Convert milliseconds to days
+  const differenceInDays = differenceInTime / (1000 * 3600 * 24)
   return differenceInDays
 }
 
 const Background = styled.div`
-  /* width: 100%; */
-  /* height: 100vh; */
   position: absolute;
   top: 0;
   bottom: 0;
@@ -310,12 +308,13 @@ interface CapsuleProps {
 }
 
 export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
-  const endDateString = capsuleData.openDate.toString().slice(0, 10)
+  const endDateString = capsuleData.openDate
+    ? capsuleData.openDate.toString().slice(0, 10)
+    : ""
   const isHost = capsuleData.myInfo.host
   const isCardAble = capsuleData.myInfo.cardAble
   const isFileAble = capsuleData.myInfo.fileAble
   const navigate = useNavigate()
-  const currentDate = new Date()
   const oneDayLater = new Date(capsuleData.registDate)
   oneDayLater.setHours(oneDayLater.getHours() + 24).toString()
   const [timer, setTimer] = useState<string>("")
@@ -338,7 +337,10 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         setTimer(`${hours}:${formattedMinutes}`)
       }
     }, 1000)
-  })
+    return () => {
+      clearInterval(interval)
+    }
+  }, [oneDayLater])
 
   return (
     <div className="relative">
@@ -537,7 +539,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
               >
                 참여코드
               </div>
-              {/* 임시 더미 코드 */}
               <Title className="text-2xl font-bold relative mb-1">
                 {capsuleData.inviteCode}
               </Title>
