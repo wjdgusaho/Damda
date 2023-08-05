@@ -2,15 +2,21 @@ package com.b210.damda.domain.timecapsule.controller;
 
 import com.b210.damda.domain.dto.Timecapsule.*;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
+import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.timecapsule.service.TimecapsuleService;
+import com.b210.damda.util.exception.CommonException;
+import com.b210.damda.util.response.CommonResponse;
 import com.b210.damda.util.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/timecapsule")
@@ -87,6 +93,42 @@ public class TimecapsuleController {
         return response;
         
     }
+
+    /*
+        타임캡슐 스티커 받기
+     */
+    @GetMapping("deco/list")
+    public DataResponse<Map<String,Object>> timecapsuleCardList(){
+
+        List<MyItemListDTO> decoList = timecapsuleService.getMyCardList();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("decoList", decoList);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "스티커 조회 성공");
+        response.setData(result);
+
+        return response;
+    }
+
+
+    /*
+        타임캡슐 카드 저장
+     */
+    @PostMapping("regist/card")
+    public CommonResponse registCard(@RequestPart("cardImage") MultipartFile cardImage,
+                                     @RequestBody TimecapsuleCardDTO timecapsuleCardDTO){
+
+
+        timecapsuleService.registCard(cardImage, timecapsuleCardDTO);
+
+
+        CommonResponse response = new CommonResponse(200, "카드 저장 완료");
+        return  response;
+    }
+
+
+
 
 }
 

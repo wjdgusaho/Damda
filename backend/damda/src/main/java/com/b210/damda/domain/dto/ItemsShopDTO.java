@@ -1,5 +1,6 @@
 package com.b210.damda.domain.dto;
 
+import com.b210.damda.domain.dto.Timecapsule.MyItemListDTO;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,5 +15,13 @@ public class ItemsShopDTO {
     private String icon;
     private boolean isUserHave;
     private String type;
+
+    public MyItemListDTO toMyItemListDTO(){
+        return MyItemListDTO.builder()
+                .itemNo(this.itemNo)
+                .name(this.name)
+                .icon(this.icon)
+                .build();
+    }
 
 }
