@@ -360,7 +360,7 @@ const Card = function () {
           </Option>
         </FontSelect>
       </div>
-      <div>
+      <div className="fixed bottom-0">
         <div className="bg-black bg-opacity-10 mt-4 flex flex-nowrap overflow-y-auto">
           {stickerList.length !== 0 &&
             stickerList.map((s: StickerType) => (
@@ -373,7 +373,7 @@ const Card = function () {
               />
             ))}
         </div>
-        <div className="flex h-64 w-full flex-wrap overflow-x-auto content-start">
+        <div className="flex h-52 w-full flex-wrap overflow-x-auto content-start">
           {matchingSticker &&
             Object.values(matchingSticker.sticker).map(
               (stickerImage, index) => (
