@@ -3,8 +3,10 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { getCookieToken, removeCookieToken } from '../../store/Cookie'
-import { DELETE_TOKEN } from '../../store/Auth'
+import { DELETE_TOKEN, DELETE_USER } from '../../store/Auth'
 import { serverUrl } from '../../urls'
+import { changeUniverseDarkTheme } from '../../store/Theme'
+import { DELETE_TIMECAPSULE } from '../../store/Timecapsule'
 
 export const Logout = function () {
     const dispatch = useDispatch()
@@ -22,6 +24,9 @@ export const Logout = function () {
         })
             .then(() => {
                 dispatch(DELETE_TOKEN())
+                dispatch(DELETE_USER())
+                dispatch(changeUniverseDarkTheme())
+                dispatch(DELETE_TIMECAPSULE())
                 removeCookieToken()
                 navigate('/login')
             })

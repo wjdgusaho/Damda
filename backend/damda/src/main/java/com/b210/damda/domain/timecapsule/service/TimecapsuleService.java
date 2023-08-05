@@ -22,4 +22,7 @@ public interface TimecapsuleService {
     List<MyItemListDTO> getMyCardList();
 
     void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO);
+
+    TimecapsuleDetailDTO joinTimecalsule(String inviteCode);
+
 }

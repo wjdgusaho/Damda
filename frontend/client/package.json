@@ -13,7 +13,9 @@
     "@types/redux-persist": "^4.3.1",
     "axios": "^1.4.0",
     "date-fns": "^2.30.0",
+    "email-validator": "^2.0.4",
     "event-source-polyfill": "^1.0.31",
+    "framer-motion": "^10.15.0",
     "html2canvas": "^1.4.1",
     "react": "^18.2.0",
     "react-cookie": "^4.1.1",
@@ -56,6 +58,7 @@
     ]
   },
   "devDependencies": {
+    "@types/email-validator": "^1.0.6",
     "@types/react-datepicker": "^4.15.0",
     "@types/react-modal": "^3.16.0",
     "@types/react-slick": "^0.23.10",
