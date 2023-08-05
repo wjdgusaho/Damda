@@ -3,6 +3,7 @@ package com.b210.damda.domain.timecapsule.controller;
 import com.b210.damda.domain.dto.Timecapsule.*;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.timecapsule.service.TimecapsuleService;
+import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.response.DataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +87,26 @@ public class TimecapsuleController {
         response.setData(result);
 
         return response;
-        
+    }
+
+    // 타임캡슐 초대번호 입력
+    @PostMapping("join")
+    public DataResponse<Map<String, Object>> timecapsuleJoin(@RequestBody TimecapsuleJoinDTO timecapsuleJoinDTO){
+        try{
+            TimecapsuleDetailDTO timecapsule = timecapsuleService.joinTimecalsule(timecapsuleJoinDTO.getInviteCode());
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("timecapsule", timecapsule);
+
+            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 참여 성공");
+            response.setData(result);
+
+            return response;
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch(Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
+        }
     }
 
 }

@@ -192,6 +192,7 @@ public class FriendService {
         friendRepository.save(FindByFriendUser);
     }
 
+    // 친구 삭제
     public void friendDelete(Long friendNo){
         Long userNo = getUserNo();
         User currentUser = userRepository.findById(userNo).get(); // 현재 유저를 찾음.
@@ -204,7 +205,7 @@ public class FriendService {
         // 친구 유저와 현재 유저의 데이터를 꺼냄
         UserFriend FindByFriendUser = friendRepository.getUserFriendByUserAndFriend(friendUser, currentUser);
 
-        FindByCurrentUser.FriendDelete(); // 둘 다 "ACCEPTED"로 바꾸고 응답시간 추가
+        FindByCurrentUser.FriendDelete(); // 둘 다 ""로 바꾸고 응답시간 null로 바꿈
         FindByFriendUser.FriendDelete();
 
         friendRepository.save(FindByCurrentUser); // 수동 저장
