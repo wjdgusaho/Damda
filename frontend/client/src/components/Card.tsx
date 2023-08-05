@@ -241,17 +241,17 @@ const Card = function () {
         style={customStyles}
         contentLabel="BUY Modal"
       >
-        <div className="text-center">
-          작성된 내용이 저장되지 않아요.
+        <div className="text-center font-semibold">
+          작성된 내용이 저장되지 않아요!
           <br />
           그래도 취소하시겠어요?
         </div>
         <div className="flex mt-4 w-48 m-auto justify-between">
           <ModalButton className="bg-black bg-opacity-0" onClick={closeModal}>
-            닫기
+            <span className="font-bold text-gray-400">닫기</span>
           </ModalButton>
           <ModalButton className="bg-black bg-opacity-10" onClick={goBack}>
-            작성취소
+            <span className="font-bold text-gray-900">작성취소</span>
           </ModalButton>
         </div>
       </Modal>
@@ -361,7 +361,7 @@ const Card = function () {
         </FontSelect>
       </div>
       <div className="fixed bottom-0">
-        <div className="bg-black bg-opacity-10 mt-4 flex flex-nowrap overflow-y-auto">
+        <div className="bg-black bg-opacity-10 flex flex-nowrap overflow-y-auto">
           {stickerList.length !== 0 &&
             stickerList.map((s: StickerType) => (
               <img
