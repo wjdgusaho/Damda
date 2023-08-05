@@ -139,9 +139,12 @@ public class FriendService {
         String str = "RECEIVED";
 
         List<UserFriend> userFriendByFriend = friendRepository.findUserFriendByUser(currentUser, str); // 현재 유저와 요청중인 상태를 보내서 요청받은 리스트 꺼냄
+        System.out.println(userFriendByFriend);
 
         for(UserFriend uf : userFriendByFriend){ // 하나씩 꺼내서 친구의 정보를 dto로 생성해서 리스트에 추가.
-            FriendRequestListDTO.add(new FriendRequestListDTO(uf.getFriend()));
+            if(uf.getFriend().getDeleteDate() == null){
+                FriendRequestListDTO.add(new FriendRequestListDTO(uf.getFriend()));
+            }
         }
 
         return FriendRequestListDTO;

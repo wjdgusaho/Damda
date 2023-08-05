@@ -25,4 +25,11 @@ public class UserSearchResultDTO {
         this.profileImage = user.getProfileImage();
         this.status = friend.getStatus();
     }
+
+    public void createSearchResultDTO(User user) {
+        this.userNo = user.getUserNo();
+        this.nickname = user.getNickname();
+        this.profileImage = user.getProfileImage();
+        this.status = "";
+    }
 }
