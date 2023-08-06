@@ -25,9 +25,12 @@ public interface TimecapsuleService {
 
     TimecapsuleDetailDTO joinTimecalsule(String inviteCode);
 
+    List<TimecapsuleInviteListDTO> getTimecapsuleInviteList(Long timecapsuleNo);
+
     void timecapsuleExit(Long timecapsuleNo);
 
     void timecapsuleKick(Long timecapsuleNo, Long kickUserNo);
 
     void timecapsuleDelete(Long timecapsuleNo);
+
 }

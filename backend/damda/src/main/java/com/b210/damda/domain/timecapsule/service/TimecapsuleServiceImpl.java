@@ -6,7 +6,9 @@ import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.dto.weather.WeatherLocationNameDTO;
 import com.b210.damda.domain.entity.Timecapsule.*;
 import com.b210.damda.domain.entity.User.User;
+import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.file.service.S3UploadService;
+import com.b210.damda.domain.friend.repository.FriendRepository;
 import com.b210.damda.domain.shop.service.ShopService;
 import com.b210.damda.domain.timecapsule.repository.*;
 import com.b210.damda.domain.user.repository.UserRepository;
@@ -23,11 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.sql.SQLOutput;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -41,6 +45,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final TimecapsuleCriteriaRepository timecapsuleCriteriaRepository;
     private final UserRepository userRepository;
     private final CirteriaDayRepository cirteriaDayRepository;
+    private final FriendRepository friendRepository;
+    private final TimecapsuleInviteRepository timecapsuleInviteRepository;
 
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
@@ -200,7 +206,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             Timecapsule timecapsule = timecapsuleMapping.getTimecapsule();
             SaveTimecapsuleListDTO saveTimecapsule = timecapsule.toSaveTimecapsuleListDTO();
             if(saveTimecapsule.getType().equals("GOAL")) {
-                saveTimecapsule.setEndDate(timecapsuleMapping.getOpenDate());
+                saveTimecapsule.setEndDate(timecapsuleMapping.getSaveDate());
             }
             saveTimecapsuleList.add(saveTimecapsule);
         }
@@ -475,6 +481,65 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         return timecapsuleDetail;
 
     }
+
+    @Override
+    public List<TimecapsuleInviteListDTO> getTimecapsuleInviteList(Long timecapsuleNo) {
+
+        List<TimecapsuleInviteListDTO> responseData = new ArrayList<>();
+
+        // 현재 유저 꺼냄
+        Long userNo = getUserNo();
+        User currentUser = userRepository.findById(userNo).get();
+
+        // 타임캡슐 꺼냄
+        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).get();
+
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
+        // 타임캡슐이 생성된 지 24시간이 지나서 초대 불가
+        if(currentTimestamp.getTime() - timecapsule.getRegistDate().getTime() > millisecondsInADay){
+            throw new CommonException(CustomExceptionStatus.NOT_INVITE_FRIEND);
+        }
+
+        // 타임캡슐의 인원이 꽉 찼으면
+        if(timecapsule.getNowParticipant() >= MAX_PARTICIOPANT){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        // 수락상태고, 탈퇴안한 친구의 목록을 가져옴.
+        String status = "ACCEPTED";
+        List<UserFriend> userFriendByUser = friendRepository.findUserFriendByUser(currentUser, status);
+        System.out.println(userFriendByUser);
+
+        // 타임캡슐의 번호로 초대 목록을 찾음.
+        List<TimecapsuleInvite> timecapsuleInviteList = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsule(timecapsule);
+
+        Map<Long, TimecapsuleInvite> inviteMap = timecapsuleInviteList.stream()
+                .collect(Collectors.toMap(TimecapsuleInvite::getGuestUserNo, Function.identity()));
+
+        for (UserFriend userFriend : userFriendByUser) {
+            TimecapsuleInviteListDTO dto = new TimecapsuleInviteListDTO();
+            User friend = userFriend.getFriend();
+
+            dto.setUserNo(friend.getUserNo());
+            dto.setProfileImage(friend.getProfileImage());  // getProfileImage()는 User 모델에서 이미지를 가져오는 메소드여야 합니다.
+            dto.setNickname(friend.getNickname());  // getNickname()은 User 모델에서 닉네임을 가져오는 메소드여야 합니다.
+
+            // 초대 상태 확인
+            TimecapsuleInvite invite = inviteMap.get(friend.getUserNo());
+            if (invite != null) {
+                dto.setStatus(invite.getStatus());  // 만약 초대목록에 있으면 상태 설정
+            } else {
+                dto.setStatus("");  // 아직 초대하지 않은 상태
+            }
+
+            responseData.add(dto);
+        }
+
+        System.out.println(responseData);
+
+
+        return responseData;
 
     /*
         타임캡슐 나가기

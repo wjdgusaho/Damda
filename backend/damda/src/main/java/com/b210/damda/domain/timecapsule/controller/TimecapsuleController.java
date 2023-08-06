@@ -114,6 +114,18 @@ public class TimecapsuleController {
         }
     }
 
+    // 타임캡슐 초대 목록 가져오기
+    @GetMapping("invite")
+    public DataResponse<List<TimecapsuleInviteListDTO>> timecapsuleInviteList(@RequestParam("timecapsuleNo") Long timecapsuleNo){
+
+        List<TimecapsuleInviteListDTO> timecapsuleInviteList = timecapsuleService.getTimecapsuleInviteList(timecapsuleNo);
+
+        DataResponse<List<TimecapsuleInviteListDTO>> response = new DataResponse<>(200, "조회 성공");
+        response.setData(timecapsuleInviteList);
+
+        return response;
+    }
+
     /*
         타임캡슐 스티커 받기
      */
