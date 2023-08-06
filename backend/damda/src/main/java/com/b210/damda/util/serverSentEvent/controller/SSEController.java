@@ -34,7 +34,7 @@ public class SSEController {
         //2. 확인하지 못했던 타임 캡슐 알림 로직
 
         //return eventStreamService.connect(eventListService.getUserNo());
-        return eventStreamService.connectStream(18L); //테스팅용
+        return eventStreamService.connectStream(); //테스팅용
     }
 
     //로그아웃 시 스트림 제거
