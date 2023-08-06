@@ -212,4 +212,11 @@ public class FriendService {
         friendRepository.save(FindByFriendUser);
 
     }
+
+    //친구 확인
+    public void friendCheck() {
+        Long userNo = getUserNo();
+        User currentUser = userRepository.findById(userNo).get(); // 현재 유저를 찾음.
+        List<UserFriend> userFriendByFriend = friendRepository.findUserFriendByUser(currentUser, "REQUESTED"); // 현재 유저와 요청중인 상태를 보내서 요청받은 리스트 꺼냄
+    }
 }
