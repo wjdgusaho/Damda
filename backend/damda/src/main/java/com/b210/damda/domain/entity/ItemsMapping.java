@@ -1,6 +1,7 @@
 package com.b210.damda.domain.entity;
 
 import com.b210.damda.domain.dto.ItemsMappingDTO;
+import com.b210.damda.domain.dto.Timecapsule.MyItemListDTO;
 import com.b210.damda.domain.entity.User.User;
 import lombok.Setter;
 
@@ -27,6 +28,14 @@ public class ItemsMapping {
                 .itemMappingNo(this.itemMappingNo)
                 .userNo(user.getUserNo())
                 .itemNo(items.getItemNo())
+                .build();
+    }
+
+    public MyItemListDTO toMyItemListDTO(){
+        return MyItemListDTO.builder()
+                .itemNo(this.items.getItemNo())
+                .name(this.items.getName())
+                .icon(this.items.getIcon())
                 .build();
     }
 }
