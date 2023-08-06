@@ -21,7 +21,7 @@ public enum CustomExceptionStatus {
     NOT_CARD(-6005, "작성된 카드가 없습니다"),
     NOT_USER(-6006, "없는 유저입니다."),
     BAD_QUERY_FORMAT(-6007, "(닉네임)#(번호) 양식에 맞춰서 검색해주세요."),
-    DELETE_TIMECAPSULE(-6008, "삭제하신 타임캡슐입니다"),
+    DELETE_TIMECAPSULE(-6008, "삭제된 타임캡슐입니다"),
     NOT_LOCATION_FIND(-6009, "서비스 불가 위치입니다."),
 
 
@@ -63,8 +63,12 @@ public enum CustomExceptionStatus {
     NOT_CARD_SAVE(-3001, "카드 저장에 실패했습니다"),
     NOT_S3_CARD_SAVE(-3002, "S3 카드값 저장 실패"),
     NOT_CARDIMAGE(-3003, "입력받은 카드 이미지가 없습니다"),
-    ALREADY_PARTICIPATING(-3004, "이미 참여중인 타임캡슐입니다.");
-
+    ALREADY_PARTICIPATING(-3004, "이미 참여중인 타임캡슐입니다."),
+    MAX_PARTICIPATING(-3005, "해당 타임캡슐의 참여인원이 꽉 찼습니다."),
+    NOT_INVITE_FRIEND(-3006, "24시간이 지나서 친구 초대가 불가능합니다."),
+    NOT_TIMECAPSULE_HOST(-3007, "해당 타임캡슐의 반장이 아닙니다."),
+    KICKUSER_NOT_TIMECAPSULE(-3008, "강퇴하는 유저는 해당 타임캡슐 참가자가 아닙니다."),
+    NOT_DELTE_TIMECAPSULE(-3009, "생성된지 24시간 이후로 삭제할수 없습니다");
 
 
     private final int code;

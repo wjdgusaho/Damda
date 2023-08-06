@@ -35,7 +35,7 @@ public class TimecapsuleMapping {
 
     private Timestamp deleteDate;
 
-    private Timestamp openDate;
+    private Timestamp saveDate;
 
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean cardAble = true;

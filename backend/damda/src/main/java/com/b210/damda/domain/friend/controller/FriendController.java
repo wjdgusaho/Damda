@@ -6,6 +6,8 @@ import com.b210.damda.domain.dto.User.UserDTO;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.friend.service.FriendService;
 import com.b210.damda.util.response.DataResponse;
+import com.b210.damda.util.serverSentEvent.service.FriendEventService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,10 +20,12 @@ import java.util.Map;
 public class FriendController {
 
     private FriendService friendService;
+    private FriendEventService friendEventService;
 
     @Autowired
-    public FriendController(FriendService friendService) {
+    public FriendController(FriendService friendService, FriendEventService friendEventService) {
         this.friendService = friendService;
+        this.friendEventService = friendEventService;
     }
 
     // 친구 요청
@@ -29,6 +33,7 @@ public class FriendController {
     public DataResponse<Map<String, Object>> friendRequest(@RequestBody UserDTO userDTO){
         try{
             friendService.friendRequest(userDTO.getUserNo());
+            friendEventService.friendRequestEvent(userDTO.getUserNo());
             return new DataResponse<>(200, "친구 신청이 완료되었습니다.");
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
@@ -123,5 +128,11 @@ public class FriendController {
         }catch (Exception e){
             return new DataResponse<>(500 ,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
+    }
+
+    //요청했던 친구 확인
+    @GetMapping("check")
+    public void friendDelete(){
+            friendService.friendCheck();
     }
 }

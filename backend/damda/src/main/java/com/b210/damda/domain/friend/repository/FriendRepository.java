@@ -26,6 +26,10 @@ public interface FriendRepository extends JpaRepository<UserFriend, Long> {
 
 
     @Query("SELECT u FROM UserFriend u WHERE u.user = :user AND u.status = :status")
-    List<UserFriend> findUserFriendByUser(@Param("user") User friend, @Param("status") String status);
+    List<UserFriend> findUserFriendByUserFriend(@Param("user") User friend, @Param("status") String status);
+
+    // 타임캡슐 친구 목록 가져오기(탈퇴하지 않고, 친구인 사람만)
+    @Query("SELECT u FROM UserFriend u WHERE u.user = :user AND u.status = :status AND u.friend.deleteDate = null")
+    List<UserFriend> findUserFriendByUser(@Param("user") User user, @Param("status") String status);
 
 }

@@ -138,7 +138,7 @@ public class FriendService {
         User currentUser = userRepository.findById(userNo).get();
         String str = "RECEIVED";
 
-        List<UserFriend> userFriendByFriend = friendRepository.findUserFriendByUser(currentUser, str); // 현재 유저와 요청중인 상태를 보내서 요청받은 리스트 꺼냄
+        List<UserFriend> userFriendByFriend = friendRepository.findUserFriendByUserFriend(currentUser, str); // 현재 유저와 요청중인 상태를 보내서 요청받은 리스트 꺼냄
         System.out.println(userFriendByFriend);
 
         for(UserFriend uf : userFriendByFriend){ // 하나씩 꺼내서 친구의 정보를 dto로 생성해서 리스트에 추가.
@@ -211,5 +211,12 @@ public class FriendService {
         friendRepository.save(FindByCurrentUser); // 수동 저장
         friendRepository.save(FindByFriendUser);
 
+    }
+
+    //친구 확인
+    public void friendCheck() {
+        Long userNo = getUserNo();
+        User currentUser = userRepository.findById(userNo).get(); // 현재 유저를 찾음.
+        List<UserFriend> userFriendByFriend = friendRepository.findUserFriendByUser(currentUser, "REQUESTED"); // 현재 유저와 요청중인 상태를 보내서 요청받은 리스트 꺼냄
     }
 }

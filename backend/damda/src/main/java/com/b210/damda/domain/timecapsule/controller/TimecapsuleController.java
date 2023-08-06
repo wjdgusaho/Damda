@@ -114,13 +114,25 @@ public class TimecapsuleController {
         }
     }
 
+    // 타임캡슐 초대 목록 가져오기
+    @GetMapping("invite")
+    public DataResponse<List<TimecapsuleInviteListDTO>> timecapsuleInviteList(@RequestParam("timecapsuleNo") Long timecapsuleNo){
+
+        List<TimecapsuleInviteListDTO> timecapsuleInviteList = timecapsuleService.getTimecapsuleInviteList(timecapsuleNo);
+
+        DataResponse<List<TimecapsuleInviteListDTO>> response = new DataResponse<>(200, "조회 성공");
+        response.setData(timecapsuleInviteList);
+
+        return response;
+    }
+
     /*
         타임캡슐 스티커 받기
      */
     @GetMapping("deco/list")
     public DataResponse<Map<String,Object>> timecapsuleCardList(){
 
-        List<MyItemListDTO> decoList = timecapsuleService.getMyCardList();
+        List<MyItemListDTO> decoList = timecapsuleService.getMyDecoList();
 
         Map<String, Object> result = new HashMap<>();
         result.put("decoList", decoList);
@@ -139,12 +151,48 @@ public class TimecapsuleController {
     public CommonResponse registCard(@RequestPart("cardImage") MultipartFile cardImage,
                                      @RequestBody TimecapsuleCardDTO timecapsuleCardDTO){
 
-
         timecapsuleService.registCard(cardImage, timecapsuleCardDTO);
-
-
         CommonResponse response = new CommonResponse(200, "카드 저장 완료");
         return  response;
+    }
+
+    /*
+        타임캡슐 나가기
+     */
+    @PatchMapping("exit")
+    public CommonResponse timecapsuleExit(@RequestBody Long timecapsuleNo){
+
+        timecapsuleService.timecapsuleExit(timecapsuleNo);
+        CommonResponse response = new CommonResponse(200, "타임캡슐을 나갔습니다");
+        return response;
+    }
+
+    /*
+        타임캡슐 강퇴하기
+     */
+    @PatchMapping("kick")
+    public CommonResponse timecapsuleKick(@RequestBody Map<String, Object> data){
+
+        Long kickUserNo = Long.parseLong((String) data.get("kickUserNo"));
+        Long timecapsuleNo = Long.parseLong((String) data.get("timecapsuleNo"));
+
+        timecapsuleService.timecapsuleKick(timecapsuleNo, kickUserNo);
+
+        CommonResponse response = new CommonResponse(200, "타임캡슐 강퇴 성공");
+        return response;
+
+    }
+
+    /*
+        타임캡슐 삭제하기
+     */
+    @PatchMapping("delete")
+    public CommonResponse timecapsuleDelete(@RequestBody Long timecapsuleNo){
+
+        timecapsuleService.timecapsuleDelete(timecapsuleNo);
+
+        CommonResponse response = new CommonResponse(200, "타임캡슐 제거 성공");
+        return response;
     }
 
 
