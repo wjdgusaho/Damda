@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react"
 import { MainHeader } from "./inc/MainHeader"
-import { SubHeader } from "./inc/SubHeader"
-import axios, { Axios } from "axios"
-import { ThemeProvider, styled } from "styled-components"
+import axios from "axios"
+import { styled } from "styled-components"
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 import { useRef, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { RootState } from "../store/Store"
-import { serverUrl, reqUrl } from "../urls"
+import { serverUrl } from "../urls"
 import { useDispatch, useSelector } from "react-redux"
 import { SET_TIMECAPSULE } from "../store/Timecapsule"
 
@@ -82,7 +81,7 @@ export const MainPage = function () {
   }, [])
 
   return (
-    <div>
+    <div className="h-screen overflow-hidden">
       <MainHeader></MainHeader>
       <div className="flex flex-col h-screen justify-center">
         <div className="-mt-60">
@@ -114,6 +113,7 @@ export const MainPage = function () {
                             <Dday className="m-auto">
                               {c.curCard} / {c.goalCard}
                             </Dday>
+                            <CapsuleTitle>{c.name}</CapsuleTitle>
                             <ProgressBar
                               percentage={(c.curCard / c.goalCard) * 100}
                             ></ProgressBar>
@@ -124,6 +124,7 @@ export const MainPage = function () {
                             <Dday className="m-auto">
                               {calculateDday(c.eDate)}
                             </Dday>
+                            <CapsuleTitle>{c.name}</CapsuleTitle>
                             <ProgressBar
                               percentage={calculateProgressPercentage(
                                 c.sDate,
@@ -147,6 +148,7 @@ export const MainPage = function () {
                       // 24시간 내의 타임캡슐인 경우
                       <div>
                         <Dday className="m-auto !opacity-80 mt-2">NEW!</Dday>
+                        <CapsuleTitle>{c.name}</CapsuleTitle>
                         <FloatingImage
                           capsulenum={"capsule" + c.capsuleIconNo}
                           className="h-52 m-auto mt-14 grayscale"
@@ -211,6 +213,14 @@ const TextStyle = styled.div`
   font-weight: 200;
   color: ${(props) => props.theme.colorCommon};
 `
+const CapsuleTitle = styled.div`
+  color: ${(props) => props.theme.colorCommon};
+  margin-top: 2px;
+  font-size: 17px;
+  opacity: 70%;
+  font-weight: 700;
+`
+
 const MakeCapsuleButton = styled.div`
   border-radius: 30px;
   font-family: "pretendard";
@@ -302,7 +312,7 @@ const Progress = styled.div`
   background: ${(props) => props.theme.colorProgressBar};
   border-radius: 10px;
   transition: width 3s;
-  border: 2px solid ${(props) => props.theme.color100};
+  border: 2px solid ${(props) => props.theme.color200};
   box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
 `
 
