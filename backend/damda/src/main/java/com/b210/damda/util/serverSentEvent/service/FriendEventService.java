@@ -24,7 +24,8 @@ public class FriendEventService {
 
     //친구 요청 이벤트 : 나(userNo) -> 친구 요청하는 사용자(frinedNo)
     public void friendRequestEvent(long friendNo) {
-        Long userNo = addOnEventService.getUserNo();
+        //Long userNo = addOnEventService.getUserNo();
+        Long userNo = 18L;
         log.info("가져온 유저 값 : ", userNo);
         //Long userNo = 18L;
         String eventName = "custom-event";
