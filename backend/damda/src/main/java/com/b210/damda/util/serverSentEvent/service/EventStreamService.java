@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,6 +43,19 @@ public class EventStreamService {
             log.info("sink 정보 : {}", sink);
             log.info("이벤트 정보 : {}", event);
             sink.next(event);
+        }
+    }
+
+    //여러 사용자에게 Send를 보낼 경우 (Overload)
+    public void sendEvent(List<Long> users, ServerSentEvent<String> event) {
+        log.info("SendEvent(List) 수행");
+        for (Long userNo : users) {
+            FluxSink<ServerSentEvent<String>> sink = userFluxSinkMap.get(userNo);
+            if (sink != null) {
+                log.info("sink 정보 : {}", sink);
+                log.info("이벤트 정보 : {}", event);
+                sink.next(event);
+            }
         }
     }
 }
