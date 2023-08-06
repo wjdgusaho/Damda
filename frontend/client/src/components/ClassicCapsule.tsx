@@ -185,6 +185,7 @@ const ClassicCapsule = function () {
         console.log(err)
       })
   }
+
   return (
     <>
       <SubHeader />
