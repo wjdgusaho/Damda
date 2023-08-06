@@ -49,6 +49,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     private final int MAX_PARTICIOPANT = 10;
     private final Long MAX_FILESIZE = 100L;
+    private final int NOW_PARTICIOPANT = 1;
     /*
         유저 정보 불러오기
      */
@@ -229,6 +230,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
          createTimecapsule.setMaxFileSize(MAX_FILESIZE);
          createTimecapsule.setMaxParticipant(MAX_PARTICIOPANT);
          createTimecapsule.setInviteCode(createKey());
+         createTimecapsule.setNowParticipant(NOW_PARTICIOPANT);
          createTimecapsule.setCapsuleIconNo(new Random().nextInt(10)+1);
 
          //타임캡슐 저장 후 No값 받아오기
@@ -420,7 +422,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
 
         // 타임캡슐의 인원이 꽉 찼으면
-        if(timecapsule.getNowParticipant() >= 10){
+        if(timecapsule.getNowParticipant() >= MAX_PARTICIOPANT){
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
         }
 
