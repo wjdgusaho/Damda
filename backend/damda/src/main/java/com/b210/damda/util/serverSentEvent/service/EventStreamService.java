@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * 해당 서비스는 Flux를 통해 스트림 데이터를 제어하고(로그인/로그아웃)
@@ -23,10 +25,21 @@ public class EventStreamService {
     //동시성 처리를 위해 ConcurrentHashMap 사용, 해당 Map에 개별적인 클라이언트들의 Reactive Stream이 연결되어 저장(FluxSink 저장)
     private final Map<Long, FluxSink<ServerSentEvent<String>>> userFluxSinkMap = new ConcurrentHashMap<>();
 
-    //최초 연결 시(로그인) Flux 생성 및 Map에 저장, onDispose는 연결이 끊어질 때 제거되는 메서드
+    //최초 연결 시(로그인) Flux 생성 및 Map에 저장
     public Flux<ServerSentEvent<String>> connectStream(Long userNo) {
-        log.info("connect 연결 성공, userNo : ", userNo);
-        return Flux.create(sink -> userFluxSinkMap.put(userNo, sink.onDispose(() -> userFluxSinkMap.remove(userNo))));
+        log.info("connect 연결 성공, userNo : {}", userNo);
+        //Sink맵 추가 후, onDispose 이벤트 시 제거하는 Flux 생성
+        Flux<ServerSentEvent<String>> dataFlux =  Flux.create(sink -> userFluxSinkMap.put(userNo, sink.onDispose(() -> userFluxSinkMap.remove(userNo))));
+
+        // 연결을 계속하기 위해 일정 시간마다 Event를 전송함
+        Flux<ServerSentEvent<String>> maintainConnectFlux = Flux.interval(Duration.ofSeconds(30)).map(new Function<Long, ServerSentEvent<String>>() {
+            @Override
+            public ServerSentEvent<String> apply(Long tick) {
+                return ServerSentEvent.<String>builder().event("custom-event").data("연결 유지").build();
+            }
+        });
+
+        return Flux.merge(dataFlux, maintainConnectFlux);
     }
 
     public void disconnectStream(Long userNo) {

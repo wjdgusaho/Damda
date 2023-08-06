@@ -1,5 +1,6 @@
 package com.b210.damda.util.serverSentEvent.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,7 @@ import java.time.format.DateTimeFormatter;
  *  EventService의 원활한 구현을 위한 부가 메서드 집합
  */
 @Service
+@Slf4j
 public class AddOnEventService {
 
     //Find NowUser
@@ -37,7 +39,7 @@ public class AddOnEventService {
         LocalDateTime currentDateTime = LocalDateTime.now(); //현재 시간
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yy년 MM월 dd일");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH시 mm분");
-        return "[ " + currentDateTime.format(dateFormatter) + ", " + currentDateTime.format(timeFormatter);
+        return "[ " + currentDateTime.format(dateFormatter) + ", " + currentDateTime.format(timeFormatter) + " ]";
     }
 
 

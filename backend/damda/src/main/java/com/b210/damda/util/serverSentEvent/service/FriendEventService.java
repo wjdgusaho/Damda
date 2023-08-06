@@ -24,8 +24,9 @@ public class FriendEventService {
 
     //친구 요청 이벤트 : 나(userNo) -> 친구 요청하는 사용자(frinedNo)
     public void friendRequestEvent(long friendNo) {
-        //Long userNo = eventStreamService.getUserNo();
-        Long userNo = 18L;
+        Long userNo = addOnEventService.getUserNo();
+        log.info("가져온 유저 값 : ", userNo);
+        //Long userNo = 18L;
         String eventName = "custom-event";
         String eventData = userNo + "로부터 친구 요청이 도착했습니다. " + addOnEventService.getNowTime();
 
@@ -36,8 +37,8 @@ public class FriendEventService {
 
     //친구 요청 수락 이벤트(요청 받은 내가 상대방에게 알림 전송)
     public void friendAcceptEvent(long fromNo) {
-        //Long userNo = eventStreamService.getUserNo();
-        Long userNo = 18L;
+        Long userNo = addOnEventService.getUserNo();
+//        Long userNo = 18L;
         String eventName = "custom-event";
         String eventData = userNo + "님이 친구 요청을 승낙했습니다!"  + addOnEventService.getNowTime();
 
@@ -47,13 +48,17 @@ public class FriendEventService {
 
     //친구 요청 거절 이벤트(요청 받은 내가 상대방에게 알림 전송)
     public void friendDenyEvent(long fromNo) {
-        //Long userNo = eventStreamService.getUserNo();
-        Long userNo = 18L;
+        Long userNo = addOnEventService.getUserNo();
+//        Long userNo = 18L;
         String eventName = "custom-event";
         String eventData = userNo + "님이 친구 요청을 거절했습니다..."  + addOnEventService.getNowTime();
 
         ServerSentEvent<String> event = addOnEventService.buildServerSentEvent(eventName, eventData);
         eventStreamService.sendEvent(fromNo, event);
+    }
+
+    //첫 로그인 시 밀렸던 모든 친구들을 조회하기
+    public void checkAllFriendEvent() {
     }
 
 }
