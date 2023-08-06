@@ -497,12 +497,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
         // 타임캡슐이 생성된 지 24시간이 지나서 초대 불가
-        if(currentTimestamp.getTime() - timecapsule.getRegistDate().getTime() > millisecondsInADay){
+        if (currentTimestamp.getTime() - timecapsule.getRegistDate().getTime() > millisecondsInADay) {
             throw new CommonException(CustomExceptionStatus.NOT_INVITE_FRIEND);
         }
 
         // 타임캡슐의 인원이 꽉 찼으면
-        if(timecapsule.getNowParticipant() >= MAX_PARTICIOPANT){
+        if (timecapsule.getNowParticipant() >= MAX_PARTICIOPANT) {
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
         }
 
@@ -540,6 +540,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
 
         return responseData;
+    }
 
     /*
         타임캡슐 나가기
