@@ -64,7 +64,8 @@ public enum CustomExceptionStatus {
     NOT_S3_CARD_SAVE(-3002, "S3 카드값 저장 실패"),
     NOT_CARDIMAGE(-3003, "입력받은 카드 이미지가 없습니다"),
     ALREADY_PARTICIPATING(-3004, "이미 참여중인 타임캡슐입니다."),
-    MAX_PARTICIPATING(-3005, "해당 타임캡슐의 참여인원이 꽉 찼습니다.");
+    MAX_PARTICIPATING(-3005, "해당 타임캡슐의 참여인원이 꽉 찼습니다."),
+    NOT_INVITE_FRIEND(-3006, "24시간이 지나서 친구 초대가 불가능합니다.");
 
 
 

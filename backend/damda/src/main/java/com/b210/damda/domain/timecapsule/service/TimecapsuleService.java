@@ -25,4 +25,6 @@ public interface TimecapsuleService {
 
     TimecapsuleDetailDTO joinTimecalsule(String inviteCode);
 
+    List<TimecapsuleInviteListDTO> getTimecapsuleInviteList(Long timecapsuleNo);
+
 }
