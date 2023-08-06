@@ -19,10 +19,15 @@ public interface TimecapsuleService {
 
     TimecapsuleDetailDTO getTimecapsuleDetail(Long timecapsuleNo);
 
-    List<MyItemListDTO> getMyCardList();
+    List<MyItemListDTO> getMyDecoList();
 
     void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO);
 
     TimecapsuleDetailDTO joinTimecalsule(String inviteCode);
 
+    void timecapsuleExit(Long timecapsuleNo);
+
+    void timecapsuleKick(Long timecapsuleNo, Long kickUserNo);
+
+    void timecapsuleDelete(Long timecapsuleNo);
 }
