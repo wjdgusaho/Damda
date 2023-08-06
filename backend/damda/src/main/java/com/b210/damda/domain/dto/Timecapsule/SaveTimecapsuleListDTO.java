@@ -13,7 +13,6 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class SaveTimecapsuleListDTO {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long timecapsuleNo;
     private String type;
     private String title;

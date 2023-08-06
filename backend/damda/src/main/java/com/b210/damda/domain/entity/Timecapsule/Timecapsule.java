@@ -4,10 +4,7 @@ import com.b210.damda.domain.dto.Timecapsule.MainTimecapsuleListDTO;
 import com.b210.damda.domain.dto.Timecapsule.SaveTimecapsuleListDTO;
 import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDetailDTO;
 import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -19,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Builder
+@ToString
 public class Timecapsule {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,8 +42,10 @@ public class Timecapsule {
 
     private int maxParticipant;
 
-    private int nowParticipant;
+    @Column(columnDefinition = "기본은 방장 1명")
+    private int nowParticipant = 1;
 
+    @Column(name="invite_code")
     private String inviteCode;
 
     private int capsuleIconNo;
@@ -120,10 +120,16 @@ public class Timecapsule {
                 .description(this.description)
                 .capsuleIcon("capsule"+this.capsuleIconNo)
                 .capsuleType(this.type)
+                .inviteCode(this.inviteCode)
                 .goalCard(this.goalCard)
                 .penalty(this.timecapsulePenalty.getPenalty() == false ? null : this.timecapsulePenalty.toTimecapsulePenaltyDTO())
                 .criteriaInfo(this.timecapsuleCriteria.toTimecapsuleCriteriaDTO())
                 .build();
+    }
+
+    // 현재 타임캡슐 인원 +1
+    public void updateNowParticipant(){
+        this.nowParticipant = nowParticipant + 1;
     }
 
 }

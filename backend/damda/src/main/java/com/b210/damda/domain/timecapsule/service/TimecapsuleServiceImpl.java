@@ -1,22 +1,27 @@
 package com.b210.damda.domain.timecapsule.service;
 
+import com.b210.damda.domain.dto.ItemsShopDTO;
 import com.b210.damda.domain.dto.Timecapsule.*;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.dto.weather.WeatherLocationNameDTO;
 import com.b210.damda.domain.entity.Timecapsule.*;
 import com.b210.damda.domain.entity.User.User;
+import com.b210.damda.domain.file.service.S3UploadService;
+import com.b210.damda.domain.shop.service.ShopService;
 import com.b210.damda.domain.timecapsule.repository.*;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
-import com.b210.damda.util.weatherAPI.service.WeatherAPIService;
 import com.b210.damda.util.weatherAPI.service.WeatherLocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -39,6 +44,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
+    private final ShopService shopService;
+    private S3UploadService s3UploadService;
 
     private final int MAX_PARTICIOPANT = 10;
     private final Long MAX_FILESIZE = 100L;
@@ -52,6 +59,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         return userNo;
     }
+
+    // 24시간이 지났는지 판단
+    long millisecondsInADay = 24 * 60 * 60 * 1000;  // 24시간을 밀리초로 변환
 
     /*
         타임캡슐 리스트 받아오기
@@ -296,6 +306,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
                 );
 
+        //삭제시간이 있다면
         if(myMapping.getDeleteDate() != null){
             if(myMapping.isSave())  throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
             else  throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
@@ -308,6 +319,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if(timecapsuleDetail.getCapsuleType().equals("GOAL")){
            timecapsuleDetail.setNowCard(timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsuleNo));
         }
+
         //해당 캡슐의 나의 정보 세팅
         timecapsuleDetail.setMyInfo(myMapping.toDetailMyInfoDTO());
         //참가자 세팅
@@ -316,13 +328,144 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         .collect(Collectors.toList())
         );
 
+        //캡슐 요일추가
+        List<CirteriaDayDTO> cirteriaDays = cirteriaDayRepository.findByTimecapsuleCriteriaCriteriaId(
+                timecapsuleDetail.getCriteriaInfo().getCriteriaId())
+                .stream()
+                .map(CirteriaDay::toCirteriaDayDTO).collect(Collectors.toList());
+
+        if(cirteriaDays.isEmpty()) timecapsuleDetail.getCriteriaInfo().setCirteriaDays(null);
+        else timecapsuleDetail.getCriteriaInfo().setCirteriaDays(cirteriaDays);
+
         return timecapsuleDetail;
+    }
+
+
+    @Override
+    public List<MyItemListDTO> getMyCardList() {
+        Map<String, Object> itemList = shopService.getItemList();
+        List<ItemsShopDTO> decoItemList = (List<ItemsShopDTO>) itemList.get("decoItemList");
+
+        //구입한 데코 아이템이 없습니다!
+        if(decoItemList.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_BUY_DECOITEM);
+        }
+
+        List<MyItemListDTO> decoMyItemList = decoItemList.stream()
+                .map(ItemsShopDTO::toMyItemListDTO).collect(Collectors.toList());
+
+        return decoMyItemList;
+    }
+
+    @Override
+    public void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
+        String fileUri = "";
+
+        if (cardImage.isEmpty() && cardImage.getSize() == 0) {
+            throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
+        } else {
+            try {
+                fileUri = s3UploadService.saveFile(cardImage);
+            } catch (IOException e) {
+                throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
+            }
+        }
+
+        TimecapsuleCard card = new TimecapsuleCard();
+        card.setTimecapsule(timecapsuleRepository.findById(
+                timecapsuleCardDTO.getTimecapsuleNo()).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)));
+
+        card.setUserNo(userRepository.findByUserNo(
+                timecapsuleCardDTO.getUserNo()).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER)));
+        card.setImagePath(fileUri);
+
+        TimecapsuleCard saveCard = timecapsuleCardRepository.save(card);
+
+        //에러메세지
+        if (saveCard.getTimecapsuleCardNo() == null) {
+            throw new CommonException(CustomExceptionStatus.NOT_CARD_SAVE);
+        }
+
+    }
+    
+    // 타임캡슐 참여코드로 참가
+    @Override
+    @Transactional
+    public TimecapsuleDetailDTO joinTimecalsule(String inviteCode) {
+        Timecapsule timecapsule = timecapsuleRepository.findByInviteCode(inviteCode);
+
+        // 타임캡슐이 없는 경우
+        if(timecapsule == null){
+            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
+        }
+
+        Long userNo = getUserNo(); // 현재 유저의 pk를 찾음
+        User user = userRepository.findById(userNo).get();
+
+        // 이미 유저가 나갔거나 추방당했다면
+        Optional<TimecapsuleMapping> mapping = timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsule.getTimecapsuleNo());
+        if(mapping.isPresent() && mapping.get().getDeleteDate() != null){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }else if (mapping.isPresent() && mapping.get().getUser().getUserNo() == userNo){ // 이미 참가중이라면
+            throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
+        }
+
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
+        // 타임캡슐이 생성된 지 24시간이 지나서 참여 불가
+        if(currentTimestamp.getTime() - timecapsule.getRegistDate().getTime() > millisecondsInADay){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        // 타임캡슐의 인원이 꽉 찼으면
+        if(timecapsule.getNowParticipant() >= 10){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        // 현재 타임캡슐의 인원 +1
+        timecapsule.updateNowParticipant();
+        timecapsuleRepository.save(timecapsule);
+        
+        // 타임캡슐 매핑 만들어서 저장
+        TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping(timecapsule, user);
+        timecapsuleMappingRepository.save(timecapsuleMapping);
+
+        //디테일 타임캡슐 생성
+        TimecapsuleDetailDTO timecapsuleDetail = timecapsule.toTimecapsuleDetailDTO();
+        if(timecapsuleDetail.getCapsuleType().equals("GOAL")){
+            timecapsuleDetail.setNowCard(timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo()));
+        }
+
+        //isSave가 false 이면서 deleteDate가 있는거를 제외한 참가자 조회
+        List<TimecapsuleMapping> participant = timecapsuleMappingRepository.findNotSavedButDeleted(timecapsule.getTimecapsuleNo());
+
+        //해당 캡슐의 나의 정보 세팅
+        timecapsuleDetail.setMyInfo(timecapsuleMapping.toDetailMyInfoDTO());
+        //참가자 세팅
+        timecapsuleDetail.setPartInfo(
+                participant.stream().map(TimecapsuleMapping::toDetailPartInfoDTO)
+                        .collect(Collectors.toList())
+        );
+
+        //캡슐 요일추가
+        List<CirteriaDayDTO> cirteriaDays = cirteriaDayRepository.findByTimecapsuleCriteriaCriteriaId(
+                        timecapsuleDetail.getCriteriaInfo().getCriteriaId())
+                .stream()
+                .map(CirteriaDay::toCirteriaDayDTO).collect(Collectors.toList());
+
+        if(cirteriaDays.isEmpty()) timecapsuleDetail.getCriteriaInfo().setCirteriaDays(null);
+        else timecapsuleDetail.getCriteriaInfo().setCirteriaDays(cirteriaDays);
+
+        return timecapsuleDetail;
+
     }
 
 
     public String createKey() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        int length = 6;
+        int length = 10;
         SecureRandom rnd = new SecureRandom();
 
         StringBuilder key = new StringBuilder(length);
@@ -332,6 +475,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         return key.toString();
     }
+
+
 
 
 }

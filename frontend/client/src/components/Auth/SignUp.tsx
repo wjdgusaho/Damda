@@ -6,6 +6,7 @@ import { serverUrl } from "../../urls"
 import { Link } from "react-router-dom"
 import tw from "tailwind-styled-components"
 import Modal from "react-modal"
+import * as EmailValidator from "email-validator"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -14,7 +15,7 @@ const isFileSizeValid = (file: File | null) => {
   return file !== null && file.size <= FILE_SIZE_LIMIT_BYTES
 }
 // 닉네임 정규식
-const nicknameRegex = /^(?=.*[a-zA-Z가-힣0-9]).{2,15}$/
+const nicknameRegex = /^(?=.*[a-zA-Z가-힣0-9])[a-zA-Z가-힣0-9]{2,15}$/
 
 // 비밀번호 정규식
 const passwordRegex = /^(?=.*[a-zA-Z])[!@#$%^*+=-]?(?=.*[0-9]).{5,25}$/
@@ -43,13 +44,13 @@ const successCode = Math.floor(Math.random() * 10000)
 
 const customStyles = {
   content: {
-    top: "50%",
+    top: "40%",
     left: "50%",
     right: "auto",
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "50%",
+    width: "65%",
     borderRadius: "20px",
   },
   overlay: {
@@ -57,7 +58,7 @@ const customStyles = {
   },
 }
 
-const ModalButton = styled.div`
+const ModalButton = styled.button`
   font-family: "pretendard";
   font-weight: 400;
   font-size: 18px;
@@ -88,6 +89,7 @@ export const SignUp = function () {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [getCode, setGetCode] = useState(false)
   const [userCode, setUserCode] = useState("")
+  const intervalRef = useRef<NodeJS.Timeout>()
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setUserdata({
@@ -156,6 +158,7 @@ export const SignUp = function () {
 
   useEffect(() => {
     if (userEmailMatch) {
+      clearInterval(intervalRef.current)
       setuserEmailMatch(0)
     }
   }, [userdata.email])
@@ -172,10 +175,8 @@ export const SignUp = function () {
   }
   let seconds = 0
 
-  function startCountdown(minute: number) {
-    seconds = minute * 60
-
-    const interval = setInterval(() => {
+  function startCountdown() {
+    intervalRef.current = setInterval(function () {
       const countdownElement = document.querySelector(
         "#countdown"
       ) as HTMLSpanElement
@@ -197,8 +198,8 @@ export const SignUp = function () {
       }
 
       if (seconds === 0) {
-        clearInterval(interval)
-        setuserEmailMatch(0)
+        clearInterval(intervalRef.current)
+        setuserEmailMatch(3)
       }
 
       seconds--
@@ -207,62 +208,63 @@ export const SignUp = function () {
 
   function handleSubmitCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    axios({
-      method: "POST",
-      url: serverUrl + "user/check-email",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: {
-        email: userdata.email,
-        code: userCode,
-      },
-    })
-      .then((response) => {
-        const code = response.data.code
-        alert(response.data.message)
-        if (code === 200) {
-          setGetCode(false)
-          setuserEmailMatch(3)
-          setUserCode("success" + successCode.toString())
-        }
+    if (!userCode) {
+      alert("인증번호를 입력해주세요.")
+    } else if (!EmailValidator.validate(userdata.email)) {
+      alert("올바르지 않은 이메일 형식입니다.")
+    } else {
+      axios({
+        method: "POST",
+        url: serverUrl + "user/check-email",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          email: userdata.email,
+          code: userCode,
+        },
       })
-      .catch((error) => {
-        console.error(error)
-      })
+        .then((response) => {
+          const code = response.data.code
+          alert(response.data.message)
+          if (code === 200) {
+            setGetCode(false)
+            setuserEmailMatch(4)
+            setUserCode("success" + successCode.toString())
+          }
+        })
+        .catch((error) => {
+          console.error(error)
+        })
+    }
   }
 
   function checkEmailOverlap(event: React.MouseEvent<HTMLButtonElement>) {
     if (!userdata.email) {
       setuserEmailMessage("이메일을 입력해주세요.")
-    } else if (
-      !userdata.email.includes("@") ||
-      userdata.email.search("@") + 1 === userdata.email.length ||
-      userdata.email.search("@") === 0
-    ) {
+    } else if (!EmailValidator.validate(userdata.email)) {
       setuserEmailMessage("이메일 형식으로 입력해주세요.")
     } else {
+      setuserEmailMatch(2)
       axios({
         method: "POST",
         url: serverUrl + "user/send-email",
         data: { email: userdata.email },
       })
-        .then(async () => {
-          setuserEmailMessage("")
-          setuserEmailMatch(2)
-          setGetCode(true)
-          await sleep(1)
-          startCountdown(10)
+        .then(async (response) => {
+          if (response.data.code === 200) {
+            setuserEmailMessage("")
+            setuserEmailMatch(3)
+            setGetCode(true)
+            seconds = 600
+            await startCountdown()
+          } else {
+            setuserEmailMatch(1)
+            alert(response.data.message)
+          }
         })
         .catch((error) => {
-          // // 이메일 사용 불가
-          // if (error.response.status === 409) {
-          //   setuserEmailMatch(1)
-          // }
-          // // 서버오류
-          // else {
           alert("중복확인에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
-          // }
         })
     }
   }
@@ -291,7 +293,7 @@ export const SignUp = function () {
       alert("이메일 중복확인을 해주세요.")
     } else if (
       userdata.email &&
-      userEmailMatch !== 3 &&
+      userEmailMatch !== 4 &&
       userCode !== "success" + successCode.toString()
     ) {
       alert("이메일 인증이 되지 않았습니다.")
@@ -315,6 +317,7 @@ export const SignUp = function () {
         data: data,
       })
         .then(() => {
+          clearInterval(intervalRef.current)
           navigate("/login")
         })
         .catch(() => {
@@ -342,19 +345,23 @@ export const SignUp = function () {
           />
         </svg>
       </Link>
-      {userEmailMatch === 3 ? (
-        <div className="p-2 px-4 text-sm text-green-500 w-24 relative top-40 left-48">
+      {userEmailMatch === 4 ? (
+        <div className="p-2 px-4 text-sm text-green-500 w-24 relative top-40 left-52">
           인증완료
         </div>
-      ) : userEmailMatch === 2 ? (
+      ) : userEmailMatch === 3 ? (
         <button
-          className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-28 relative top-40 left-48"
+          className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-28 relative top-40 left-44"
           onClick={() => {
             setGetCode(true)
           }}
         >
           이메일인증
         </button>
+      ) : userEmailMatch === 2 ? (
+        <div className="p-2 px-4 text-sm w-48 relative top-40 left-40">
+          인증번호 전송중...
+        </div>
       ) : userEmailMatch === 1 ? (
         <button
           className="p-2 px-4 text-sm rounded-full shadow-md bg-red-500 w-24 relative top-40 left-48"
@@ -391,9 +398,9 @@ export const SignUp = function () {
             type="text"
             onChange={handleCodeChange}
           />
-          <div className="flex justify-between mt-5">
-            <ModalButton>확인</ModalButton>
+          <div className="flex justify-between mt-5 mx-5">
             <ModalButton onClick={() => handleClose()}>닫기</ModalButton>
+            <ModalButton onSubmit={() => handleSubmitCode}>확인</ModalButton>
           </div>
         </ModalForm>
       </Modal>
@@ -401,10 +408,13 @@ export const SignUp = function () {
         <div className="w-full justify-center">
           <img
             className="mx-auto"
-            style={{ backgroundColor: "#AEB8E2", borderRadius: "50%" }}
+            style={{
+              backgroundColor: "#AEB8E2",
+              borderRadius: "50%",
+              width: "100px",
+              height: "100px",
+            }}
             src={selectedImage ? selectedImage : "/defalutprofile.png"}
-            width={100}
-            height={100}
             alt="profile"
           />
           <img
@@ -439,7 +449,7 @@ export const SignUp = function () {
         <p>
           닉네임
           <span style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}>
-            영문 2~15자
+            영문, 한글, 숫자 2~15자 가능합니다.
           </span>
         </p>
         <InputCSS
@@ -460,7 +470,8 @@ export const SignUp = function () {
 
         <p>비밀번호</p>
         <span style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}>
-          5~25자, 영문숫자 필수, 특수문자(!@#$%^*+=-) 가능
+          5~25자, 영문, 숫자, 특수문자(!@#$%^*+=-) 가능. 특수문자는 필수는
+          아닙니다.
         </span>
         <InputCSS
           name="userPw"

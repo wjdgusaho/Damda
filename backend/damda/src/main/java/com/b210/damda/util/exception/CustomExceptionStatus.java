@@ -35,6 +35,7 @@ public enum CustomExceptionStatus {
     ITEM_NOT_CAPSULE( -5006, "해당 아이템은 캡슐증가 아이템이 아닙니다"),
     ITEM_NOT_STORAGE(-5007, "해당 아이템은 용량증가 아이템이 아닙니다"),
     USER_NOT_TIMECAPSULE (-5008, "해당 유저의 타임캡슐이 아닙니다"),
+    NOT_BUY_DECOITEM(-5009, "구매하신 꾸미기 아이템이 없습니다"),
 
 
     //유저 관련
@@ -58,7 +59,14 @@ public enum CustomExceptionStatus {
     NOT_CREATE_TIMECAPSULE_USERLIMIT(-4004, "생성 및 참여 할 수 있는 타임캡슐의 공간이 부족합니다."),
 
     // 타임캡슐
-    NOT_ALLOW_PARTICIPATE(-3000, "참가 불가능한 타임캡슐입니다.");
+    NOT_ALLOW_PARTICIPATE(-3000, "참가 불가능한 타임캡슐입니다."),
+    NOT_CARD_SAVE(-3001, "카드 저장에 실패했습니다"),
+    NOT_S3_CARD_SAVE(-3002, "S3 카드값 저장 실패"),
+    NOT_CARDIMAGE(-3003, "입력받은 카드 이미지가 없습니다"),
+    ALREADY_PARTICIPATING(-3004, "이미 참여중인 타임캡슐입니다.");
+
+
+
     private final int code;
     private final String message;
 
