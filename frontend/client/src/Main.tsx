@@ -45,9 +45,9 @@ function Main() {
     }
   `
   useEffect(() => {
-    let eventSource: EventSource
-    const fetchSse = async () => {
-      if (token) {
+    if (token) {
+      let eventSource: EventSource
+      const fetchSse = async () => {
         try {
           eventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
             headers: {
@@ -55,22 +55,23 @@ function Main() {
             },
           })
 
-          // eventSource.onmessage = (event) => {
-          //   const res = event.data
-          //   console.log(res)
-          // }
-          eventSource.addEventListener("custom-event", (event) => {
+          eventSource.onmessage = (event) => {
+            const res = event.data
+            console.log(res)
+          }
+
+          eventSource.addEventListener("custom-event", async (event) => {
             console.log(event)
           })
 
-          eventSource.onerror = (event) => {
+          eventSource.onerror = async (event) => {
             eventSource.close()
           }
         } catch (error) {}
       }
+      fetchSse()
+      return () => eventSource.close()
     }
-    fetchSse()
-    return () => eventSource.close()
   })
 
   document.head.appendChild(styleElement)
