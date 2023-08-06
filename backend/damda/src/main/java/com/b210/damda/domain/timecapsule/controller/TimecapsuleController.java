@@ -148,8 +148,8 @@ public class TimecapsuleController {
         타임캡슐 카드 저장
      */
     @PostMapping("regist/card")
-    public CommonResponse registCard(@RequestPart("cardImage") MultipartFile cardImage,
-                                     @RequestBody TimecapsuleCardDTO timecapsuleCardDTO){
+    public CommonResponse registCard( @RequestPart("cardInfo") TimecapsuleCardDTO timecapsuleCardDTO,
+            @RequestPart("cardImage") MultipartFile cardImage){
 
         timecapsuleService.registCard(cardImage, timecapsuleCardDTO);
         CommonResponse response = new CommonResponse(200, "카드 저장 완료");
@@ -160,8 +160,8 @@ public class TimecapsuleController {
         타임캡슐 나가기
      */
     @PatchMapping("exit")
-    public CommonResponse timecapsuleExit(@RequestBody Long timecapsuleNo){
-
+    public CommonResponse timecapsuleExit(@RequestBody Map<String, Object> data){
+        Long timecapsuleNo = Long.parseLong((String) data.get("timecapsuleNo"));
         timecapsuleService.timecapsuleExit(timecapsuleNo);
         CommonResponse response = new CommonResponse(200, "타임캡슐을 나갔습니다");
         return response;
@@ -187,8 +187,8 @@ public class TimecapsuleController {
         타임캡슐 삭제하기
      */
     @PatchMapping("delete")
-    public CommonResponse timecapsuleDelete(@RequestBody Long timecapsuleNo){
-
+    public CommonResponse timecapsuleDelete(@RequestBody Map<String, Object> data){
+        Long timecapsuleNo = Long.parseLong((String) data.get("timecapsuleNo"));
         timecapsuleService.timecapsuleDelete(timecapsuleNo);
 
         CommonResponse response = new CommonResponse(200, "타임캡슐 제거 성공");

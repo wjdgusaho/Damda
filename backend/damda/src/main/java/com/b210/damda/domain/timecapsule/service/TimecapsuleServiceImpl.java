@@ -1,14 +1,17 @@
 package com.b210.damda.domain.timecapsule.service;
 
+import com.b210.damda.domain.dto.ItemsMappingDTO;
 import com.b210.damda.domain.dto.ItemsShopDTO;
 import com.b210.damda.domain.dto.Timecapsule.*;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.dto.weather.WeatherLocationNameDTO;
+import com.b210.damda.domain.entity.ItemsMapping;
 import com.b210.damda.domain.entity.Timecapsule.*;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.friend.repository.FriendRepository;
+import com.b210.damda.domain.shop.repository.ItemsMappingRepository;
 import com.b210.damda.domain.shop.service.ShopService;
 import com.b210.damda.domain.timecapsule.repository.*;
 import com.b210.damda.domain.user.repository.UserRepository;
@@ -47,6 +50,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final CirteriaDayRepository cirteriaDayRepository;
     private final FriendRepository friendRepository;
     private final TimecapsuleInviteRepository timecapsuleInviteRepository;
+    private final ItemsMappingRepository itemsMappingRepository;
 
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
@@ -360,8 +364,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
      */
     @Override
     public List<MyItemListDTO> getMyDecoList() {
-        Map<String, Object> itemList = shopService.getItemList();
-        List<ItemsShopDTO> decoItemList = (List<ItemsShopDTO>) itemList.get("decoItemList");
+
+        Long UserNo = getUserNo();
+        List<ItemsMapping> decoItemList = itemsMappingRepository.findByUserUserNo(UserNo);
 
         //구입한 데코 아이템이 없습니다!
         if(decoItemList.isEmpty()){
@@ -369,7 +374,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
 
         List<MyItemListDTO> decoMyItemList = decoItemList.stream()
-                .map(ItemsShopDTO::toMyItemListDTO).collect(Collectors.toList());
+                .map(ItemsMapping::toMyItemListDTO).collect(Collectors.toList());
 
         return decoMyItemList;
     }
@@ -565,6 +570,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
         );
 
+        //만약 나가가는 사람이 방장일경우 캡슐방 폭파
+        if(timecapsuleMapping.isHost()){
+            timecapsule.setRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
+            timecapsuleRepository.save(timecapsule);
+        }
+
         timecapsuleMapping.setDeleteDate(Timestamp.valueOf(LocalDateTime.now()));
         timecapsuleMappingRepository.save(timecapsuleMapping);
     }
@@ -592,6 +603,11 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
         );
 
+        //강퇴하려는 유저
+        User kickUser = userRepository.findByUserNo(kickUserNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.KICK_NOT_USER)
+        );
+
         //반장이 아닌경우
         if(userTimecapsule.isHost() == false){
             throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE_HOST);
@@ -599,7 +615,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //강퇴하련느 유저
         TimecapsuleMapping kickUserMapping = timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(
-                user.getUserNo(), timecapsule.getTimecapsuleNo()
+                kickUser.getUserNo(), timecapsule.getTimecapsuleNo()
         ).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.KICKUSER_NOT_TIMECAPSULE)
         );
