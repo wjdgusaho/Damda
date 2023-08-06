@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
@@ -45,8 +46,8 @@ public class SSEController {
 
     //테스트용
     @GetMapping(value = "/sse/test")
-    public void test() {
-        friendEventService.friendRequestEvent(18L);
+    public void test(@RequestParam long no) {
+        friendEventService.friendRequestEvent(no);
     }
 
 
