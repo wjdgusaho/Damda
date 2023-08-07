@@ -45,12 +45,11 @@ public class SSEController {
     @GetMapping(value = "/sse/test")
     public void test(@RequestParam long no) {
         friendEventService.friendRequestEvent(no);
-    }    @GetMapping(value = "/sse/2")
-    public void test2(@RequestParam long no) {
-        friendEventService.friendAcceptEvent(no);
-    }    @GetMapping(value = "/sse/test3")
-    public void test3(@RequestParam long no) {
-        friendEventService.friendDenyEvent(no);
+    }
+
+    @GetMapping(value = "/sse/nohead")
+    public Flux<ServerSentEvent<String>> nohead(@RequestParam long no) {
+        return eventStreamService.connectStream();
     }
 
     //테스트용2
