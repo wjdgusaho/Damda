@@ -42,7 +42,7 @@ public class Timecapsule {
 
     private int maxParticipant;
 
-    @Column(columnDefinition = "기본은 방장 1명")
+    @Column(columnDefinition = "integer default 1")
     private int nowParticipant = 1;
 
     @Column(name="invite_code")
