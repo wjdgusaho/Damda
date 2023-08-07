@@ -656,7 +656,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                   {isCardAble ? (
                     <CardBtn
                       onClick={() => {
-                        navigate("/card")
+                        navigate(`/card/${capsuleData.timecapsuleNo}`)
                       }}
                     >
                       카드 작성하기
