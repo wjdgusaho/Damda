@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@types/email-validator": "^1.0.6",
+    "@types/event-source-polyfill": "^1.0.1",
     "@types/react-datepicker": "^4.15.0",
     "@types/react-modal": "^3.16.0",
     "@types/react-slick": "^0.23.10",
