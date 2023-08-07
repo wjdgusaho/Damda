@@ -123,7 +123,7 @@ const Login = function () {
     try {
       eventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
         headers: {
-          token: token,
+          Authorization: "Bearer " + token,
         },
       })
 

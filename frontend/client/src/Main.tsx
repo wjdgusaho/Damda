@@ -53,7 +53,7 @@ function Main() {
               <Route path="/user-info/" element={<UserInfoChange />}></Route>
               <Route path="/shop/" element={<ShopPage />}></Route>
               <Route path="/timecapsule/" element={<TimecapsulePage />}></Route>
-              <Route path="/card/" element={<Card />}></Route>
+              <Route path="/card/:capsuleId" element={<Card />}></Route>
               <Route path="/friend/" element={<Friend />}>
                 <Route path="list" element={<List />}></Route>
                 <Route path="request" element={<Request />}></Route>
