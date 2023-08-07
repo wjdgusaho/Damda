@@ -169,6 +169,7 @@ public class FriendService {
 
         friendRepository.save(FindByCurrentUser); // 수동 저장
         friendRepository.save(FindByFriendUser);
+
     }
 
     // 친구 거절
@@ -214,9 +215,8 @@ public class FriendService {
     }
 
     //친구 확인
-    public void friendCheck() {
-        Long userNo = getUserNo();
-        User currentUser = userRepository.findById(userNo).get(); // 현재 유저를 찾음.
-        List<UserFriend> userFriendByFriend = friendRepository.findUserFriendByUser(currentUser, "REQUESTED"); // 현재 유저와 요청중인 상태를 보내서 요청받은 리스트 꺼냄
-    }
+    // 받은 친구요청 조회
+//    public List<FriendRequestListDTO> checkFriendRequest(){
+//
+//    }
 }

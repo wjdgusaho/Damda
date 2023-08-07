@@ -9,6 +9,8 @@ import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
+import Modal from "react-modal"
+import { textAlign } from "html2canvas/dist/types/css/property-descriptors/text-align"
 
 interface DataType {
   timecapsuleNo: number
@@ -189,6 +191,10 @@ const FileIcon = styled.img`
   margin-right: 5px;
 `
 
+const FileIcon2 = styled(FileIcon)`
+  margin-top: 0;
+`
+
 const InviteBtn = styled.button`
   width: 44px;
   height: 44px;
@@ -201,8 +207,13 @@ const InviteBtn = styled.button`
   line-height: 44px;
 `
 
-const FileInput = tw.input`
-  ml-1
+const FileInput = styled.input`
+  display: flex;
+  background-color: rgb(0, 0, 0, 0.15);
+  width: 194px;
+  height: 26px;
+  border-radius: 10px;
+  margin-top: 15px;
 `
 
 const FriendBox = styled.div`
@@ -210,6 +221,62 @@ const FriendBox = styled.div`
   background-color: ${(props) => props.theme.color100};
   border-radius: 50px;
   padding: 30px;
+`
+
+const FileInputBox = styled.div`
+  background-color: rgb(0, 0, 0, 0.15);
+  width: 194px;
+  height: 26px;
+  border-radius: 10px;
+`
+
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    borderRadius: "20px",
+    fontFamily: "Pretendard",
+  },
+  overlay: {
+    zIndex: 2,
+    backgroundColor: "rgba(0, 0, 0, 0.733)",
+  },
+}
+
+const ModalContent = styled.div`
+  color: ${(props) => props.theme.color900};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+`
+
+const ModalTitle = styled.div`
+  font-size: 20px;
+  font-weight: 700;
+`
+
+// 취소 등록 버튼
+const FileCencelBtn = styled.button`
+  width: 76px;
+  height: 25px;
+  border-radius: 30px;
+  background-color: rgb(255, 255, 255, 0.05);
+  color: ${(props) => props.theme.color900};
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  font-size: 16px;
+  font-weight: 500;
+  margin: 10px 13px;
+`
+
+const FileSubmitBtn = styled(FileCencelBtn)`
+  background-color: ${(props) => props.theme.color500};
 `
 
 const TimeCapsuleDetail = function () {
@@ -320,6 +387,21 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [timer, setTimer] = useState<string>("")
   const [isInvite, setIsInvite] = useState(true)
   const [isHelp, setIsHelp] = useState(false)
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [selectedFile, setSelectedFile] = useState<string | null>(null)
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0]
+    setSelectedFile(file ? file.name : null)
+  }
+
+  function openModal() {
+    setIsOpen(true)
+  }
+
+  function closeModal() {
+    setIsOpen(false)
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -333,8 +415,9 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         const minutes = Math.floor(
           (timeDiffer % (1000 * 60 * 60)) / (1000 * 60)
         )
+        const formattedHours = hours.toString().padStart(2, "0")
         const formattedMinutes = minutes.toString().padStart(2, "0")
-        setTimer(`${hours}:${formattedMinutes}`)
+        setTimer(`${formattedHours}:${formattedMinutes}`)
       }
     }, 1000)
     return () => {
@@ -382,8 +465,8 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 {capsuleData.title}
               </Title>
               <div className="text-2xl font-bold relative mb-1">
-                <div>{capsuleData.title}</div>
                 <HightLight />
+                <div>{capsuleData.title}</div>
               </div>
               <div style={{ fontSize: "14px" }}>{capsuleData.description}</div>
               {capsuleData.capsuleType !== "CLASSIC" ? (
@@ -501,12 +584,67 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                       src="../../assets/icons/file.png"
                       alt="fileicon"
                     />
-                    <FileInput
-                      type="file"
-                      name="file"
-                      id="file"
-                      accept="audio/*, video/*"
-                    />
+                    <span onClick={openModal}>파일 첨부하기</span>
+
+                    <Modal
+                      isOpen={modalIsOpen}
+                      onRequestClose={closeModal}
+                      style={customStyles}
+                      contentLabel="Example Modal"
+                    >
+                      <ModalContent>
+                        <ModalTitle className="mb-2">
+                          파일을 선택해주세요
+                        </ModalTitle>
+                        <div className="flex items-center">
+                          타임캡슐의 남은 용량 : MB
+                          <img
+                            className="ml-2"
+                            src="../../assets/icons/volumeUp.png"
+                            alt="volumeUp"
+                            width="54px"
+                            onClick={() => {
+                              navigate("/shop")
+                            }}
+                          />
+                        </div>
+                        <input
+                          style={{ display: "none" }}
+                          type="file"
+                          name="file"
+                          id="file"
+                          accept="audio/*, video/*"
+                          onChange={handleFileChange}
+                        />
+                        {selectedFile === null ? (
+                          <FileInputBox className="flex my-4 items-center pl-3">
+                            <FileIcon2
+                              src="../../assets/icons/file.png"
+                              alt="fileicon"
+                            />
+                            <label htmlFor="file">파일을 선택하세요</label>
+                          </FileInputBox>
+                        ) : (
+                          <FileInputBox className="flex my-4 items-center pl-3">
+                            <FileIcon2
+                              src="../../assets/icons/file.png"
+                              alt="fileicon"
+                            />
+                            <label htmlFor="file">{selectedFile}</label>
+                          </FileInputBox>
+                        )}
+                        <div style={{ textAlign: "center" }}>
+                          등록 후에는 삭제 및 변경할 수 없어요. <br />
+                          등록하시겠어요?
+                        </div>
+                        <div>
+                          <FileCencelBtn onClick={closeModal}>
+                            취소
+                          </FileCencelBtn>
+                          <FileSubmitBtn>등록</FileSubmitBtn>
+                        </div>
+                      </ModalContent>
+                    </Modal>
                   </div>
                   {isCardAble ? (
                     <CardBtn

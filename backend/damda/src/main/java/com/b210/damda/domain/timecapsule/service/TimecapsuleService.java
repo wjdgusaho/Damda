@@ -39,4 +39,9 @@ public interface TimecapsuleService {
 
     void timecapsuleInviteReject(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO);
 
+    Map<String, Object> timecapsuleFileSize(Long timecapsuleNo);
+
+    void timecapsuleInvitAccept(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO);
+
+
 }

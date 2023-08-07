@@ -1,6 +1,7 @@
 package com.b210.damda.util.serverSentEvent.controller;
 
 
+import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.util.serverSentEvent.service.FriendEventService;
 import com.b210.damda.util.serverSentEvent.service.EventStreamService;
 import com.b210.damda.util.serverSentEvent.service.TimeCapsuleEventService;
@@ -24,32 +25,38 @@ public class SSEController {
 
     //최초 접속 시 로그인 이벤트. 이를 통해 스트림 파이프라인 구축 가능
     //MediaType 명시를 통해 엔드포인트가 text/event-stream을 반환하도록 강제함.
-    @GetMapping(value = "/sse/login", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/sse/login")
     public Flux<ServerSentEvent<String>> login() {
         log.info("로그인 개방");
-
-        //또한 로그인 시 밀렸던 푸시 알림 체크 로직도 확인해야 함
         //1. 확인하지 못했던 친구 상태 알림 로직
         friendEventService.checkAllFriendEvent();
         //2. 확인하지 못했던 타임 캡슐 알림 로직
 
-        //return eventStreamService.connect(eventListService.getUserNo());
-        return eventStreamService.connectStream(18L); //테스팅용
+        return eventStreamService.connectStream();
     }
 
     //로그아웃 시 스트림 제거
     @GetMapping(value = "/sse/logout")
     public void logout() {
-//        eventStreamService.disconnectStream(eventListService.getUserNo());
-        eventStreamService.disconnectStream(18L); //테스팅용
+        eventStreamService.disconnectStream();
     }
 
     //테스트용
     @GetMapping(value = "/sse/test")
     public void test(@RequestParam long no) {
         friendEventService.friendRequestEvent(no);
+    }    @GetMapping(value = "/sse/2")
+    public void test2(@RequestParam long no) {
+        friendEventService.friendAcceptEvent(no);
+    }    @GetMapping(value = "/sse/test3")
+    public void test3(@RequestParam long no) {
+        friendEventService.friendDenyEvent(no);
     }
 
-
+    //테스트용2
+    @GetMapping(value = "sse/size")
+    public void test() {
+        eventStreamService.test();
+    }
 
 }
