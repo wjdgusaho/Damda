@@ -55,7 +55,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
     private final ShopService shopService;
-    private S3UploadService s3UploadService;
+    private final S3UploadService s3UploadService;
 
     private final int MAX_PARTICIOPANT = 10;
     private final Long MAX_FILESIZE = 100L;
@@ -385,7 +385,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
         String fileUri = "";
-
+        log.info(cardImage.toString());
         if (cardImage.isEmpty() && cardImage.getSize() == 0) {
             throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
         } else {
@@ -405,6 +405,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 timecapsuleCardDTO.getUserNo()).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.NOT_USER)));
         card.setImagePath(fileUri);
+        card.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
 
         TimecapsuleCard saveCard = timecapsuleCardRepository.save(card);
 
