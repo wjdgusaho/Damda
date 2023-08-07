@@ -146,6 +146,22 @@ public class TimecapsuleController {
         }
     }
 
+    // 타임캡슐 초대 수락
+    @PatchMapping("invite-accept")
+    public DataResponse<Map<String, Object>> timecapsuleInviteAccept(@RequestBody TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO){
+        try{
+            timecapsuleService.timecapsuleInvitAccept(timecapsuleInviteAcceptDTO);
+
+            return new DataResponse<>(200, "타임캡슐에 참여 성공하였습니다.");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch(Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
+        }
+
+
+    }
+
     /*
         타임캡슐 스티커 받기
      */
