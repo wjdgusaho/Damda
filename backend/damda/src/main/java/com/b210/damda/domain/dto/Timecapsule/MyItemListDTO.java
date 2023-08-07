@@ -1,5 +1,6 @@
 package com.b210.damda.domain.dto.Timecapsule;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 public class MyItemListDTO {
+    @JsonProperty("no")
     private Long itemNo;
     private String name;
     private String icon;
