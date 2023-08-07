@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor  // 기본 생성자 추가
 @AllArgsConstructor
 public class WeatherLocationDTO {
-    boolean mode;
+    boolean mode = true;
     double lat;
     double lan;
     double nx;

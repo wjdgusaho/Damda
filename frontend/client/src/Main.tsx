@@ -1,10 +1,8 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { RootState } from "./store/Store"
 import { useSelector } from "react-redux"
 import { CookiesProvider } from "react-cookie"
-import { EventSourcePolyfill } from "event-source-polyfill"
-import { serverUrl } from "./urls"
 
 import MainPage from "./components/MainPage"
 import { CheckPassword } from "./components/Auth/CheckPassword"
@@ -35,8 +33,6 @@ import TimeCapsuleDetail from "./components/TimeCapsuleDetail"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
-  const token = useSelector((state: RootState) => state.auth.accessToken)
-
   const styleElement = document.createElement("style")
   styleElement.innerHTML = `
     html {
@@ -44,35 +40,6 @@ function Main() {
       background-size: cover;
     }
   `
-  // useEffect(() => {
-  //   if (token) {
-  //     let eventSource: EventSource
-  //     const fetchSse = async () => {
-  //       try {
-  //         eventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
-  //           headers: {
-  //             token: token ? token : "",
-  //           },
-  //         })
-
-  //         eventSource.onmessage = (event) => {
-  //           const res = event.data
-  //           console.log(res)
-  //         }
-
-  //         eventSource.addEventListener("custom-event", async (event) => {
-  //           console.log(event)
-  //         })
-
-  //         eventSource.onerror = async (event) => {
-  //           eventSource.close()
-  //         }
-  //       } catch (error) {}
-  //     }
-  //     fetchSse()
-  //     return () => eventSource.close()
-  //   }
-  // })
 
   document.head.appendChild(styleElement)
   return (

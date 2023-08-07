@@ -29,7 +29,6 @@ public class WeatherLocationServiceImpl implements WeatherLocationService {
         double lat = weatherDTO.getLat();
         double lan = weatherDTO.getLan();
         LatXLngY latXLngY = ConvertGRID_GPS.converting(weatherDTO.isMode(), lat, lan);
-
         //격자값 변환한 nx,ny와 동일한 값 찾고, 이 중 위경도와 가장 유사한 값을 찾음
         List<WeatherLocationInfo> weatherLocations = weatherLocationInfoRepository.findByNxAndNy((int)latXLngY.x, (int)latXLngY.y);
 

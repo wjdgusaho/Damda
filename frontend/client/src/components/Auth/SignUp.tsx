@@ -163,6 +163,10 @@ export const SignUp = function () {
     }
   }, [userdata.email])
 
+  useEffect(() => {
+    return () => clearInterval(intervalRef.current)
+  }, [])
+
   function imgChange() {
     const fileinput = document.getElementById(
       "profileImage"
@@ -170,9 +174,6 @@ export const SignUp = function () {
     fileinput.click()
   }
 
-  async function sleep(sec: number) {
-    return new Promise<void>((resolve) => setTimeout(resolve, sec * 1000))
-  }
   let seconds = 0
 
   function startCountdown() {
@@ -230,6 +231,7 @@ export const SignUp = function () {
           if (code === 200) {
             setGetCode(false)
             setuserEmailMatch(4)
+            clearInterval(intervalRef.current)
             setUserCode("success" + successCode.toString())
           }
         })
@@ -257,7 +259,7 @@ export const SignUp = function () {
             setuserEmailMatch(3)
             setGetCode(true)
             seconds = 600
-            await startCountdown()
+            startCountdown()
           } else {
             setuserEmailMatch(1)
             alert(response.data.message)

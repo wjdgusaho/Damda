@@ -1,6 +1,7 @@
 package com.b210.damda.domain.entity;
 
 import com.b210.damda.domain.dto.ItemsShopDTO;
+import com.b210.damda.domain.dto.Timecapsule.MyItemListDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
