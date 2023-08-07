@@ -197,8 +197,9 @@ public class TimecapsuleController {
      */
     @PostMapping("regist/card")
     public CommonResponse registCard( @RequestPart("cardInfo") TimecapsuleCardDTO timecapsuleCardDTO,
-            @RequestPart("cardImage") MultipartFile cardImage){
+            @RequestPart("cardImage") String cardImage){
 
+        log.info(cardImage);
         timecapsuleService.registCard(cardImage, timecapsuleCardDTO);
         CommonResponse response = new CommonResponse(200, "카드 저장 완료");
         return  response;

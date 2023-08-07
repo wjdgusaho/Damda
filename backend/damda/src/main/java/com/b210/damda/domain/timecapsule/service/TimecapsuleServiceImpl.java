@@ -27,7 +27,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.codec.binary.Base64;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLOutput;
@@ -417,18 +419,35 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         카드 작성하기
      */
     @Override
-    public void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
+    public void registCard(String cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
         String fileUri = "";
         log.info(cardImage.toString());
-        if (cardImage.isEmpty() && cardImage.getSize() == 0) {
+
+        FileOutputStream stream = null;
+        if(cardImage == null || cardImage.trim().equals("")) {
             throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
-        } else {
-            try {
-                fileUri = s3UploadService.saveFile(cardImage);
-            } catch (IOException e) {
-                throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
-            }
         }
+
+        String cardBinaryDate = cardImage.replaceAll("data:image/png;base64,", "");
+        byte[] file = Base64.decodeBase64(cardBinaryDate);
+        //랜덤 이미지
+        String fileName = UUID.randomUUID().toString();
+
+        try {
+            fileUri = s3UploadService.saveFileBase64(file, fileName);
+        } catch (IOException e) {
+            throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
+        }
+
+//        if (cardImage.isEmpty() && cardImage.getSize() == 0) {
+//            throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
+//        } else {
+//            try {
+//                fileUri = s3UploadService.saveFile(cardImage);
+//            } catch (IOException e) {
+//                throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
+//            }
+//        }
 
         TimecapsuleCard card = new TimecapsuleCard();
         card.setTimecapsule(timecapsuleRepository.findById(
