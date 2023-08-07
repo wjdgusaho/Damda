@@ -40,7 +40,8 @@ public class EventStreamService {
     }
 
     //최초 연결 시(로그인) Flux 생성 및 Map에 저장
-    public Flux<ServerSentEvent<String>> connectStream(long userNo) {
+    public Flux<ServerSentEvent<String>> connectStream() {
+        long userNo = addOnEventService.getUserNo();
         log.info("connect 연결 성공, userNo : {}", userNo);
 
         //Sink맵 추가 후, onDispose 이벤트 시 제거하는 Flux 생성
@@ -77,7 +78,8 @@ public class EventStreamService {
         return Flux.merge(dataFlux, maintainConnectFlux.takeUntil(other -> dataFlux == null));
     }
 
-    public void disconnectStream(long userNo) {
+    public void disconnectStream() {
+        long userNo = addOnEventService.getUserNo();
         //프로세서 종료
         DirectProcessor<Void> processor = disconnectProcessors.get(userNo);
         if (processor != null) {
