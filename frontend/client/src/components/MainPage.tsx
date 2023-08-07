@@ -30,6 +30,7 @@ export interface CapsuleType {
   goalCard: number
   state: boolean
   imgsrc: string
+  isRegisted: boolean
 }
 
 export const MainPage = function () {

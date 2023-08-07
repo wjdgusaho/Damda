@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
@@ -357,7 +357,8 @@ const TimeCapsuleDetail = function () {
     fetchData()
   }, [capsuleId, token])
 
-  // console.log(capsuleData)
+  console.log(capsuleData)
+
   const currentDate = new Date()
   const oneDayLater = new Date(capsuleData.registDate)
   oneDayLater.setHours(oneDayLater.getHours() + 24).toString()
@@ -389,8 +390,11 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const isCardAble = capsuleData.myInfo.cardAble
   const isFileAble = capsuleData.myInfo.fileAble
   const navigate = useNavigate()
-  const oneDayLater = new Date(capsuleData.registDate)
-  oneDayLater.setHours(oneDayLater.getHours() + 24).toString()
+  const oneDayLater = useMemo(() => {
+    const date = new Date(capsuleData.registDate)
+    date.setHours(date.getHours() + 24)
+    return date
+  }, [capsuleData.registDate])
   const [timer, setTimer] = useState<string>("")
   const [isInvite, setIsInvite] = useState(true)
   const [isHelp, setIsHelp] = useState(false)
@@ -727,6 +731,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0]
     setSelectedFile(file ? file.name : null)
+    // 여기 파일 크기 체크하는 조건문 넣기
   }
 
   function openModal() {
@@ -736,8 +741,6 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   function closeModal() {
     setIsOpen(false)
   }
-
-  console.log(capsuleData.penalty)
 
   return (
     <>
