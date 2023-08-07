@@ -48,6 +48,9 @@ public class SSEController {
         friendEventService.friendRequestEvent(no);
     }
 
-
+    @GetMapping(value = "sse/size")
+    public void test() {
+        eventStreamService.test();
+    }
 
 }
