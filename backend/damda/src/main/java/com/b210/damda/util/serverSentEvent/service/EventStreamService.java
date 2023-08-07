@@ -46,7 +46,6 @@ public class EventStreamService {
 
         //Sink맵 추가 후, onDispose 이벤트 시 제거하는 Flux 생성
         Flux<ServerSentEvent<String>> dataFlux = Flux.create(sink -> userFluxSinkMap.put(userNo, sink.onDispose(() -> userFluxSinkMap.remove(userNo))));
-
         // 연결을 계속하기 위해 일정 시간마다 Event를 전송함. 해당 Flux는 기존 FluxSink와 별도의 로직이다.
 //        Flux<ServerSentEvent<String>> maintainConnectFlux = Flux.interval(Duration.ofSeconds(5)).map(new Function<Long, ServerSentEvent<String>>() {
 //            @Override
@@ -70,6 +69,7 @@ public class EventStreamService {
                         .map(new Function<Long, ServerSentEvent<String>>() {
                             @Override
                             public ServerSentEvent<String> apply(Long tick) {
+                                log.info("연결 유지");
                                 return ServerSentEvent.<String>builder().event("custom-event").data("연결 유지").build();
                             }
                         });
