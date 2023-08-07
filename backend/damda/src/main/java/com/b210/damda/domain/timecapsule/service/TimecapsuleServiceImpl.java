@@ -483,8 +483,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         Long userNo = getUserNo(); // 현재 유저의 pk를 찾음
         User user = userRepository.findById(userNo).get();
 
+        // 유저의 타임캡슐 한도 확인
+        if(user.getMaxCapsuleCount() == user.getNowCapsuleCount()){
+            throw new CommonException(CustomExceptionStatus.FULL_USER_TIMECAPSULE);
+        }
+
         // 이미 유저가 나갔거나 추방당했다면
         Optional<TimecapsuleMapping> mapping = timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsule.getTimecapsuleNo());
+        // 이미 나갔거나 추방당했다는 기록이 있는 경우
         if(mapping.isPresent() && mapping.get().getDeleteDate() != null){
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
         }else if (mapping.isPresent() && mapping.get().getUser().getUserNo() == userNo){ // 이미 참가중이라면
@@ -499,7 +505,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }   
         // 타임캡슐의 인원이 꽉 찼으면
         if(timecapsule.getNowParticipant() >= MAX_PARTICIOPANT){
-            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+            throw new CommonException(CustomExceptionStatus.MAX_PARTICIPATING);
         }
 
         // 현재 타임캡슐의 인원 +1
@@ -545,7 +551,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     }
 
-    
     // 타임캡슐 초대목록 가져오기
     @Override
     public List<TimecapsuleInviteListDTO> getTimecapsuleInviteList(Long timecapsuleNo) {
@@ -557,11 +562,27 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         User currentUser = userRepository.findById(userNo).get();
 
         // 타임캡슐 꺼냄
-        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).get();
+        Optional<Timecapsule> byIdTimecapsule = timecapsuleRepository.findById(timecapsuleNo);
 
-        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        // 타임캡슐이 없을 경우
+        if(byIdTimecapsule.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
+        }
+
+        // 현재 유저의 타임캡슐매핑을 가져옴.
+        TimecapsuleMapping byUserUserNoOne = timecapsuleMappingRepository.findByUserUserNoOne(timecapsuleNo, userNo);
+
+        // 현재 유저가 방장이 아니면
+        if(!byUserUserNoOne.isHost()){
+            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE_HOST);
+        }
+
+
+        Timecapsule timecapsule = byIdTimecapsule.get();
 
         // 타임캡슐이 생성된 지 24시간이 지나서 초대 불가
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
         if (currentTimestamp.getTime() - timecapsule.getRegistDate().getTime() > millisecondsInADay) {
             throw new CommonException(CustomExceptionStatus.NOT_INVITE_FRIEND);
         }
@@ -580,7 +601,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         // 타임캡슐 매핑리스트 꺼내옴.
         List<TimecapsuleMapping> timecapsuleMappings = timecapsuleMappingRepository.findByIdNo(timecapsuleNo);
-        System.out.println(timecapsuleMappings);
 
         Map<Long, TimecapsuleInvite> inviteMap = timecapsuleInviteList.stream()
                 .collect(Collectors.toMap(TimecapsuleInvite::getGuestUserNo, Function.identity()));
@@ -650,6 +670,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             // 이미 초대했을 경우
             if(timecapsuleInvite.getStatus().equals("NOTREAD")){
                 throw new CommonException(CustomExceptionStatus.ALREADY_INVITED_USER);
+            }else if(timecapsuleInvite.getStatus().equals("ACCEPTED")){ // 이미 참여중
+                throw new CommonException(CustomExceptionStatus.ALREADY_JOIN_TIMECAPSULE);
+            }else { // 이미 강퇴당했거나 나간 유저
+                throw new CommonException(CustomExceptionStatus.ALREADY_KICKED_OUT_USER);
             }
         }
     }
@@ -674,10 +698,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
         Timecapsule timecapsule = timecapsuleData.get();
 
-        Optional<TimecapsuleMapping> timecapsuleMappingData = timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsule.getTimecapsuleNo());
+        Optional<TimecapsuleMapping> byUserAnAndTimecapsule = timecapsuleMappingRepository.findByUserAndTimecapsule(user, timecapsule);
 
         // 이미 타임캡슐 참여중인지 판단
-        if(timecapsuleMappingData.isPresent()){
+        if(byUserAnAndTimecapsule.isPresent()){
+            // 타임캡슐을 나갔거나 추방당한 유저인지 판단
+            if(byUserAnAndTimecapsule.get().getDeleteDate() != null){
+                throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+            }
             throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
         }
 
@@ -699,6 +727,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         // 타임캡슐 초대 기록이 NOTREAD가 아니면
         if(!timecapsuleInvite.getStatus().equals("NOTREAD")){
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }else if(timecapsuleInvite.getStatus().equals("ACCEPTED")){
+            throw new CommonException(CustomExceptionStatus.ALREADY_JOIN_TIMECAPSULE);
+        }else if(timecapsuleInvite.getStatus().equals("REJECTED")){
+            throw new CommonException(CustomExceptionStatus.NOT_RECORD_INVITE);
         }
 
         // 타임캡슐이 삭제되었다면
@@ -724,6 +756,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         // 타임캡슐 매핑 데이터 생성
         TimecapsuleMapping timecapsuleMapping1 = new TimecapsuleMapping(timecapsule, user);
         timecapsuleMappingRepository.save(timecapsuleMapping1);
+
+        // 유저의 현재 타임캡슐 +1
+        user.setNowCapsuleCount(user.getNowCapsuleCount() + 1);
+        userRepository.save(user);
+
+        // 타임캡슐 현재 인원 +1
+        timecapsule.setNowParticipant(timecapsule.getNowParticipant() + 1);
+        timecapsuleRepository.save(timecapsule);
     }
 
     // 타임캡슐 초대 거절
