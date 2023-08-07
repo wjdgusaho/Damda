@@ -50,7 +50,7 @@ public class S3UploadService {
                 .body(urlResource);
     }
 
-    public String saveFileBase64(byte[] data, String filename) {
+    public String saveFileBase64(byte[] data, String filename) throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(data.length);
         // 또한 이미지인 경우 ContentType을 적절히 설정해야합니다.
@@ -66,7 +66,6 @@ public class S3UploadService {
         // ByteArrayInputStream을 사용하여 byte[]를 InputStream으로 변환
         ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
 
-        String extension = filename.substring(filename.lastIndexOf(".")); // 파일 확장자
         String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
         String newFilename = randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
 
