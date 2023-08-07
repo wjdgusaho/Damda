@@ -32,7 +32,6 @@ public class SSEController {
         friendEventService.checkAllFriendEvent();
         //2. 확인하지 못했던 타임 캡슐 알림 로직
 
-        //return eventStreamService.connect(eventListService.getUserNo());
         return eventStreamService.connectStream();
     }
 
