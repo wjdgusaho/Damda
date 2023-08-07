@@ -20,6 +20,17 @@ const nicknameRegex = /^(?=.*[a-zA-Z가-힣0-9])[a-zA-Z가-힣0-9]{2,15}$/
 // 비밀번호 정규식
 const passwordRegex = /^(?=.*[a-zA-Z])[!@#$%^*+=-]?(?=.*[0-9]).{5,25}$/
 
+// 파일(사진) 확장자 제한
+const allowedExtensions = [".jpg", ".jpeg", ".png"]
+
+const isAllowFiles = (file: File) => {
+  const fileExtension = file.name.substring(file.name.lastIndexOf("."))
+  if (allowedExtensions.includes(fileExtension.toLowerCase())) {
+    return true
+  }
+  return false
+}
+
 const Form = styled.form`
   display: flex;
   flex-wrap: wrap;
@@ -107,21 +118,26 @@ export const SignUp = function () {
 
   function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] || null
-    if (file && isFileSizeValid(file)) {
-      setProfileImage(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setSelectedImage(reader.result as string)
+    if (file) {
+      if (!isFileSizeValid(file)) {
+        alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
+      } else if (!isAllowFiles(file)) {
+        alert("파일 확장자는 .jpg, .jpeg, .png만 가능합니다.")
+      } else {
+        setProfileImage(file)
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          setSelectedImage(reader.result as string)
+        }
+        reader.readAsDataURL(file)
       }
-      reader.readAsDataURL(file)
-    } else {
-      if (imageRef.current) {
-        imageRef.current.value = ""
-      }
-      setProfileImage(null)
-      alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
     }
+    if (imageRef.current) {
+      imageRef.current.value = ""
+    }
+    setProfileImage(null)
   }
+
   useEffect(() => {
     if (userdata.nickname) {
       if (nicknameRegex.test(userdata.nickname)) {
