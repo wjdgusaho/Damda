@@ -196,11 +196,11 @@ public class TimecapsuleController {
         타임캡슐 카드 저장
      */
     @PostMapping("regist/card")
-    public CommonResponse registCard( @RequestPart("cardInfo") TimecapsuleCardDTO timecapsuleCardDTO,
+    public CommonResponse registCard( @RequestPart("timecapsuleNo") Long timecapsuleNo,
                                       @RequestParam("cardImage") MultipartFile cardImage){
 
         //log.info(cardImage.toString());
-        timecapsuleService.registCard(cardImage, timecapsuleCardDTO);
+        timecapsuleService.registCard(cardImage, timecapsuleNo);
         CommonResponse response = new CommonResponse(200, "카드 저장 완료");
         return  response;
     }
@@ -254,6 +254,23 @@ public class TimecapsuleController {
         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "파일 사이즈 조회 성공");
         response.setData(result);
 
+        return response;
+    }
+
+    /*
+        파일 첨부파일 받기
+     */
+    @PostMapping("regist/file")
+    public DataResponse<Map<String, Object>> timecapsuleFileUpload(@RequestPart("fileContent") MultipartFile file,
+                                                                   @RequestParam("timeCapsuleNo") Long timecapsuleNo){
+
+        log.info("file : {} ",file);
+        log.info("No : " + timecapsuleNo.toString());
+
+        Map<String, Object>  result = timecapsuleService.timecapsuleFileUpload(file, timecapsuleNo);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "파일 저장 성공");
+        //response.setData(result);
         return response;
     }
 
