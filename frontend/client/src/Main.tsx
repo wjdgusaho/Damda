@@ -1,10 +1,8 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { RootState } from "./store/Store"
 import { useSelector } from "react-redux"
 import { CookiesProvider } from "react-cookie"
-import { EventSourcePolyfill } from "event-source-polyfill"
-import { serverUrl } from "./urls"
 
 import MainPage from "./components/MainPage"
 import { CheckPassword } from "./components/Auth/CheckPassword"
@@ -44,41 +42,6 @@ function Main() {
       background-size: cover;
     }
   `
-  useEffect(() => {
-    let eventSource: EventSource
-    const fetchSse = () => {
-      try {
-        eventSource = new EventSourcePolyfill(serverUrl + "sse/test?no=10", {
-          headers: {
-            token: token ? token : "",
-          },
-        })
-
-        eventSource.onmessage = (event) => {
-          const res = event.data
-          console.log(res)
-        }
-
-        eventSource.addEventListener("custom-event", (event) => {
-          console.log(event)
-        })
-
-        eventSource.onerror = (event) => {
-          console.log("Error event:", event)
-
-          eventSource.close()
-        }
-      } catch (error) {}
-    }
-    if (token) {
-      fetchSse()
-    }
-    return () => {
-      if (eventSource) {
-        eventSource.close()
-      }
-    }
-  })
 
   document.head.appendChild(styleElement)
   return (
