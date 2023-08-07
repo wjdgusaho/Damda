@@ -161,52 +161,59 @@ const Card = function () {
   const inputWidth =
     inputValue.length <= 5 ? "100px" : `${inputValue.length * 8 + 100}px`
 
+  const sendImageToServer = async (formData: FormData) => {
+    try {
+      // `cardInfo`를 한 객체로 합치기
+      const body = {
+        cardImage: formData,
+        cardInfo: {
+          userNo: UserData.userNo,
+          timecapsuleNo: timecapsuleNo.capsuleId,
+        },
+      }
+      console.log(body)
+
+      // `Content-Type` 헤더 설정
+      const response = await axios.post(
+        serverUrl + "timecapsule/regist/card",
+        formData,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
+      console.log(response)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const saveAsImageHandler = () => {
     const target = document.getElementById("saveImgContainer")
     if (!target) {
       return alert("결과 저장에 실패했습니다.")
     }
     html2canvas(target, {
-      useCORS: true, // 크로스 오리진 요청 허용
-      scale: 2, // 해상도 높이기
+      useCORS: true,
+      scale: 2,
     }).then((canvas) => {
-      // const link = document.createElement("a")
-      // document.body.appendChild(link)
-      var imageDataURL = canvas.toDataURL("image/png")
-      imageDataURL = imageDataURL.replace("data:image/png;base64,", "")
+      const imgBase64 = canvas.toDataURL("image/jpeg")
+      const decodImg = atob(imgBase64.split(",")[1])
 
-      // link.download = "result.png"
-      // link.click()
-      // document.body.removeChild(link)
-
-      // 이미지 데이터를 Axios를 사용하여 서버로 보냄
-      sendImageToServer(imageDataURL)
-    })
-
-    const sendImageToServer = (imageDataURL: string) => {
-      try {
-        const body = {
-          cardImage: imageDataURL,
-          cardInfo: {
-            userNo: UserData.userNo,
-            timecapsuleNo: timecapsuleNo.capsuleId,
-          },
-        }
-        console.log(body)
-        const response = axios.post(
-          serverUrl + "timecapsule/regist/card",
-          body,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          }
-        )
-        console.log(response)
-      } catch (error) {
-        console.error(error)
+      let array = []
+      for (let i = 0; i < decodImg.length; i++) {
+        array.push(decodImg.charCodeAt(i))
       }
-    }
+
+      const file = new Blob([new Uint8Array(array)], { type: "image/jpeg" })
+      const fileName = "canvas_img_" + new Date().getMilliseconds() + ".jpg"
+      let formData = new FormData()
+      formData.append("file_give", file, fileName)
+
+      sendImageToServer(formData)
+    })
   }
 
   const StickerContainerArea = useRef<HTMLDivElement>(null)
