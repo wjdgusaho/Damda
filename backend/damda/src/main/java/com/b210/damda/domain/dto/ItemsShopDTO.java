@@ -16,12 +16,5 @@ public class ItemsShopDTO {
     private boolean isUserHave;
     private String type;
 
-    public MyItemListDTO toMyItemListDTO(){
-        return MyItemListDTO.builder()
-                .itemNo(this.itemNo)
-                .name(this.name)
-                .icon(this.icon)
-                .build();
-    }
 
 }

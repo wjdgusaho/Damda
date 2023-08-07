@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
-import { styled, css } from "styled-components"
+import { styled } from "styled-components"
 import { useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
-import axios from "axios"
-import { serverUrl } from "../urls"
 
 const calculateProgressPercentage = (startDate: string, endDate: string) => {
   const currentDate = new Date()
@@ -16,70 +14,6 @@ const calculateProgressPercentage = (startDate: string, endDate: string) => {
   const ratio = calculateDateDifference(startDate, dateString)
   return (ratio / total) * 100
 }
-
-type CapsuleType = {
-  id: number
-  type: string
-  sDate: string
-  eDate: string
-  name: string
-  imgsrc: string
-  curCard: number
-  goalCard: number
-  state: boolean
-  title: string
-}
-
-const capsuleList: CapsuleType[] = [
-  {
-    id: 1,
-    type: "classic",
-    sDate: "2023-01-01",
-    eDate: "2023-06-01",
-    name: "클래식1",
-    imgsrc: "capsule1",
-    curCard: 0,
-    goalCard: 0,
-    state: true,
-    title: "싸피 친구들 타임캡슐",
-  },
-  {
-    id: 3,
-    type: "memory",
-    sDate: "2023-01-01",
-    eDate: "2023-02-30",
-    name: "기록1",
-    imgsrc: "capsule10",
-    curCard: 0,
-    goalCard: 0,
-    state: true,
-    title: "퇴사하고 싶은 사람들",
-  },
-  {
-    id: 4,
-    type: "new",
-    sDate: "2023-08-04",
-    eDate: "2023-06-01",
-    name: "클래식1",
-    imgsrc: "capsule3",
-    curCard: 0,
-    goalCard: 0,
-    state: false,
-    title: "눈올때마다 기록하기",
-  },
-  {
-    id: 2,
-    type: "goal",
-    sDate: "2023-01-01",
-    eDate: "2024-01-01",
-    name: "목표1",
-    imgsrc: "capsule5",
-    curCard: 50,
-    goalCard: 100,
-    state: false,
-    title: "우리 1년 뒤 만나",
-  },
-]
 
 const Box = styled.div`
   display: flex;
@@ -158,59 +92,112 @@ const TimecapsulePage = function () {
         <Title>진행 중인 타임캡슐</Title>
         {capsuleList.map((capsule) => (
           <React.Fragment key={capsule.timecapsuleNo}>
-            <Card
-              onClick={() => {
-                navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
-              }}
-            >
-              <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
-              <div style={{ marginLeft: "15px" }}>
-                <CapsuleState>
-                  {calculateDday(capsule.eDate)}
-                  <DateDiv
-                    className="text-sm font-thin"
-                    style={{ opacity: "56%" }}
+            {/* 등록 된 타임캡슐 */}
+            {capsule.state ? (
+              <>
+                {calculateProgressPercentage(capsule.sDate, capsule.eDate) >=
+                  100 || capsule.goalCard === capsule.curCard ? (
+                  <OpenableCard
+                    onClick={() => {
+                      navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
+                    }}
                   >
-                    {capsule.eDate}
-                  </DateDiv>
-                </CapsuleState>
-                <CapsuleTitle className="text-xl font-thin">
-                  {capsule.name}
-                </CapsuleTitle>
-              </div>
-            </Card>
-            {calculateProgressPercentage(capsule.sDate, capsule.eDate) >=
-              100 && (
-              <OpenableCard
-                onClick={() => {
-                  navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
-                }}
-              >
-                <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
-                <div style={{ marginLeft: "15px" }}>
-                  <CapsuleState>
-                    오픈가능
-                    <DateDiv
-                      className="text-sm font-thin"
-                      style={{ opacity: "56%" }}
-                    >
-                      {capsule.eDate}
-                    </DateDiv>
-                  </CapsuleState>
-                  <CapsuleTitle className="text-xl font-thin">
-                    {capsule.name}
-                  </CapsuleTitle>
-                </div>
-              </OpenableCard>
-            )}
-            {capsule.type === "new" && (
-              // 24시간 내의 타임캡슐인 경우
+                    <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
+                    <div style={{ marginLeft: "15px" }}>
+                      <CapsuleState>
+                        오픈가능
+                        {capsule.type !== "GOAL" ? (
+                          <DateDiv
+                            className="text-sm font-thin"
+                            style={{ opacity: "56%" }}
+                          >
+                            {capsule.eDate}
+                          </DateDiv>
+                        ) : null}
+                      </CapsuleState>
+                      <CapsuleTitle className="text-xl font-thin">
+                        {capsule.name}
+                      </CapsuleTitle>
+                    </div>
+                  </OpenableCard>
+                ) : (
+                  <>
+                    {capsule.type !== "GOAL" ? (
+                      <Card
+                        onClick={() => {
+                          navigate(
+                            `/timecapsule/detail/${capsule.timecapsuleNo}`
+                          )
+                        }}
+                      >
+                        <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
+                        <div style={{ marginLeft: "15px" }}>
+                          {capsule.type === "GOAL" ? (
+                            <CapsuleState>
+                              {capsule.curCard} / {capsule.goalCard}
+                            </CapsuleState>
+                          ) : (
+                            <CapsuleState>
+                              {calculateDday(capsule.eDate)}
+                              <DateDiv
+                                className="text-sm font-thin"
+                                style={{ opacity: "56%" }}
+                              >
+                                {capsule.eDate}
+                              </DateDiv>
+                            </CapsuleState>
+                          )}
+
+                          <CapsuleTitle className="text-xl font-thin">
+                            {capsule.name}
+                          </CapsuleTitle>
+                        </div>
+                      </Card>
+                    ) : (
+                      <Card
+                        onClick={() => {
+                          navigate(
+                            `/timecapsule/detail/${capsule.timecapsuleNo}`
+                          )
+                        }}
+                      >
+                        <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
+                        <div style={{ marginLeft: "15px" }}>
+                          {capsule.type === "GOAL" ? (
+                            <CapsuleState>
+                              {capsule.curCard} / {capsule.goalCard}
+                            </CapsuleState>
+                          ) : (
+                            <CapsuleState>
+                              {calculateDday(capsule.eDate)}
+                              <DateDiv
+                                className="text-sm font-thin"
+                                style={{ opacity: "56%" }}
+                              >
+                                {capsule.eDate}
+                              </DateDiv>
+                            </CapsuleState>
+                          )}
+
+                          <CapsuleTitle className="text-xl font-thin">
+                            {capsule.name}
+                          </CapsuleTitle>
+                        </div>
+                      </Card>
+                    )}
+                  </>
+                )}
+              </>
+            ) : (
               <UnregisteredCard
                 onClick={() => {
                   navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
                 }}
               >
-                <CapsuleImg capsuleNum={capsule.capsuleIconNo} />
+                <CapsuleImg
+                  className="grayscale"
+                  capsuleNum={capsule.capsuleIconNo}
+                />
                 <div style={{ marginLeft: "15px" }}>
                   <CapsuleState>
                     등록 전
@@ -226,79 +213,12 @@ const TimecapsulePage = function () {
                   </CapsuleTitle>
                 </div>
               </UnregisteredCard>
-            )}
-            {capsule.state ? (
-              <OpenableCard>
-                <CapsuleImg capsuleNum={capsule.imgsrc} />
-                <div style={{ marginLeft: "15px" }}>
-                  <CapsuleState>
-                    오픈가능
-                    <DateDiv
-                      className="text-sm font-thin"
-                      style={{ opacity: "56%" }}
-                    >
-                      {capsule.eDate}
-                    </DateDiv>
-                  </CapsuleState>
-                  <CapsuleTitle className="text-xl font-thin">
-                    {capsule.name}
-                  </CapsuleTitle>
-                </div>
-              </OpenableCard>
-            ) : dataCheck(capsule.sDate) ? (
-              <UnregisteredCard>
-                <CapsuleImg capsuleNum={capsule.imgsrc} />
-                <div style={{ marginLeft: "15px" }}>
-                  <CapsuleState>
-                    등록 전
-                    <DateDiv
-                      className="text-sm font-thin"
-                      style={{ opacity: "56%" }}
-                    >
-                      {capsule.eDate}
-                    </DateDiv>
-                  </CapsuleState>
-                  <CapsuleTitle className="text-xl font-thin">
-                    {capsule.name}
-                  </CapsuleTitle>
-                </div>
-              </UnregisteredCard>
-            ) : (
-              <Card>
-                <CapsuleImg capsuleNum={capsule.imgsrc} />
-                <div style={{ marginLeft: "15px" }}>
-                  <CapsuleState>
-                    {calculateDday(capsule.eDate)}
-                    <DateDiv
-                      className="text-sm font-thin"
-                      style={{ opacity: "56%" }}
-                    >
-                      {capsule.eDate}
-                    </DateDiv>
-                  </CapsuleState>
-                  <CapsuleTitle className="text-xl font-thin">
-                    {capsule.name}
-                  </CapsuleTitle>
-                </div>
-              </Card>
             )}
           </React.Fragment>
         ))}
       </Box>
     </>
   )
-}
-
-const dataCheck = (startDate: string): boolean => {
-  if (startDate) {
-    const targetDate = new Date(startDate)
-    const nowDate = new Date()
-    const diffDate = nowDate.getTime() - targetDate.getTime()
-    if (diffDate < 0) {
-      return true
-    }
-  }
-  return false
 }
 
 const calculateDday = (endDate: string) => {

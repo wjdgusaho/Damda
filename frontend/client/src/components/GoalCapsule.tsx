@@ -6,6 +6,10 @@ import { useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
 import "react-datepicker/dist/react-datepicker.css"
 import "./datePicker.css"
+import axios from "axios"
+import { serverUrl } from "../urls"
+import { useSelector } from "react-redux"
+import { RootState } from "../store/Store"
 
 const Box = styled.div`
   display: flex;
@@ -103,24 +107,26 @@ const BtnWrap = tw.div`
   justify-evenly
 `
 
-const RandomWrap = styled.div`
-  position: absolute;
-  top: -40px;
-  right: -145px;
-  display: flex;
-  align-items: center;
-`
+// const RandomWrap = styled.div`
+//   position: absolute;
+//   top: -40px;
+//   left: 190px;
+//   display: flex;
+//   align-items: center;
+// `
 
-const CustomBtn = styled.button`
-  width: 90px;
-  height: 31px;
-  border-radius: 15px;
-  background-color: rgb(255, 255, 255, 0.29);
-  font-weight: 100;
-  margin-left: 20px;
-`
+// const CustomBtn = styled.div`
+//   text-align: center;
+//   line-height: 31px;
+//   width: 110px;
+//   height: 31px;
+//   border-radius: 15px;
+//   background-color: rgb(255, 255, 255, 0.29);
+//   font-weight: 100;
+//   margin-left: 20px;
+// `
 
-const penalty = [
+const basicPenalty = [
   "엉덩이로 이름쓰기",
   "스쿼트 10개 하기",
   "카페 음료 돌리기",
@@ -131,22 +137,34 @@ const penalty = [
 interface DataItem {
   id: number
   title: string
+  eng: string
 }
 
 const GoalCapsule = function () {
   let [isHelp, setIsHelp] = useState(false)
-  let [isCustom, setIsCustom] = useState(true)
+  // let [isCustom, setIsCustom] = useState(true)
   const navigate = useNavigate()
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [timeValue, setTimeValue] = useState<[string, string, string]>([
+    "",
+    "",
+    "",
+  ])
+  const [isPenalty, setIsPenalty] = useState(false)
+  const [penaltyDes, setPenaltyDes] = useState("")
+  const [goalNumber, setGoalNumber] = useState("")
 
   const data: DataItem[] = [
-    { id: 0, title: "없음" }, // Monday 이런식으로 바꾸기
-    { id: 1, title: "월" },
-    { id: 2, title: "화" },
-    { id: 3, title: "수" },
-    { id: 4, title: "목" },
-    { id: 5, title: "금" },
-    { id: 6, title: "토" },
-    { id: 7, title: "일" },
+    { id: 0, title: "없음", eng: "" },
+    { id: 1, title: "월", eng: "Monday" },
+    { id: 2, title: "화", eng: "Tuesday" },
+    { id: 3, title: "수", eng: "Wednesday" },
+    { id: 4, title: "목", eng: "Thursday" },
+    { id: 5, title: "금", eng: "Friday" },
+    { id: 6, title: "토", eng: "Saturday" },
+    { id: 7, title: "일", eng: "Sunday" },
   ]
 
   // 체크된 아이템을 담을 배열
@@ -169,12 +187,12 @@ const GoalCapsule = function () {
   }
 
   // 랜덤 벌칙
-  const [selectedPenalty, setSelectedPenalty] = useState<string | null>(null)
+  // const [selectedPenalty, setSelectedPenalty] = useState<string>("")
 
-  const handleButtonClick = () => {
-    const randomIndex = Math.floor(Math.random() * penalty.length)
-    setSelectedPenalty(penalty[randomIndex])
-  }
+  // const handleButtonClick = () => {
+  //   const randomIndex = Math.floor(Math.random() * basicPenalty.length)
+  //   setSelectedPenalty(basicPenalty[randomIndex])
+  // }
 
   const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value
@@ -201,171 +219,274 @@ const GoalCapsule = function () {
     }
   }
 
+  function inputTitle(e: React.FormEvent<HTMLInputElement>) {
+    setTitle(e.currentTarget.value)
+  }
+
+  function inputDescription(e: React.FormEvent<HTMLInputElement>) {
+    setDescription(e.currentTarget.value)
+  }
+
+  function inputPenalty(e: React.FormEvent<HTMLInputElement>) {
+    setIsPenalty(true)
+    setPenaltyDes(e.currentTarget.value)
+  }
+
+  function inputGoalNumber(e: React.FormEvent<HTMLInputElement>) {
+    setGoalNumber(e.currentTarget.value)
+  }
+
+  function handleTimeChange(value: [string, string, string]) {
+    setTimeValue(value)
+  }
+
+  function FormSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    const inputDay = data
+      .filter((item) => checkItems.includes(item.id))
+      .map((item) => item.eng)
+
+    axios({
+      method: "POST",
+      url: serverUrl + "timecapsule/create",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        title: title,
+        type: "GOAL",
+        description: description,
+        goalCard: goalNumber,
+        openDate: null,
+        criteria: {
+          type: "CARD",
+          localBig: null,
+          localMedium: null,
+          weatherStatus: null,
+          startTime: timeValue[0],
+          endTime: timeValue[1],
+          timeKr: timeValue[2],
+        },
+        cardInputDay: inputDay,
+        penalty: {
+          penalty: isPenalty,
+          penaltyDescription: penaltyDes,
+        },
+      },
+    })
+      .then((res) => {
+        if (res.data.code === 200) {
+          console.log(res.data)
+          navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
+        } else if (res.data.code === -4004) {
+          alert(
+            "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
+          )
+          navigate("/main")
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
   return (
     <>
       <SubHeader />
       <Box className="w-80 m-auto">
         <Title>목표 타임캡슐을 만들어요</Title>
-        <ContentWrap>
-          <Content>
-            이름
-            <span>최대 10자</span>
-          </Content>
-        </ContentWrap>
-        <InputBox className="w-80" type="text" maxLength={10} />
-        <ContentWrap>
-          <Content>
-            한줄설명
-            <span>최대 30자</span>
-          </Content>
-        </ContentWrap>
-        <InputBox className="w-80" type="text" maxLength={30} />
-        <ContentWrap>
-          <Content>
-            달성도
-            <span>최대 1000개</span>
-          </Content>
-        </ContentWrap>
-        <InputBox
-          className="w-80"
-          type="number"
-          max={1000}
-          min={1}
-          onInput={handleInput}
-        />
+        <form onSubmit={FormSubmit}>
+          <ContentWrap>
+            <Content>
+              이름
+              <span>최대 10자</span>
+            </Content>
+          </ContentWrap>
+          <InputBox
+            onChange={inputTitle}
+            className="w-80"
+            type="text"
+            maxLength={10}
+          />
+          <ContentWrap>
+            <Content>
+              한줄설명
+              <span>최대 30자</span>
+            </Content>
+          </ContentWrap>
+          <InputBox
+            onChange={inputDescription}
+            className="w-80"
+            type="text"
+            maxLength={30}
+          />
+          <ContentWrap>
+            <Content>
+              달성도
+              <span>최대 1000개</span>
+            </Content>
+          </ContentWrap>
+          <InputBox
+            onChange={inputGoalNumber}
+            className="w-80"
+            type="number"
+            max={1000}
+            min={1}
+            onInput={handleInput}
+          />
 
-        <ContentWrap>
-          <Content>
-            카드 작성시간
-            <span>카드를 작성할 시간을 설정해요</span>
-          </Content>
-          <HelpIcon
-            onClick={() => setIsHelp(!isHelp)}
-            src="assets/icons/questionMark.png"
-            alt="helpicon"
-          />
-        </ContentWrap>
-        <div>
-          {isHelp ? <Info src="../../helptimeinfo.png" alt="helpinfo" /> : null}
-        </div>
-        <div className="mt-6">
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="none"
-            name="time"
-            defaultChecked
-          />
-          <RadioBtn htmlFor="none">없음</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="dawn"
-            name="time"
-          />
-          <RadioBtn htmlFor="dawn">새벽</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="morning"
-            name="time"
-          />
-          <RadioBtn htmlFor="morning">아침</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="afternoon"
-            name="time"
-          />
-          <RadioBtn htmlFor="afternoon">오후</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="night"
-            name="time"
-          />
-          <RadioBtn htmlFor="night">밤</RadioBtn>
-        </div>
-        <ContentWrap>
-          <Content>
-            카드 작성요일
-            <span style={{ marginLeft: "4px" }}>
-              특정 요일에만 카드를 작성하도록 해요
-            </span>
-          </Content>
-        </ContentWrap>
-        <div className="mt-6">
-          {data.map((item) => (
-            <React.Fragment key={item.id}>
-              <input
-                type="checkbox"
-                style={{ display: "none" }}
-                id={`day_${item.id}`}
-                name="day"
-                value={item.title}
-                onChange={() => handleCheckboxChange(item.id)}
-                checked={checkItems.includes(item.id)}
-              />
-              <RadioBtn className="my-1" htmlFor={`day_${item.id}`}>
-                {item.title}
-              </RadioBtn>
-            </React.Fragment>
-          ))}
-        </div>
-        <ContentWrap>
-          <Content>벌칙</Content>
-        </ContentWrap>
-        <PenaltyInputBox
-          className="w-80"
-          type="text"
-          placeholder="랜덤 벌칙 정하기"
-          disabled={isCustom}
-          maxLength={30}
-          defaultValue={selectedPenalty !== null ? selectedPenalty : ""}
-        />
-        <div style={{ position: "relative", width: "24px", height: "24px" }}>
-          <RandomWrap>
-            <img
-              onClick={handleButtonClick}
-              style={{ width: "18px", height: "18px" }}
-              src="assets/icons/random.png"
-              alt="random"
+          <ContentWrap>
+            <Content>
+              카드 작성시간
+              <span>카드를 작성할 시간을 설정해요</span>
+            </Content>
+            <HelpIcon
+              onClick={() => setIsHelp(!isHelp)}
+              src="assets/icons/questionMark.png"
+              alt="helpicon"
             />
-            <CustomBtn
+          </ContentWrap>
+          <div>
+            {isHelp ? (
+              <Info src="../../helptimeinfo.png" alt="helpinfo" />
+            ) : null}
+          </div>
+          <div className="mt-6">
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="none"
+              name="time"
+              onChange={() => handleTimeChange(["", "", ""])}
+              defaultChecked
+            />
+            <RadioBtn htmlFor="none">없음</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="dawn"
+              name="time"
+              onChange={() => handleTimeChange(["00", "06", "새벽"])}
+            />
+            <RadioBtn htmlFor="dawn">새벽</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="morning"
+              name="time"
+              onChange={() => handleTimeChange(["06", "12", "아침"])}
+            />
+            <RadioBtn htmlFor="morning">아침</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="afternoon"
+              name="time"
+              onChange={() => handleTimeChange(["12", "18", "오후"])}
+            />
+            <RadioBtn htmlFor="afternoon">오후</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="night"
+              name="time"
+              onChange={() => handleTimeChange(["18", "24", "밤"])}
+            />
+            <RadioBtn htmlFor="night">밤</RadioBtn>
+          </div>
+          <ContentWrap>
+            <Content>
+              카드 작성요일
+              <span style={{ marginLeft: "4px" }}>
+                특정 요일에만 카드를 작성하도록 해요
+              </span>
+            </Content>
+          </ContentWrap>
+          <div className="mt-6">
+            {data.map((item) => (
+              <React.Fragment key={item.id}>
+                <input
+                  type="checkbox"
+                  style={{ display: "none" }}
+                  id={`day_${item.id}`}
+                  name="day"
+                  value={item.title}
+                  onChange={() => {
+                    handleCheckboxChange(item.id)
+                  }}
+                  checked={checkItems.includes(item.id)}
+                />
+                <RadioBtn className="my-1" htmlFor={`day_${item.id}`}>
+                  {item.title}
+                </RadioBtn>
+              </React.Fragment>
+            ))}
+          </div>
+          <ContentWrap>
+            <Content>벌칙</Content>
+          </ContentWrap>
+          <InputBox
+            onChange={inputPenalty}
+            className="w-80"
+            type="text"
+            maxLength={30}
+          />
+          {/* <PenaltyInputBox
+            onChange={inputPenaty}
+            className="w-80"
+            type="text"
+            placeholder="랜덤 벌칙 정하기"
+            disabled={isCustom}
+            maxLength={30}
+            value={selectedPenalty}
+          />
+          <div style={{ position: "relative", width: "24px", height: "24px" }}>
+            <RandomWrap>
+              <img
+                onClick={handleButtonClick}
+                style={{ width: "18px", height: "18px" }}
+                src="assets/icons/random.png"
+                alt="random"
+              />
+              <CustomBtn
+                onClick={() => {
+                  setIsCustom(false)
+                  setSelectedPenalty("")
+                }}
+              >
+                직접입력
+              </CustomBtn>
+            </RandomWrap>
+          </div> */}
+          <BtnWrap>
+            <CancelBtn
+              type="button"
               onClick={() => {
-                setIsCustom(false)
-                setSelectedPenalty(null)
+                navigate(-1)
               }}
             >
-              직접입력
-            </CustomBtn>
-          </RandomWrap>
-        </div>
-        <BtnWrap>
-          <CancelBtn
-            onClick={() => {
-              navigate(-1)
-            }}
-          >
-            취소
-          </CancelBtn>
-          <SubmitBtn>생성</SubmitBtn>
-        </BtnWrap>
+              취소
+            </CancelBtn>
+            <SubmitBtn type="submit">생성</SubmitBtn>
+          </BtnWrap>
+        </form>
       </Box>
     </>
   )
 }
 
 // 랜덤 벌칙 정하기
-interface InputBoxProps {
-  className?: string
-  type?: string
-  placeholder?: string
-  disabled?: boolean
-  maxLength?: number
-  defaultValue: string | null
-}
+// interface InputBoxProps {
+//   className?: string
+//   type?: string
+//   placeholder?: string
+//   disabled?: boolean
+//   maxLength?: number
+//   value: string | null
+// }
 
-const PenaltyInputBox = styled(InputBox)<InputBoxProps>``
+// const PenaltyInputBox = styled(InputBox)<InputBoxProps>``
 
 export default GoalCapsule
