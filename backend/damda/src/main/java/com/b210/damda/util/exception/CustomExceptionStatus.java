@@ -76,7 +76,12 @@ public enum CustomExceptionStatus {
     CARD_SAVE_NULL_ERR(-3012, "카드 저장 에러 (이미지 값이 없습니다)"),
     NOT_RECORD_INVITE(-3013, "잘못 온 초대 기록입니다."),
     ALREADY_JOIN_TIMECAPSULE(-3014, "해당 유저는 이미 참여중입니다."),
-    ALREADY_KICKED_OUT_USER(-3015, "이미 강퇴 당했거나 나간 유저입니다.");
+    ALREADY_KICKED_OUT_USER(-3015, "이미 강퇴 당했거나 나간 유저입니다."),
+    FILE_LIMIT_NOT_UPLOAD(-3014, "최대 파일 업로드 가능 용량을 초과하여 업로드에 실패했습니다"),
+    FILE_NOT_UPLOAD(-3015, "파일 업로드에 실패했습니다"),
+    ALREADY_CARD_UPLOAD(-3016, "오늘은 카드 작성을 하셨습니다"),
+    ALREADY_FILE_UPLOAD(-3017, "오늘은 파일 업로드를 하셨습니다");
+
 
 
     private final int code;
