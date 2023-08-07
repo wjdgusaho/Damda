@@ -21,7 +21,7 @@ public interface TimecapsuleService {
 
     List<MyItemListDTO> getMyDecoList();
 
-    void registCard(String cardImage, TimecapsuleCardDTO timecapsuleCardDTO);
+    void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO);
 
     TimecapsuleDetailDTO joinTimecalsule(String inviteCode);
 
