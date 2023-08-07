@@ -69,8 +69,8 @@ public class EventStreamService {
                         .map(new Function<Long, ServerSentEvent<String>>() {
                             @Override
                             public ServerSentEvent<String> apply(Long tick) {
-                                log.info("연결 유지");
-                                return ServerSentEvent.<String>builder().event("custom-event").data("연결 유지").build();
+                                log.info("연결 유지 {}", tick);
+                                return addOnEventService.buildServerSentEvent("custom-event", "연결--유지");
                             }
                         });
 
