@@ -58,8 +58,8 @@ export const List = function () {
           </TextStyle>
           <img
             className="w-72 m-auto mt-12"
-            src="/assets/Astronaut-4.png"
-            alt="Astronaut-3"
+            src="/assets/universe/Astronaut-4.png"
+            alt="Astronaut-4"
           />
           <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
         </div>
@@ -67,7 +67,7 @@ export const List = function () {
       {friendList.length !== 0 && (
         <div>
           {friendList.map((f: FriendType) => (
-            <FriendCard key={f.id} friend={f}></FriendCard>
+            <FriendCard key={f.userNo} friend={f}></FriendCard>
           ))}
         </div>
       )}
@@ -88,7 +88,7 @@ export const Request = function () {
       },
     })
       .then((response) => {
-        // setRequestList(response.data.data.result)
+        setRequestList(response.data.data.result)
       })
       .catch((error) => console.error(error))
   }, [])
@@ -101,8 +101,8 @@ export const Request = function () {
           </TextStyle>
           <img
             className="w-72 m-auto mt-12"
-            src="/assets/Astronaut-4.png"
-            alt="Astronaut-3"
+            src="/assets/universe/Astronaut-4.png"
+            alt="Astronaut-4"
           />
           <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
         </div>
@@ -110,7 +110,7 @@ export const Request = function () {
       {requestList.length !== 0 && (
         <div>
           {requestList.map((f: FriendType) => (
-            <RequestCard key={f.id} friend={f}></RequestCard>
+            <RequestCard key={f.userNo} friend={f}></RequestCard>
           ))}
         </div>
       )}
@@ -126,19 +126,22 @@ const FriendCard = function ({ friend }: { friend: FriendType }) {
         src={friend.profileImage}
         alt="프로필사진"
       />
-      <TextStyle className="ml-4 text-white">{friend.nickname}</TextStyle>
+      <TextStyle className="ml-4 text-white">
+        {friend.nickname}
+        <span className="text-gray-400">#{friend.userNo}</span>
+      </TextStyle>
       <div className="flex ml-auto mr-3">
         {friend.isFavorite ? (
           <img
             className="w-5 mr-4"
             src="/assets/icons/star.png"
-            alt="즐겨찾기"
+            alt="즐겨찾는친구"
           />
         ) : (
           <img
             className="w-5 mr-4 opacity-10"
             src="/assets/icons/star.png"
-            alt="즐겨찾기"
+            alt="즐겨찾기안됨"
           />
         )}
         <img className="w-5" src="/assets/icons/button_x.png" alt="삭제" />
@@ -149,15 +152,22 @@ const FriendCard = function ({ friend }: { friend: FriendType }) {
 const RequestCard = function ({ friend }: { friend: FriendType }) {
   return (
     <div className="flex w-10/12 items-center m-auto p-2">
-      <img className="w-16" src={friend.profileImage} alt="프로필사진" />
-      <TextStyle className="ml-4 text-white">{friend.nickname}</TextStyle>
+      <img
+        className="w-16 rounded-full h-16"
+        src={friend.profileImage}
+        alt="프로필사진"
+      />
+      <TextStyle className="ml-4 text-white">
+        {friend.nickname}
+        <span className="text-gray-400">#{friend.userNo}</span>
+      </TextStyle>
       <div className="flex ml-auto mr-3">
         <img
           className="w-5 mr-4"
           src="/assets/icons/button_check.png"
-          alt="즐겨찾기"
+          alt="수락"
         />
-        <img className="w-5" src="/assets/icons/button_x.png" alt="삭제" />
+        <img className="w-5" src="/assets/icons/button_x.png" alt="거절" />
       </div>
     </div>
   )
@@ -203,7 +213,7 @@ const NavLink2 = styled(NavLink)`
 `
 
 type FriendType = {
-  id: number
+  userNo: number
   nickname: string
   profileImage: string
   isFavorite: boolean

@@ -2,7 +2,11 @@ import axios from "axios"
 import React, { useState, useEffect } from "react"
 import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
-import { Navigate, useNavigate } from "react-router"
+import { useNavigate } from "react-router"
+import { Link } from "react-router-dom"
+
+// 비밀번호 정규식
+const passwordRegex = /^(?=.*[a-zA-Z])[!@#$%^*+=-]?(?=.*[0-9]).{5,25}$/
 
 const Box = tw.div`
   flex
@@ -32,10 +36,11 @@ export const FindPassword = function () {
   const [password, setPassword] = useState("")
   const [checkPassword, setCheckPassword] = useState("")
   const [passwordHelp, setPasswordHelp] = useState("")
+  const [sendCode, setSendCode] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!checkPassword) {
+    if (!checkPassword && passwordRegex.test(checkPassword)) {
       setPasswordHelp(
         "비밀번호는 최소 5자 이상, 최대 15자 미만의 특수문자를 제외한 영문, 숫자 조합입니다."
       )
@@ -68,6 +73,7 @@ export const FindPassword = function () {
 
   function handleSubmitEmail(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setSendCode(true)
     axios({
       method: "POST",
       url: serverUrl + "user/change-password/email",
@@ -79,22 +85,19 @@ export const FindPassword = function () {
       },
     })
       .then(async (response) => {
-        if (response.data === "인증번호 전송 성공") {
+        if(response.data.code === 200) {
           setGetCode(true)
           await sleep(1)
           startCountdown(10)
-        } else if (response.data === "이메일 없음") {
-          alert("이메일이 존재하지 않습니다.")
+        } else {
+          alert(response.data.message)
         }
       })
       .catch((error) => {
-        if (error.response.data === "인증번호 전송 실패") {
-          alert(
-            "서버에서 인증 번호 전송에 실패했습니다. 잠시 뒤 다시 보내주세요."
-          )
-        } else {
-          console.error(error)
-        }
+        console.error(error)
+      })
+      .finally(() => {
+        setSendCode(false)
       })
   }
   let seconds = 0
@@ -194,6 +197,27 @@ export const FindPassword = function () {
 
   return (
     <Box style={{ color: "#CFD4EE" }}>
+      <div className="w-full flex justify-center">
+
+      <Link to={"/login"} style={{ fontSize: "30px", color: "white" }}
+      className="w-6 mr-72">
+        <svg
+          className="w-6 h-6 text-black-800 dark:text-white"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 8 14"
+          >
+          <path
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
+            />
+        </svg>
+      </Link>
+      </div>
       <img
         src="assets/universe/Planet-3.png"
         alt="planet"
@@ -218,7 +242,7 @@ export const FindPassword = function () {
               </button>
             )}
           </Form>
-          {getCode && (
+          {getCode? (
             <div>
               <Form onSubmit={handleSubmitCode}>
                 <p className="grid grid-cols-2 justify-between">
@@ -236,7 +260,14 @@ export const FindPassword = function () {
                 </button>
               </Form>
             </div>
-          )}
+          ) : sendCode && (
+          <div>
+              <Form>
+                <p className="text-center">
+                  인증번호 전송중...
+                </p>
+              </Form>
+          </div>)}
         </div>
       )}
       {change && (

@@ -17,12 +17,12 @@ const Background = styled.div`
 `
 
 const TypeBtn = styled.button`
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: ${(props) => props.theme.colorShadow};
   width: 297px;
   height: 70px;
   font-size: 20px;
   border-radius: 15px;
-  color: #fff;
+  color: ${(props) => props.theme.colorCommon};
   font-weight: 100;
   margin-bottom: 55px;
   box-shadow: 0px 4px 4px rgb(33, 25, 74, 0.4);
@@ -43,7 +43,7 @@ const Box = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #e4e6f5;
+  color: ${(props) => props.theme.colorCommon};
   font-family: "Pretendard";
   font-size: 20px;
 `
@@ -66,47 +66,59 @@ const SelectType = function () {
 
   return (
     <>
-      {isHelp ? <Help isHelp={isHelp} setIsHelp={setIsHelp} /> : null}
-      <Background className={isHelp ? "blur-sm" : ""}>
-        <HeaderWrap>
-          <SubHeader />
-        </HeaderWrap>
-        <Box>
-          <div className="flex">
-            <div className="mb-5 ml-9">어떤 타임캡슐을 만들어 볼까요?</div>
-            <HelpIcon
-              onClick={() => setIsHelp(!isHelp)}
-              className="mt-12 mb-8"
-              src="../../assets/icons/questionMark.png"
-              alt="questionMark"
-            />
-          </div>
-          <TypeBtn
-            onClick={() => {
-              navigate("/classic")
-            }}
-          >
-            클래식 타임캡슐
-          </TypeBtn>
-          <TypeBtn
-            onClick={() => {
-              navigate("/record")
-            }}
-          >
-            기록 타임캡슐
-          </TypeBtn>
-          <TypeBtn
-            onClick={() => {
-              navigate("/goal")
-            }}
-          >
-            목표 타임캡슐
-          </TypeBtn>
-        </Box>
-      </Background>
+      <BackgroundImg>
+        {isHelp ? <Help isHelp={isHelp} setIsHelp={setIsHelp} /> : null}
+        <Background className={isHelp ? "blur-sm" : ""}>
+          <HeaderWrap>
+            <SubHeader />
+          </HeaderWrap>
+          <Box>
+            <div className="flex">
+              <div className="mb-5 ml-9">어떤 타임캡슐을 만들어 볼까요?</div>
+              <HelpIcon
+                onClick={() => setIsHelp(!isHelp)}
+                className="mt-12 mb-8"
+                src="../../assets/icons/questionMark.png"
+                alt="questionMark"
+              />
+            </div>
+            <TypeBtn
+              onClick={() => {
+                navigate("/classic")
+              }}
+            >
+              클래식 타임캡슐
+            </TypeBtn>
+            <TypeBtn
+              onClick={() => {
+                navigate("/record")
+              }}
+            >
+              기록 타임캡슐
+            </TypeBtn>
+            <TypeBtn
+              onClick={() => {
+                navigate("/goal")
+              }}
+            >
+              목표 타임캡슐
+            </TypeBtn>
+          </Box>
+        </Background>
+      </BackgroundImg>
     </>
   )
 }
+
+const BackgroundImg = styled.div`
+  background-image: url(${(props) => props.theme.bgImg});
+  background-size: 540px;
+  background-position-x: center;
+  background-position-y: 60px;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100vh;
+`
 
 const BlurBg = styled.div`
   height: 100vh;

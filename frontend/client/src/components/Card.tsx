@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react"
 import { styled } from "styled-components"
 import html2canvas from "html2canvas"
 import StickerContainer from "./StickerContainer"
+import { useNavigate } from "react-router-dom"
+import Modal from "react-modal"
 
 interface StickerType {
   no: number
@@ -61,6 +63,24 @@ const stickerList: StickerType[] = [
   },
 ]
 
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    borderRadius: "20px",
+    backgroundColor: "rgb(255, 255, 255)",
+    color: "rgb(93, 93, 93)",
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.733)",
+  },
+}
+
 const Card = function () {
   const [inputValue, setInputValue] = useState("")
   const [inputContentValue, setInputContentValue] = useState("")
@@ -70,6 +90,17 @@ const Card = function () {
   const [title, setTitle] = useState("오늘의 제목")
   const [cardContent, setCardContent] = useState("오늘의 내용을 입력해주세요!")
   const [countList, setCountList] = useState<{ no: number; url: string }[]>([])
+
+  const navigate = useNavigate()
+
+  const goBack = () => {
+    navigate(-1) // 뒤로가기
+  }
+
+  function imgChange() {
+    const fileinput = document.getElementById("cardImage") as HTMLInputElement
+    fileinput.click()
+  }
 
   const handleChange = (e: { target: { value: any } }) => {
     const value = e.target.value
@@ -162,10 +193,41 @@ const Card = function () {
 
   const StickerContainerArea = useRef<HTMLDivElement>(null)
 
+  const [cardImage, setCardImage] = useState<File | null>(null)
+  const imageRef = useRef<HTMLInputElement>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] || null
+    if (file) {
+      setCardImage(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+
+  function openModal() {
+    setIsOpen(true)
+  }
+
+  function closeModal() {
+    setIsOpen(false)
+  }
+
   return (
     <BackGround bgColor={bgcolor} className="overflow-hidden w-full h-full">
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
-        <img className="w-6 h-6" src="/assets/icons/x_dark.png" alt="X" />
+        <img
+          className="w-6 h-6"
+          onClick={openModal}
+          src="/assets/icons/x_dark.png"
+          alt="X"
+        />
         <img
           onClick={saveAsImageHandler}
           className="w-8 h-6"
@@ -173,6 +235,26 @@ const Card = function () {
           alt="체크"
         />
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="BUY Modal"
+      >
+        <div className="text-center font-semibold">
+          작성된 내용이 저장되지 않아요!
+          <br />
+          그래도 취소하시겠어요?
+        </div>
+        <div className="flex mt-4 w-48 m-auto justify-between">
+          <ModalButton className="bg-black bg-opacity-0" onClick={closeModal}>
+            <span className="font-bold text-gray-400">닫기</span>
+          </ModalButton>
+          <ModalButton className="bg-black bg-opacity-10" onClick={goBack}>
+            <span className="font-bold text-gray-900">작성취소</span>
+          </ModalButton>
+        </div>
+      </Modal>
       <CardContainer
         bgColor={bgcolor}
         id="saveImgContainer"
@@ -216,14 +298,22 @@ const Card = function () {
               </InputResult>
             </label>
           </div>
-          <div className="flex w-40 h-40 items-center m-auto mt-4 bg-black bg-opacity-20 mb-1">
-            <img
-              className="w-8 h-8 m-auto opacity-80"
-              onClick={saveAsImageHandler}
-              src="/assets/icons/img_select.png"
-              alt="사진"
-            />
-          </div>
+          <img
+            src={
+              selectedImage ? selectedImage : "/assets/icons/cardImgSelect.png"
+            }
+            onClick={imgChange}
+            alt="카드이미지"
+            className="flex w-40 h-40 items-center m-auto mt-4 mb-1"
+          />
+          <input
+            id="cardImage"
+            name="cardImage"
+            type="file"
+            className="hidden"
+            onChange={handleImageChange}
+            ref={imageRef}
+          />
           <div className="text-center">
             <div className="relative text-center -mt-2">
               <label
@@ -270,8 +360,8 @@ const Card = function () {
           </Option>
         </FontSelect>
       </div>
-      <div>
-        <div className="bg-black bg-opacity-10 mt-4 flex flex-nowrap overflow-y-auto">
+      <div className="fixed bottom-0">
+        <div className="bg-black bg-opacity-10 flex flex-nowrap overflow-y-auto">
           {stickerList.length !== 0 &&
             stickerList.map((s: StickerType) => (
               <img
@@ -283,7 +373,7 @@ const Card = function () {
               />
             ))}
         </div>
-        <div className="flex h-64 w-full flex-wrap overflow-x-auto content-start">
+        <div className="flex h-52 w-full flex-wrap overflow-x-auto content-start">
           {matchingSticker &&
             Object.values(matchingSticker.sticker).map(
               (stickerImage, index) => (
@@ -301,6 +391,18 @@ const Card = function () {
     </BackGround>
   )
 }
+
+const ModalButton = styled.div`
+  font-family: "pretendard";
+  font-weight: 400;
+  font-size: 18px;
+  width: 80px;
+  height: 26px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: #000000b1;
+`
 
 interface BackGroundProps {
   bgColor: string

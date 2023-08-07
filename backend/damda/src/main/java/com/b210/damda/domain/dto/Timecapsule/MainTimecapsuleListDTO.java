@@ -15,7 +15,6 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class MainTimecapsuleListDTO {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long timecapsuleNo;
     private String type;
     @JsonProperty("sDate")
