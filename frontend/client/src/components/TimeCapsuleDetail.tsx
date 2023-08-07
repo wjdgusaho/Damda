@@ -560,7 +560,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
             contentLabel="DeleteModal"
           >
             <ModalContent>
-              <ModalTitle className="mb-2">정말 삭제하시겠어요?</ModalTitle>
+              <ModalTitle className="my-2">정말 삭제하시겠어요?</ModalTitle>
               <div>삭제하면 타임캡슐이 사라져요.</div>
               <div className="mt-2">
                 <FileCencelBtn type="button" onClick={closeDeleteModal}>
