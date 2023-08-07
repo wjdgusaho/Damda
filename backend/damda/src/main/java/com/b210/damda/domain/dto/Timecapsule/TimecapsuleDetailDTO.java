@@ -4,6 +4,7 @@ import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailMyInfoDTO;
 import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailPartInfoDTO;
 import lombok.*;
 
+import javax.persistence.Column;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -23,6 +24,11 @@ public class TimecapsuleDetailDTO {
     private Integer goalCard;
     private Long nowCard;
     private String inviteCode;
+    private int maxParticipant;
+    private int nowParticipant;
+    private Long maxFileSize;
+    private Long nowFileSize;
+
     //벌칙
     private TimecapsulePenaltyDTO penalty;
     //조건
