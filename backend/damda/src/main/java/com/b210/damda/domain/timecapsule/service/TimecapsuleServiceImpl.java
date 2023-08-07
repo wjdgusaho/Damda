@@ -450,8 +450,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         // 타임캡슐이 생성된 지 24시간이 지나서 참여 불가
         if(currentTimestamp.getTime() - timecapsule.getRegistDate().getTime() > millisecondsInADay){
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
-        }
-
+        }   
         // 타임캡슐의 인원이 꽉 찼으면
         if(timecapsule.getNowParticipant() >= MAX_PARTICIOPANT){
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
@@ -470,6 +469,11 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if(timecapsuleDetail.getCapsuleType().equals("GOAL")){
             timecapsuleDetail.setNowCard(timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo()));
         }
+
+        // 타임캡슐 초대목록에 해당 유저 ACCEPTED로 생성
+        TimecapsuleInvite timecapsuleInvite = new TimecapsuleInvite();
+        timecapsuleInvite.createTimecapsuleInvite(timecapsule, user);
+        timecapsuleInviteRepository.save(timecapsuleInvite);
 
         //isSave가 false 이면서 deleteDate가 있는거를 제외한 참가자 조회
         List<TimecapsuleMapping> participant = timecapsuleMappingRepository.findNotSavedButDeleted(timecapsule.getTimecapsuleNo());
@@ -495,6 +499,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     }
 
+    
+    // 타임캡슐 초대목록 가져오기
     @Override
     public List<TimecapsuleInviteListDTO> getTimecapsuleInviteList(Long timecapsuleNo) {
 
@@ -522,10 +528,13 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         // 수락상태고, 탈퇴안한 친구의 목록을 가져옴.
         String status = "ACCEPTED";
         List<UserFriend> userFriendByUser = friendRepository.findUserFriendByUser(currentUser, status);
-        System.out.println(userFriendByUser);
 
         // 타임캡슐의 번호로 초대 목록을 찾음.
         List<TimecapsuleInvite> timecapsuleInviteList = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsule(timecapsule);
+
+        // 타임캡슐 매핑리스트 꺼내옴.
+        List<TimecapsuleMapping> timecapsuleMappings = timecapsuleMappingRepository.findByIdNo(timecapsuleNo);
+        System.out.println(timecapsuleMappings);
 
         Map<Long, TimecapsuleInvite> inviteMap = timecapsuleInviteList.stream()
                 .collect(Collectors.toMap(TimecapsuleInvite::getGuestUserNo, Function.identity()));
@@ -535,11 +544,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             User friend = userFriend.getFriend();
 
             dto.setUserNo(friend.getUserNo());
-            dto.setProfileImage(friend.getProfileImage());  // getProfileImage()는 User 모델에서 이미지를 가져오는 메소드여야 합니다.
-            dto.setNickname(friend.getNickname());  // getNickname()은 User 모델에서 닉네임을 가져오는 메소드여야 합니다.
+            dto.setProfileImage(friend.getProfileImage());
+            dto.setNickname(friend.getNickname());
 
             // 초대 상태 확인
             TimecapsuleInvite invite = inviteMap.get(friend.getUserNo());
+
             if (invite != null) {
                 dto.setStatus(invite.getStatus());  // 만약 초대목록에 있으면 상태 설정
             } else {
@@ -549,11 +559,55 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             responseData.add(dto);
         }
 
-        System.out.println(responseData);
-
-
         return responseData;
     }
+
+
+    // 타임캡슐 초대하기
+    @Override
+    @Transactional
+    public void timecapsuleInviteUser(TimecapsuleInviteUserDTO timecapsuleInviteUserDTO) {
+
+        // 현재 유저 찾기
+        Long userNo = getUserNo();
+        User user = userRepository.findById(userNo).get();
+
+        // 초대하는 친구 유저 찾기
+        Long friendUserNo = timecapsuleInviteUserDTO.getFriendNo();
+        User friendUser = userRepository.findByUserNoAndDeleteDateIsNull(friendUserNo);
+
+        // 해당 친구가 없는 경우
+        if(friendUser == null){
+            throw new CommonException(CustomExceptionStatus.NOT_USER);
+        }
+
+        Optional<Timecapsule> timecapsuleData = timecapsuleRepository.findById(timecapsuleInviteUserDTO.getTimecapsuleNo());
+
+        // 해당 타임캡슐이 존재하지 않으면
+        if(timecapsuleData.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
+        }
+
+        // 해당 타임캡슐을 꺼냄
+        Timecapsule timecapsule = timecapsuleData.get();
+
+        // 친구 번호로 타임캡슐 초대 데이터 찾음.
+        Optional<TimecapsuleInvite> timecapsuleInviteDate = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, friendUserNo);
+
+        if(timecapsuleInviteDate.isEmpty()){
+            TimecapsuleInvite timecapsuleInvite1 = new TimecapsuleInvite();
+            timecapsuleInvite1.createTimecapsuleInvite(timecapsule, friendUser);
+            timecapsuleInvite1.setStatus("NOTREAD");
+            timecapsuleInviteRepository.save(timecapsuleInvite1);
+        }else {
+            TimecapsuleInvite timecapsuleInvite = timecapsuleInviteDate.get();
+            // 이미 초대했을 경우
+            if(timecapsuleInvite.getStatus().equals("NOTREAD")){
+                throw new CommonException(CustomExceptionStatus.ALREADY_INVITED_USER);
+            }
+        }
+    }
+
 
     /*
         타임캡슐 나가기
@@ -682,6 +736,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         timecapsuleRepository.save(timecapsule);
 
     }
+
 
 
     public String createKey() {

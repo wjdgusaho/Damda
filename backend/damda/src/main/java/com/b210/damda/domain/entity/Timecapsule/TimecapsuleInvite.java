@@ -1,5 +1,6 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
+import com.b210.damda.domain.entity.User.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,5 +46,16 @@ public class TimecapsuleInvite {
         this.requestDate = requestDate;
         this.timecapsulePenalty = timecapsulePenalty;
         this.timecapsuleCriteria = timecapsuleCriteria;
+    }
+
+    public TimecapsuleInvite createTimecapsuleInvite(Timecapsule timecapsule, User user){
+        this.timecapsule = timecapsule;
+        this.guestUserNo = user.getUserNo();
+        this.timecapsuleCriteria = timecapsule.getTimecapsuleCriteria();
+        this.timecapsulePenalty = timecapsule.getTimecapsulePenalty();
+        this.status = "ACCEPTED";
+        this.requestDate = LocalDateTime.now();
+
+        return this;
     }
 }

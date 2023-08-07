@@ -69,7 +69,8 @@ public enum CustomExceptionStatus {
     NOT_INVITE_FRIEND(-3006, "24시간이 지나서 친구 초대가 불가능합니다."),
     NOT_TIMECAPSULE_HOST(-3007, "해당 타임캡슐의 반장이 아닙니다."),
     KICKUSER_NOT_TIMECAPSULE(-3008, "강퇴하는 유저는 해당 타임캡슐 참가자가 아닙니다."),
-    NOT_DELTE_TIMECAPSULE(-3009, "생성된지 24시간 이후로 삭제할수 없습니다");
+    NOT_DELTE_TIMECAPSULE(-3009, "생성된지 24시간 이후로 삭제할수 없습니다"),
+    ALREADY_INVITED_USER(-3010, "이미 초대된 회원입니다.");
 
 
     private final int code;
