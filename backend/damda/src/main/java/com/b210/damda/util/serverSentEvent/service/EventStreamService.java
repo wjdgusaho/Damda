@@ -40,12 +40,12 @@ public class EventStreamService {
     }
 
     //최초 연결 시(로그인) Flux 생성 및 Map에 저장
-    public Flux<ServerSentEvent<String>> connectStream(long userNo) {
+    public Flux<ServerSentEvent<String>> connectStream() {
+        long userNo = addOnEventService.getUserNo();
         log.info("connect 연결 성공, userNo : {}", userNo);
 
         //Sink맵 추가 후, onDispose 이벤트 시 제거하는 Flux 생성
         Flux<ServerSentEvent<String>> dataFlux = Flux.create(sink -> userFluxSinkMap.put(userNo, sink.onDispose(() -> userFluxSinkMap.remove(userNo))));
-
         // 연결을 계속하기 위해 일정 시간마다 Event를 전송함. 해당 Flux는 기존 FluxSink와 별도의 로직이다.
 //        Flux<ServerSentEvent<String>> maintainConnectFlux = Flux.interval(Duration.ofSeconds(5)).map(new Function<Long, ServerSentEvent<String>>() {
 //            @Override
@@ -69,7 +69,8 @@ public class EventStreamService {
                         .map(new Function<Long, ServerSentEvent<String>>() {
                             @Override
                             public ServerSentEvent<String> apply(Long tick) {
-                                return ServerSentEvent.<String>builder().event("custom-event").data("연결 유지").build();
+                                log.info("연결 유지 {}", tick);
+                                return addOnEventService.buildServerSentEvent("custom-event", "연결--유지");
                             }
                         });
 
@@ -77,7 +78,8 @@ public class EventStreamService {
         return Flux.merge(dataFlux, maintainConnectFlux.takeUntil(other -> dataFlux == null));
     }
 
-    public void disconnectStream(long userNo) {
+    public void disconnectStream() {
+        long userNo = addOnEventService.getUserNo();
         //프로세서 종료
         DirectProcessor<Void> processor = disconnectProcessors.get(userNo);
         if (processor != null) {
