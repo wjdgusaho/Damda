@@ -13,17 +13,17 @@ public enum CustomExceptionStatus {
      */
 
     //존재 관련
-    THEMA_NOT_FOUND(-6000, "해당 테마가 존재하지 않습니다"),
-    ITEM_NOT_FOUND(-6001, "해당 아이템이 존재하지 않습니다"),
-    NOT_TIMECAPSULE(-6002, "타임캠슐이 존재하지 않습니다"),
-    NOT_WORK_TIMECAPSULE(-6003, "현재 진행중인 타임캡슐이 없습니다"),
+    THEMA_NOT_FOUND(-6000, "해당 테마가 존재하지 않습니다."),
+    ITEM_NOT_FOUND(-6001, "해당 아이템이 존재하지 않습니다."),
+    NOT_TIMECAPSULE(-6002, "타임캠슐이 존재하지 않습니다."),
+    NOT_WORK_TIMECAPSULE(-6003, "현재 진행중인 타임캡슐이 없습니다."),
     NOT_SAVE_TIMECAPSULE(-6004, "저장된 타임캡슐이 없습니다."),
-    NOT_CARD(-6005, "작성된 카드가 없습니다"),
+    NOT_CARD(-6005, "작성된 카드가 없습니다."),
     NOT_USER(-6006, "없는 유저입니다."),
     BAD_QUERY_FORMAT(-6007, "(닉네임)#(번호) 양식에 맞춰서 검색해주세요."),
-    DELETE_TIMECAPSULE(-6008, "삭제된 타임캡슐입니다"),
+    DELETE_TIMECAPSULE(-6008, "삭제된 타임캡슐입니다."),
     NOT_LOCATION_FIND(-6009, "서비스 불가 위치입니다."),
-    KICK_NOT_USER(-6010, "강퇴하려는 유저가 없는 유저입니다"),
+    KICK_NOT_USER(-6010, "강퇴하려는 유저가 없는 유저입니다."),
 
 
     //상점 관련
@@ -70,7 +70,8 @@ public enum CustomExceptionStatus {
     NOT_TIMECAPSULE_HOST(-3007, "해당 타임캡슐의 반장이 아닙니다."),
     KICKUSER_NOT_TIMECAPSULE(-3008, "강퇴하는 유저는 해당 타임캡슐 참가자가 아닙니다."),
     NOT_DELTE_TIMECAPSULE(-3009, "생성된지 24시간 이후로 삭제할수 없습니다"),
-    ALREADY_INVITED_USER(-3010, "이미 초대된 회원입니다.");
+    ALREADY_INVITED_USER(-3010, "이미 초대된 회원입니다."),
+    FULL_USER_TIMECAPSULE(-3011, "보유 가능한 타임캡슐의 개수를 초과했습니다. 상점에서 아이템 구매 부탁드립니다.");
 
 
     private final int code;
