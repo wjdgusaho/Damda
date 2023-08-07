@@ -625,6 +625,81 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     }
 
 
+    // 타임캡슐 초대 수락
+    @Override
+    @Transactional
+    public void timecapsuleInvitAccept(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO) {
+
+        TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping();
+
+        // 현재 유저 꺼내옴
+        Long userNo = getUserNo();
+        User user = userRepository.findById(userNo).get();
+
+        // 현재 타임캡슐을 꺼내옴
+        Optional<Timecapsule> timecapsuleData = timecapsuleRepository.findById(timecapsuleInviteAcceptDTO.getTimecapsuleNo());
+        // 타임캡슐이 존재하지 않으면
+        if(timecapsuleData.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
+        }
+        Timecapsule timecapsule = timecapsuleData.get();
+
+        Optional<TimecapsuleMapping> timecapsuleMappingData = timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsule.getTimecapsuleNo());
+
+        // 이미 타임캡슐 참여중인지 판단
+        if(timecapsuleMappingData.isPresent()){
+            throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
+        }
+
+        // 현재 유저의 타임캡슐 개수가 충분한지 판단.
+        if(user.getMaxCapsuleCount() == user.getNowCapsuleCount()){
+            throw new CommonException(CustomExceptionStatus.FULL_USER_TIMECAPSULE);
+        }
+
+        // 타임캡슐 초대를 꺼냄
+        Optional<TimecapsuleInvite> timecapsuleInviteData = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, userNo);
+
+        // 타임캡슐에 초대 기록이 없으면
+        if(timecapsuleInviteData.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteData.get();
+
+        // 타임캡슐 초대 기록이 NOTREAD가 아니면
+        if(!timecapsuleInvite.getStatus().equals("NOTREAD")){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        // 타임캡슐이 삭제되었다면
+        if(timecapsule.getRemoveDate() != null){
+            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+        }
+
+        // 타임캡슐을 생성한 지 24시간이 지났다면
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        if(currentTimestamp.getTime() - timecapsule.getRegistDate().getTime() > millisecondsInADay){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        // 현재 타임캡슐의 참여인원이 최대인원을 넘지 않았는지 판단
+        if(timecapsule.getNowParticipant() == timecapsule.getMaxParticipant()){
+            throw new CommonException(CustomExceptionStatus.MAX_PARTICIPATING);
+        }
+
+        // 해당 타임캡슐 초대 기록을 ACCEPTED, 응답시간을 추가
+        timecapsuleInvite.acceptTimecapsuleInvite(timecapsuleInvite);
+        timecapsuleInviteRepository.save(timecapsuleInvite);
+
+        // 타임캡슐 매핑 데이터 생성
+        TimecapsuleMapping timecapsuleMapping1 = new TimecapsuleMapping(timecapsule, user);
+        timecapsuleMappingRepository.save(timecapsuleMapping1);
+    }
+
+    
+    
+
+
     /*
         타임캡슐 나가기
      */
