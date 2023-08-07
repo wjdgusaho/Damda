@@ -1,5 +1,6 @@
 package com.b210.damda.util.serverSentEvent.service;
 
+import com.b210.damda.domain.friend.service.FriendService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.ServerSentEvent;
@@ -21,11 +22,12 @@ public class FriendEventService {
 
     private final EventStreamService eventStreamService; //실제 스트림을 보내는 객체
     private final AddOnEventService addOnEventService;   //공통 로직에서 사용되는 이벤트 메서드
+    private final FriendService friendService;
 
     //친구 요청 이벤트 : 나(userNo) -> 친구 요청하는 사용자(frinedNo)
     public void friendRequestEvent(long friendNo) {
-        //Long userNo = addOnEventService.getUserNo();
-        Long userNo = 18L;
+        Long userNo = addOnEventService.getUserNo();
+//        Long userNo = 18L;
         log.info("가져온 유저 값 : ", userNo);
         //Long userNo = 18L;
         String eventName = "custom-event";
@@ -36,7 +38,7 @@ public class FriendEventService {
         eventStreamService.sendEvent(friendNo, event);
     }
 
-    //친구 요청 수락 이벤트(요청 받은 내가 상대방에게 알림 전송)
+    //친구 요청 수락 이벤트(내가 상대방의 친구 요청을 승낙함)
     public void friendAcceptEvent(long fromNo) {
         Long userNo = addOnEventService.getUserNo();
 //        Long userNo = 18L;
@@ -60,6 +62,7 @@ public class FriendEventService {
 
     //첫 로그인 시 밀렸던 모든 친구들을 조회하기
     public void checkAllFriendEvent() {
+        log.info("부재중 모든 친구 체크 요청 로직 실행");
     }
 
 }

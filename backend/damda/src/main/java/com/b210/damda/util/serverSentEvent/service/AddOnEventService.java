@@ -1,5 +1,6 @@
 package com.b210.damda.util.serverSentEvent.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.core.Authentication;
