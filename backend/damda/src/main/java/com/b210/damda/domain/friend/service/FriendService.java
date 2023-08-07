@@ -215,11 +215,8 @@ public class FriendService {
     }
 
     //친구 확인
-    public void friendCheck() {
-        Long userNo = getUserNo();
-        List<Long> checkedList = friendRepository.findUserNoByFriendNoAndStatus(userNo, "REQUESTED");
-        for(Long now : checkedList) {
-            System.out.println(now);
-        }
-    }
+    // 받은 친구요청 조회
+//    public List<FriendRequestListDTO> checkFriendRequest(){
+//
+//    }
 }

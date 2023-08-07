@@ -36,6 +36,7 @@ import TimeCapsuleDetail from "./components/TimeCapsuleDetail"
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
   const token = useSelector((state: RootState) => state.auth.accessToken)
+  let isLogin = false
 
   const styleElement = document.createElement("style")
   styleElement.innerHTML = `
@@ -50,7 +51,31 @@ function Main() {
       try {
         eventSource = new EventSourcePolyfill(serverUrl + "sse/test?no=10", {
           headers: {
-            token: token ? token : "",
+            token: token,
+          },
+        })
+
+        eventSource.onmessage = (event) => {
+          const res = event.data
+          console.log(res)
+        }
+
+        eventSource.addEventListener("custom-event", (event) => {
+          console.log(event)
+        })
+
+        eventSource.onerror = (event) => {
+          console.log("Error event:", event)
+
+          // eventSource.close()
+        }
+      } catch (error) {}
+    }
+    const fetchLogin = () => {
+      try {
+        eventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
+          headers: {
+            token: token,
           },
         })
 
@@ -70,8 +95,15 @@ function Main() {
         }
       } catch (error) {}
     }
-    if (token) {
+    if (!token && isLogin) {
+      isLogin = false
+    }
+
+    if (token && isLogin) {
       fetchSse()
+    } else if (!isLogin) {
+      // fetchLogin()
+      isLogin = true
     }
     return () => {
       if (eventSource) {
