@@ -230,7 +230,19 @@ public class TimecapsuleController {
         CommonResponse response = new CommonResponse(200, "타임캡슐 제거 성공");
         return response;
     }
+    /*
+        파일 사이즈 받기
+     */
+    @GetMapping("size")
+    public DataResponse<Map<String, Object>> timecapsuleFileSize(@RequestParam("timecapsuleNo") Long timecapsuleNo){
 
+        Map<String, Object> result = timecapsuleService.timecapsuleFileSize(timecapsuleNo);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "파일 사이즈 조회 성공");
+        response.setData(result);
+
+        return response;
+    }
 
 
 

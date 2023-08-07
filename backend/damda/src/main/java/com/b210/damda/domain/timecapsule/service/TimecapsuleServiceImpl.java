@@ -154,12 +154,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 boolean openAble = true;
                 //타임캡슐 조건 테이블 받아오기
                 TimecapsuleCriteria timecapsuleCriteria = timecapsule.getTimecapsule().getTimecapsuleCriteria();
+                //날씨와 지역 조건이 있다면
                 if(timecapsuleCriteria.getWeatherStatus() != null || timecapsuleCriteria.getLocalBig() != null) {
                     weatherLocationDto.setMode(true);
                     WeatherLocationNameDTO location = null;
                     //현재 위치값 받기
                     try { location = weatherLocationService.getNowLocation(weatherLocationDto); }
                     catch (Exception e) { throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND); }
+
                     
                     //위치가 있을경우
                     if (timecapsuleCriteria.getLocalBig() != null) {   
@@ -170,7 +172,16 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                     }
                     //날씨가 있는 경우
                     if(timecapsuleCriteria.getWeatherStatus() != null){
-                        //추후 추가예정
+                        // 날씨를 갱신 해야하는 가?
+
+                        // 위치 저장된 곳이 없다면 -> 생성
+
+                        // 그것이 아리나면 위치가 같은가?  - 날시가 같은가 ?
+
+
+                        // 위치가 같은가 ?
+
+
                     }
 
                 }
@@ -698,6 +709,43 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     
     
+
+
+    /*
+        파일 사이즈 받기
+     */
+    @Override
+    public Map<String, Object> timecapsuleFileSize(Long timecapsuleNo) {
+
+        Long userNo = getUserNo();
+        //유저
+        User user = userRepository.findByUserNo(userNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER)
+        );
+
+        //타임캡슐
+        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)
+        );
+
+        //완전히 삭제된 타임캡슐인가
+        if (timecapsule.getRemoveDate() != null){
+            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+        }
+
+        //캡슐 - 유저 매핑된게 아니라면
+        TimecapsuleMapping myMapping = timecapsuleMappingRepository
+                .findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsuleNo)
+                .orElseThrow(
+                        () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
+                );
+
+        Map<String, Object> fileInfo = new HashMap<>();
+        fileInfo.put("maxFileSize", timecapsule.getMaxFileSize());
+        fileInfo.put("nowFilesize", timecapsule.getNowFileSize());
+
+        return fileInfo;
+    }
 
 
     /*

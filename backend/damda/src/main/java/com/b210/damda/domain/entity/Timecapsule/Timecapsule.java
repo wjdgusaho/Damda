@@ -123,8 +123,6 @@ public class Timecapsule {
                 .inviteCode(this.inviteCode)
                 .maxParticipant(this.maxParticipant)
                 .nowParticipant(this.nowParticipant)
-                .maxFileSize(this.maxFileSize)
-                .nowFileSize(this.nowFileSize)
                 .goalCard(this.goalCard)
                 .penalty(this.timecapsulePenalty.getPenalty() == false ? null : this.timecapsulePenalty.toTimecapsulePenaltyDTO())
                 .criteriaInfo(this.timecapsuleCriteria.toTimecapsuleCriteriaDTO())
