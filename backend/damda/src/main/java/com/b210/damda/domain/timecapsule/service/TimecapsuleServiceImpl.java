@@ -639,7 +639,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     // 타임캡슐 초대 수락
     @Override
     @Transactional
-    public void timecapsuleInvitAccept(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO) {
+    public void timecapsuleInviteAccept(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO) {
 
         TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping();
 
@@ -707,8 +707,35 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         timecapsuleMappingRepository.save(timecapsuleMapping1);
     }
 
-    
-    
+    // 타임캡슐 초대 거절
+    @Override
+    @Transactional
+    public void timecapsuleInviteReject(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO) {
+        // 현재 유저 꺼내옴
+        Long userNo = getUserNo();
+        User user = userRepository.findById(userNo).get();
+
+        // 현재 타임캡슐을 꺼내옴
+        Optional<Timecapsule> timecapsuleData = timecapsuleRepository.findById(timecapsuleInviteAcceptDTO.getTimecapsuleNo());
+        // 타임캡슐이 존재하지 않으면
+        if(timecapsuleData.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
+        }
+        Timecapsule timecapsule = timecapsuleData.get();
+
+        // 타임캡슐 초대를 꺼냄
+        Optional<TimecapsuleInvite> timecapsuleInviteData = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, userNo);
+
+        // 초대 데이터가 존재하지 않음
+        if(timecapsuleInviteData.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_RECORD_INVITE);
+        }
+
+        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteData.get();
+
+        timecapsuleInvite.setStatus("REJECTED");
+        timecapsuleInviteRepository.save(timecapsuleInvite);
+    }
 
 
     /*
