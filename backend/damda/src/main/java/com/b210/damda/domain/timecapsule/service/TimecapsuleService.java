@@ -35,6 +35,8 @@ public interface TimecapsuleService {
 
     void timecapsuleInviteUser(TimecapsuleInviteUserDTO timecapsuleInviteUserDTO);
 
-    void timecapsuleInvitAccept(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO);
+    void timecapsuleInviteAccept(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO);
+
+    void timecapsuleInviteReject(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO);
 
 }
