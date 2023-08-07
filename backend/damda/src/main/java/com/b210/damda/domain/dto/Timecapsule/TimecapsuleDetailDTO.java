@@ -22,6 +22,7 @@ public class TimecapsuleDetailDTO {
     private String capsuleIcon;
     private Integer goalCard;
     private Long nowCard;
+    private String inviteCode;
     //벌칙
     private TimecapsulePenaltyDTO penalty;
     //조건

@@ -2,10 +2,11 @@ package com.b210.damda.util.weatherAPI.controller;
 
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.util.weatherAPI.service.WeatherAPIService;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 
 @RestController
@@ -18,8 +19,13 @@ public class WeatherAPIController {
 
     //좌표로 현재 날씨 찾기
     @GetMapping("/now/weather")
-    public Mono<String> getNowWeatherInfos(@RequestBody WeatherLocationDTO weatherDTO) throws Exception {
-        return weatherAPIService.getNowWeatherInfos(weatherDTO);
+    public ResponseEntity<JsonNode> getNowWeatherInfos(@RequestParam("lan") double lan, @RequestParam("lat") double lat) throws Exception {
+        WeatherLocationDTO weatherLocationDTO = new WeatherLocationDTO();
+        weatherLocationDTO.setLan(lan);
+        weatherLocationDTO.setLat(lat);
+
+        ResponseEntity<JsonNode> result = weatherAPIService.getNowWeatherInfos(weatherLocationDTO);
+        return result;
     }
 
 
