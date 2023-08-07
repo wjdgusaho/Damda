@@ -45,32 +45,38 @@ function Main() {
     }
   `
   useEffect(() => {
+    let eventSource: EventSource
+    const fetchSse = () => {
+      try {
+        eventSource = new EventSourcePolyfill(serverUrl + "sse/test?no=10", {
+          headers: {
+            token: token ? token : "",
+          },
+        })
+
+        eventSource.onmessage = (event) => {
+          const res = event.data
+          console.log(res)
+        }
+
+        eventSource.addEventListener("custom-event", (event) => {
+          console.log(event)
+        })
+
+        eventSource.onerror = (event) => {
+          console.log("Error event:", event)
+
+          eventSource.close()
+        }
+      } catch (error) {}
+    }
     if (token) {
-      let eventSource: EventSource
-      const fetchSse = async () => {
-        try {
-          eventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
-            headers: {
-              token: token ? token : "",
-            },
-          })
-
-          eventSource.onmessage = (event) => {
-            const res = event.data
-            console.log(res)
-          }
-
-          eventSource.addEventListener("custom-event", async (event) => {
-            console.log(event)
-          })
-
-          eventSource.onerror = async (event) => {
-            eventSource.close()
-          }
-        } catch (error) {}
-      }
       fetchSse()
-      return () => eventSource.close()
+    }
+    return () => {
+      if (eventSource) {
+        eventSource.close()
+      }
     }
   })
 
