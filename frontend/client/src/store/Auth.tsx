@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 interface authState {
-  accessToken: string | null
+  accessToken: string
   userInfo: UserInfo
 }
 
 const initialState: authState = {
-  accessToken: null,
+  accessToken: "",
   userInfo: {
     accountType: "",
     coin: 0,
@@ -39,7 +39,7 @@ export const authSlice = createSlice({
       state.userInfo = action.payload
     },
     DELETE_TOKEN: (state) => {
-      state.accessToken = null
+      state.accessToken = ""
     },
     DELETE_USER: (state) => {
       state.userInfo = initialState.userInfo

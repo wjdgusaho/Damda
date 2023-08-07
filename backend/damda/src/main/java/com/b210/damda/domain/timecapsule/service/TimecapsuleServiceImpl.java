@@ -55,7 +55,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
     private final ShopService shopService;
-    private S3UploadService s3UploadService;
+    private final S3UploadService s3UploadService;
 
     private final int MAX_PARTICIOPANT = 10;
     private final Long MAX_FILESIZE = 100L;
@@ -124,9 +124,20 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         List<MainTimecapsuleListDTO> timecapsuleList = new ArrayList<>();
         for(TimecapsuleMapping timecapsule : workTimecapsules){
             MainTimecapsuleListDTO mainTimecapsule = timecapsule.getTimecapsule().toMainTimecapsuleListDTO();
+
+            /*
+                24시간 내 외이냐? 등록이 안되거는 FALSE
+             */
+            LocalDateTime registTime = timecapsule.getTimecapsule().getRegistDate().toLocalDateTime();
+            LocalDateTime nowTime = LocalDateTime.now();
+            boolean isRegisted = false;
+            //지났다면 등록됬다고 변경
+            if(nowTime.isAfter(registTime.plusHours(24))) isRegisted = true;
+            mainTimecapsule.setRegisted(isRegisted);
             /*
                 오픈조건 검증 로직
              */
+
             //목표 타임캡슐이라면
             if(mainTimecapsule.getType().equals("GOAL")){
                 List<TimecapsuleCard> cards = timecapsuleCardRepository
@@ -166,19 +177,15 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 //캡슐 오픈 날짜
                 ZonedDateTime openDate = timecapsule.getTimecapsule().getOpenDate()
                         .toLocalDateTime().atZone(seoulZoneId);
-
                 //날짜가 지났다면 (날짜만 비교 LocalDate)
-                if(seoulTime.toLocalDate().isAfter(openDate.toLocalDate())){
+                if(seoulTime.isAfter(openDate)){
                     //시간을 설정했고 그 설정한시간보다 전이라면
                     if( timecapsule.getTimecapsule().getTimecapsuleCriteria().getStartTime() != null
                             && seoulTime.getHour() < timecapsule.getTimecapsule()
                             .getTimecapsuleCriteria().getStartTime()) openAble = false;
-                    else continue;
                 }else openAble = false;
-
                 //모든 조건이 지나긴후
                 mainTimecapsule.setState(openAble);
-
             }
             timecapsuleList.add(mainTimecapsule);
         }
@@ -385,7 +392,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
         String fileUri = "";
-
+        log.info(cardImage.toString());
         if (cardImage.isEmpty() && cardImage.getSize() == 0) {
             throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
         } else {
@@ -405,6 +412,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 timecapsuleCardDTO.getUserNo()).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.NOT_USER)));
         card.setImagePath(fileUri);
+        card.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
 
         TimecapsuleCard saveCard = timecapsuleCardRepository.save(card);
 
@@ -573,8 +581,11 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         //만약 나가가는 사람이 방장일경우 캡슐방 폭파
         if(timecapsuleMapping.isHost()){
             timecapsule.setRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
-            timecapsuleRepository.save(timecapsule);
         }
+
+        //참가자 감소
+        timecapsule.setNowParticipant(timecapsule.getNowParticipant() - 1);
+        timecapsuleRepository.save(timecapsule);
 
         timecapsuleMapping.setDeleteDate(Timestamp.valueOf(LocalDateTime.now()));
         timecapsuleMappingRepository.save(timecapsuleMapping);
@@ -619,6 +630,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         ).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.KICKUSER_NOT_TIMECAPSULE)
         );
+
+        //참가자 감소
+        timecapsule.setNowParticipant(timecapsule.getNowParticipant() - 1);
+        timecapsuleRepository.save(timecapsule);
 
         kickUserMapping.setDeleteDate(Timestamp.valueOf(LocalDateTime.now()));
         timecapsuleMappingRepository.save(kickUserMapping);

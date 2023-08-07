@@ -42,7 +42,7 @@ public class Timecapsule {
 
     private int maxParticipant;
 
-    @Column(columnDefinition = "기본은 방장 1명")
+    @Column(columnDefinition = "integer default 1")
     private int nowParticipant = 1;
 
     @Column(name="invite_code")
@@ -121,6 +121,10 @@ public class Timecapsule {
                 .capsuleIcon("capsule"+this.capsuleIconNo)
                 .capsuleType(this.type)
                 .inviteCode(this.inviteCode)
+                .maxParticipant(this.maxParticipant)
+                .nowParticipant(this.nowParticipant)
+                .maxFileSize(this.maxFileSize)
+                .nowFileSize(this.nowFileSize)
                 .goalCard(this.goalCard)
                 .penalty(this.timecapsulePenalty.getPenalty() == false ? null : this.timecapsulePenalty.toTimecapsulePenaltyDTO())
                 .criteriaInfo(this.timecapsuleCriteria.toTimecapsuleCriteriaDTO())
