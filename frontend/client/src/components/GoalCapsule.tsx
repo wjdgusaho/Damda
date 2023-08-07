@@ -97,7 +97,7 @@ const SubmitBtn = styled.button`
 `
 
 const CancelBtn = styled(SubmitBtn)`
-  background-color: rgb(255, 255, 255, 0.05);
+  background-color: rgb(255, 255, 255, 0.15);
 `
 
 const BtnWrap = tw.div`

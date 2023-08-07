@@ -44,35 +44,35 @@ function Main() {
       background-size: cover;
     }
   `
-  useEffect(() => {
-    if (token) {
-      let eventSource: EventSource
-      const fetchSse = async () => {
-        try {
-          eventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
-            headers: {
-              token: token ? token : "",
-            },
-          })
+  // useEffect(() => {
+  //   if (token) {
+  //     let eventSource: EventSource
+  //     const fetchSse = async () => {
+  //       try {
+  //         eventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
+  //           headers: {
+  //             token: token ? token : "",
+  //           },
+  //         })
 
-          eventSource.onmessage = (event) => {
-            const res = event.data
-            console.log(res)
-          }
+  //         eventSource.onmessage = (event) => {
+  //           const res = event.data
+  //           console.log(res)
+  //         }
 
-          eventSource.addEventListener("custom-event", async (event) => {
-            console.log(event)
-          })
+  //         eventSource.addEventListener("custom-event", async (event) => {
+  //           console.log(event)
+  //         })
 
-          eventSource.onerror = async (event) => {
-            eventSource.close()
-          }
-        } catch (error) {}
-      }
-      fetchSse()
-      return () => eventSource.close()
-    }
-  })
+  //         eventSource.onerror = async (event) => {
+  //           eventSource.close()
+  //         }
+  //       } catch (error) {}
+  //     }
+  //     fetchSse()
+  //     return () => eventSource.close()
+  //   }
+  // })
 
   document.head.appendChild(styleElement)
   return (
