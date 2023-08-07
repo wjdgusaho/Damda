@@ -93,7 +93,7 @@ const TimecapsulePage = function () {
         {capsuleList.map((capsule) => (
           <React.Fragment key={capsule.timecapsuleNo}>
             {/* 등록 된 타임캡슐 */}
-            {capsule.state ? (
+            {capsule.isRegisted ? (
               <>
                 {calculateProgressPercentage(capsule.sDate, capsule.eDate) >=
                   100 || capsule.goalCard === capsule.curCard ? (
@@ -111,7 +111,7 @@ const TimecapsulePage = function () {
                             className="text-sm font-thin"
                             style={{ opacity: "56%" }}
                           >
-                            {capsule.eDate}
+                            {capsule.sDate}
                           </DateDiv>
                         ) : null}
                       </CapsuleState>
@@ -135,6 +135,12 @@ const TimecapsulePage = function () {
                           {capsule.type === "GOAL" ? (
                             <CapsuleState>
                               {capsule.curCard} / {capsule.goalCard}
+                              <DateDiv
+                                className="text-sm font-thin"
+                                style={{ opacity: "56%" }}
+                              >
+                                {capsule.sDate}
+                              </DateDiv>
                             </CapsuleState>
                           ) : (
                             <CapsuleState>
@@ -143,7 +149,7 @@ const TimecapsulePage = function () {
                                 className="text-sm font-thin"
                                 style={{ opacity: "56%" }}
                               >
-                                {capsule.eDate}
+                                {capsule.sDate}
                               </DateDiv>
                             </CapsuleState>
                           )}
@@ -166,6 +172,12 @@ const TimecapsulePage = function () {
                           {capsule.type === "GOAL" ? (
                             <CapsuleState>
                               {capsule.curCard} / {capsule.goalCard}
+                              <DateDiv
+                                className="text-sm font-thin"
+                                style={{ opacity: "56%" }}
+                              >
+                                {capsule.sDate}
+                              </DateDiv>
                             </CapsuleState>
                           ) : (
                             <CapsuleState>
@@ -174,7 +186,7 @@ const TimecapsulePage = function () {
                                 className="text-sm font-thin"
                                 style={{ opacity: "56%" }}
                               >
-                                {capsule.eDate}
+                                {capsule.sDate}
                               </DateDiv>
                             </CapsuleState>
                           )}
@@ -205,7 +217,7 @@ const TimecapsulePage = function () {
                       className="text-sm font-thin"
                       style={{ opacity: "56%" }}
                     >
-                      {capsule.eDate}
+                      {capsule.sDate}
                     </DateDiv>
                   </CapsuleState>
                   <CapsuleTitle className="text-xl font-thin">
