@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.UUID;
 
 @Service
@@ -27,7 +29,7 @@ public class S3UploadService {
 
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 파일 확장자
         String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
-        String newFilename = randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
+        String newFilename = "user-profileImage/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
@@ -46,5 +48,29 @@ public class S3UploadService {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                 .body(urlResource);
+    }
+
+    public String saveFileBase64(byte[] data, String filename) {
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(data.length);
+        // 또한 이미지인 경우 ContentType을 적절히 설정해야합니다.
+        // 이 예제에서는 JPEG 이미지를 가정합니다.
+
+        String extension = filename.substring(filename.lastIndexOf(".")).toLowerCase(); // 파일 확장자
+        String contentType = "image/jpeg";
+        if (".png".equals(extension)) {
+            contentType = "image/png";
+        }
+        metadata.setContentType(contentType);
+
+        // ByteArrayInputStream을 사용하여 byte[]를 InputStream으로 변환
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+
+        String extension = filename.substring(filename.lastIndexOf(".")); // 파일 확장자
+        String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
+        String newFilename = randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
+
+        amazonS3.putObject(bucket, newFilename, inputStream, metadata);
+        return amazonS3.getUrl(bucket, newFilename).toString();
     }
 }
