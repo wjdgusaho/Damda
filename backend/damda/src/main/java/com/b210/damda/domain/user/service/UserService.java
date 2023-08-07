@@ -104,14 +104,14 @@ public class UserService {
 
         User user = findUser.get();
 
-        // 비밀번호 불일치
-        if (!encoder.matches(password, user.getUserPw())){
-            throw new CommonException(CustomExceptionStatus.NOT_MATCH_PASSWORD);
-        }
-
         // 이미 탈퇴한 유저
         if(user.getDeleteDate() != null){
             throw new CommonException(CustomExceptionStatus.USER_ALREADY_DEACTIVATED);
+        }
+
+        // 비밀번호 불일치
+        if (!encoder.matches(password, user.getUserPw())){
+            throw new CommonException(CustomExceptionStatus.NOT_MATCH_PASSWORD);
         }
 
         // 로그인 성공

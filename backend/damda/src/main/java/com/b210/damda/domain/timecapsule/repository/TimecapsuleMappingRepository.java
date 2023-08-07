@@ -14,6 +14,9 @@ public interface TimecapsuleMappingRepository extends JpaRepository<TimecapsuleM
 
     List<TimecapsuleMapping> findByUserUserNo(Long userNo);
 
+    @Query("SELECT tm FROM TimecapsuleMapping tm WHERE tm.timecapsule.timecapsuleNo = :timecapsuleNo")
+    List<TimecapsuleMapping> findByIdNo(@Param("timecapsuleNo") Long TimecapsuleNo);
+
     @Query("SELECT tm FROM TimecapsuleMapping tm " +
             "WHERE tm.timecapsule.timecapsuleNo = :timecapsuleNo " +
             "AND tm.user.userNo = :userNo " +

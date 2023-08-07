@@ -7,6 +7,7 @@ import com.b210.damda.domain.timecapsule.service.TimecapsuleService;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.response.CommonResponse;
 import com.b210.damda.util.response.DataResponse;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -117,13 +118,32 @@ public class TimecapsuleController {
     // 타임캡슐 초대 목록 가져오기
     @GetMapping("invite")
     public DataResponse<List<TimecapsuleInviteListDTO>> timecapsuleInviteList(@RequestParam("timecapsuleNo") Long timecapsuleNo){
+        try{
+            List<TimecapsuleInviteListDTO> timecapsuleInviteList = timecapsuleService.getTimecapsuleInviteList(timecapsuleNo);
 
-        List<TimecapsuleInviteListDTO> timecapsuleInviteList = timecapsuleService.getTimecapsuleInviteList(timecapsuleNo);
+            DataResponse<List<TimecapsuleInviteListDTO>> response = new DataResponse<>(200, "조회 성공");
+            response.setData(timecapsuleInviteList);
 
-        DataResponse<List<TimecapsuleInviteListDTO>> response = new DataResponse<>(200, "조회 성공");
-        response.setData(timecapsuleInviteList);
+            return response;
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch(Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
+        }
+    }
 
-        return response;
+    // 타임캡슐 초대하기
+    @PatchMapping("invite")
+    public DataResponse<Map<String, Object>> timecapsuleInviteUser(@RequestBody TimecapsuleInviteUserDTO timecapsuleInviteUserDTO){
+        try{
+            timecapsuleService.timecapsuleInviteUser(timecapsuleInviteUserDTO);
+            DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 초대 성공");
+            return response;
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch(Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
+        }
     }
 
     /*
