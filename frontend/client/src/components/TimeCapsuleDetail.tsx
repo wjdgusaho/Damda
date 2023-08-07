@@ -10,7 +10,6 @@ import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
 import Modal from "react-modal"
-import { textAlign } from "html2canvas/dist/types/css/property-descriptors/text-align"
 
 interface DataType {
   timecapsuleNo: number
@@ -23,8 +22,8 @@ interface DataType {
   goalCard: number
   nowCard: number
   inviteCode: string
-  maxFileSize: number
-  nowFileSize: number
+  // maxFileSize: number
+  // nowFileSize: number
   maxParticipant: number
   nowParticipant: number
   penalty: {
@@ -297,8 +296,8 @@ const TimeCapsuleDetail = function () {
     goalCard: 0,
     nowCard: 0,
     inviteCode: "",
-    maxFileSize: 0,
-    nowFileSize: 0,
+    // maxFileSize: 0,
+    // nowFileSize: 0,
     maxParticipant: 0,
     nowParticipant: 0,
     penalty: {
@@ -358,7 +357,7 @@ const TimeCapsuleDetail = function () {
     fetchData()
   }, [capsuleId, token])
 
-  console.log(capsuleData)
+  // console.log(capsuleData)
   const currentDate = new Date()
   const oneDayLater = new Date(capsuleData.registDate)
   oneDayLater.setHours(oneDayLater.getHours() + 24).toString()
@@ -488,7 +487,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <div className="text-center mt-3">
                   카드를 가장 적게 작성한 친구는 <br />{" "}
                   <span className="font-bold">
-                    {capsuleData.penalty?.penaltyDescription}
+                    {capsuleData.penalty.penaltyDescription}
                   </span>{" "}
                   벌칙을 받아요
                 </div>
@@ -605,8 +604,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                           파일을 선택해주세요
                         </ModalTitle>
                         <div className="flex items-center">
-                          타임캡슐의 남은 용량 :{" "}
-                          {capsuleData.maxFileSize - capsuleData.nowFileSize} MB
+                          타임캡슐의 남은 용량 : MB
                           <img
                             className="ml-2"
                             src="../../assets/icons/volumeUp.png"
@@ -718,9 +716,28 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
 }
 
 export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
-  const endDateString = capsuleData.openDate.toString().slice(0, 10)
+  const endDateString = capsuleData.openDate
+    ? capsuleData.openDate.toString().slice(0, 10)
+    : ""
   const navigate = useNavigate()
   const isCardAble = capsuleData.myInfo.cardAble
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [selectedFile, setSelectedFile] = useState<string | null>(null)
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0]
+    setSelectedFile(file ? file.name : null)
+  }
+
+  function openModal() {
+    setIsOpen(true)
+  }
+
+  function closeModal() {
+    setIsOpen(false)
+  }
+
+  console.log(capsuleData.penalty)
 
   return (
     <>
@@ -728,9 +745,15 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
       <Box>
         <CapsuleImg capsuleIcon={capsuleData.capsuleIcon} />
         <>
-          <div className="text-2xl font-bold mt-28">
-            {calculateDday(capsuleData.openDate)}
-          </div>
+          {capsuleData.capsuleType === "GOAL" ? (
+            <div className="text-2xl font-bold mt-28">
+              {capsuleData.nowCard} / {capsuleData.goalCard}
+            </div>
+          ) : (
+            <div className="text-2xl font-bold mt-28">
+              {calculateDday(capsuleData.openDate)}
+            </div>
+          )}
           <Title className="text-2xl font-bold relative mb-1">
             {capsuleData.title}
           </Title>
@@ -768,13 +791,25 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
               </div>
             </>
           ) : null}
+          {capsuleData.capsuleType !== "GOAL" ? (
+            <div className="my-3">
+              <span className="font-bold">
+                {endDateString} {capsuleData.criteriaInfo.timeKr}
+              </span>{" "}
+              에 공개됩니다
+            </div>
+          ) : null}
 
-          <div className="my-3">
-            <span className="font-bold">
-              {endDateString} {capsuleData.criteriaInfo.timeKr}
-            </span>{" "}
-            에 공개됩니다
-          </div>
+          {capsuleData.penalty ? (
+            <div className="text-center mt-3">
+              카드를 가장 적게 작성한 친구는 <br />{" "}
+              <span className="font-bold">
+                {capsuleData.penalty.penaltyDescription}
+              </span>{" "}
+              벌칙을 받아요
+            </div>
+          ) : null}
+
           <div>
             <div className="flex justify-center flex-wrap w-80">
               {capsuleData.partInfo.map((part, idx) => (
@@ -807,12 +842,65 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
             <>
               <div className="flex w-56 my-2 mt-5">
                 <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
-                <FileInput
-                  type="file"
-                  name="file"
-                  id="file"
-                  accept="audio/*, video/*"
-                />
+                <span onClick={openModal}>파일 첨부하기</span>
+
+                <Modal
+                  isOpen={modalIsOpen}
+                  onRequestClose={closeModal}
+                  style={customStyles}
+                  contentLabel="Example Modal"
+                >
+                  <ModalContent>
+                    <ModalTitle className="mb-2">
+                      파일을 선택해주세요
+                    </ModalTitle>
+                    <div className="flex items-center">
+                      타임캡슐의 남은 용량 : MB
+                      <img
+                        className="ml-2"
+                        src="../../assets/icons/volumeUp.png"
+                        alt="volumeUp"
+                        width="54px"
+                        onClick={() => {
+                          navigate("/shop")
+                        }}
+                      />
+                    </div>
+                    <input
+                      style={{ display: "none" }}
+                      type="file"
+                      name="file"
+                      id="file"
+                      accept="audio/*, video/*"
+                      onChange={handleFileChange}
+                    />
+                    {selectedFile === null ? (
+                      <FileInputBox className="flex my-4 items-center pl-3">
+                        <FileIcon2
+                          src="../../assets/icons/file.png"
+                          alt="fileicon"
+                        />
+                        <label htmlFor="file">파일을 선택하세요</label>
+                      </FileInputBox>
+                    ) : (
+                      <FileInputBox className="flex my-4 items-center pl-3">
+                        <FileIcon2
+                          src="../../assets/icons/file.png"
+                          alt="fileicon"
+                        />
+                        <label htmlFor="file">{selectedFile}</label>
+                      </FileInputBox>
+                    )}
+                    <div style={{ textAlign: "center" }}>
+                      등록 후에는 삭제 및 변경할 수 없어요. <br />
+                      등록하시겠어요?
+                    </div>
+                    <div>
+                      <FileCencelBtn onClick={closeModal}>취소</FileCencelBtn>
+                      <FileSubmitBtn>등록</FileSubmitBtn>
+                    </div>
+                  </ModalContent>
+                </Modal>
               </div>
               {isCardAble ? (
                 <CardBtn
