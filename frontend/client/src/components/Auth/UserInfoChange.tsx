@@ -5,8 +5,12 @@ import { serverUrl } from "../../urls"
 import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
-import { SET_USER } from "../../store/Auth"
+import { DELETE_TOKEN, DELETE_USER, SET_USER } from "../../store/Auth"
 import Modal from "react-modal"
+import { DELETE_TIMECAPSULE } from "../../store/Timecapsule"
+import { changeUniverseDarkTheme } from "../../store/Theme"
+import { removeCookieToken } from "../../store/Cookie"
+import styled from "styled-components"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -50,6 +54,18 @@ const ModalStyle = {
     backgroundColor: "rgba(0,0,0,0.7333)",
   },
 }
+
+const ModalButton = styled.button<{ color: string }>`
+  font-family: "pretendard";
+  font-weight: 400;
+  font-size: 18px;
+  width: 80px;
+  height: 26px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: ${(props) => props.color};
+`
 
 export const UserInfoChange = () => {
   const navigate = useNavigate()
@@ -206,7 +222,15 @@ export const UserInfoChange = () => {
       },
     })
       .then((response) => {
-        console.log(response)
+        alert(response.data.message)
+        if (response.data.code === 200) {
+          dispatch(DELETE_USER())
+          dispatch(DELETE_TOKEN())
+          dispatch(DELETE_TIMECAPSULE())
+          dispatch(changeUniverseDarkTheme())
+          removeCookieToken()
+          navigate("/login")
+        }
       })
       .catch((error) => console.error(error))
   }
@@ -365,7 +389,24 @@ export const UserInfoChange = () => {
         style={ModalStyle}
         shouldCloseOnOverlayClick={false}
       >
-        <div></div>
+        <div>
+          <p className="text-3xl text-center">정말 회원탈퇴 할거냥?</p>
+          <p className="text-red-500 text-center text-sm">
+            이후에 같은 아이디로는 다시 회원가입 할 수 없습니다!
+          </p>
+          <div className="my-5 mx-10 p-4 flex justify-between">
+            <ModalButton color={"black"} onClick={ModalClose}>
+              취소
+            </ModalButton>
+            <ModalButton
+              color={"white"}
+              className="bg-red-500"
+              onClick={handleUserDelete}
+            >
+              탈퇴
+            </ModalButton>
+          </div>
+        </div>
       </Modal>
     </div>
   )
