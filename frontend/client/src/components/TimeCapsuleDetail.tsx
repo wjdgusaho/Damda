@@ -382,6 +382,11 @@ interface CapsuleProps {
   capsuleData: DataType
 }
 
+interface FileDataType {
+  maxFileSize: number
+  nowFilesize: number
+}
+
 export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const endDateString = capsuleData.openDate
     ? capsuleData.openDate.toString().slice(0, 10)
@@ -401,13 +406,71 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
 
+  const { capsuleId = "" } = useParams()
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
+
+  const getFileSize = async () => {
+    try {
+      const response = await axios({
+        method: "GET",
+        url: serverUrl + `timecapsule/size?timecapsuleNo=${capsuleId}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
+      setFileSizeData(response.data.data)
+    } catch (error) {
+      console.log("Error fetching data:", error)
+    }
+  }
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0]
-    setSelectedFile(file ? file.name : null)
+
+    if (fileSizeData && file) {
+      const remainingSpace =
+        (fileSizeData.maxFileSize || 0) - (fileSizeData.nowFilesize || 0)
+      const fileSize = file.size / (1024 * 1024) // MB 단위로 변환
+
+      if (fileSize <= remainingSpace) {
+        setSelectedFile(file.name)
+      } else {
+        alert("파일 크기가 사용 가능한 공간을 초과합니다.")
+      }
+    } else {
+      setSelectedFile(null)
+    }
+  }
+
+  const handleFileSubmit = async () => {
+    if (selectedFile) {
+      const formData = new FormData()
+      formData.append("fileContent", selectedFile)
+      try {
+        formData.append("timeCapsuleNo", capsuleId.toString())
+
+        const response = await axios({
+          method: "POST",
+          url: serverUrl + "timecapsule/regist/file",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + token,
+          },
+          data: formData,
+        })
+        console.log(response.data)
+        closeModal()
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 
   function openModal() {
     setIsOpen(true)
+    getFileSize()
   }
 
   function closeModal() {
@@ -608,7 +671,13 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                           파일을 선택해주세요
                         </ModalTitle>
                         <div className="flex items-center">
-                          타임캡슐의 남은 용량 : MB
+                          타임캡슐의 남은 용량 :{" "}
+                          {fileSizeData?.maxFileSize !== undefined &&
+                          fileSizeData?.nowFilesize !== undefined
+                            ? fileSizeData?.maxFileSize -
+                              fileSizeData?.nowFilesize
+                            : "0"}
+                          MB
                           <img
                             className="ml-2"
                             src="../../assets/icons/volumeUp.png"
@@ -649,10 +718,12 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                           등록하시겠어요?
                         </div>
                         <div>
-                          <FileCencelBtn onClick={closeModal}>
+                          <FileCencelBtn type="button" onClick={closeModal}>
                             취소
                           </FileCencelBtn>
-                          <FileSubmitBtn>등록</FileSubmitBtn>
+                          <FileSubmitBtn onClick={handleFileSubmit}>
+                            등록
+                          </FileSubmitBtn>
                         </div>
                       </ModalContent>
                     </Modal>
@@ -660,7 +731,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                   {isCardAble ? (
                     <CardBtn
                       onClick={() => {
-                        navigate(`/card/${capsuleData.timecapsuleNo}`)
+                        navigate(`/card/${capsuleId}`)
                       }}
                     >
                       카드 작성하기
@@ -728,14 +799,72 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
 
+  const { capsuleId = "" } = useParams()
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
+
+  const getFileSize = async () => {
+    try {
+      const response = await axios({
+        method: "GET",
+        url: serverUrl + `timecapsule/size?timecapsuleNo=${capsuleId}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
+      setFileSizeData(response.data.data)
+    } catch (error) {
+      console.log("Error fetching data:", error)
+    }
+  }
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0]
-    setSelectedFile(file ? file.name : null)
-    // 여기 파일 크기 체크하는 조건문 넣기
+
+    if (fileSizeData && file) {
+      const remainingSpace =
+        (fileSizeData.maxFileSize || 0) - (fileSizeData.nowFilesize || 0)
+      const fileSize = file.size / (1024 * 1024) // MB 단위로 변환
+
+      if (fileSize <= remainingSpace) {
+        setSelectedFile(file.name)
+      } else {
+        alert("파일 크기가 사용 가능한 공간을 초과합니다.")
+      }
+    } else {
+      setSelectedFile(null)
+    }
+  }
+
+  const handleFileSubmit = async () => {
+    if (selectedFile) {
+      const formData = new FormData()
+      formData.append("fileContent", selectedFile)
+      try {
+        formData.append("timeCapsuleNo", capsuleId.toString())
+
+        const response = await axios({
+          method: "POST",
+          // url: serverUrl + "timecapsule/regist/file",
+          url: "https://damda-f03cb-default-rtdb.firebaseio.com/file.json",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + token,
+          },
+          data: formData,
+        })
+        console.log(response.data)
+        closeModal()
+      } catch (error) {
+        console.log(error)
+      }
+    }
   }
 
   function openModal() {
     setIsOpen(true)
+    getFileSize()
   }
 
   function closeModal() {
@@ -858,7 +987,12 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
                       파일을 선택해주세요
                     </ModalTitle>
                     <div className="flex items-center">
-                      타임캡슐의 남은 용량 : MB
+                      타임캡슐의 남은 용량 :{" "}
+                      {fileSizeData?.maxFileSize !== undefined &&
+                      fileSizeData?.nowFilesize !== undefined
+                        ? fileSizeData?.maxFileSize - fileSizeData?.nowFilesize
+                        : "0"}
+                      MB
                       <img
                         className="ml-2"
                         src="../../assets/icons/volumeUp.png"
@@ -899,8 +1033,12 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
                       등록하시겠어요?
                     </div>
                     <div>
-                      <FileCencelBtn onClick={closeModal}>취소</FileCencelBtn>
-                      <FileSubmitBtn>등록</FileSubmitBtn>
+                      <FileCencelBtn type="button" onClick={closeModal}>
+                        취소
+                      </FileCencelBtn>
+                      <FileSubmitBtn onClick={handleFileSubmit}>
+                        등록
+                      </FileSubmitBtn>
                     </div>
                   </ModalContent>
                 </Modal>
@@ -908,7 +1046,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
               {isCardAble ? (
                 <CardBtn
                   onClick={() => {
-                    navigate("/card")
+                    navigate(`/card/${capsuleId}`)
                   }}
                 >
                   카드 작성하기
