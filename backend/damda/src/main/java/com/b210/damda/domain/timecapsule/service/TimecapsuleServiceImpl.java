@@ -5,12 +5,14 @@ import com.b210.damda.domain.dto.ItemsShopDTO;
 import com.b210.damda.domain.dto.Timecapsule.*;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.dto.weather.WeatherLocationNameDTO;
+import com.b210.damda.domain.entity.ItemDetails;
 import com.b210.damda.domain.entity.ItemsMapping;
 import com.b210.damda.domain.entity.Timecapsule.*;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.friend.repository.FriendRepository;
+import com.b210.damda.domain.shop.repository.ItemDetailsRepository;
 import com.b210.damda.domain.shop.repository.ItemsMappingRepository;
 import com.b210.damda.domain.shop.service.ShopService;
 import com.b210.damda.domain.timecapsule.repository.*;
@@ -51,6 +53,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final FriendRepository friendRepository;
     private final TimecapsuleInviteRepository timecapsuleInviteRepository;
     private final ItemsMappingRepository itemsMappingRepository;
+    private final ItemDetailsRepository itemDetailsRepository;
 
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
@@ -380,8 +383,21 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.NOT_BUY_DECOITEM);
         }
 
-        List<MyItemListDTO> decoMyItemList = decoItemList.stream()
-                .map(ItemsMapping::toMyItemListDTO).collect(Collectors.toList());
+        List<MyItemListDTO> decoMyItemList = new ArrayList<>();
+        for(ItemsMapping itemMapping : decoItemList){
+           MyItemListDTO myItem = itemMapping.toMyItemListDTO();
+           List<ItemDetails> detailList =  itemDetailsRepository.findByItemsItemNo(myItem.getItemNo());
+           //디테일 값 세팅
+           Map<String, Object> stickers = new HashMap<>();
+           int count = 1;
+           for(ItemDetails detail : detailList){
+               stickers.put("s"+ count, detail.getPath());
+               count++;
+           }
+           //스티커 리스트값 세팅
+           myItem.setSticker(stickers);
+           decoMyItemList.add(myItem);
+        }
 
         return decoMyItemList;
     }
@@ -646,7 +662,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     }
     
     /*
-        타임캡슐 강되하기
+        타임캡슐 강퇴하기
      */
     @Override
     public void timecapsuleKick(Long timecapsuleNo, Long kickUserNo) {
