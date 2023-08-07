@@ -71,7 +71,8 @@ public enum CustomExceptionStatus {
     KICKUSER_NOT_TIMECAPSULE(-3008, "강퇴하는 유저는 해당 타임캡슐 참가자가 아닙니다."),
     NOT_DELTE_TIMECAPSULE(-3009, "생성된지 24시간 이후로 삭제할수 없습니다"),
     ALREADY_INVITED_USER(-3010, "이미 초대된 회원입니다."),
-    FULL_USER_TIMECAPSULE(-3011, "보유 가능한 타임캡슐의 개수를 초과했습니다. 상점에서 아이템 구매 부탁드립니다.");
+    FULL_USER_TIMECAPSULE(-3011, "보유 가능한 타임캡슐의 개수를 초과했습니다. 상점에서 아이템 구매 부탁드립니다."),
+    CARD_SAVE_NULL_ERR(-3012, "카드 저장 에러 (이미지 값이 없습니다)");
 
 
     private final int code;
