@@ -39,22 +39,22 @@ public class EventStreamService {
         log.info("사이즈 : {}", userFluxSinkMap.size());
     }
 
-    //최초 연결 시(로그인) Flux 생성 및 Map에 저장
+    //최초 연결 시(로그인), 혹은 재연결 시 Flux 생성 및 Map에 저장
     public Flux<ServerSentEvent<String>> connectStream() {
         long userNo = addOnEventService.getUserNo();
         log.info("connect 연결 성공, userNo : {}", userNo);
 
+        //현재 연결된 스트림이 존재할 경우 새로운 스트림을 생성하지 않음
+        if (userFluxSinkMap.get(userNo) != null) {
+            return null;  // 로직 종료
+        }
+
         //Sink맵 추가 후, onDispose 이벤트 시 제거하는 Flux 생성
         Flux<ServerSentEvent<String>> dataFlux = Flux.create(sink -> userFluxSinkMap.put(userNo, sink.onDispose(() -> userFluxSinkMap.remove(userNo))));
         // 연결을 계속하기 위해 일정 시간마다 Event를 전송함. 해당 Flux는 기존 FluxSink와 별도의 로직이다.
-//        Flux<ServerSentEvent<String>> maintainConnectFlux = Flux.interval(Duration.ofSeconds(5)).map(new Function<Long, ServerSentEvent<String>>() {
-//            @Override
-//            public ServerSentEvent<String> apply(Long tick) {
-//                return ServerSentEvent.<String>builder().event("custom-event").data("연결 유지").build();
-//            }
-//        });
 
         /*
+            연결 유지를 위한 일정 주기로 신호 전송하는 로직
             연결 종료를 위한 Processor를 만든다.
             disconnectStream에서 이 Processor에 신호를 보낸다.
             maintainConnectFlux는 이 신호를 감지하면 중지된다.
