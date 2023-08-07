@@ -56,6 +56,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final TimecapsuleInviteRepository timecapsuleInviteRepository;
     private final ItemsMappingRepository itemsMappingRepository;
     private final ItemDetailsRepository itemDetailsRepository;
+    private final UserLocationRepository userLocationRepository;
 
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
@@ -116,7 +117,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public List<MainTimecapsuleListDTO> workTimecapsule(WeatherLocationDTO weatherLocationDto) {
         Long userNo = getUserNo();
-        log.info(userNo.toString());
+
+        User user = userRepository.findByUserNo(userNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER));
+
         Map<String,List<TimecapsuleMapping>> allTimecapsuleList = getTimecapsuleList(userNo);
 
         List<TimecapsuleMapping> workTimecapsules = allTimecapsuleList.get("workTimecapsules");
@@ -164,7 +168,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                     try { location = weatherLocationService.getNowLocation(weatherLocationDto); }
                     catch (Exception e) { throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND); }
 
-                    
                     //위치가 있을경우
                     if (timecapsuleCriteria.getLocalBig() != null) {   
                         //LocalBig과 LocalMedium 이 같지 않으면 오픈 조건 미성립!
@@ -175,17 +178,40 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                     //날씨가 있는 경우
                     if(timecapsuleCriteria.getWeatherStatus() != null){
                         // 날씨를 갱신 해야하는 가?
+                        UserLocation userLocation = userLocationRepository.findByUserUserNo(userNo);
+                        // 위치 저장된 곳이 없다면 -> 새로 생성
+                        if(userLocation == null){
+                            userLocation = new UserLocation();
+                            userLocation.setUser(user);
+                            userLocation.setLocalBig(location.getLocalBig());
+                            userLocation.setLocalMedium(location.getLocalMedium());
+                            //날씨 조회 - 저장
+                            userLocation.setWeaterTime(Timestamp.valueOf(LocalDateTime.now()));
+                            userLocationRepository.save(userLocation);
+                        }
+                        else{
+                            //현재 위치랑 같다면
+                            if (userLocation.getLocalBig().equals(location.getLocalBig()) &&
+                                    userLocation.getLocalMedium().equals(location.getLocalMedium())) {
+                                //날씨 갱신이 필요한가 - 현재 시간과 userLocationTime의 시간값의 차이를 계산
+                                LocalDateTime userLocationTime = userLocation.getWeaterTime().toLocalDateTime();
+                                long hourDifference = LocalDateTime.now().getHour() - userLocationTime.getHour();
+                                // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상인 경우
+                                if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1) {
+                                    //날씨 갱신
 
-                        // 위치 저장된 곳이 없다면 -> 생성
+                                }
+                            }
+                            //현재 위치가 다르다면
+                            else{
+                                //날씨 갱신해
 
-                        // 그것이 아리나면 위치가 같은가?  - 날시가 같은가 ?
+                            }
+                        }
 
-
-                        // 위치가 같은가 ?
-
+                        //날씨가 같은가
 
                     }
-
                 }
                 //시간 조건 확인 (한국)
                 ZoneId seoulZoneId = ZoneId.of("Asia/Seoul");
@@ -336,7 +362,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)
         );
 
-        //완전히 삭제된 타임캡슐인가
+        //완전히 삭제된 타임캡슐이라면
         if (timecapsule.getRemoveDate() != null){
             throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
         }
@@ -419,43 +445,62 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         카드 작성하기
      */
     @Override
-    public void registCard(String cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
+    public void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
+        Long userNo = getUserNo();
+
+        //유저
+        User user = userRepository.findByUserNo(userNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER)
+        );
+
+        //타임캡슐
+        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleCardDTO.getTimecapsuleNo()).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)
+        );
+
+        //완전히 삭제된 타임캡슐이라면
+        if (timecapsule.getRemoveDate() != null){
+            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+        }
+
         String fileUri = "";
         log.info(cardImage.toString());
-
-        FileOutputStream stream = null;
-        if(cardImage == null || cardImage.trim().equals("")) {
-            throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
-        }
-
-        String cardBinaryDate = cardImage.replaceAll("data:image/png;base64,", "");
-        byte[] file = Base64.decodeBase64(cardBinaryDate);
-        //랜덤 이미지
-        String fileName = UUID.randomUUID().toString();
-
-        try {
-            fileUri = s3UploadService.saveFileBase64(file, fileName);
-        } catch (IOException e) {
-            throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
-        }
-
-//        if (cardImage.isEmpty() && cardImage.getSize() == 0) {
+        
+//        FileOutputStream stream = null;
+//        if(cardImage == null || cardImage.trim().equals("")) {
 //            throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
-//        } else {
-//            try {
-//                fileUri = s3UploadService.saveFile(cardImage);
-//            } catch (IOException e) {
-//                throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
-//            }
+//        }
+//
+//        String cardBinaryDate = cardImage.replaceAll("data:image/png;base64,", "");
+//        byte[] file = Base64.decodeBase64(cardBinaryDate);
+//        //랜덤 이미지
+//        String fileName = UUID.randomUUID().toString();
+//
+//        try {
+//            fileUri = s3UploadService.saveFileBase64(file, fileName);
+//        } catch (IOException e) {
+//            throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
 //        }
 
+        //S3에 저장
+        if (cardImage.isEmpty() && cardImage.getSize() == 0) {
+            throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
+        } else {
+            try {
+                fileUri = s3UploadService.saveFile(cardImage);
+            } catch (IOException e) {
+                throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
+            }
+        }
+        
+        //카드 세팅
         TimecapsuleCard card = new TimecapsuleCard();
         card.setTimecapsule(timecapsuleRepository.findById(
                 timecapsuleCardDTO.getTimecapsuleNo()).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)));
 
         card.setUserNo(userRepository.findByUserNo(
-                timecapsuleCardDTO.getUserNo()).orElseThrow(
+              user.getUserNo()).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.NOT_USER)));
         card.setImagePath(fileUri);
         card.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
