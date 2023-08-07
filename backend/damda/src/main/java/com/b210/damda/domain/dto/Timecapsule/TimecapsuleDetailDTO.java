@@ -26,8 +26,6 @@ public class TimecapsuleDetailDTO {
     private String inviteCode;
     private int maxParticipant;
     private int nowParticipant;
-    private Long maxFileSize;
-    private Long nowFileSize;
 
     //벌칙
     private TimecapsulePenaltyDTO penalty;

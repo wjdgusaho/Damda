@@ -58,4 +58,11 @@ public class TimecapsuleInvite {
 
         return this;
     }
+
+    public TimecapsuleInvite acceptTimecapsuleInvite(TimecapsuleInvite timecapsuleInvite){
+        this.status = "ACCEPTED";
+        this.requestDate = LocalDateTime.now();
+
+        return this;
+    }
 }

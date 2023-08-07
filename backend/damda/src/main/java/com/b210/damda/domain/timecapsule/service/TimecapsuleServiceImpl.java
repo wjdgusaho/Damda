@@ -5,12 +5,14 @@ import com.b210.damda.domain.dto.ItemsShopDTO;
 import com.b210.damda.domain.dto.Timecapsule.*;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.dto.weather.WeatherLocationNameDTO;
+import com.b210.damda.domain.entity.ItemDetails;
 import com.b210.damda.domain.entity.ItemsMapping;
 import com.b210.damda.domain.entity.Timecapsule.*;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.friend.repository.FriendRepository;
+import com.b210.damda.domain.shop.repository.ItemDetailsRepository;
 import com.b210.damda.domain.shop.repository.ItemsMappingRepository;
 import com.b210.damda.domain.shop.service.ShopService;
 import com.b210.damda.domain.timecapsule.repository.*;
@@ -25,7 +27,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.commons.codec.binary.Base64;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLOutput;
@@ -51,6 +55,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final FriendRepository friendRepository;
     private final TimecapsuleInviteRepository timecapsuleInviteRepository;
     private final ItemsMappingRepository itemsMappingRepository;
+    private final ItemDetailsRepository itemDetailsRepository;
 
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
@@ -151,12 +156,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 boolean openAble = true;
                 //타임캡슐 조건 테이블 받아오기
                 TimecapsuleCriteria timecapsuleCriteria = timecapsule.getTimecapsule().getTimecapsuleCriteria();
+                //날씨와 지역 조건이 있다면
                 if(timecapsuleCriteria.getWeatherStatus() != null || timecapsuleCriteria.getLocalBig() != null) {
                     weatherLocationDto.setMode(true);
                     WeatherLocationNameDTO location = null;
                     //현재 위치값 받기
                     try { location = weatherLocationService.getNowLocation(weatherLocationDto); }
                     catch (Exception e) { throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND); }
+
                     
                     //위치가 있을경우
                     if (timecapsuleCriteria.getLocalBig() != null) {   
@@ -167,7 +174,16 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                     }
                     //날씨가 있는 경우
                     if(timecapsuleCriteria.getWeatherStatus() != null){
-                        //추후 추가예정
+                        // 날씨를 갱신 해야하는 가?
+
+                        // 위치 저장된 곳이 없다면 -> 생성
+
+                        // 그것이 아리나면 위치가 같은가?  - 날시가 같은가 ?
+
+
+                        // 위치가 같은가 ?
+
+
                     }
 
                 }
@@ -380,8 +396,21 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.NOT_BUY_DECOITEM);
         }
 
-        List<MyItemListDTO> decoMyItemList = decoItemList.stream()
-                .map(ItemsMapping::toMyItemListDTO).collect(Collectors.toList());
+        List<MyItemListDTO> decoMyItemList = new ArrayList<>();
+        for(ItemsMapping itemMapping : decoItemList){
+           MyItemListDTO myItem = itemMapping.toMyItemListDTO();
+           List<ItemDetails> detailList =  itemDetailsRepository.findByItemsItemNo(myItem.getItemNo());
+           //디테일 값 세팅
+           Map<String, Object> stickers = new HashMap<>();
+           int count = 1;
+           for(ItemDetails detail : detailList){
+               stickers.put("s"+ count, detail.getPath());
+               count++;
+           }
+           //스티커 리스트값 세팅
+           myItem.setSticker(stickers);
+           decoMyItemList.add(myItem);
+        }
 
         return decoMyItemList;
     }
@@ -390,18 +419,35 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         카드 작성하기
      */
     @Override
-    public void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
+    public void registCard(String cardImage, TimecapsuleCardDTO timecapsuleCardDTO) {
         String fileUri = "";
         log.info(cardImage.toString());
-        if (cardImage.isEmpty() && cardImage.getSize() == 0) {
+
+        FileOutputStream stream = null;
+        if(cardImage == null || cardImage.trim().equals("")) {
             throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
-        } else {
-            try {
-                fileUri = s3UploadService.saveFile(cardImage);
-            } catch (IOException e) {
-                throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
-            }
         }
+
+        String cardBinaryDate = cardImage.replaceAll("data:image/png;base64,", "");
+        byte[] file = Base64.decodeBase64(cardBinaryDate);
+        //랜덤 이미지
+        String fileName = UUID.randomUUID().toString();
+
+        try {
+            fileUri = s3UploadService.saveFileBase64(file, fileName);
+        } catch (IOException e) {
+            throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
+        }
+
+//        if (cardImage.isEmpty() && cardImage.getSize() == 0) {
+//            throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
+//        } else {
+//            try {
+//                fileUri = s3UploadService.saveFile(cardImage);
+//            } catch (IOException e) {
+//                throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
+//            }
+//        }
 
         TimecapsuleCard card = new TimecapsuleCard();
         card.setTimecapsule(timecapsuleRepository.findById(
@@ -609,6 +655,145 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     }
 
 
+    // 타임캡슐 초대 수락
+    @Override
+    @Transactional
+    public void timecapsuleInviteAccept(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO) {
+
+        TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping();
+
+        // 현재 유저 꺼내옴
+        Long userNo = getUserNo();
+        User user = userRepository.findById(userNo).get();
+
+        // 현재 타임캡슐을 꺼내옴
+        Optional<Timecapsule> timecapsuleData = timecapsuleRepository.findById(timecapsuleInviteAcceptDTO.getTimecapsuleNo());
+        // 타임캡슐이 존재하지 않으면
+        if(timecapsuleData.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
+        }
+        Timecapsule timecapsule = timecapsuleData.get();
+
+        Optional<TimecapsuleMapping> timecapsuleMappingData = timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsule.getTimecapsuleNo());
+
+        // 이미 타임캡슐 참여중인지 판단
+        if(timecapsuleMappingData.isPresent()){
+            throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
+        }
+
+        // 현재 유저의 타임캡슐 개수가 충분한지 판단.
+        if(user.getMaxCapsuleCount() == user.getNowCapsuleCount()){
+            throw new CommonException(CustomExceptionStatus.FULL_USER_TIMECAPSULE);
+        }
+
+        // 타임캡슐 초대를 꺼냄
+        Optional<TimecapsuleInvite> timecapsuleInviteData = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, userNo);
+
+        // 타임캡슐에 초대 기록이 없으면
+        if(timecapsuleInviteData.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteData.get();
+
+        // 타임캡슐 초대 기록이 NOTREAD가 아니면
+        if(!timecapsuleInvite.getStatus().equals("NOTREAD")){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        // 타임캡슐이 삭제되었다면
+        if(timecapsule.getRemoveDate() != null){
+            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+        }
+
+        // 타임캡슐을 생성한 지 24시간이 지났다면
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        if(currentTimestamp.getTime() - timecapsule.getRegistDate().getTime() > millisecondsInADay){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        // 현재 타임캡슐의 참여인원이 최대인원을 넘지 않았는지 판단
+        if(timecapsule.getNowParticipant() == timecapsule.getMaxParticipant()){
+            throw new CommonException(CustomExceptionStatus.MAX_PARTICIPATING);
+        }
+
+        // 해당 타임캡슐 초대 기록을 ACCEPTED, 응답시간을 추가
+        timecapsuleInvite.acceptTimecapsuleInvite(timecapsuleInvite);
+        timecapsuleInviteRepository.save(timecapsuleInvite);
+
+        // 타임캡슐 매핑 데이터 생성
+        TimecapsuleMapping timecapsuleMapping1 = new TimecapsuleMapping(timecapsule, user);
+        timecapsuleMappingRepository.save(timecapsuleMapping1);
+    }
+
+    // 타임캡슐 초대 거절
+    @Override
+    @Transactional
+    public void timecapsuleInviteReject(TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO) {
+        // 현재 유저 꺼내옴
+        Long userNo = getUserNo();
+        User user = userRepository.findById(userNo).get();
+
+        // 현재 타임캡슐을 꺼내옴
+        Optional<Timecapsule> timecapsuleData = timecapsuleRepository.findById(timecapsuleInviteAcceptDTO.getTimecapsuleNo());
+        // 타임캡슐이 존재하지 않으면
+        if(timecapsuleData.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
+        }
+        Timecapsule timecapsule = timecapsuleData.get();
+
+        // 타임캡슐 초대를 꺼냄
+        Optional<TimecapsuleInvite> timecapsuleInviteData = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, userNo);
+
+        // 초대 데이터가 존재하지 않음
+        if(timecapsuleInviteData.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_RECORD_INVITE);
+        }
+
+        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteData.get();
+
+        timecapsuleInvite.setStatus("REJECTED");
+        timecapsuleInviteRepository.save(timecapsuleInvite);
+    }
+
+
+    /*
+        파일 사이즈 받기
+     */
+    @Override
+    public Map<String, Object> timecapsuleFileSize(Long timecapsuleNo) {
+
+        Long userNo = getUserNo();
+        //유저
+        User user = userRepository.findByUserNo(userNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER)
+        );
+
+        //타임캡슐
+        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)
+        );
+
+        //완전히 삭제된 타임캡슐인가
+        if (timecapsule.getRemoveDate() != null){
+            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+        }
+
+        //캡슐 - 유저 매핑된게 아니라면
+        TimecapsuleMapping myMapping = timecapsuleMappingRepository
+                .findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsuleNo)
+                .orElseThrow(
+                        () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
+                );
+
+        Map<String, Object> fileInfo = new HashMap<>();
+        fileInfo.put("maxFileSize", timecapsule.getMaxFileSize());
+        fileInfo.put("nowFilesize", timecapsule.getNowFileSize());
+
+        return fileInfo;
+    }
+
+
     /*
         타임캡슐 나가기
      */
@@ -646,7 +831,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     }
     
     /*
-        타임캡슐 강되하기
+        타임캡슐 강퇴하기
      */
     @Override
     public void timecapsuleKick(Long timecapsuleNo, Long kickUserNo) {

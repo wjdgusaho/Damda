@@ -146,6 +146,34 @@ public class TimecapsuleController {
         }
     }
 
+    // 타임캡슐 초대 수락
+    @PatchMapping("invite-accept")
+    public DataResponse<Map<String, Object>> timecapsuleInviteAccept(@RequestBody TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO){
+        try{
+            timecapsuleService.timecapsuleInviteAccept(timecapsuleInviteAcceptDTO);
+
+            return new DataResponse<>(200, "타임캡슐에 참여 성공하였습니다.");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch(Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
+        }
+    }
+
+    // 타임캡슐 초대 거절
+    @PatchMapping("invite-reject")
+    public DataResponse<Map<String, Object>> timecapsuleInviteReject(@RequestBody TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO){
+        try{
+            timecapsuleService.timecapsuleInviteReject(timecapsuleInviteAcceptDTO);
+
+            return new DataResponse<>(200, "거절 완료");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
+        }catch(Exception e){
+            return new DataResponse<>(500,"알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
+        }
+    }
+
     /*
         타임캡슐 스티커 받기
      */
@@ -169,8 +197,9 @@ public class TimecapsuleController {
      */
     @PostMapping("regist/card")
     public CommonResponse registCard( @RequestPart("cardInfo") TimecapsuleCardDTO timecapsuleCardDTO,
-            @RequestPart("cardImage") MultipartFile cardImage){
+            @RequestPart("cardImage") String cardImage){
 
+        log.info(cardImage);
         timecapsuleService.registCard(cardImage, timecapsuleCardDTO);
         CommonResponse response = new CommonResponse(200, "카드 저장 완료");
         return  response;
@@ -214,7 +243,19 @@ public class TimecapsuleController {
         CommonResponse response = new CommonResponse(200, "타임캡슐 제거 성공");
         return response;
     }
+    /*
+        파일 사이즈 받기
+     */
+    @GetMapping("size")
+    public DataResponse<Map<String, Object>> timecapsuleFileSize(@RequestParam("timecapsuleNo") Long timecapsuleNo){
 
+        Map<String, Object> result = timecapsuleService.timecapsuleFileSize(timecapsuleNo);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "파일 사이즈 조회 성공");
+        response.setData(result);
+
+        return response;
+    }
 
 
 
