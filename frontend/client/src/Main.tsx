@@ -43,6 +43,8 @@ function Main() {
       background-size: cover;
     }
   `
+<<<<<<< HEAD
+=======
   useEffect(() => {
     let eventSource: EventSource
     const fetchSse = () => {
@@ -109,6 +111,7 @@ function Main() {
       }
     }
   })
+>>>>>>> develop
 
   document.head.appendChild(styleElement)
   return (
