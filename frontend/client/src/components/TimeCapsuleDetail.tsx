@@ -23,6 +23,10 @@ interface DataType {
   goalCard: number
   nowCard: number
   inviteCode: string
+  maxFileSize: number
+  nowFileSize: number
+  maxParticipant: number
+  nowParticipant: number
   penalty: {
     penaltyNo: number
     penalty: boolean
@@ -293,6 +297,10 @@ const TimeCapsuleDetail = function () {
     goalCard: 0,
     nowCard: 0,
     inviteCode: "",
+    maxFileSize: 0,
+    nowFileSize: 0,
+    maxParticipant: 0,
+    nowParticipant: 0,
     penalty: {
       penaltyNo: 0,
       penalty: false,
@@ -597,7 +605,8 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                           파일을 선택해주세요
                         </ModalTitle>
                         <div className="flex items-center">
-                          타임캡슐의 남은 용량 : MB
+                          타임캡슐의 남은 용량 :{" "}
+                          {capsuleData.maxFileSize - capsuleData.nowFileSize} MB
                           <img
                             className="ml-2"
                             src="../../assets/icons/volumeUp.png"
