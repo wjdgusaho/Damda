@@ -404,11 +404,33 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [isInvite, setIsInvite] = useState(true)
   const [isHelp, setIsHelp] = useState(false)
   const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = React.useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
 
   const { capsuleId = "" } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
+
+  const handleExitClick = async () => {
+    try {
+      const response = await axios({
+        method: "PATCH",
+        url: serverUrl + "timecapsule/delete",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        data: {
+          timecapsuleNo: capsuleId,
+        },
+      })
+
+      console.log(response.data)
+      navigate("/main")
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const getFileSize = async () => {
     try {
@@ -477,6 +499,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     setIsOpen(false)
   }
 
+  function openDeleteModal() {
+    setDeleteModalIsOpen(true)
+  }
+
+  function closeDeleteModal() {
+    setDeleteModalIsOpen(false)
+  }
+
   useEffect(() => {
     const interval = setInterval(() => {
       const currentTime = new Date()
@@ -518,7 +548,28 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
             alt="questionMark"
           />
           <CapsuleGray capsuleIcon={capsuleData.capsuleIcon} />
-          <ExitImg src="../../assets/icons/bin_dark.png" alt="bin" />
+          <ExitImg
+            onClick={openDeleteModal}
+            src="../../assets/icons/bin_dark.png"
+            alt="bin"
+          />
+          <Modal
+            isOpen={deleteModalIsOpen}
+            onRequestClose={closeDeleteModal}
+            style={customStyles}
+            contentLabel="DeleteModal"
+          >
+            <ModalContent>
+              <ModalTitle className="my-2">정말 삭제하시겠어요?</ModalTitle>
+              <div>삭제하면 타임캡슐이 사라져요.</div>
+              <div className="mt-2">
+                <FileCencelBtn type="button" onClick={closeDeleteModal}>
+                  취소
+                </FileCencelBtn>
+                <FileSubmitBtn onClick={handleExitClick}>삭제</FileSubmitBtn>
+              </div>
+            </ModalContent>
+          </Modal>
           <TimerWrap>
             {timer}
             <div className="-mt-1">뒤에 등록돼요</div>
