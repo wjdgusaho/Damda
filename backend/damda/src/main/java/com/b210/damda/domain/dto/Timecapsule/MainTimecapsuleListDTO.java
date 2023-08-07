@@ -28,6 +28,8 @@ public class MainTimecapsuleListDTO {
     private int curCard;
     private int goalCard;
     private boolean state;
+    @JsonProperty("isRegisted")
+    private boolean isRegisted;
 
     public MainTimecapsuleListDTO(){
 

@@ -9,14 +9,16 @@ import com.b210.damda.util.emailAPI.service.EmailService;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.b210.damda.util.response.DataResponse;
+import com.b210.damda.util.serverSentEvent.controller.SSEController;
+import com.b210.damda.util.serverSentEvent.service.EventStreamService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")

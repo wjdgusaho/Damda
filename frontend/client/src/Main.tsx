@@ -33,8 +33,6 @@ import TimeCapsuleDetail from "./components/TimeCapsuleDetail"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
-  const token = useSelector((state: RootState) => state.auth.accessToken)
-
   const styleElement = document.createElement("style")
   styleElement.innerHTML = `
     html {
