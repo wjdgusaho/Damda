@@ -33,4 +33,6 @@ public interface TimecapsuleService {
 
     void timecapsuleDelete(Long timecapsuleNo);
 
+    void timecapsuleInviteUser(TimecapsuleInviteUserDTO timecapsuleInviteUserDTO);
+
 }
