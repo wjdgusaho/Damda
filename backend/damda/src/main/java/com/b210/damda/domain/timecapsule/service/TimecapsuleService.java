@@ -21,7 +21,7 @@ public interface TimecapsuleService {
 
     List<MyItemListDTO> getMyDecoList();
 
-    void registCard(MultipartFile cardImage, TimecapsuleCardDTO timecapsuleCardDTO);
+    void registCard(MultipartFile cardImage, Long timecapsuleNo);
 
     TimecapsuleDetailDTO joinTimecalsule(String inviteCode);
 
@@ -41,5 +41,5 @@ public interface TimecapsuleService {
 
     Map<String, Object> timecapsuleFileSize(Long timecapsuleNo);
 
-
+    Map<String, Object> timecapsuleFileUpload(MultipartFile file, Long timecapsuleNo);
 }
