@@ -44,6 +44,7 @@ export const List = function () {
     })
       .then((response) => {
         setFriendList(response.data.data.result)
+        console.log(response.data)
       })
       .catch((error) => console.error(error))
   }, [])
@@ -64,9 +65,9 @@ export const List = function () {
       )}
       {friendList.length !== 0 && (
         <div>
-          {friendList.map((f: FriendType, index: number) => (
+          {friendList.map((f: FriendType) => (
             <FriendCard
-              key={index}
+              key={f.userNo}
               friend={f}
               friendList={friendList}
               setFriendList={setFriendList}
@@ -112,9 +113,9 @@ export const Request = function () {
       )}
       {requestList.length !== 0 && (
         <div>
-          {requestList.map((f: FriendType, index: number) => (
+          {requestList.map((f: FriendType) => (
             <RequestCard
-              key={index}
+              key={f.userNo}
               friend={f}
               requestList={requestList}
               setRequestList={setRequestList}
@@ -127,12 +128,10 @@ export const Request = function () {
 }
 
 const FriendCard = function ({
-  key,
   friend,
   friendList,
   setFriendList,
 }: {
-  key: number
   friend: FriendType
   friendList: FriendType[]
   setFriendList: React.Dispatch<React.SetStateAction<FriendType[]>>
@@ -155,8 +154,12 @@ const FriendCard = function ({
         const code = response.data.code
         alert(response.data.message)
         if (code === 200) {
-          let newList = friendList
-          newList[key].isFavorite = true
+          let newList = friendList.map((f) => {
+            if (f.userNo === friend.userNo) {
+              f.favorite = true
+            }
+            return f
+          })
           setFriendList(newList)
         }
       })
@@ -179,8 +182,12 @@ const FriendCard = function ({
         const code = response.data.code
         alert(response.data.message)
         if (code === 200) {
-          let newList = friendList
-          newList[key].isFavorite = false
+          let newList = friendList.map((f) => {
+            if (f.userNo === friend.userNo) {
+              f.favorite = false
+            }
+            return f
+          })
           setFriendList(newList)
         }
       })
@@ -199,7 +206,7 @@ const FriendCard = function ({
         <span className="text-gray-400">#{friend.userNo}</span>
       </TextStyle>
       <div className="flex ml-auto mr-3">
-        {friend.isFavorite ? (
+        {friend.favorite ? (
           <button className="w-5 mr-4" onClick={favoriteCancel}>
             <img src="/assets/icons/star.png" alt="즐겨찾는친구" />
           </button>
@@ -214,12 +221,10 @@ const FriendCard = function ({
   )
 }
 const RequestCard = function ({
-  key,
   friend,
   requestList,
   setRequestList,
 }: {
-  key: number
   friend: FriendType
   requestList: FriendType[]
   setRequestList: React.Dispatch<React.SetStateAction<FriendType[]>>
@@ -341,7 +346,7 @@ type FriendType = {
   userNo: number
   nickname: string
   profileImage: string
-  isFavorite: boolean
+  favorite: boolean
 }
 
 export default Friend

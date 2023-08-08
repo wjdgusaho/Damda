@@ -77,7 +77,13 @@ function Main() {
     setIsOnline(false)
   }
 
+  // useEffect 함수는 특정 상황에서 자동으로 실행되는 함수.
+  // useEffect(() => {내용}) : 컴포넌트가 마운트 되었을 때 실행. 만약 내용에 return이 들어가 있다면 해당 내용은 언마운트 되었을때 실행됨.
+  // useEffect(()=> {내용}, [변수]) : 변수값이 업데이트 될때마다 실행. 만약 변수가 없다면 컴포넌트가 마운트 되었을때 한번만 실행된다. 변수는 여러개를 지정할 수 있음.
+
+  // 여기서 마운트, 언마운트의 뜻은 컴포넌트가 나타났을 때, 그리고 사라질 때를 의미한다.
   useEffect(() => {
+    // 브라우저(창)의 상태를 확인하는 함수. 즉, 브라우저가 열려있는지, 닫혀있는지 확인하고, 해당 상태에 따라 isOnline의 값이 바뀐다.
     window.addEventListener("online", handleOnline)
     window.addEventListener("offline", handleOffline)
 
@@ -95,32 +101,56 @@ function Main() {
     }
   }, [token, isOnline])
 
+  // 이벤트소스 새롭게 시작할 함수.
   const initializeEventSource = () => {
+    // 만약 sse를 시작하지 않았거나, 현재 sse가 중단된 상태라면 새롭게 실행함.
     if (eventSource === null || eventSource.readyState === EventSource.CLOSED) {
       const newEventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
         headers: {
           Authorization: "Bearer " + token,
         },
       })
+      // 이건 왜있는지 잘 모르겠음...
       newEventSource.onmessage = (event) => {
-        const res = event.data
-        console.log(res)
+        console.log("Message : ", event)
       }
+      // 에러가 났을 때 발생하는 이벤트 함수
       newEventSource.onerror = (event) => {
-        console.log("Error event:", event)
+        console.log("Error event : ", event)
       }
+      // addEventListener : 특정 이벤트 string 값을 서버에서 받으면 콜백함수를 실행한다.
+      // 콜백함수 : (event) => {}  <-- 이렇게 쓰는게 하나의 콜백함수.
       newEventSource.addEventListener("custom-event", (event) => {
-        console.log(event)
+        console.log("Custom : ", event)
+      })
+      newEventSource.addEventListener("check-connection", (event) => {
+        console.log("Check connection : ", event)
+
+        // 새롭게 서버로 보낼 이벤트소스
+        // serverUrl + (내가 보낼 url 주소)
+        // headers에는 토큰 값. 헤더 이외의 값 추가하려면 , 뒤에 넣을 것.
+        const otherEventSource = new EventSourcePolyfill(
+          serverUrl + "sse/login",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
       })
       newEventSource.addEventListener("end-of-stream", (event) => {
         console.log(event)
       })
+
+      // 신경쓰지 않아도 됨.
       setEventSource(newEventSource)
     }
   }
 
   const closeEventSource = () => {
+    // sse를 종료할 때, eventSource가 null이라면 에러가 나므로, 미리 체크해본다.
     if (eventSource !== null) {
+      // sse 종료 함수.
       eventSource.close()
       setEventSource(null)
     }
