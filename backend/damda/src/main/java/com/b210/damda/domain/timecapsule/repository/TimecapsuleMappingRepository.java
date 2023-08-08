@@ -1,6 +1,8 @@
 package com.b210.damda.domain.timecapsule.repository;
 
+import com.b210.damda.domain.entity.Timecapsule.Timecapsule;
 import com.b210.damda.domain.entity.Timecapsule.TimecapsuleMapping;
+import com.b210.damda.domain.entity.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +15,9 @@ import java.util.Optional;
 public interface TimecapsuleMappingRepository extends JpaRepository<TimecapsuleMapping, Long> {
 
     List<TimecapsuleMapping> findByUserUserNo(Long userNo);
+
+    @Query("SELECT tm FROM TimecapsuleMapping tm WHERE tm.user.userNo = :userNo AND tm.timecapsule.timecapsuleNo = :timecapsuleNo")
+    TimecapsuleMapping findByUserUserNoOne(@Param("timecapsuleNo") Long timecapsuleNo, @Param("userNo") Long userNo);
 
     @Query("SELECT tm FROM TimecapsuleMapping tm WHERE tm.timecapsule.timecapsuleNo = :timecapsuleNo")
     List<TimecapsuleMapping> findByIdNo(@Param("timecapsuleNo") Long TimecapsuleNo);
@@ -27,5 +32,7 @@ public interface TimecapsuleMappingRepository extends JpaRepository<TimecapsuleM
             "WHERE tm.timecapsule.timecapsuleNo = :timecapsuleNo " +
             "AND ((tm.isSave = true) OR (tm.isSave = false AND tm.deleteDate IS NULL))")
     List<TimecapsuleMapping> findNotSavedButDeleted(@Param("timecapsuleNo") Long timecapsuleNo);
+
+    Optional<TimecapsuleMapping> findByUserAndTimecapsule(User user, Timecapsule timecapsule);
 
 }
