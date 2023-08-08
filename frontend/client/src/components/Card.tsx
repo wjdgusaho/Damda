@@ -161,52 +161,66 @@ const Card = function () {
   const inputWidth =
     inputValue.length <= 5 ? "100px" : `${inputValue.length * 8 + 100}px`
 
+  const sendFileToServer = async (file: File) => {
+    try {
+      const formData = new FormData()
+      formData.append("cardImage", file)
+
+      if (timecapsuleNo.capsuleId !== undefined) {
+        formData.append(
+          "timecapsuleNo",
+          new Blob([JSON.stringify(timecapsuleNo.capsuleId)], {
+            type: "application/json",
+          })
+        )
+      }
+
+      const response = await axios.post(
+        serverUrl + "timecapsule/regist/card",
+        formData,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
+
+      console.log(response.data.code)
+      if (response.data.code === 200) {
+        alert("정상적으로 저장되었습니다.")
+        // navigate(-1)
+      } else if (response.data.code === 200) {
+        alert("오늘은 이미 카드작성을 완료하였습니다.")
+      } else {
+        alert("카드 저장에 실패했습니다.")
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   const saveAsImageHandler = () => {
     const target = document.getElementById("saveImgContainer")
     if (!target) {
       return alert("결과 저장에 실패했습니다.")
     }
+
     html2canvas(target, {
-      useCORS: true, // 크로스 오리진 요청 허용
-      scale: 2, // 해상도 높이기
+      useCORS: true,
+      scale: 2,
     }).then((canvas) => {
-      // const link = document.createElement("a")
-      // document.body.appendChild(link)
-      var imageDataURL = canvas.toDataURL("image/png")
-      imageDataURL = imageDataURL.replace("data:image/png;base64,", "")
+      canvas.toBlob((blob) => {
+        if (blob) {
+          // Blob 객체를 이미지 파일로 변환
+          const imageFile = new File([blob], "result_image.jpg", {
+            type: "image/jpeg",
+          })
 
-      // link.download = "result.png"
-      // link.click()
-      // document.body.removeChild(link)
-
-      // 이미지 데이터를 Axios를 사용하여 서버로 보냄
-      sendImageToServer(imageDataURL)
-    })
-
-    const sendImageToServer = (imageDataURL: string) => {
-      try {
-        const body = {
-          cardImage: imageDataURL,
-          cardInfo: {
-            userNo: UserData.userNo,
-            timecapsuleNo: timecapsuleNo.capsuleId,
-          },
+          sendFileToServer(imageFile) // 이미지 파일을 서버로 보냅니다.
         }
-        console.log(body)
-        const response = axios.post(
-          serverUrl + "timecapsule/regist/card",
-          body,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          }
-        )
-        console.log(response)
-      } catch (error) {
-        console.error(error)
-      }
-    }
+      }, "image/jpeg")
+    })
   }
 
   const StickerContainerArea = useRef<HTMLDivElement>(null)
@@ -227,14 +241,19 @@ const Card = function () {
     }
   }
 
-  const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [modalXIsOpen, setXIsOpen] = React.useState(false)
+  const [modalYIsOpen, setYIsOpen] = React.useState(false)
 
-  function openModal() {
-    setIsOpen(true)
+  function openXModal() {
+    setXIsOpen(true)
   }
 
   function closeModal() {
-    setIsOpen(false)
+    setXIsOpen(false)
+    setYIsOpen(false)
+  }
+  function openYModal() {
+    setYIsOpen(true)
   }
 
   return (
@@ -242,22 +261,22 @@ const Card = function () {
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
         <img
           className="w-6 h-6"
-          onClick={openModal}
+          onClick={openXModal}
           src="/assets/icons/x_dark.png"
           alt="X"
         />
         <img
-          onClick={saveAsImageHandler}
+          onClick={openYModal}
           className="w-8 h-6"
           src="/assets/icons/check_dark.png"
           alt="체크"
         />
       </div>
       <Modal
-        isOpen={modalIsOpen}
+        isOpen={modalXIsOpen}
         onRequestClose={closeModal}
         style={customStyles}
-        contentLabel="BUY Modal"
+        contentLabel="X Modal"
       >
         <div className="text-center font-semibold">
           작성된 내용이 저장되지 않아요!
@@ -270,6 +289,32 @@ const Card = function () {
           </ModalButton>
           <ModalButton className="bg-black bg-opacity-10" onClick={goBack}>
             <span className="font-bold text-gray-900">작성취소</span>
+          </ModalButton>
+        </div>
+      </Modal>
+      <Modal
+        isOpen={modalYIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="submit Modal"
+      >
+        <div className="text-center font-semibold">
+          사진을 첨부했는지 꼭 확인해주세요! <br />
+          카드를 등록하시겠어요?
+          <br />
+          <span className="font-extralight">
+            (등록 후에는 수정할 수 없어요)
+          </span>
+        </div>
+        <div className="flex mt-4 w-48 m-auto justify-between">
+          <ModalButton className="bg-black bg-opacity-0" onClick={closeModal}>
+            <span className="font-bold text-gray-400">닫기</span>
+          </ModalButton>
+          <ModalButton
+            className="bg-black bg-opacity-10"
+            onClick={saveAsImageHandler}
+          >
+            <span className="font-bold text-gray-900">등록</span>
           </ModalButton>
         </div>
       </Modal>
