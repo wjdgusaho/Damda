@@ -127,6 +127,10 @@ const RecordCapsule = function () {
   twoDayAheadDate.setDate(nextDayOfMonth)
   const twoDayAheadDateString = twoDayAheadDate.toISOString().slice(0, 10)
 
+  function handleDatePickerKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    e.preventDefault()
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -179,6 +183,7 @@ const RecordCapsule = function () {
           minDate={new Date(twoDayAheadDateString)}
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
+          onKeyDown={handleDatePickerKeyDown}
         />
         <ContentWrap>
           <Content>

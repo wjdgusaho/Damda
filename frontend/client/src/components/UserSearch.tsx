@@ -170,6 +170,7 @@ const UserItem = function ({
             }
             return user
           })
+          setSearchList(newList)
         }
       })
       .catch((error) => console.error(error))

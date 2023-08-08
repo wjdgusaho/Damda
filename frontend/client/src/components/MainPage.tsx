@@ -54,7 +54,6 @@ export const MainPage = function () {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log("token", token)
     const fetchData = async () => {
       try {
         const body = {
@@ -70,9 +69,7 @@ export const MainPage = function () {
             },
           }
         )
-        console.log(response)
         setCapsuleList(response.data.data.timecapsuleList)
-        console.log("CapsuleList", response.data.data.timecapsuleList)
         dispatch(SET_TIMECAPSULE(response.data.data.timecapsuleList))
       } catch (error) {
         console.error(error)
