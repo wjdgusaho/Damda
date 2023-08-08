@@ -171,18 +171,29 @@ interface ThemeProps {
   themeList: themeType[]
 }
 export const Theme: React.FC<ThemeProps> = ({ themeList }) => {
+  const [showOnlyOwned, setShowOnlyOwned] = useState(false)
+  const filteredThemeList = showOnlyOwned
+    ? themeList.filter((t) => t.userHave)
+    : themeList
+
   return (
     <div>
       <div className="ml-8 mb-4">
-        <input type="checkbox" name="" id="" />
-        <label htmlFor="">
+        <input
+          type="checkbox"
+          name=""
+          id="isHave"
+          checked={showOnlyOwned}
+          onChange={() => setShowOnlyOwned(!showOnlyOwned)}
+        />
+        <label htmlFor="isHave">
           <TextStyle className="inline ml-2 opacity-70">
             보유중인 상품만
           </TextStyle>
         </label>
       </div>
-      {themeList.length > 0 &&
-        themeList.map((t) => (
+      {filteredThemeList.length > 0 &&
+        filteredThemeList.map((t) => (
           <div key={t.themeNo}>
             <Card
               no={t.themeNo}
