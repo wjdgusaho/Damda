@@ -2,6 +2,8 @@ package com.b210.damda.domain.file.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.b210.damda.util.exception.CommonException;
+import com.b210.damda.util.exception.CustomExceptionStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
@@ -26,8 +28,13 @@ public class S3UploadService {
 
     public String profileSaveFile(MultipartFile multipartFile) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
-
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 파일 확장자
+
+        // 사진 확장자가 맞지 않으면
+        if (!isValidExtensionImage(extension)) {
+            throw new CommonException(CustomExceptionStatus.EXTENSION_ERROR_IMAGE);
+        }
+
         String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
         String newFilename = "user-profileImage/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
 
@@ -41,8 +48,13 @@ public class S3UploadService {
 
     public String cardSaveFile(MultipartFile multipartFile) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
-
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 파일 확장자
+
+        // 사진 확장자가 맞지 않으면
+        if (!isValidExtensionImage(extension)) {
+            throw new CommonException(CustomExceptionStatus.EXTENSION_ERROR_IMAGE);
+        }
+
         String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
         String newFilename = "timecapsule-card/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
 
@@ -56,8 +68,13 @@ public class S3UploadService {
 
     public String fileSaveFile(MultipartFile multipartFile) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
-
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 파일 확장자
+
+        // 파일 확장자가 맞지 않으면
+        if (!isValidExtensionFile(extension)) {
+            throw new CommonException(CustomExceptionStatus.EXTENSION_ERROR_FILE);
+        }
+
         String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
         String newFilename = "timecapsule-file/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
 
@@ -80,11 +97,34 @@ public class S3UploadService {
                 .body(urlResource);
     }
 
+    // 사진 확장자 검사
+    private boolean isValidExtensionImage(String extension) {
+        String[] allowedExtensions = {".jpg", ".jpeg", ".png"};
+        for (String allowedExtension : allowedExtensions) {
+            if (allowedExtension.equalsIgnoreCase(extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // 파일 확장자 검사
+    private boolean isValidExtensionFile(String extension) {
+        String[] allowedExtensions = {
+                ".mp3", ".wav", ".ogg", ".m4a",    // 오디오 확장자
+                ".mp4", ".avi", ".mkv", ".mov", ".flv", ".wmv"   // 비디오 확장자
+        };
+        for (String allowedExtension : allowedExtensions) {
+            if (allowedExtension.equalsIgnoreCase(extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String saveFileBase64(byte[] data, String filename) throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(data.length);
-        // 또한 이미지인 경우 ContentType을 적절히 설정해야합니다.
-        // 이 예제에서는 JPEG 이미지를 가정합니다.
 
         String extension = filename.substring(filename.lastIndexOf(".")).toLowerCase(); // 파일 확장자
         String contentType = "image/jpeg";
