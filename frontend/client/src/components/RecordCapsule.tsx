@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
@@ -8,6 +8,10 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import "./datePicker.css"
 import { ko } from "date-fns/esm/locale"
+import axios from "axios"
+import { serverUrl } from "../urls"
+import { useSelector } from "react-redux"
+import { RootState } from "../store/Store"
 
 const Box = styled.div`
   display: flex;
@@ -111,15 +115,39 @@ const BtnWrap = tw.div`
 `
 
 const RecordCapsule = function () {
+  const token = useSelector((state: RootState) => state.auth.accessToken)
   let [isHelp, setIsHelp] = useState(false)
   const currentDate = new Date()
   const nextDayOfMonth = currentDate.getDate() + 2
   const navigate = useNavigate()
   const twoDayAheadDate = new Date(currentDate)
   const [selectedDate, setSelectedDate] = useState<Date | null>(twoDayAheadDate)
+  const [locationBig, setLocationBig] = useState([])
 
   twoDayAheadDate.setDate(nextDayOfMonth)
   const twoDayAheadDateString = twoDayAheadDate.toISOString().slice(0, 10)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios({
+          method: "GET",
+          url: serverUrl + "location/big",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        })
+        setLocationBig(response.data)
+      } catch (error) {
+        console.log("Error fetching data:", error)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  console.log(locationBig)
 
   return (
     <>
