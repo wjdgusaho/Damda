@@ -989,14 +989,18 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //만약 나가가는 사람이 방장일경우 캡슐방 폭파
         if(timecapsuleMapping.isHost()){
+            // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
+            List<TimecapsuleInvite> timecapsuleInvites = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsule(timecapsule);
+            for(TimecapsuleInvite ti : timecapsuleInvites){
+                ti.setStatus("REJECTED");
+            }
+            timecapsuleInviteRepository.saveAll(timecapsuleInvites);
             timecapsule.setRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
+        }else{
+            TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, user.getUserNo()).get();
+            timecapsuleInvite.setStatus("REJECTED");
+            timecapsuleInviteRepository.save(timecapsuleInvite);
         }
-        
-        // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
-        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, user.getUserNo()).get();
-
-        timecapsuleInvite.setStatus("REJECTED");
-        
 
         //유저 타임캡슐 값 감소
         user.setNowCapsuleCount(user.getNowCapsuleCount() - 1);
