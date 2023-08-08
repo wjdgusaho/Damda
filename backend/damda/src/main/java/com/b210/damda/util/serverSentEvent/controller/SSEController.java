@@ -32,26 +32,42 @@ public class SSEController {
         friendEventService.checkAllFriendEvent();
         //2. 확인하지 못했던 타임 캡슐 알림 로직
 
-        return eventStreamService.connectStream();
+        return eventStreamService.connectStream(12);
     }
 
     //로그아웃 시 스트림 제거
+    @GetMapping(value = "/sse/login31")
+    public Flux<ServerSentEvent<String>> login31() {
+        log.info("로그인 개방");
+        //1. 확인하지 못했던 친구 상태 알림 로직
+        friendEventService.checkAllFriendEvent();
+        //2. 확인하지 못했던 타임 캡슐 알림 로직
+
+        return eventStreamService.connectStream(31);
+    }
+
     @GetMapping(value = "/sse/logout")
     public void logout() {
         eventStreamService.disconnectStream();
     }
 
     //테스트용
-    @GetMapping(value = "/sse/test")
+
+    @GetMapping(value = "/sse/test/request")
     public void test(@RequestParam long no) {
         friendEventService.friendRequestEvent(no);
-    }    @GetMapping(value = "/sse/2")
+    }
+
+    @GetMapping(value = "/sse/test/accept")
     public void test2(@RequestParam long no) {
         friendEventService.friendAcceptEvent(no);
-    }    @GetMapping(value = "/sse/test3")
+    }
+
+    @GetMapping(value = "/sse/test/reject")
     public void test3(@RequestParam long no) {
         friendEventService.friendDenyEvent(no);
     }
+
 
     //테스트용2
     @GetMapping(value = "sse/size")
