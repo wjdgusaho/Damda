@@ -135,10 +135,11 @@ export const Sticker: React.FC<StickerProps> = ({ decoItemList }) => {
         decoItemList.map((d) => (
           <div key={d.itemNo}>
             <Card
-              name={d.name}
+              name={"스티커 " + (d.itemNo - 2)}
               price={d.price}
               desc={d.description}
               isHave={d.userHave}
+              icon={d.icon}
             ></Card>
             <CardLine></CardLine>
           </div>
@@ -169,6 +170,7 @@ export const Theme: React.FC<ThemeProps> = ({ themeList }) => {
               price={t.price}
               desc={t.description}
               isHave={t.userHave}
+              icon={t.icon}
             ></Card>
             <CardLine></CardLine>
           </div>
@@ -203,7 +205,13 @@ interface CardProps {
   icon?: string
 }
 
-export const Card: React.FC<CardProps> = ({ name, price, desc, isHave }) => {
+export const Card: React.FC<CardProps> = ({
+  name,
+  price,
+  desc,
+  isHave,
+  icon,
+}) => {
   const [modalIsOpen, setIsOpen] = React.useState(false)
 
   function openModal() {
@@ -217,7 +225,7 @@ export const Card: React.FC<CardProps> = ({ name, price, desc, isHave }) => {
   return (
     <div className="w-80 h-40 bg-white bg-opacity-10 m-auto rounded-3xl flex shadow-2xl">
       <div className="w-40 h-40 bg-white opacity-100 rounded-3xl">
-        <img src="/assets/universe/Planet-3.png" alt="카드이미지" />
+        <img className="w-full h-full " src={icon} alt="카드이미지" />
       </div>
       <div className="w-40 h-40 text-center">
         <TextStyle className="mt-1 text-white text-lg">{name}</TextStyle>
