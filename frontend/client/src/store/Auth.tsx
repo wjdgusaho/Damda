@@ -13,8 +13,8 @@ const initialState: authState = {
     userNo: 0,
     nickname: "",
     profileImage: "",
-    nowCapsuleCount: 0,
-    savedCapsuleCount: 0,
+    nowTheme: 0,
+    expiredMs: 0,
   },
 }
 
@@ -24,8 +24,8 @@ export interface UserInfo {
   userNo: number
   nickname: string
   profileImage: string
-  nowCapsuleCount: number
-  savedCapsuleCount: number
+  nowTheme: number
+  expiredMs: number
 }
 
 export const authSlice = createSlice({
