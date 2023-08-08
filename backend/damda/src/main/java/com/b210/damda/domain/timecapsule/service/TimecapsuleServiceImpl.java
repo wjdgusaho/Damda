@@ -65,7 +65,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final S3UploadService s3UploadService;
 
     private final int MAX_PARTICIOPANT = 10;
-    private final Long MAX_FILESIZE = 100L;
+    private final Long MAX_FILESIZE = (long) 50 * (1024 * 1024);
     private final int NOW_PARTICIOPANT = 1;
     /*
         유저 정보 불러오기
