@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
@@ -20,6 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 기상청 데이터 API 연동
@@ -39,7 +42,7 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
     }
 
     @Override
-    public ResponseEntity<JsonNode> getNowWeatherInfos(WeatherLocationDTO weatherDTO) throws Exception {
+    public String getNowWeatherInfos(WeatherLocationDTO weatherDTO) throws Exception {
         //URL Encoding Issue로 인한 문자열 대체
 //        String EncodeServiceKey = serviceKey.replace("+", "%2B");
         String EncodeServiceKey = URLEncoder.encode(serviceKey, StandardCharsets.UTF_8.toString());
@@ -95,19 +98,46 @@ public class WeatherAPIServiceImpl implements WeatherAPIService {
 
     /**
      * 기상청 API에서 받아온 값을 block하고,
-     * 읽을 수 있는 json 타입으로 변환하여 동기적으로 전송
+     * 현재 필요한 비/눈 타입만 변환하여 동기적으로 전송
      */
     @Override
-    public ResponseEntity<JsonNode> convertWeatherDTO(Mono<String> response) throws JsonProcessingException {
+    public String convertWeatherDTO(Mono<String> response) throws JsonProcessingException {
         // JSON 문자열을 JSON 객체로 파싱, response.block()을 통해 결과값이 나올때까지 대기
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(response.block());
 
-        // "body" 부분 추출
-        JsonNode bodyNode = jsonNode.get("response").get("body").get("items");
+        // "item" 부분 추출
+        JsonNode items = jsonNode.get("response")
+                .get("body")
+                .get("items")
+                .get("item");
 
-        //HTTP 성공 신호 전송
-        return ResponseEntity.status(HttpStatus.OK).body(bodyNode);
+        // "category" 값이 "PTY"인 첫 번째 요소 추출
+        JsonNode ptyItem = null;
+        for (JsonNode item : items) {
+            JsonNode categoryNode = item.get("category");
+            if (categoryNode != null && categoryNode.asText().equals("PTY")) {
+                ptyItem = item;
+                break; // 첫 번째 해당 요소를 찾으면 루프 종료
+            }
+        }
+
+        //PTY의 obsrvalue 추출
+        JsonNode resultJson = ptyItem.get("obsrValue");
+        int result = resultJson.asInt();
+        if(result == 1 || result == 5 || result == 4) {
+            return "RAIN";
+        }
+        else if(result == 3 || result == 7) {
+            return "SNOW";
+        }
+        else if(result == 2 || result == 6) {
+            return "SNOWRAIN";
+        }
+        else {
+            return "SUN";
+        }
+
     }
 
 
