@@ -6,6 +6,7 @@ import com.b210.damda.domain.dto.Friend.FriendRequestListDTO;
 import com.b210.damda.domain.dto.User.UserDTO;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.friend.service.FriendService;
+import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.response.DataResponse;
 import com.b210.damda.util.serverSentEvent.service.FriendEventService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,8 @@ public class FriendController {
             friendService.friendRequest(userDTO.getUserNo());
             friendEventService.friendRequestEvent(userDTO.getUserNo());
             return new DataResponse<>(200, "친구 신청이 완료되었습니다.");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
@@ -54,6 +57,8 @@ public class FriendController {
 
             response.setData(result);
             return response;
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
@@ -65,6 +70,8 @@ public class FriendController {
         try{
             friendService.friendRequestFavoriteAdd(friendListDTO.getUserNo());
             return new DataResponse<>(200, "즐겨찾기 추가 성공");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
@@ -76,6 +83,8 @@ public class FriendController {
         try{
             friendService.friendRequestFavoriteDel(friendListDTO.getUserNo());
             return new DataResponse<>(200, "즐겨찾기 삭제 성공");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
@@ -93,6 +102,8 @@ public class FriendController {
             response.setData(result);
 
             return response;
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
         }catch (Exception e){
             return new DataResponse<>(500, "알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
@@ -105,6 +116,8 @@ public class FriendController {
             friendService.friendReqeustAccept(friendNoRequestDTO.getUserNo());
             friendEventService.friendAcceptEvent(friendNoRequestDTO.getUserNo());
             return new DataResponse<>(200, "친구 신청 수락");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
         }catch (Exception e){
             return new DataResponse<>(500 ,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
@@ -117,6 +130,8 @@ public class FriendController {
             friendService.friendReqeustReject(friendNoRequestDTO.getUserNo());
             friendEventService.friendDenyEvent(friendNoRequestDTO.getUserNo());
             return new DataResponse<>(200, "친구 신청 거절");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
         }catch (Exception e){
             return new DataResponse<>(500 ,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
@@ -128,6 +143,8 @@ public class FriendController {
         try{
             friendService.friendDelete(friendNoRequestDTO.getUserNo());
             return new DataResponse<>(200, "친구 삭제 완료");
+        }catch (CommonException e){
+            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
         }catch (Exception e){
             return new DataResponse<>(500 ,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
         }
