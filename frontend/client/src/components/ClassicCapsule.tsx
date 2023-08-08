@@ -109,21 +109,21 @@ const BtnWrap = tw.div`
 const ClassicCapsule = function () {
   const [isHelp, setIsHelp] = useState(false)
   const currentDate = new Date()
-  const oneDayAheadDate = new Date(currentDate)
-  const nextDayOfMonth = currentDate.getDate() + 1
+  const twoDayAheadDate = new Date(currentDate)
+  const nextDayOfMonth = currentDate.getDate() + 2
   const navigate = useNavigate()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [selectedDate, setSelectedDate] = useState<Date | null>(oneDayAheadDate)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(twoDayAheadDate)
   const [timeValue, setTimeValue] = useState<[string, string, string]>([
     "",
     "",
     "",
   ])
 
-  oneDayAheadDate.setDate(nextDayOfMonth)
-  const oneDayAheadDateString = oneDayAheadDate.toISOString().slice(0, 10)
+  twoDayAheadDate.setDate(nextDayOfMonth)
+  const twoDayAheadDateString = twoDayAheadDate.toISOString().slice(0, 10)
 
   function inputTitle(e: React.FormEvent<HTMLInputElement>) {
     setTitle(e.currentTarget.value)
@@ -224,7 +224,7 @@ const ClassicCapsule = function () {
             formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
             dateFormat="yyyy-MM-dd"
             locale={ko}
-            minDate={new Date(oneDayAheadDateString)}
+            minDate={new Date(twoDayAheadDateString)}
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
             onKeyDown={handleDatePickerKeyDown}
