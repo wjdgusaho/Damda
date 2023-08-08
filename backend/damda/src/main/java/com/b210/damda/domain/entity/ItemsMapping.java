@@ -23,6 +23,14 @@ public class ItemsMapping {
     @JoinColumn(name = "item_no")
     private Items items;
 
+    public ItemsMapping() {
+    }
+
+    public ItemsMapping(User user, Items items) {
+        this.user = user;
+        this.items = items;
+    }
+
     public ItemsMappingDTO tothemeMappingDTO(){
         return ItemsMappingDTO.builder()
                 .itemMappingNo(this.itemMappingNo)
