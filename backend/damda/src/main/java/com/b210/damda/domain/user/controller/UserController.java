@@ -9,14 +9,16 @@ import com.b210.damda.util.emailAPI.service.EmailService;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.b210.damda.util.response.DataResponse;
+import com.b210.damda.util.serverSentEvent.controller.SSEController;
+import com.b210.damda.util.serverSentEvent.service.EventStreamService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -38,7 +40,6 @@ public class UserController {
     public DataResponse<Map<String, Object>> regist(@RequestPart("user") UserOriginRegistDTO userOriginRegistDTO,
                                     @RequestPart("profileImage") MultipartFile profileImage){
         try {
-            System.out.println(userOriginRegistDTO.toString());
             User savedUser = userService.regist(userOriginRegistDTO, profileImage);
             DataResponse<Map<String, Object>> response = new DataResponse<>(201, "회원가입 완료");
             return response;

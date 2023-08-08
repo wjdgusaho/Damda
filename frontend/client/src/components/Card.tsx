@@ -2,8 +2,14 @@ import React, { useEffect, useRef, useState } from "react"
 import { styled } from "styled-components"
 import html2canvas from "html2canvas"
 import StickerContainer from "./StickerContainer"
+import { useNavigate, useParams } from "react-router-dom"
+import Modal from "react-modal"
+import axios from "axios"
+import { serverUrl } from "../urls"
+import { useSelector } from "react-redux"
+import { RootState } from "../store/Store"
 
-interface StickerType {
+export interface StickerType {
   no: number
   name: string
   icon: string
@@ -22,54 +28,48 @@ interface StickerType {
     s12?: string
   }
 }
-
-const stickerList: StickerType[] = [
-  {
-    no: 1,
-    name: "confetti",
-    icon: "assets/stickers/confetti/icon.png",
-    sticker: {
-      s1: "assets/stickers/confetti/1.png",
-      s2: "assets/stickers/confetti/2.png",
-      s3: "assets/stickers/confetti/3.png",
-      s4: "assets/stickers/confetti/4.png",
-      s5: "assets/stickers/confetti/5.png",
-      s6: "assets/stickers/confetti/6.png",
-      s7: "assets/stickers/confetti/7.png",
-      s8: "assets/stickers/confetti/8.png",
-      s9: "assets/stickers/confetti/9.png",
-      s10: "assets/stickers/confetti/10.png",
-    },
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    borderRadius: "20px",
+    backgroundColor: "rgb(255, 255, 255)",
+    color: "rgb(93, 93, 93)",
   },
-  {
-    no: 2,
-    name: "colorface",
-    icon: "assets/stickers/colorface/icon.png",
-    sticker: {
-      s1: "assets/stickers/colorface/1.png",
-      s2: "assets/stickers/colorface/2.png",
-      s3: "assets/stickers/colorface/3.png",
-      s4: "assets/stickers/colorface/4.png",
-      s5: "assets/stickers/colorface/5.png",
-      s6: "assets/stickers/colorface/6.png",
-      s7: "assets/stickers/colorface/7.png",
-      s8: "assets/stickers/colorface/8.png",
-      s9: "assets/stickers/colorface/9.png",
-      s10: "assets/stickers/colorface/10.png",
-      s11: "assets/stickers/colorface/11.png",
-    },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.733)",
   },
-]
+}
 
 const Card = function () {
   const [inputValue, setInputValue] = useState("")
+  const [stickerList, setStickerList] = useState<StickerType[]>([])
   const [inputContentValue, setInputContentValue] = useState("")
   const [bgcolor, setBgcolor] = useState("#C4C5F4")
   const [font, setFont] = useState("pretendard")
-  const [stickerNo, setSticker] = useState(stickerList[0].no)
+  const [stickerNo, setSticker] = useState(-1)
   const [title, setTitle] = useState("오늘의 제목")
   const [cardContent, setCardContent] = useState("오늘의 내용을 입력해주세요!")
   const [countList, setCountList] = useState<{ no: number; url: string }[]>([])
+  const UserData = useSelector((state: RootState) => state.auth.userInfo)
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+
+  const navigate = useNavigate()
+  const timecapsuleNo = useParams()
+
+  const goBack = () => {
+    navigate(-1) // 뒤로가기
+  }
+
+  function imgChange() {
+    const fileinput = document.getElementById("cardImage") as HTMLInputElement
+    fileinput.click()
+  }
 
   const handleChange = (e: { target: { value: any } }) => {
     const value = e.target.value
@@ -122,6 +122,25 @@ const Card = function () {
   }
 
   useEffect(() => {
+    console.log("token", token)
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(serverUrl + "timecapsule/deco/list", {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        console.log(response)
+        setStickerList(response.data.data.decoList)
+        setSticker(5)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchData()
+  }, [])
+
+  useEffect(() => {
     // countList가 변경되면 호출됨
     console.log(countList)
   }, [countList])
@@ -151,21 +170,82 @@ const Card = function () {
       useCORS: true, // 크로스 오리진 요청 허용
       scale: 2, // 해상도 높이기
     }).then((canvas) => {
-      const link = document.createElement("a")
-      document.body.appendChild(link)
-      link.href = canvas.toDataURL("image/png")
-      link.download = "result.png"
-      link.click()
-      document.body.removeChild(link)
+      // const link = document.createElement("a")
+      // document.body.appendChild(link)
+      var imageDataURL = canvas.toDataURL("image/png")
+      imageDataURL = imageDataURL.replace("data:image/png;base64,", "")
+
+      // link.download = "result.png"
+      // link.click()
+      // document.body.removeChild(link)
+
+      // 이미지 데이터를 Axios를 사용하여 서버로 보냄
+      sendImageToServer(imageDataURL)
     })
+
+    const sendImageToServer = (imageDataURL: string) => {
+      try {
+        const body = {
+          cardImage: imageDataURL,
+          cardInfo: {
+            userNo: UserData.userNo,
+            timecapsuleNo: timecapsuleNo.capsuleId,
+          },
+        }
+        console.log(body)
+        const response = axios.post(
+          serverUrl + "timecapsule/regist/card",
+          body,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+    }
   }
 
   const StickerContainerArea = useRef<HTMLDivElement>(null)
 
+  const [cardImage, setCardImage] = useState<File | null>(null)
+  const imageRef = useRef<HTMLInputElement>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] || null
+    if (file) {
+      setCardImage(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+
+  function openModal() {
+    setIsOpen(true)
+  }
+
+  function closeModal() {
+    setIsOpen(false)
+  }
+
   return (
     <BackGround bgColor={bgcolor} className="overflow-hidden w-full h-full">
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
-        <img className="w-6 h-6" src="/assets/icons/x_dark.png" alt="X" />
+        <img
+          className="w-6 h-6"
+          onClick={openModal}
+          src="/assets/icons/x_dark.png"
+          alt="X"
+        />
         <img
           onClick={saveAsImageHandler}
           className="w-8 h-6"
@@ -173,6 +253,26 @@ const Card = function () {
           alt="체크"
         />
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="BUY Modal"
+      >
+        <div className="text-center font-semibold">
+          작성된 내용이 저장되지 않아요!
+          <br />
+          그래도 취소하시겠어요?
+        </div>
+        <div className="flex mt-4 w-48 m-auto justify-between">
+          <ModalButton className="bg-black bg-opacity-0" onClick={closeModal}>
+            <span className="font-bold text-gray-400">닫기</span>
+          </ModalButton>
+          <ModalButton className="bg-black bg-opacity-10" onClick={goBack}>
+            <span className="font-bold text-gray-900">작성취소</span>
+          </ModalButton>
+        </div>
+      </Modal>
       <CardContainer
         bgColor={bgcolor}
         id="saveImgContainer"
@@ -216,14 +316,22 @@ const Card = function () {
               </InputResult>
             </label>
           </div>
-          <div className="flex w-40 h-40 items-center m-auto mt-4 bg-black bg-opacity-20 mb-1">
-            <img
-              className="w-8 h-8 m-auto opacity-80"
-              onClick={saveAsImageHandler}
-              src="/assets/icons/img_select.png"
-              alt="사진"
-            />
-          </div>
+          <img
+            src={
+              selectedImage ? selectedImage : "/assets/icons/cardImgSelect.png"
+            }
+            onClick={imgChange}
+            alt="카드이미지"
+            className="flex w-40 h-40 items-center m-auto mt-4 mb-1"
+          />
+          <input
+            id="cardImage"
+            name="cardImage"
+            type="file"
+            className="hidden"
+            onChange={handleImageChange}
+            ref={imageRef}
+          />
           <div className="text-center">
             <div className="relative text-center -mt-2">
               <label
@@ -270,8 +378,8 @@ const Card = function () {
           </Option>
         </FontSelect>
       </div>
-      <div>
-        <div className="bg-black bg-opacity-10 mt-4 flex flex-nowrap overflow-y-auto">
+      <div className="fixed bottom-0">
+        <div className="bg-black bg-opacity-10 flex flex-nowrap overflow-y-auto">
           {stickerList.length !== 0 &&
             stickerList.map((s: StickerType) => (
               <img
@@ -283,7 +391,7 @@ const Card = function () {
               />
             ))}
         </div>
-        <div className="flex h-64 w-full flex-wrap overflow-x-auto content-start">
+        <div className="flex h-52 w-full flex-wrap overflow-x-auto content-start">
           {matchingSticker &&
             Object.values(matchingSticker.sticker).map(
               (stickerImage, index) => (
@@ -291,6 +399,7 @@ const Card = function () {
                   className="w-16 m-4"
                   key={index}
                   src={stickerImage}
+                  // src="/assets/stickers/doodle/1.png"
                   alt={`Sticker ${index + 1}`}
                   onClick={() => onAddCardSticker(stickerImage)}
                 />
@@ -301,6 +410,18 @@ const Card = function () {
     </BackGround>
   )
 }
+
+const ModalButton = styled.div`
+  font-family: "pretendard";
+  font-weight: 400;
+  font-size: 18px;
+  width: 80px;
+  height: 26px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: #000000b1;
+`
 
 interface BackGroundProps {
   bgColor: string

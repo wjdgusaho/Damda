@@ -15,7 +15,6 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class MainTimecapsuleListDTO {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long timecapsuleNo;
     private String type;
     @JsonProperty("sDate")
@@ -29,6 +28,8 @@ public class MainTimecapsuleListDTO {
     private int curCard;
     private int goalCard;
     private boolean state;
+    @JsonProperty("isRegisted")
+    private boolean isRegisted;
 
     public MainTimecapsuleListDTO(){
 

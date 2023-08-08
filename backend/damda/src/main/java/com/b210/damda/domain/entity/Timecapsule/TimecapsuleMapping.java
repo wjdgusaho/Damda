@@ -5,6 +5,7 @@ import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailPartInfoDTO;
 import com.b210.damda.domain.entity.User.User;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -12,6 +13,7 @@ import java.sql.Timestamp;
 @Entity
 @Getter
 @Setter
+@ToString
 public class TimecapsuleMapping {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +35,7 @@ public class TimecapsuleMapping {
 
     private Timestamp deleteDate;
 
-    private Timestamp openDate;
+    private Timestamp saveDate;
 
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean cardAble = true;
@@ -41,6 +43,13 @@ public class TimecapsuleMapping {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private boolean fileAble = true;
 
+    public TimecapsuleMapping() {
+    }
+
+    public TimecapsuleMapping(Timecapsule timecapsule, User user) {
+        this.timecapsule = timecapsule;
+        this.user = user;
+    }
 
     public DetailMyInfoDTO toDetailMyInfoDTO(){
         return DetailMyInfoDTO.builder()
@@ -58,4 +67,6 @@ public class TimecapsuleMapping {
                 .profileImage(this.user.getProfileImage())
                 .build();
     }
+
+
 }

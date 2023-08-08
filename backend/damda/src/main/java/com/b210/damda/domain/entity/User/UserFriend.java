@@ -79,7 +79,7 @@ public class UserFriend {
 
     // 친구 거절
     public void rejectFriendRequest(){
-        this.responseDate = null;
+        this.responseDate = LocalDateTime.now();
         this.status = "REJECTED";
     }
 

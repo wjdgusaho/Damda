@@ -6,6 +6,7 @@ import { serverUrl } from "../../urls"
 import { Link } from "react-router-dom"
 import tw from "tailwind-styled-components"
 import Modal from "react-modal"
+import * as EmailValidator from "email-validator"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -14,10 +15,21 @@ const isFileSizeValid = (file: File | null) => {
   return file !== null && file.size <= FILE_SIZE_LIMIT_BYTES
 }
 // 닉네임 정규식
-const nicknameRegex = /^(?=.*[a-zA-Z가-힣0-9]).{2,15}$/
+const nicknameRegex = /^(?=.*[a-zA-Z가-힣0-9])[a-zA-Z가-힣0-9]{2,15}$/
 
 // 비밀번호 정규식
 const passwordRegex = /^(?=.*[a-zA-Z])[!@#$%^*+=-]?(?=.*[0-9]).{5,25}$/
+
+// 파일(사진) 확장자 제한
+const allowedExtensions = [".jpg", ".jpeg", ".png"]
+
+const isAllowFiles = (file: File) => {
+  const fileExtension = file.name.substring(file.name.lastIndexOf("."))
+  if (allowedExtensions.includes(fileExtension.toLowerCase())) {
+    return true
+  }
+  return false
+}
 
 const Form = styled.form`
   display: flex;
@@ -43,13 +55,13 @@ const successCode = Math.floor(Math.random() * 10000)
 
 const customStyles = {
   content: {
-    top: "50%",
+    top: "40%",
     left: "50%",
     right: "auto",
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "50%",
+    width: "65%",
     borderRadius: "20px",
   },
   overlay: {
@@ -88,6 +100,7 @@ export const SignUp = function () {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [getCode, setGetCode] = useState(false)
   const [userCode, setUserCode] = useState("")
+  const intervalRef = useRef<NodeJS.Timeout>()
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setUserdata({
@@ -105,21 +118,26 @@ export const SignUp = function () {
 
   function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0] || null
-    if (file && isFileSizeValid(file)) {
-      setProfileImage(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setSelectedImage(reader.result as string)
+    if (file) {
+      if (!isFileSizeValid(file)) {
+        alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
+      } else if (!isAllowFiles(file)) {
+        alert("파일 확장자는 .jpg, .jpeg, .png만 가능합니다.")
+      } else {
+        setProfileImage(file)
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          setSelectedImage(reader.result as string)
+        }
+        reader.readAsDataURL(file)
       }
-      reader.readAsDataURL(file)
-    } else {
-      if (imageRef.current) {
-        imageRef.current.value = ""
-      }
-      setProfileImage(null)
-      alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
     }
+    if (imageRef.current) {
+      imageRef.current.value = ""
+    }
+    setProfileImage(null)
   }
+
   useEffect(() => {
     if (userdata.nickname) {
       if (nicknameRegex.test(userdata.nickname)) {
@@ -156,9 +174,14 @@ export const SignUp = function () {
 
   useEffect(() => {
     if (userEmailMatch) {
+      clearInterval(intervalRef.current)
       setuserEmailMatch(0)
     }
   }, [userdata.email])
+
+  useEffect(() => {
+    return () => clearInterval(intervalRef.current)
+  }, [])
 
   function imgChange() {
     const fileinput = document.getElementById(
@@ -167,15 +190,10 @@ export const SignUp = function () {
     fileinput.click()
   }
 
-  async function sleep(sec: number) {
-    return new Promise<void>((resolve) => setTimeout(resolve, sec * 1000))
-  }
   let seconds = 0
 
-  function startCountdown(minute: number) {
-    seconds = minute * 60
-
-    const interval = setInterval(() => {
+  function startCountdown() {
+    intervalRef.current = setInterval(function () {
       const countdownElement = document.querySelector(
         "#countdown"
       ) as HTMLSpanElement
@@ -197,8 +215,8 @@ export const SignUp = function () {
       }
 
       if (seconds === 0) {
-        clearInterval(interval)
-        setuserEmailMatch(0)
+        clearInterval(intervalRef.current)
+        setuserEmailMatch(3)
       }
 
       seconds--
@@ -209,6 +227,8 @@ export const SignUp = function () {
     event.preventDefault()
     if (!userCode) {
       alert("인증번호를 입력해주세요.")
+    } else if (!EmailValidator.validate(userdata.email)) {
+      alert("올바르지 않은 이메일 형식입니다.")
     } else {
       axios({
         method: "POST",
@@ -227,6 +247,7 @@ export const SignUp = function () {
           if (code === 200) {
             setGetCode(false)
             setuserEmailMatch(4)
+            clearInterval(intervalRef.current)
             setUserCode("success" + successCode.toString())
           }
         })
@@ -239,11 +260,7 @@ export const SignUp = function () {
   function checkEmailOverlap(event: React.MouseEvent<HTMLButtonElement>) {
     if (!userdata.email) {
       setuserEmailMessage("이메일을 입력해주세요.")
-    } else if (
-      !userdata.email.includes("@") ||
-      userdata.email.search("@") + 1 === userdata.email.length ||
-      userdata.email.search("@") === 0
-    ) {
+    } else if (!EmailValidator.validate(userdata.email)) {
       setuserEmailMessage("이메일 형식으로 입력해주세요.")
     } else {
       setuserEmailMatch(2)
@@ -257,8 +274,8 @@ export const SignUp = function () {
             setuserEmailMessage("")
             setuserEmailMatch(3)
             setGetCode(true)
-            await sleep(1)
-            startCountdown(10)
+            seconds = 600
+            startCountdown()
           } else {
             setuserEmailMatch(1)
             alert(response.data.message)
@@ -294,7 +311,7 @@ export const SignUp = function () {
       alert("이메일 중복확인을 해주세요.")
     } else if (
       userdata.email &&
-      userEmailMatch !== 3 &&
+      userEmailMatch !== 4 &&
       userCode !== "success" + successCode.toString()
     ) {
       alert("이메일 인증이 되지 않았습니다.")
@@ -318,6 +335,7 @@ export const SignUp = function () {
         data: data,
       })
         .then(() => {
+          clearInterval(intervalRef.current)
           navigate("/login")
         })
         .catch(() => {
@@ -346,12 +364,12 @@ export const SignUp = function () {
         </svg>
       </Link>
       {userEmailMatch === 4 ? (
-        <div className="p-2 px-4 text-sm text-green-500 w-24 relative top-40 left-48">
+        <div className="p-2 px-4 text-sm text-green-500 w-24 relative top-40 left-52">
           인증완료
         </div>
       ) : userEmailMatch === 3 ? (
         <button
-          className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-28 relative top-40 left-48"
+          className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-28 relative top-40 left-44"
           onClick={() => {
             setGetCode(true)
           }}
@@ -359,7 +377,7 @@ export const SignUp = function () {
           이메일인증
         </button>
       ) : userEmailMatch === 2 ? (
-        <div className="p-2 px-4 text-sm w-48 relative top-40 left-48">
+        <div className="p-2 px-4 text-sm w-48 relative top-40 left-40">
           인증번호 전송중...
         </div>
       ) : userEmailMatch === 1 ? (
@@ -398,9 +416,9 @@ export const SignUp = function () {
             type="text"
             onChange={handleCodeChange}
           />
-          <div className="flex justify-between mt-5">
-            <ModalButton onSubmit={() => handleSubmitCode}>확인</ModalButton>
+          <div className="flex justify-between mt-5 mx-5">
             <ModalButton onClick={() => handleClose()}>닫기</ModalButton>
+            <ModalButton onSubmit={() => handleSubmitCode}>확인</ModalButton>
           </div>
         </ModalForm>
       </Modal>
@@ -449,7 +467,7 @@ export const SignUp = function () {
         <p>
           닉네임
           <span style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}>
-            영문 2~15자
+            영문, 한글, 숫자 2~15자 가능합니다.
           </span>
         </p>
         <InputCSS
@@ -470,7 +488,8 @@ export const SignUp = function () {
 
         <p>비밀번호</p>
         <span style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}>
-          5~25자, 영문숫자 필수, 특수문자(!@#$%^*+=-) 가능
+          5~25자, 영문, 숫자, 특수문자(!@#$%^*+=-) 가능. 특수문자는 필수는
+          아닙니다.
         </span>
         <InputCSS
           name="userPw"
