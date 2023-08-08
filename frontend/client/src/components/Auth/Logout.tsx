@@ -13,21 +13,17 @@ import { RootState } from "../../store/Store"
 export const Logout = function () {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const userdata = useSelector((state: RootState) => state.auth.userInfo)
   const token = useSelector((state: RootState) => state.auth.accessToken)
 
   useEffect(() => {
     let eventSource: EventSource
     const UnSse = () => {
       try {
-        eventSource = new EventSourcePolyfill(
-          serverUrl + "sse/logout?userNo=" + userdata.userNo,
-          {
-            headers: {
-              token: "Bearer " + token,
-            },
-          }
-        )
+        eventSource = new EventSourcePolyfill(serverUrl + "sse/logout", {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
 
         eventSource.onmessage = (event) => {
           console.log(event)
