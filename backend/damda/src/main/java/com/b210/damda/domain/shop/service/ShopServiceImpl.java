@@ -37,10 +37,10 @@ public class ShopServiceImpl implements ShopService{
     // 타임캡슐 최대로 살수있는 개수
     private final int MAX_CAPSULE_LIMIT = 10;
     //타임캡슐 최대 용량
-    private final int MAX_FILE_SIZE = 1000;
+    private final Long MAX_FILE_SIZE = (long) 200 * (1024 * 1024);
 
     //증가될 파일의 사이즈 (구매시)
-    private final int UP_FILE_SIZE = 100;
+    private final Long UP_FILE_SIZE = (long) 50 * (1024 * 1024);
 
     /*
         유저정보 불러오기
