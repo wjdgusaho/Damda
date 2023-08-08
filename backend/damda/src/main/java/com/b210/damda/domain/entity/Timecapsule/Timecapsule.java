@@ -121,6 +121,8 @@ public class Timecapsule {
                 .capsuleIcon("capsule"+this.capsuleIconNo)
                 .capsuleType(this.type)
                 .inviteCode(this.inviteCode)
+                .maxParticipant(this.maxParticipant)
+                .nowParticipant(this.nowParticipant)
                 .goalCard(this.goalCard)
                 .penalty(this.timecapsulePenalty.getPenalty() == false ? null : this.timecapsulePenalty.toTimecapsulePenaltyDTO())
                 .criteriaInfo(this.timecapsuleCriteria.toTimecapsuleCriteriaDTO())
