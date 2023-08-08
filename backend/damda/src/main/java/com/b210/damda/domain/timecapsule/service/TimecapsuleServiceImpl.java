@@ -147,7 +147,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             /*
                 오픈조건 검증 로직
              */
-
             //목표 타임캡슐이라면
             if(mainTimecapsule.getType().equals("GOAL")){
                 List<TimecapsuleCard> cards = timecapsuleCardRepository
@@ -200,16 +199,15 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                                 // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상인 경우
                                 if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1) {
                                     //날씨 갱신
-
+                                    
                                 }
                             }
                             //현재 위치가 다르다면
                             else{
                                 //날씨 갱신해
-
+                                
                             }
-                        }
-
+                        }//날씨가 갱신이 완료됨
                         //날씨가 같은가
 
                     }
@@ -476,22 +474,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         String fileUri = "";
         log.info(cardImage.toString());
-        
-//        FileOutputStream stream = null;
-//        if(cardImage == null || cardImage.trim().equals("")) {
-//            throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
-//        }
-//
-//        String cardBinaryDate = cardImage.replaceAll("data:image/png;base64,", "");
-//        byte[] file = Base64.decodeBase64(cardBinaryDate);
-//        //랜덤 이미지
-//        String fileName = UUID.randomUUID().toString();
-//
-//        try {
-//            fileUri = s3UploadService.saveFileBase64(file, fileName);
-//        } catch (IOException e) {
-//            throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
-//        }
 
         //S3에 저장
         if (cardImage.isEmpty() && cardImage.getSize() == 0) {
