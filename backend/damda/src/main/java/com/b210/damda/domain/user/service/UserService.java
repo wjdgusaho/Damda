@@ -46,6 +46,8 @@ public class UserService {
     private S3UploadService s3UploadService;
     private SignupEmailLogRepository signupEmailLogRepository;
 
+    private static Long acExpiredMs = 1000 * 60 * 30L * (48 * 30); // 액세스 토큰의 만료 시간(30분) * 48 * 30 = 30일
+
     @Autowired
     public UserService(UserRepository userRepository, UserLogRepository userLogRepository, BCryptPasswordEncoder encoder, RefreshTokenRepository refreshTokenRepository,
                        EmailSendLogRepository emailSendLogRepository, FriendRepository friendRepository, S3UploadService s3UploadService, SignupEmailLogRepository signupEmailLogRepository) {
@@ -116,7 +118,7 @@ public class UserService {
 
         // 로그인 성공
         String accessToken = JwtUtil.createAccessJwt(user.getUserNo(), secretKey); // 토큰 발급해서 넘김
-        accessToken.
+
         String refreshToken = JwtUtil.createRefreshToken(secretKey); // 리프레시 토큰 발급해서 넘김
 
         Optional<RefreshToken> byUserUserNo = refreshTokenRepository.findByUserUserNo(user.getUserNo());
@@ -150,10 +152,10 @@ public class UserService {
                 .userNo(user.getUserNo())
                 .nowTheme(user.getNowTheme())
                 .coin(user.getCoin())
+                .expiredMs(acExpiredMs)
                 .build();
 
 
-        accessToken.
         // 로그인 log 기록
         UserLog userLog = new UserLog();
         userLog.setUser(user);
