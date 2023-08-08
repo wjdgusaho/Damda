@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 
 @Getter
 @Builder
@@ -19,6 +21,7 @@ public class UserLoginSuccessDTO {
     private Long userNo;
     private int nowTheme;
     private int coin;
+    private LocalDateTime
 
     public UserLoginSuccessDTO() {
     }
