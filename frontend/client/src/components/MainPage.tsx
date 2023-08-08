@@ -11,6 +11,8 @@ import { RootState } from "../store/Store"
 import { serverUrl } from "../urls"
 import { useDispatch, useSelector } from "react-redux"
 import { SET_TIMECAPSULE } from "../store/Timecapsule"
+import { getLocation } from "./getLocation"
+import { resolve } from "path"
 
 /*
 1. 모든 타임캡슐의 조건 만족 여부와 밑의 3가지 경우로 나뉨.
@@ -56,25 +58,43 @@ export const MainPage = function () {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const body = {
-          lat: "123",
-          lan: "123",
-        }
-        const response = await axios.post(
-          serverUrl + "timecapsule/view",
-          body,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
+        const location = await getLocation()
+
+        if (
+          location !== null &&
+          typeof location === "object" &&
+          "lat" in location &&
+          "lan" in location
+        ) {
+          const { lat, lan } = location
+
+          const body = {
+            lat: lat,
+            lan: lan,
           }
-        )
-        setCapsuleList(response.data.data.timecapsuleList)
-        dispatch(SET_TIMECAPSULE(response.data.data.timecapsuleList))
+
+          console.log("--------------------", body)
+
+          const response = await axios.post(
+            serverUrl + "timecapsule/view",
+            body,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
+          )
+
+          setCapsuleList(response.data.data.timecapsuleList)
+          dispatch(SET_TIMECAPSULE(response.data.data.timecapsuleList))
+        } else {
+          console.error("Invalid location object:", location)
+        }
       } catch (error) {
         console.error(error)
       }
     }
+
     fetchData()
   }, [])
 
