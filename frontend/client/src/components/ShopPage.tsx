@@ -221,7 +221,13 @@ export const Capsule: React.FC<CapsuleProps> = ({ capsuleItemList }) => {
       {capsuleItemList.length > 0 &&
         capsuleItemList.map((c) => (
           <div key={c.itemNo}>
-            <Card name={c.name} price={c.price} desc={c.description}></Card>
+            <Card
+              name={c.name}
+              price={c.price}
+              desc={c.description}
+              icon={c.icon}
+              type={c.type}
+            ></Card>
             <CardLine></CardLine>
           </div>
         ))}
@@ -252,6 +258,12 @@ export const Card: React.FC<CardProps> = ({
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const dispatch = useDispatch()
   const UserData = useSelector((state: RootState) => state.auth.userInfo)
+  const [selectedTimecapsuleNo, setSelectedTimecapsuleNo] = React.useState<
+    number | undefined
+  >(undefined)
+  const handleTimecapsuleChange = (timecapsuleNo: number) => {
+    setSelectedTimecapsuleNo(timecapsuleNo)
+  }
 
   function openModal() {
     setIsOpen(true)
@@ -262,6 +274,7 @@ export const Card: React.FC<CardProps> = ({
   }
 
   const buyItem = async (type: string, no: number, price: number) => {
+    console.log("type : ", type)
     const newNo = "" + no
     if (type === "DECO") {
       const body = {
@@ -279,6 +292,28 @@ export const Card: React.FC<CardProps> = ({
       console.log(response.data)
       if (response.data.code === 200) {
         alert("스티커 구매가 완료되었습니다.")
+        closeModal()
+        /* eslint-disable no-restricted-globals */
+        location.reload()
+        dispatch(SET_COIN(UserData.coin - price))
+      }
+    }
+    if (type === "THEME") {
+      const body = {
+        themeNo: newNo,
+      }
+      const response = await axios.post(
+        serverUrl + "shop/purchase/theme",
+        body,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      console.log(response.data)
+      if (response.data.code === 200) {
+        alert("테마 구매가 완료되었습니다.")
         closeModal()
         /* eslint-disable no-restricted-globals */
         location.reload()
@@ -315,8 +350,14 @@ export const Card: React.FC<CardProps> = ({
         style={customStyles}
         contentLabel="BUY Modal"
       >
-        {name === "용량추가" && <ModalCapsuleInner></ModalCapsuleInner>}
-        {name === "캡슐추가" && <ModalCapsuleInner></ModalCapsuleInner>}
+        {name === "용량추가" && (
+          <ModalCapsuleInner
+            onTimecapsuleChange={(selectedTimecapsuleNo) => {
+              setSelectedTimecapsuleNo(selectedTimecapsuleNo)
+            }}
+          ></ModalCapsuleInner>
+        )}
+        {/* {name === "캡슐추가" && <ModalCapsuleInner></ModalCapsuleInner>} */}
         {name !== "캡슐추가" && name !== "용량추가" && (
           <ModalBuyInner name={name} icon={icon}></ModalBuyInner>
         )}
@@ -334,6 +375,7 @@ export const Card: React.FC<CardProps> = ({
               ) {
                 buyItem(type, no, price)
               }
+              console.log("zzzzzzzzzzzzzzzzzzzz", selectedTimecapsuleNo)
             }}
           >
             구매
@@ -365,24 +407,95 @@ export const ModalBuyInner: React.FC<ModalBuyInnerProps> = ({ name, icon }) => {
   )
 }
 
+interface TimeCapsuleListType {
+  capsuleIconNo?: number
+  maxFileSize?: number
+  nowFileSize?: number
+  timecapsuleNo?: number
+  title?: string
+}
+
 // 타임캡슐 용량 구매 팝업
-const ModalCapsuleInner = function () {
+const ModalCapsuleInner: React.FC<{
+  onTimecapsuleChange: (timecapsuleNo: number) => void
+}> = ({ onTimecapsuleChange }) => {
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const [timeCapsuleList, setTimeCapsuleList] = useState<TimeCapsuleListType[]>(
+    []
+  )
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          serverUrl + "shop/purchase/timecapsule/list",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
+        setTimeCapsuleList(response.data.data.timecapsuleList)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchData()
+  }, [])
+
   return (
     <div className="text-center">
       <TextStyle7 className="opacity-70 text-lg mb-4">
         타임캡슐을 선택해주세요
       </TextStyle7>
       <div className="border-solid border-gray-700 border rounded-2xl w-full p-4">
-        <MyCapsule />
-        <MyCapsule />
-        <MyCapsule />
+        {timeCapsuleList.length > 0 &&
+          timeCapsuleList.map((t) => (
+            <div key={t.timecapsuleNo}>
+              <MyCapsule
+                capsuleIconNo={t.capsuleIconNo}
+                maxFileSize={t.maxFileSize}
+                nowFileSize={t.nowFileSize}
+                timecapsuleNo={t.timecapsuleNo}
+                title={t.title}
+                onRadioChange={(selectedTimecapsuleNo) => {
+                  // 선택한 타임캡슐 번호를 부모 컴포넌트로 전달
+                  console.log("Selected Timecapsule No:", selectedTimecapsuleNo)
+                  onTimecapsuleChange(selectedTimecapsuleNo)
+                }}
+              />
+            </div>
+          ))}
       </div>
     </div>
   )
 }
-
+interface MyCapsuleProps {
+  capsuleIconNo?: number
+  maxFileSize?: number
+  nowFileSize?: number
+  timecapsuleNo?: number
+  title?: string
+  onRadioChange: (timecapsuleNo: number) => void
+}
 // 내가 가진 타임캡슐
-const MyCapsule = function () {
+export const MyCapsule: React.FC<MyCapsuleProps> = ({
+  capsuleIconNo,
+  maxFileSize,
+  nowFileSize,
+  timecapsuleNo,
+  title,
+  onRadioChange,
+}) => {
+  const [isSelected, setIsSelected] = useState(false)
+
+  const handleRadioClick = () => {
+    setIsSelected(!isSelected)
+    if (timecapsuleNo !== undefined) {
+      onRadioChange(timecapsuleNo)
+    }
+  }
+
   return (
     <div className="flex m-auto mb-1 rounded-lg p-2 justify-around items-center">
       <div className="w-2/12">
@@ -393,11 +506,23 @@ const MyCapsule = function () {
         />
       </div>
       <div className="w-8/12 text-left pl-3">
-        <TextStyle5 className="">우리 1년 뒤 보자!</TextStyle5>
-        <TextStyle3 className="text-xs ">300 / 500 MB</TextStyle3>
+        <TextStyle5 className="!text-black">{title}</TextStyle5>
+        <TextStyle3 className="text-xs !text-black">
+          {nowFileSize} / {maxFileSize} MB
+        </TextStyle3>
       </div>
       <div className="w-2/12">
-        <input type="radio" name="" id="" />
+        <input
+          type="radio"
+          name="myCapsuleRadio"
+          checked={isSelected}
+          onChange={() => {
+            handleRadioClick()
+            if (timecapsuleNo !== undefined) {
+              onRadioChange(timecapsuleNo)
+            }
+          }}
+        />
       </div>
     </div>
   )
