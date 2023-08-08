@@ -292,6 +292,10 @@ const InviteRequestBtn = styled.button`
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
 `
 
+const InvitedBtn = styled(InviteRequestBtn)`
+  background-color: #cfcfcf;
+`
+
 const TimeCapsuleDetail = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
@@ -419,6 +423,47 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
   const [friendList, setFriendList] = useState<FriendListDataType | undefined>()
+  // const [isRequest, setIsRequest] = useState(true)
+
+  const inviteFriendClick = async (userNo: number) => {
+    if (friendList) {
+      console.log(1111)
+      let newList = friendList
+      newList.data = newList.data.map((f) => {
+        if (f.userNo === userNo) {
+          console.log(2222)
+          f.status = "NOTREAD"
+          console.log(f.status)
+        }
+        return f
+      })
+      setFriendList(newList)
+      console.log(33333)
+      console.log(newList)
+      console.log(friendList)
+    }
+    // try {
+    //   const response = await axios({
+    //     method: "PATCH",
+    //     url: serverUrl + "timecapsule/invite",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: "Bearer " + token,
+    //     },
+    //     data: {
+    //       timecapsuleNo: capsuleId,
+    //       friendNo: userNo,
+    //     },
+    //   })
+    //   if (response.data.code === 200) {
+    //     alert("친구 초대 성공")
+    //   } else if (response.data.code === -6006) {
+    //     alert("없는 유저 입니다.")
+    //   } // 나중에 더 추가하기(빠른 시일 내임)
+    // } catch (error) {
+    //   console.log(error)
+    // }
+  }
 
   const handleExitClick = async () => {
     try {
@@ -881,11 +926,34 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                             src={friend.profileImage}
                             alt="profilepic"
                           />
-                          <div style={{ fontWeight: "500", marginLeft: "4px" }}>
+                          <div
+                            className="flex flex-col"
+                            style={{ fontWeight: "500", marginLeft: "4px" }}
+                          >
                             {friend.nickname}
+                            <span
+                              style={{
+                                fontSize: "13px",
+                                opacity: "70%",
+                                fontWeight: "300",
+                              }}
+                            >
+                              #{friend.userNo}
+                            </span>
                           </div>
                         </div>
-                        <InviteRequestBtn>초대</InviteRequestBtn>
+                        {friend.status === "" ||
+                        friend.status === "REJECTED" ? (
+                          <InviteRequestBtn
+                            onClick={() => inviteFriendClick(friend.userNo)}
+                          >
+                            초대
+                          </InviteRequestBtn>
+                        ) : friend.status === "NOTREAD" ? (
+                          <InvitedBtn>요청됨</InvitedBtn>
+                        ) : friend.status === "ACCEPTED" ? (
+                          <InvitedBtn>참여중</InvitedBtn>
+                        ) : null}
                       </div>
                     </div>
                   ))}
