@@ -9,6 +9,12 @@ import { setRefreshToken } from "../../store/Cookie"
 import "../../index.css"
 import { EventSourcePolyfill } from "event-source-polyfill"
 import { RootState } from "../../store/Store"
+import {
+  changeHeartTheme,
+  changeMarbleTheme,
+  changeUniverseDarkTheme,
+  changeUniverseLightTheme,
+} from "../../store/Theme"
 
 const Box = styled.div`
   display: flex;
@@ -168,6 +174,15 @@ const Login = function () {
           dispatch(SET_TOKEN(accessToken))
           dispatch(SET_USER(userInfo))
           fetchsse(accessToken)
+          if (userInfo.nowTheme === 0) {
+            dispatch(changeUniverseDarkTheme())
+          } else if (userInfo.nowTheme === 1) {
+            dispatch(changeUniverseLightTheme())
+          } else if (userInfo.nowTheme === 2) {
+            dispatch(changeHeartTheme())
+          } else if (userInfo.nowTheme === 3) {
+            dispatch(changeMarbleTheme())
+          }
           navigate("/tutorial")
         }
       })
