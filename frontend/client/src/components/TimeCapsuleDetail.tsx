@@ -424,9 +424,21 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
           timecapsuleNo: capsuleId,
         },
       })
-
-      console.log(response.data)
-      navigate("/main")
+      if (response.data.code === 200) {
+        navigate("/main")
+      } else if (response.data.code === -6006) {
+        alert("존재하지 않는 유저입니다.")
+      } else if (response.data.code === -6002) {
+        alert("존재하지 않는 타임캡슐 입니다.")
+      } else if (response.data.code === -6008) {
+        alert("이미 삭제된 타임캡슐 입니다.")
+      } else if (response.data.code === -5008) {
+        alert("해당 유저의 타임캡슐이 아닙니다.")
+      } else if (response.data.code === -3007) {
+        alert("해당 타임캡슐의 방장이 아닙니다.")
+      } else if (response.data.code === -3009) {
+        alert("생성 후 24시간 이내에만 삭제할 수 있습니다.")
+      }
     } catch (error) {
       console.log(error)
     }
