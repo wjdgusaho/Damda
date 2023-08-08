@@ -80,7 +80,11 @@ public enum CustomExceptionStatus {
     FILE_LIMIT_NOT_UPLOAD(-3014, "최대 파일 업로드 가능 용량을 초과하여 업로드에 실패했습니다"),
     FILE_NOT_UPLOAD(-3015, "파일 업로드에 실패했습니다"),
     ALREADY_CARD_UPLOAD(-3016, "오늘은 카드 작성을 하셨습니다"),
-    ALREADY_FILE_UPLOAD(-3017, "오늘은 파일 업로드를 하셨습니다");
+    ALREADY_FILE_UPLOAD(-3017, "오늘은 파일 업로드를 하셨습니다"),
+
+    // 확장자 문제
+    EXTENSION_ERROR_IMAGE(-8000, "사진 확장자만 등록 가능합니다."),
+    EXTENSION_ERROR_FILE(-8001, "음성, 영상 확장자만 등록 가능합니다.");
 
 
 
