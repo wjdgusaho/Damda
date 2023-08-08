@@ -27,7 +27,7 @@ public class TimecapsuleCard {
 
     @ManyToOne
     @JoinColumn(name="user_no")
-    private User userNo;
+    private User user;
 
     private Timestamp createTime;
 

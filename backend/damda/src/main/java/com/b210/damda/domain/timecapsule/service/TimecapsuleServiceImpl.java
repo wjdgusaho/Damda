@@ -511,18 +511,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //카드 세팅
         TimecapsuleCard card = new TimecapsuleCard();
-        card.setTimecapsule(timecapsuleRepository.findById(
-                timecapsule.getTimecapsuleNo()).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)));
-        card.setUserNo(userRepository.findByUserNo(
-              user.getUserNo()).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER)));
+        card.setTimecapsule(timecapsule);
+        card.setUser(user);
         card.setImagePath(fileUri);
         card.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
 
         TimecapsuleCard saveCard = timecapsuleCardRepository.save(card);
-
-
 
         //에러메세지
         if (saveCard.getTimecapsuleCardNo() == null) {
