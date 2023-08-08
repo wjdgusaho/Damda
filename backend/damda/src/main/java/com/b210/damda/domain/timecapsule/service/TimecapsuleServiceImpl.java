@@ -952,6 +952,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         timecapsuleFile.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
         timecapsuleFile.setTimecapsule(timecapsule);
         timecapsuleFile.setUser(user);
+        timecapsuleFile.setFileSize(file.getSize());
         timecapsuleFile.setFileName(file.getName());
         timecapsuleFileRepository.save(timecapsuleFile);
 
