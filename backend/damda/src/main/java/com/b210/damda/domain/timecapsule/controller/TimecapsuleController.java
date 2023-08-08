@@ -274,8 +274,6 @@ public class TimecapsuleController {
         return response;
     }
 
-
-
 }
 
 
