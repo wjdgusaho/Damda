@@ -96,6 +96,7 @@ public class EventStreamService {
         FluxSink<ServerSentEvent<String>> sink = userFluxSinkMap.get(userNo);
         if (sink != null) {
             sink.complete();  // 스트림 종료
+            log.info("로그아웃 : 스트림 종료, {}", userNo);
         }
         userFluxSinkMap.remove(userNo);
 

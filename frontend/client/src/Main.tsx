@@ -1,7 +1,7 @@
-import React from "react"
+import React, { useEffect, useRef } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { RootState } from "./store/Store"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { CookiesProvider } from "react-cookie"
 
 import MainPage from "./components/MainPage"
@@ -30,6 +30,9 @@ import GoalCapsule from "./components/GoalCapsule"
 import SelectTheme from "./components/SelectTheme"
 import UserSearch from "./components/UserSearch"
 import TimeCapsuleDetail from "./components/TimeCapsuleDetail"
+import { GetNewTokens } from "./components/Auth/RefreshTokenApi"
+import { getCookieToken } from "./store/Cookie"
+import { SET_TOKEN } from "./store/Auth"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
@@ -42,6 +45,24 @@ function Main() {
   `
 
   document.head.appendChild(styleElement)
+
+  const intervalTokenRef = useRef<NodeJS.Timeout>()
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const intervalMs = useSelector(
+    (state: RootState) => state.auth.userInfo.expiredMs
+  )
+  const getNewToken = GetNewTokens()
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (token && !intervalTokenRef.current) {
+      intervalTokenRef.current = setInterval(async () => {
+        const newToken = getNewToken(getCookieToken())
+        dispatch(SET_TOKEN(await newToken))
+      }, intervalMs - 5000)
+    }
+    return clearInterval(intervalTokenRef.current)
+  })
   return (
     <ThemeProvider theme={themeState}>
       <div className="Main">

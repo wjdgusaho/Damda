@@ -3,10 +3,14 @@ import { CapsuleType } from "../components/MainPage"
 
 interface timecapsuleState {
   timecapsules: CapsuleType[]
+  nowCapsuleCount: number
+  savedCapsuleCount: number
 }
 
 const initialState: timecapsuleState = {
   timecapsules: [],
+  nowCapsuleCount: 0,
+  savedCapsuleCount: 0,
 }
 
 export const timecapsuleSlice = createSlice({
@@ -18,9 +22,11 @@ export const timecapsuleSlice = createSlice({
       action: PayloadAction<CapsuleType[]>
     ) => {
       state.timecapsules = action.payload
+      state.nowCapsuleCount = action.payload.length
     },
     DELETE_TIMECAPSULE: (state) => {
       state.timecapsules = []
+      state.nowCapsuleCount = 0
     },
   },
 })
