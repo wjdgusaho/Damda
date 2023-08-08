@@ -959,6 +959,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         myMapping.setFileAble(false);
         timecapsuleMappingRepository.save(myMapping);
 
+        //파일 용량값 즈가
+        timecapsule.setNowFileSize(timecapsule.getNowFileSize() + file.getSize());
+        timecapsuleRepository.save(timecapsule);
+
         return null;
     }
 
