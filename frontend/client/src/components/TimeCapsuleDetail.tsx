@@ -423,46 +423,37 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
   const [friendList, setFriendList] = useState<FriendListDataType | undefined>()
-  // const [isRequest, setIsRequest] = useState(true)
 
   const inviteFriendClick = async (userNo: number) => {
-    if (friendList) {
-      console.log(1111)
-      let newList = friendList
-      newList.data = newList.data.map((f) => {
-        if (f.userNo === userNo) {
-          console.log(2222)
-          f.status = "NOTREAD"
-          console.log(f.status)
-        }
-        return f
+    try {
+      const response = await axios({
+        method: "PATCH",
+        url: serverUrl + "timecapsule/invite",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        data: {
+          timecapsuleNo: capsuleId,
+          friendNo: userNo,
+        },
       })
-      setFriendList(newList)
-      console.log(33333)
-      console.log(newList)
-      console.log(friendList)
+      if (response.data.code === 200) {
+        getFriendList()
+      } else if (response.data.code === -6006) {
+        alert("없는 유저 입니다.")
+      } else if (response.data.code === -6002) {
+        alert("존재하지 않는 타임캡슐 입니다.")
+      } else if (response.data.code === -3010) {
+        alert("이미 초대된 회원입니다.")
+      } else if (response.data.code === -3014) {
+        alert("해당 유저는 이미 참여 중입니다.")
+      } else if (response.data.code === -3015) {
+        alert("이미 강퇴 당했거나 나간 유저입니다.")
+      }
+    } catch (error) {
+      console.log(error)
     }
-    // try {
-    //   const response = await axios({
-    //     method: "PATCH",
-    //     url: serverUrl + "timecapsule/invite",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: "Bearer " + token,
-    //     },
-    //     data: {
-    //       timecapsuleNo: capsuleId,
-    //       friendNo: userNo,
-    //     },
-    //   })
-    //   if (response.data.code === 200) {
-    //     alert("친구 초대 성공")
-    //   } else if (response.data.code === -6006) {
-    //     alert("없는 유저 입니다.")
-    //   } // 나중에 더 추가하기(빠른 시일 내임)
-    // } catch (error) {
-    //   console.log(error)
-    // }
   }
 
   const handleExitClick = async () => {
