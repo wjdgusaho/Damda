@@ -1,6 +1,12 @@
-import React from "react"
+import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
+import tw from "tailwind-styled-components"
+import Modal from "react-modal"
+import { useSelector } from "react-redux"
+import { RootState } from "../../store/Store"
+import { FriendType } from "../Friend"
+import { CapsuleType } from "../MainPage"
 
 const TextStyle = styled.p`
   font-family: "pretendard";
@@ -49,10 +55,121 @@ const RefreshIcon = styled.div`
   height: 25px;
 `
 
+const customStyles = {
+  content: {
+    top: "20%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    width: "65%",
+    border: "0px",
+    backgroundColor: "rgba(255,255,255,0)",
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+  },
+}
+
+const ModalCard = tw.div`
+  mt-5 p-8 text-lilac-900 bg-white opacity-80 rounded-3xl shadow-2xl
+  flex items-center
+`
+
+const AlarmFriendComponent = function ({ friend }: { friend: FriendType }) {
+  return (
+    <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
+      <div className="w-24" style={{ alignSelf: "start" }}>
+        <img
+          src={friend.profileImage}
+          alt="defalut"
+          style={{ width: "75px", height: "75px" }}
+        />
+      </div>
+      <div className="ml-2" style={{ width: "28rem" }}>
+        <p>
+          <span>{friend.nickname}</span>님께서,
+        </p>
+        <p>친구요청이 왔어요</p>
+      </div>
+      <div>
+        <button>거절</button>
+        <button>수락</button>
+      </div>
+    </ModalCard>
+  )
+}
+
+const AlarmTimecapsuleComponent = function ({
+  timecapsule,
+}: {
+  timecapsule: CapsuleType
+}) {
+  return <div></div>
+}
+
 export const MainHeader = function () {
   const navigate = useNavigate()
+  const [modalOpen, setModalOpen] = useState(false)
+  const alarmFriendData = useSelector((state: RootState) => state.alarm.friends)
+  const alarmTimecapsuleData = useSelector(
+    (state: RootState) => state.alarm.timecapsule
+  )
+
+  const handleClose = () => {
+    setModalOpen(false)
+  }
+
   return (
     <div>
+      <Modal
+        isOpen={modalOpen}
+        onRequestClose={handleClose}
+        style={customStyles}
+      >
+        <div className="flex justify-end">
+          <button onClick={handleClose}>
+            <img src="assets/icons/cancel.png" alt="cancel" />
+          </button>
+        </div>
+        <div>
+          {alarmFriendData.length === 0 &&
+            alarmTimecapsuleData.length === 0 && (
+              <ModalCard
+                style={{ fontFamily: "Pretendard", fontWeight: "600" }}
+              >
+                <div className="w-24" style={{ alignSelf: "start" }}>
+                  <img
+                    src="assets/icons/popup.png"
+                    alt="defalut"
+                    style={{ width: "75px", height: "75px" }}
+                  />
+                </div>
+                <div className="ml-2" style={{ width: "28rem" }}>
+                  <p>받은 알람이 없습니다.</p>
+                </div>
+              </ModalCard>
+            )}
+          {alarmFriendData.length !== 0 && (
+            <div>
+              {alarmFriendData.map((friend: FriendType) => (
+                <AlarmFriendComponent key={friend.userNo} friend={friend} />
+              ))}
+            </div>
+          )}
+          {alarmTimecapsuleData.length !== 0 && (
+            <div>
+              {alarmTimecapsuleData.map((timecapsule: CapsuleType) => (
+                <AlarmTimecapsuleComponent
+                  key={timecapsule.timecapsuleNo}
+                  timecapsule={timecapsule}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </Modal>
       <div className="w-10/12 m-auto mt-12 flex justify-between">
         <ThemeBtn
           className="flex justify-center items-center w-20 rounded-lg"
@@ -64,7 +181,7 @@ export const MainHeader = function () {
           <AlermIcon
             className="mr-6"
             onClick={() => {
-              navigate("/menu")
+              setModalOpen(true)
             }}
           />
           <MenuIcon
