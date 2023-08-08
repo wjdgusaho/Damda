@@ -24,12 +24,42 @@ public class S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String saveFile(MultipartFile multipartFile) throws IOException {
+    public String profileSaveFile(MultipartFile multipartFile) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
 
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 파일 확장자
         String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
         String newFilename = "user-profileImage/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(multipartFile.getSize());
+        metadata.setContentType(multipartFile.getContentType());
+
+        amazonS3.putObject(bucket, newFilename, multipartFile.getInputStream(), metadata);
+        return amazonS3.getUrl(bucket, newFilename).toString();
+    }
+
+    public String cardSaveFile(MultipartFile multipartFile) throws IOException {
+        String originalFilename = multipartFile.getOriginalFilename();
+
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 파일 확장자
+        String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
+        String newFilename = "timecapsule-card/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(multipartFile.getSize());
+        metadata.setContentType(multipartFile.getContentType());
+
+        amazonS3.putObject(bucket, newFilename, multipartFile.getInputStream(), metadata);
+        return amazonS3.getUrl(bucket, newFilename).toString();
+    }
+
+    public String fileSaveFile(MultipartFile multipartFile) throws IOException {
+        String originalFilename = multipartFile.getOriginalFilename();
+
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 파일 확장자
+        String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
+        String newFilename = "timecapsule-file/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());

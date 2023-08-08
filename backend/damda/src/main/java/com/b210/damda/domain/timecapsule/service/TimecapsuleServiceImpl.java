@@ -498,7 +498,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
         } else {
             try {
-                fileUri = s3UploadService.saveFile(cardImage);
+                fileUri = s3UploadService.cardSaveFile(cardImage);
             } catch (IOException e) {
                 throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
             }
@@ -942,7 +942,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         String fileUrl = "";
         try {
-            fileUrl = s3UploadService.saveFile(file);
+            fileUrl = s3UploadService.fileSaveFile(file);
         } catch (IOException e) {
             throw new  CommonException(CustomExceptionStatus.FILE_NOT_UPLOAD);
         }
