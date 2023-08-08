@@ -114,6 +114,11 @@ public class FriendService {
 
         User friendUser = userRepository.findById(friendNo).get(); // 친구 유저 꺼냄
 
+        // 만약에 탈퇴했다면
+        if(friendUser.getDeleteDate() != null){
+            throw new CommonException(CustomExceptionStatus.USER_ALREADY_DEACTIVATED);
+        }
+
         UserFriend findFriend = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser); // 나와 친구인 UserFriend를 하나 찾음.
 
         findFriend.updateFavoriteAdd(); // 즐겨찾기 추가
