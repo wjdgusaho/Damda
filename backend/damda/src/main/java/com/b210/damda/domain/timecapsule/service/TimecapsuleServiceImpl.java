@@ -854,6 +854,13 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         TimecapsuleInvite timecapsuleInvite = timecapsuleInviteData.get();
 
+        // 초대 데이터가 NOTREAD인지 판단
+        if(timecapsuleInvite.getStatus().equals("ACCEPTED")){ // 이미 참여중
+            throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
+        }else if(timecapsuleInvite.getStatus().equals("REJECTED")){ // 이미 거절
+            throw new CommonException(CustomExceptionStatus.NOT_RECORD_INVITE);
+        }
+
         timecapsuleInvite.setStatus("REJECTED");
         timecapsuleInviteRepository.save(timecapsuleInvite);
     }
