@@ -96,7 +96,7 @@ function Main() {
   }, [token, isOnline])
 
   const initializeEventSource = () => {
-    if (eventSource === null) {
+    if (eventSource === null || eventSource.readyState === EventSource.CLOSED) {
       const newEventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
         headers: {
           Authorization: "Bearer " + token,
