@@ -161,13 +161,15 @@ const Card = function () {
   const inputWidth =
     inputValue.length <= 5 ? "100px" : `${inputValue.length * 8 + 100}px`
 
-  const sendImageToServer = async (file: File) => {
+  const sendBlobToServer = async (blob: Blob) => {
     try {
       const formData = new FormData()
-      formData.append("cardImage", file)
+      formData.append("cardImage", blob)
+
       if (timecapsuleNo.capsuleId !== undefined) {
         formData.append("timecapsuleNo", timecapsuleNo.capsuleId)
       }
+
       const response = await axios.post(
         serverUrl + "timecapsule/regist/card",
         formData,
@@ -185,26 +187,19 @@ const Card = function () {
     }
   }
 
-  function blobToFile(blob: Blob, fileName: string): File {
-    const file = new File([blob], fileName, { type: blob.type })
-    return file
-  }
-
   const saveAsImageHandler = () => {
     const target = document.getElementById("saveImgContainer")
     if (!target) {
       return alert("결과 저장에 실패했습니다.")
     }
+
     html2canvas(target, {
       useCORS: true,
       scale: 2,
     }).then((canvas) => {
       canvas.toBlob((blob) => {
         if (blob) {
-          const fileName = "canvas_img_" + new Date().getMilliseconds() + ".jpg"
-          const file = blobToFile(blob, fileName)
-          sendImageToServer(file)
-          console.log("file", file)
+          sendBlobToServer(blob) // Blob 객체를 서버로 보냅니다.
         }
       }, "image/jpeg")
     })
