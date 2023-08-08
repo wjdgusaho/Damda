@@ -342,7 +342,7 @@ const NavLink2 = styled(NavLink)`
   }
 `
 
-type FriendType = {
+export type FriendType = {
   userNo: number
   nickname: string
   profileImage: string
