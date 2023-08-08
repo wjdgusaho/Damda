@@ -49,7 +49,8 @@ const CloseBtn = styled(MenuBtn)`
 
 const Menu = function () {
   const navigate = useNavigate()
-  const UserData = useSelector((state:RootState) => state.auth.userInfo)
+  const UserData = useSelector((state: RootState) => state.auth.userInfo)
+  const timecapsuleData = useSelector((state: RootState) => state.timecapsule)
 
   return (
     <Background>
@@ -81,7 +82,7 @@ const Menu = function () {
           >
             진행중인 타임캡슐
             <div className="text-xl font-normal">
-              {UserData.nowCapsuleCount? UserData.nowCapsuleCount:0}개
+              {timecapsuleData.nowCapsuleCount}개
             </div>
           </div>
           <div
@@ -92,7 +93,7 @@ const Menu = function () {
           >
             저장된 타임캡슐
             <div className="text-xl font-normal">
-              {UserData.savedCapsuleCount? UserData.savedCapsuleCount:0}개
+              {timecapsuleData.savedCapsuleCount}개
             </div>
           </div>
         </div>
