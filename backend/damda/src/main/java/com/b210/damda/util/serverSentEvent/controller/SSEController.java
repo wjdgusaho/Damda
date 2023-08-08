@@ -38,7 +38,7 @@ public class SSEController {
     //로그아웃 시 스트림 제거
     @GetMapping(value = "/sse/logout")
     public void logout() {
-        eventStreamService.disconnectStream(true);
+        eventStreamService.disconnectStream();
     }
 
     //테스트용
