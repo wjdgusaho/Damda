@@ -37,22 +37,10 @@ public class EventStreamService {
     //마지막 heartbeat 시간대 체크 : 서버는 클라이언트의 연결 상태를 위해 주기적으로 마지막 접속 시간을 체크함, 클라이언트의 답신이 없어질 경우 끊어짐으로 판단
     private final Map<Long, LocalDateTime> lastResponseTimes = new ConcurrentHashMap<>();
 
-
-    //테스트용
-    public void size() {
-        log.info("사이즈 : {}", userFluxSinkMap.size());
-    }
-
     //최초 연결 시(로그인), 혹은 재연결 시 Flux 생성 및 Map에 저장
     public Flux<ServerSentEvent<String>> connectStream() {
         long userNo = addOnEventService.getUserNo();
         log.info("connect 연결 성공, userNo : {}", userNo);
-
-        //현재 연결된 스트림이 존재할 경우 기존 스트림을 제거
-        if (userFluxSinkMap.get(userNo) != null) {
-            log.info("기존 스트림 제거");
-            disconnectStream(); //로그아웃 로직
-        }
 
         //접속 시간 등록
         lastResponseTimes.put(userNo, LocalDateTime.now());
@@ -71,11 +59,8 @@ public class EventStreamService {
                         .doOnEach(signal -> {
                             // 현재 시간 측정하여 15초 동안 응답이 없을 경우 중지(커넥션 종료)
                             LocalDateTime lastResponseTime = lastResponseTimes.get(userNo);
-                            log.warn("테스팅 1 {}", userNo);
-                            log.warn("테스팅 2 {}", Duration.between(lastResponseTime, LocalDateTime.now()).toSeconds());
-                            log.info("클라이언트 -> 서버로 응답 없음, 시간 : {}", userNo);
+                            log.warn("(부재)다음 {} 초 동안 응답이 없었음.", Duration.between(lastResponseTime, LocalDateTime.now()).toSeconds());
                             if (lastResponseTime != null && Duration.between(lastResponseTime, LocalDateTime.now()).toSeconds() > 15) {
-                                log.info("디스컨넥팅");
                                 disconnectStream(userNo);
                             }
                             //만약 답장 왔을 경우 해당 Map에 현재 시간으로 갱신하는 로직 추가
@@ -83,7 +68,7 @@ public class EventStreamService {
                         .map(new Function<Long, ServerSentEvent<String>>() {
                             @Override
                             public ServerSentEvent<String> apply(Long tick) {
-                                log.info("heartbeat : {} {}", tick, userNo);
+                                log.info("heartbeat, tick : {} userNo : {}", tick, userNo);
                                 return addOnEventService.buildServerSentEvent("check-connection", "heartbeat");
                             }
                         });
@@ -92,13 +77,19 @@ public class EventStreamService {
         return Flux.merge(dataFlux, maintainConnectFlux.takeUntil(other -> dataFlux == null));
     }
 
+    //클라이언트에서 응답 존재할 경우 마지막 시간 갱신
+    public void checkConnection() {
+        log.info("checkConnection : 클라이언트에서 응답 수신하였음");
+        lastResponseTimes.put(addOnEventService.getUserNo(), LocalDateTime.now());
+    }
+
     //로그아웃시 종료 로직
     public void disconnectStream() {
         long userNo = addOnEventService.getUserNo();
         //프로세서 종료
         DirectProcessor<Void> processor = disconnectProcessors.get(userNo);
         if (processor != null) {
-            log.info("프로세스 종료");
+            log.info("processor.onComplete()");
             processor.onComplete(); //종료
             disconnectProcessors.remove(userNo);
         }
@@ -107,7 +98,7 @@ public class EventStreamService {
         ServerSentEvent<String> logoutEvent = addOnEventService.buildServerSentEvent("custom-event", "로그아웃 진행");
         sendEvent(userNo, logoutEvent);
 
-        //저장된 스트림 종료 및 싱크 제거
+        //저장된 스트림 종료 및 싱크 제거, 응답 기록 제거
         endAndRemoveStream(userNo);
     }
 
@@ -116,7 +107,7 @@ public class EventStreamService {
         //프로세서 종료
         DirectProcessor<Void> processor = disconnectProcessors.get(userNo);
         if (processor != null) {
-            log.info("프로세스 종료");
+            log.info("processor.onComplete()");
             processor.onComplete(); //종료
             disconnectProcessors.remove(userNo);
         }
@@ -137,6 +128,7 @@ public class EventStreamService {
             log.info("disconnect : 스트림 종료, {}", userNo);
         }
         userFluxSinkMap.remove(userNo);
+        lastResponseTimes.remove(userNo);
     }
 
     //특정 이벤트를 발생시켜 특정 사용자에게 이벤트를 전송

@@ -41,6 +41,11 @@ public class SSEController {
         eventStreamService.disconnectStream();
     }
 
+    //heartbeat 응답 스트림
+    @GetMapping("/sse/check")
+    public void checkConnection() {
+        eventStreamService.checkConnection();
+    }
     //테스트용
 
     @GetMapping(value = "/sse/test/request")
