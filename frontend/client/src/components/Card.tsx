@@ -161,19 +161,13 @@ const Card = function () {
   const inputWidth =
     inputValue.length <= 5 ? "100px" : `${inputValue.length * 8 + 100}px`
 
-  const sendImageToServer = async (formData: FormData) => {
+  const sendImageToServer = async (file: File) => {
     try {
-      // `cardInfo`를 한 객체로 합치기
-      const body = {
-        cardImage: formData,
-        cardInfo: {
-          userNo: UserData.userNo,
-          timecapsuleNo: timecapsuleNo.capsuleId,
-        },
+      const formData = new FormData()
+      formData.append("cardImage", file)
+      if (timecapsuleNo.capsuleId !== undefined) {
+        formData.append("timecapsuleNo", timecapsuleNo.capsuleId)
       }
-      console.log(body)
-
-      // `Content-Type` 헤더 설정
       const response = await axios.post(
         serverUrl + "timecapsule/regist/card",
         formData,
@@ -184,10 +178,16 @@ const Card = function () {
           },
         }
       )
+
       console.log(response)
     } catch (error) {
       console.error(error)
     }
+  }
+
+  function blobToFile(blob: Blob, fileName: string): File {
+    const file = new File([blob], fileName, { type: blob.type })
+    return file
   }
 
   const saveAsImageHandler = () => {
@@ -199,20 +199,14 @@ const Card = function () {
       useCORS: true,
       scale: 2,
     }).then((canvas) => {
-      const imgBase64 = canvas.toDataURL("image/jpeg")
-      const decodImg = atob(imgBase64.split(",")[1])
-
-      let array = []
-      for (let i = 0; i < decodImg.length; i++) {
-        array.push(decodImg.charCodeAt(i))
-      }
-
-      const file = new Blob([new Uint8Array(array)], { type: "image/jpeg" })
-      const fileName = "canvas_img_" + new Date().getMilliseconds() + ".jpg"
-      let formData = new FormData()
-      formData.append("file_give", file, fileName)
-
-      sendImageToServer(formData)
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const fileName = "canvas_img_" + new Date().getMilliseconds() + ".jpg"
+          const file = blobToFile(blob, fileName)
+          sendImageToServer(file)
+          console.log("file", file)
+        }
+      }, "image/jpeg")
     })
   }
 
