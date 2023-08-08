@@ -79,22 +79,17 @@ public class UserService {
         String fileUri = "";
 
         if(multipartFile.isEmpty() && multipartFile.getSize() == 0){
-            fileUri = "https://damda.s3.ap-northeast-2.amazonaws.com/profile.jpg";
+            fileUri = "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/profile.jpg";
         }else{
             fileUri = s3UploadService.profileSaveFile(multipartFile);
         }
         String encode = encoder.encode(userOriginRegistDTO.getUserPw()); // 비밀번호 암호화
 
         userOriginRegistDTO.setUserPw(encode);
-        if (fileUri.equals("https://damda.s3.ap-northeast-2.amazonaws.com/profile.jpg")) {
-            userOriginRegistDTO.setUri("https://damda.s3.ap-northeast-2.amazonaws.com/profile.jpg");
-            User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
-            return savedUser;
-        } else {
-            userOriginRegistDTO.setUri(fileUri);
-            User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
-            return savedUser;
-        }
+
+        userOriginRegistDTO.setUri(fileUri);
+        User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
+        return savedUser;
     }
 
     // 로그인
