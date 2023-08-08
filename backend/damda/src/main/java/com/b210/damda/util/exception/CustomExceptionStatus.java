@@ -24,6 +24,7 @@ public enum CustomExceptionStatus {
     DELETE_TIMECAPSULE(-6008, "삭제된 타임캡슐입니다."),
     NOT_LOCATION_FIND(-6009, "서비스 불가 위치입니다."),
     KICK_NOT_USER(-6010, "강퇴하려는 유저가 없는 유저입니다."),
+    NOT_REQUESTED_FRIEND(-6011, "잘못된 친구 요청입니다."),
 
 
     //상점 관련
@@ -67,17 +68,20 @@ public enum CustomExceptionStatus {
     ALREADY_PARTICIPATING(-3004, "이미 참여중인 타임캡슐입니다."),
     MAX_PARTICIPATING(-3005, "해당 타임캡슐의 참여인원이 꽉 찼습니다."),
     NOT_INVITE_FRIEND(-3006, "24시간이 지나서 친구 초대가 불가능합니다."),
-    NOT_TIMECAPSULE_HOST(-3007, "해당 타임캡슐의 반장이 아닙니다."),
+    NOT_TIMECAPSULE_HOST(-3007, "해당 타임캡슐의 방장이 아닙니다."),
     KICKUSER_NOT_TIMECAPSULE(-3008, "강퇴하는 유저는 해당 타임캡슐 참가자가 아닙니다."),
     NOT_DELTE_TIMECAPSULE(-3009, "생성된지 24시간 이후로 삭제할수 없습니다"),
     ALREADY_INVITED_USER(-3010, "이미 초대된 회원입니다."),
     FULL_USER_TIMECAPSULE(-3011, "보유 가능한 타임캡슐의 개수를 초과했습니다. 상점에서 아이템 구매 부탁드립니다."),
     CARD_SAVE_NULL_ERR(-3012, "카드 저장 에러 (이미지 값이 없습니다)"),
     NOT_RECORD_INVITE(-3013, "잘못 온 초대 기록입니다."),
+    ALREADY_JOIN_TIMECAPSULE(-3014, "해당 유저는 이미 참여중입니다."),
+    ALREADY_KICKED_OUT_USER(-3015, "이미 강퇴 당했거나 나간 유저입니다."),
     FILE_LIMIT_NOT_UPLOAD(-3014, "최대 파일 업로드 가능 용량을 초과하여 업로드에 실패했습니다"),
     FILE_NOT_UPLOAD(-3015, "파일 업로드에 실패했습니다"),
     ALREADY_CARD_UPLOAD(-3016, "오늘은 카드 작성을 하셨습니다"),
     ALREADY_FILE_UPLOAD(-3017, "오늘은 파일 업로드를 하셨습니다");
+
 
 
     private final int code;

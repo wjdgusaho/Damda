@@ -116,6 +116,7 @@ public class UserService {
 
         // 로그인 성공
         String accessToken = JwtUtil.createAccessJwt(user.getUserNo(), secretKey); // 토큰 발급해서 넘김
+        accessToken.
         String refreshToken = JwtUtil.createRefreshToken(secretKey); // 리프레시 토큰 발급해서 넘김
 
         Optional<RefreshToken> byUserUserNo = refreshTokenRepository.findByUserUserNo(user.getUserNo());
@@ -152,6 +153,7 @@ public class UserService {
                 .build();
 
 
+        accessToken.
         // 로그인 log 기록
         UserLog userLog = new UserLog();
         userLog.setUser(user);
