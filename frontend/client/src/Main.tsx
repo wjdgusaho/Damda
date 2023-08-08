@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { RootState } from "./store/Store"
 import { useDispatch, useSelector } from "react-redux"
 import { CookiesProvider } from "react-cookie"
+import { EventSourcePolyfill } from "event-source-polyfill"
 
 import MainPage from "./components/MainPage"
 import { CheckPassword } from "./components/Auth/CheckPassword"
@@ -33,6 +34,7 @@ import TimeCapsuleDetail from "./components/TimeCapsuleDetail"
 import { GetNewTokens } from "./components/Auth/RefreshTokenApi"
 import { getCookieToken } from "./store/Cookie"
 import { SET_TOKEN } from "./store/Auth"
+import { serverUrl } from "./urls"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
@@ -63,6 +65,67 @@ function Main() {
     }
     return clearInterval(intervalTokenRef.current)
   })
+
+  const [isOnline, setIsOnline] = useState(navigator.onLine)
+  const [eventSource, setEventSource] = useState<EventSource | null>(null)
+
+  const handleOnline = () => {
+    setIsOnline(true)
+  }
+
+  const handleOffline = () => {
+    setIsOnline(false)
+  }
+
+  useEffect(() => {
+    window.addEventListener("online", handleOnline)
+    window.addEventListener("offline", handleOffline)
+
+    return () => {
+      window.removeEventListener("online", handleOnline)
+      window.removeEventListener("offline", handleOffline)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (token && isOnline) {
+      initializeEventSource()
+    } else {
+      closeEventSource()
+    }
+  }, [token, isOnline])
+
+  const initializeEventSource = () => {
+    if (eventSource === null) {
+      const newEventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
+      newEventSource.onmessage = (event) => {
+        const res = event.data
+        console.log(res)
+      }
+      newEventSource.onerror = (event) => {
+        console.log("Error event:", event)
+      }
+      newEventSource.addEventListener("custom-event", (event) => {
+        console.log(event)
+      })
+      newEventSource.addEventListener("end-of-stream", (event) => {
+        console.log(event)
+      })
+      setEventSource(newEventSource)
+    }
+  }
+
+  const closeEventSource = () => {
+    if (eventSource !== null) {
+      eventSource.close()
+      setEventSource(null)
+    }
+  }
+
   return (
     <ThemeProvider theme={themeState}>
       <div className="Main">
