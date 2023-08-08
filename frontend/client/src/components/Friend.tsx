@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { SubHeader } from "./inc/SubHeader"
 import { styled } from "styled-components"
-import { NavLink, Navigate, Outlet, Link } from "react-router-dom"
+import { NavLink, Outlet, Link } from "react-router-dom"
 import Modal from "react-modal"
-import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
@@ -33,7 +32,7 @@ const Friend = function () {
 }
 
 export const List = function () {
-  const [friendList, setFriendList] = useState([])
+  const [friendList, setFriendList] = useState<FriendType[]>([])
   const token = useSelector((state: RootState) => state.auth.accessToken)
   useEffect(() => {
     axios({
@@ -67,7 +66,12 @@ export const List = function () {
       {friendList.length !== 0 && (
         <div>
           {friendList.map((f: FriendType) => (
-            <FriendCard key={f.userNo} friend={f}></FriendCard>
+            <FriendCard
+              key={f.userNo}
+              friend={f}
+              friendList={friendList}
+              setFriendList={setFriendList}
+            ></FriendCard>
           ))}
         </div>
       )}
@@ -76,7 +80,7 @@ export const List = function () {
 }
 
 export const Request = function () {
-  const [requestList, setRequestList] = useState([])
+  const [requestList, setRequestList] = useState<FriendType[]>([])
   const token = useSelector((state: RootState) => state.auth.accessToken)
   useEffect(() => {
     axios({
@@ -110,7 +114,12 @@ export const Request = function () {
       {requestList.length !== 0 && (
         <div>
           {requestList.map((f: FriendType) => (
-            <RequestCard key={f.userNo} friend={f}></RequestCard>
+            <RequestCard
+              key={f.userNo}
+              friend={f}
+              requestList={requestList}
+              setRequestList={setRequestList}
+            ></RequestCard>
           ))}
         </div>
       )}
@@ -118,7 +127,61 @@ export const Request = function () {
   )
 }
 
-const FriendCard = function ({ friend }: { friend: FriendType }) {
+const FriendCard = function ({
+  friend,
+  friendList,
+  setFriendList,
+}: {
+  friend: FriendType
+  friendList: FriendType[]
+  setFriendList: React.Dispatch<React.SetStateAction<FriendType[]>>
+}) {
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+
+  const favoriteRequest = (event: React.MouseEvent<HTMLButtonElement>) => {
+    axios({
+      method: "PATCH",
+      url: serverUrl + "friend/favorite-add",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        userNo: friend.userNo,
+      },
+    }).then((response) => {
+      const code = response.data.code
+      alert(response.data.message)
+      if (code === 200) {
+        let newList = friendList
+        newList[friend.userNo].isFavorite = true
+        setFriendList(newList)
+      }
+    })
+  }
+
+  const favoriteCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
+    axios({
+      method: "PATCH",
+      url: serverUrl + "friend/favorite-del",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        userNo: friend.userNo,
+      },
+    }).then((response) => {
+      const code = response.data.code
+      alert(response.data.message)
+      if (code === 200) {
+        let newList = friendList
+        newList[friend.userNo].isFavorite = false
+        setFriendList(newList)
+      }
+    })
+  }
+
   return (
     <div className="flex w-10/12 items-center m-auto p-2">
       <img
@@ -132,24 +195,79 @@ const FriendCard = function ({ friend }: { friend: FriendType }) {
       </TextStyle>
       <div className="flex ml-auto mr-3">
         {friend.isFavorite ? (
-          <img
-            className="w-5 mr-4"
-            src="/assets/icons/star.png"
-            alt="즐겨찾는친구"
-          />
+          <button className="w-5 mr-4" onClick={favoriteCancel}>
+            <img src="/assets/icons/star.png" alt="즐겨찾는친구" />
+          </button>
         ) : (
-          <img
-            className="w-5 mr-4 opacity-10"
-            src="/assets/icons/star.png"
-            alt="즐겨찾기안됨"
-          />
+          <button className="w-5 mr-4 opacity-10" onClick={favoriteRequest}>
+            <img src="/assets/icons/star.png" alt="즐겨찾기안됨" />
+          </button>
         )}
         <img className="w-5" src="/assets/icons/button_x.png" alt="삭제" />
       </div>
     </div>
   )
 }
-const RequestCard = function ({ friend }: { friend: FriendType }) {
+const RequestCard = function ({
+  friend,
+  requestList,
+  setRequestList,
+}: {
+  friend: FriendType
+  requestList: FriendType[]
+  setRequestList: React.Dispatch<React.SetStateAction<FriendType[]>>
+}) {
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const requestAccept = (event: React.MouseEvent<HTMLButtonElement>) => {
+    axios({
+      method: "PATCH",
+      url: serverUrl + "friend/request-accept",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        userNo: friend.userNo,
+      },
+    })
+      .then((response) => {
+        const code = response.data.code
+        alert(response.data.message)
+        if (code === 200) {
+          const newList = requestList.filter(
+            (request) => request.userNo !== friend.userNo
+          )
+          setRequestList(newList)
+        }
+      })
+      .catch((error) => console.error(error))
+  }
+
+  const requestReject = (event: React.MouseEvent<HTMLButtonElement>) => {
+    axios({
+      method: "PATCH",
+      url: serverUrl + "friend/request-reject",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        userNo: friend.userNo,
+      },
+    })
+      .then((response) => {
+        const code = response.data.code
+        alert(response.data.message)
+        if (code === 200) {
+          const newList = requestList.filter(
+            (request) => request.userNo !== friend.userNo
+          )
+          setRequestList(newList)
+        }
+      })
+      .catch((error) => console.error(error))
+  }
+
   return (
     <div className="flex w-10/12 items-center m-auto p-2">
       <img
@@ -162,12 +280,12 @@ const RequestCard = function ({ friend }: { friend: FriendType }) {
         <span className="text-gray-400">#{friend.userNo}</span>
       </TextStyle>
       <div className="flex ml-auto mr-3">
-        <img
-          className="w-5 mr-4"
-          src="/assets/icons/button_check.png"
-          alt="수락"
-        />
-        <img className="w-5" src="/assets/icons/button_x.png" alt="거절" />
+        <button className="w-5 mr-4" onClick={requestAccept}>
+          <img src="/assets/icons/button_check.png" alt="수락" />
+        </button>
+        <button className="w-5" onClick={requestReject}>
+          <img src="/assets/icons/button_x.png" alt="거절" />
+        </button>
       </div>
     </div>
   )
