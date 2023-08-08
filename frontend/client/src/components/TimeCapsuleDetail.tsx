@@ -22,8 +22,6 @@ interface DataType {
   goalCard: number
   nowCard: number
   inviteCode: string
-  // maxFileSize: number
-  // nowFileSize: number
   maxParticipant: number
   nowParticipant: number
   penalty: {
@@ -210,15 +208,6 @@ const InviteBtn = styled.button`
   line-height: 44px;
 `
 
-const FileInput = styled.input`
-  display: flex;
-  background-color: rgb(0, 0, 0, 0.15);
-  width: 194px;
-  height: 26px;
-  border-radius: 10px;
-  margin-top: 15px;
-`
-
 const FriendBox = styled.div`
   width: 17rem;
   background-color: ${(props) => props.theme.color100};
@@ -296,8 +285,6 @@ const TimeCapsuleDetail = function () {
     goalCard: 0,
     nowCard: 0,
     inviteCode: "",
-    // maxFileSize: 0,
-    // nowFileSize: 0,
     maxParticipant: 0,
     nowParticipant: 0,
     penalty: {
@@ -406,6 +393,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [deleteModalIsOpen, setDeleteModalIsOpen] = React.useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 
   const { capsuleId = "" } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
@@ -470,6 +458,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
       if (fileSize <= remainingSpace) {
         setSelectedFile(file.name)
+        setUploadedFile(file)
       } else {
         alert("파일 크기가 사용 가능한 공간을 초과합니다.")
       }
@@ -479,9 +468,9 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   }
 
   const handleFileSubmit = async () => {
-    if (selectedFile) {
+    if (uploadedFile) {
       const formData = new FormData()
-      formData.append("fileContent", selectedFile)
+      formData.append("fileContent", uploadedFile)
       try {
         formData.append("timeCapsuleNo", capsuleId.toString())
 
@@ -865,6 +854,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const { capsuleId = "" } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 
   const getFileSize = async () => {
     try {
@@ -892,6 +882,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
       if (fileSize <= remainingSpace) {
         setSelectedFile(file.name)
+        setUploadedFile(file)
       } else {
         alert("파일 크기가 사용 가능한 공간을 초과합니다.")
       }
@@ -901,16 +892,15 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   }
 
   const handleFileSubmit = async () => {
-    if (selectedFile) {
+    if (uploadedFile) {
       const formData = new FormData()
-      formData.append("fileContent", selectedFile)
+      formData.append("fileContent", uploadedFile)
       try {
         formData.append("timeCapsuleNo", capsuleId.toString())
 
         const response = await axios({
           method: "POST",
-          // url: serverUrl + "timecapsule/regist/file",
-          url: "https://damda-f03cb-default-rtdb.firebaseio.com/file.json",
+          url: serverUrl + "timecapsule/regist/file",
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + token,
@@ -1036,8 +1026,23 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           {capsuleData.capsuleType === "CLASSIC" ? null : (
             <>
               <div className="flex w-56 my-2 mt-5">
-                <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
-                <span onClick={openModal}>파일 첨부하기</span>
+                {capsuleData.myInfo.fileAble ? (
+                  <>
+                    <FileIcon
+                      src="../../assets/icons/file.png"
+                      alt="fileicon"
+                    />
+                    <span onClick={openModal}>파일 첨부하기</span>
+                  </>
+                ) : (
+                  <>
+                    <FileIcon
+                      src="../../assets/icons/file.png"
+                      alt="fileicon"
+                    />
+                    <span>파일 첨부 완료</span>
+                  </>
+                )}
 
                 <Modal
                   isOpen={modalIsOpen}
