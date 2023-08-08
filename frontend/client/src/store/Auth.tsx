@@ -38,6 +38,9 @@ export const authSlice = createSlice({
     SET_USER: (state, action: PayloadAction<UserInfo>) => {
       state.userInfo = action.payload
     },
+    SET_COIN: (state, action: PayloadAction<number>) => {
+      state.userInfo.coin = action.payload
+    },
     DELETE_TOKEN: (state) => {
       state.accessToken = ""
     },
@@ -47,7 +50,7 @@ export const authSlice = createSlice({
   },
 })
 
-export const { SET_TOKEN, DELETE_TOKEN, SET_USER, DELETE_USER } =
+export const { SET_TOKEN, DELETE_TOKEN, SET_USER, DELETE_USER, SET_COIN } =
   authSlice.actions
 
 export default authSlice.reducer

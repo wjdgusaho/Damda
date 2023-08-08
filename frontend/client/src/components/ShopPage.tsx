@@ -5,7 +5,10 @@ import Modal from "react-modal"
 import axios, { Axios } from "axios"
 import { serverUrl, reqUrl } from "../urls"
 import { RootState } from "../store/Store"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { async } from "q"
+import { Navigate } from "react-router"
+import { SET_COIN } from "../store/Auth"
 
 interface themeType {
   themeNo: number
@@ -14,6 +17,7 @@ interface themeType {
   price: number
   icon: string
   userHave: boolean
+  type: string
 }
 interface capsuleItemType {
   itemNo: number
@@ -41,6 +45,7 @@ export const ShopPage = function () {
   const [decoItemList, setDecoItemList] = useState<decoItemType[]>([])
   const [comp, setComp] = useState("Sticker")
   const [activeComponent, setActiveComponent] = useState("Sticker")
+  const UserData = useSelector((state: RootState) => state.auth.userInfo)
 
   useEffect(() => {
     console.log("token", token)
@@ -69,6 +74,7 @@ export const ShopPage = function () {
     setActiveComponent(compName)
   }
 
+  console.log("userData", UserData)
   return (
     <div>
       <SubHeader></SubHeader>
@@ -77,7 +83,7 @@ export const ShopPage = function () {
           <TextStyle className="text-xl">상점</TextStyle>
         </div>
         <CoinContainer>
-          <TextStyle className="text-sm">30코인 보유중</TextStyle>
+          <TextStyle className="text-sm">{UserData.coin} 코인</TextStyle>
         </CoinContainer>
       </div>
       <div className="flex justify-evenly mt-6 mb-8">
@@ -121,24 +127,38 @@ interface StickerProps {
 }
 
 export const Sticker: React.FC<StickerProps> = ({ decoItemList }) => {
+  const [showOnlyOwned, setShowOnlyOwned] = useState(false)
+
+  const filteredDecoItems = showOnlyOwned
+    ? decoItemList.filter((d) => d.userHave)
+    : decoItemList
+
   return (
     <div>
       <div className="ml-8 mb-4">
-        <input type="checkbox" name="" id="" />
-        <label htmlFor="">
+        <input
+          id="isHave"
+          type="checkbox"
+          checked={showOnlyOwned}
+          onChange={() => setShowOnlyOwned(!showOnlyOwned)}
+        />
+        <label htmlFor="isHave">
           <TextStyle className="inline ml-2 opacity-70">
             보유중인 상품만
           </TextStyle>
         </label>
       </div>
-      {decoItemList.length > 0 &&
-        decoItemList.map((d) => (
+      {filteredDecoItems.length > 0 &&
+        filteredDecoItems.map((d) => (
           <div key={d.itemNo}>
             <Card
-              name={d.name}
+              no={d.itemNo}
+              name={"스티커 " + (d.itemNo - 2)}
               price={d.price}
               desc={d.description}
               isHave={d.userHave}
+              icon={d.icon}
+              type={d.type}
             ></Card>
             <CardLine></CardLine>
           </div>
@@ -151,24 +171,38 @@ interface ThemeProps {
   themeList: themeType[]
 }
 export const Theme: React.FC<ThemeProps> = ({ themeList }) => {
+  const [showOnlyOwned, setShowOnlyOwned] = useState(false)
+  const filteredThemeList = showOnlyOwned
+    ? themeList.filter((t) => t.userHave)
+    : themeList
+
   return (
     <div>
       <div className="ml-8 mb-4">
-        <input type="checkbox" name="" id="" />
-        <label htmlFor="">
+        <input
+          type="checkbox"
+          name=""
+          id="isHave"
+          checked={showOnlyOwned}
+          onChange={() => setShowOnlyOwned(!showOnlyOwned)}
+        />
+        <label htmlFor="isHave">
           <TextStyle className="inline ml-2 opacity-70">
             보유중인 상품만
           </TextStyle>
         </label>
       </div>
-      {themeList.length > 0 &&
-        themeList.map((t) => (
+      {filteredThemeList.length > 0 &&
+        filteredThemeList.map((t) => (
           <div key={t.themeNo}>
             <Card
+              no={t.themeNo}
               name={t.name}
               price={t.price}
               desc={t.description}
               isHave={t.userHave}
+              icon={t.icon}
+              type={t.type}
             ></Card>
             <CardLine></CardLine>
           </div>
@@ -196,15 +230,28 @@ export const Capsule: React.FC<CapsuleProps> = ({ capsuleItemList }) => {
 }
 
 interface CardProps {
+  no?: number
   name?: string
   price?: number
   desc?: string
   isHave?: boolean
   icon?: string
+  type?: string
 }
 
-export const Card: React.FC<CardProps> = ({ name, price, desc, isHave }) => {
+export const Card: React.FC<CardProps> = ({
+  no,
+  name,
+  price,
+  desc,
+  isHave,
+  icon,
+  type,
+}) => {
   const [modalIsOpen, setIsOpen] = React.useState(false)
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const dispatch = useDispatch()
+  const UserData = useSelector((state: RootState) => state.auth.userInfo)
 
   function openModal() {
     setIsOpen(true)
@@ -214,10 +261,36 @@ export const Card: React.FC<CardProps> = ({ name, price, desc, isHave }) => {
     setIsOpen(false)
   }
 
+  const buyItem = async (type: string, no: number, price: number) => {
+    const newNo = "" + no
+    if (type === "DECO") {
+      const body = {
+        itemNo: newNo,
+      }
+      const response = await axios.post(
+        serverUrl + "shop/purchase/sticker",
+        body,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      console.log(response.data)
+      if (response.data.code === 200) {
+        alert("스티커 구매가 완료되었습니다.")
+        closeModal()
+        /* eslint-disable no-restricted-globals */
+        location.reload()
+        dispatch(SET_COIN(UserData.coin - price))
+      }
+    }
+  }
+
   return (
     <div className="w-80 h-40 bg-white bg-opacity-10 m-auto rounded-3xl flex shadow-2xl">
       <div className="w-40 h-40 bg-white opacity-100 rounded-3xl">
-        <img src="/assets/universe/Planet-3.png" alt="카드이미지" />
+        <img className="w-full h-full " src={icon} alt="카드이미지" />
       </div>
       <div className="w-40 h-40 text-center">
         <TextStyle className="mt-1 text-white text-lg">{name}</TextStyle>
@@ -228,7 +301,7 @@ export const Card: React.FC<CardProps> = ({ name, price, desc, isHave }) => {
           <TextStyle className=" text-white text-sm">{desc}</TextStyle>
         </div>
         <div
-          onClick={openModal}
+          onClick={!isHave ? openModal : undefined}
           className="flex justify-center items-center w-24 h-6 mt-2 bg-white bg-opacity-30 rounded-full m-auto"
         >
           <TextStyle className=" text-white text-md">
@@ -245,13 +318,24 @@ export const Card: React.FC<CardProps> = ({ name, price, desc, isHave }) => {
         {name === "용량추가" && <ModalCapsuleInner></ModalCapsuleInner>}
         {name === "캡슐추가" && <ModalCapsuleInner></ModalCapsuleInner>}
         {name !== "캡슐추가" && name !== "용량추가" && (
-          <ModalBuyInner name={name}></ModalBuyInner>
+          <ModalBuyInner name={name} icon={icon}></ModalBuyInner>
         )}
         <div className="flex mt-4 w-48 m-auto justify-between">
           <ModalButton className="bg-black bg-opacity-0" onClick={closeModal}>
             취소
           </ModalButton>
-          <ModalButton className="bg-black bg-opacity-10" onClick={closeModal}>
+          <ModalButton
+            className="bg-black bg-opacity-10"
+            onClick={() => {
+              if (
+                type !== undefined &&
+                no !== undefined &&
+                price !== undefined
+              ) {
+                buyItem(type, no, price)
+              }
+            }}
+          >
             구매
           </ModalButton>
         </div>
@@ -270,12 +354,11 @@ export const ModalBuyInner: React.FC<ModalBuyInnerProps> = ({ name, icon }) => {
   return (
     <div className="flex items-center justify-around">
       <div className="w-1/3 p-2 rounded-2xl mr-2 shadow-lg">
-        <img src="/assets/universe/Planet-2.png" alt="모달이미지" />
+        <img className="w-full h-full" src={icon} alt="모달이미지" />
       </div>
       <div className="w-2/3 p-2">
-        <TextStyle7 className="opacity-70 text-lg">
-          {name}
-          <br></br> 구매하시겠습니까?
+        <TextStyle7 className="opacity-70 text-lg !text-black">
+          {name} 을<br /> 구매하시겠습니까?
         </TextStyle7>
       </div>
     </div>
@@ -371,7 +454,7 @@ const TextStyle = styled.div`
 const CoinContainer = styled.div`
   background-color: #ffffff2e;
   color: white;
-  width: 100px;
+  width: 120px;
   text-align: center;
   margin-left: auto;
   margin-right: 20px;
