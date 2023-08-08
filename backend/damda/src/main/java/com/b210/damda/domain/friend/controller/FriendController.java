@@ -1,6 +1,7 @@
 package com.b210.damda.domain.friend.controller;
 
 import com.b210.damda.domain.dto.Friend.FriendListDTO;
+import com.b210.damda.domain.dto.Friend.FriendNoRequestDTO;
 import com.b210.damda.domain.dto.Friend.FriendRequestListDTO;
 import com.b210.damda.domain.dto.User.UserDTO;
 import com.b210.damda.domain.entity.User.UserFriend;
@@ -99,10 +100,10 @@ public class FriendController {
 
     // 친구 수락
     @PatchMapping("request-accept")
-    public DataResponse<Map<String, Object>> friendAccept(@RequestBody FriendListDTO friendListDTO){
+    public DataResponse<Map<String, Object>> friendAccept(@RequestBody FriendNoRequestDTO friendNoRequestDTO){
         try{
-            friendService.friendReqeustAccept(friendListDTO.getUserNo());
-            friendEventService.friendAcceptEvent(friendListDTO.getUserNo());
+            friendService.friendReqeustAccept(friendNoRequestDTO.getUserNo());
+            friendEventService.friendAcceptEvent(friendNoRequestDTO.getUserNo());
             return new DataResponse<>(200, "친구 신청 수락");
         }catch (Exception e){
             return new DataResponse<>(500 ,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
@@ -111,10 +112,10 @@ public class FriendController {
 
     // 친구 거절
     @PatchMapping("request-reject")
-    public DataResponse<Map<String, Object>> friendReject(@RequestBody FriendListDTO friendListDTO){
+    public DataResponse<Map<String, Object>> friendReject(@RequestBody FriendNoRequestDTO friendNoRequestDTO){
         try{
-            friendService.friendReqeustReject(friendListDTO.getUserNo());
-            friendEventService.friendDenyEvent(friendListDTO.getUserNo());
+            friendService.friendReqeustReject(friendNoRequestDTO.getUserNo());
+            friendEventService.friendDenyEvent(friendNoRequestDTO.getUserNo());
             return new DataResponse<>(200, "친구 신청 거절");
         }catch (Exception e){
             return new DataResponse<>(500 ,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
@@ -123,9 +124,9 @@ public class FriendController {
 
     // 친구 삭제
     @PatchMapping("delete")
-    public DataResponse<Map<String, Object>> friendDelete(@RequestBody FriendListDTO friendListDTO){
+    public DataResponse<Map<String, Object>> friendDelete(@RequestBody FriendNoRequestDTO friendNoRequestDTO){
         try{
-            friendService.friendDelete(friendListDTO.getUserNo());
+            friendService.friendDelete(friendNoRequestDTO.getUserNo());
             return new DataResponse<>(200, "친구 삭제 완료");
         }catch (Exception e){
             return new DataResponse<>(500 ,"알 수 없는 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
