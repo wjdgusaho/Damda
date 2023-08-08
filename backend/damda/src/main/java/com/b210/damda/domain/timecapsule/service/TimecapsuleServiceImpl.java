@@ -19,6 +19,7 @@ import com.b210.damda.domain.timecapsule.repository.*;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
+import com.b210.damda.util.weatherAPI.service.WeatherAPIService;
 import com.b210.damda.util.weatherAPI.service.WeatherLocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +62,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
+    private final WeatherAPIService weatherAPIService;
     private final ShopService shopService;
     private final S3UploadService s3UploadService;
 
@@ -199,17 +201,39 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                                 // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상인 경우
                                 if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1) {
                                     //날씨 갱신
-                                    
+                                    String weather = null;
+                                    try {
+                                        weather = weatherAPIService.getNowWeatherInfos(weatherLocationDto);
+                                    } catch (Exception e) {
+                                        throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND);
+                                    }
+                                    //시간값 세팅
+                                    userLocation.setWeaterTime(Timestamp.valueOf(LocalDateTime.now()));
+                                    //날씨 세팅
+                                    userLocation.setWeather(weather);
+                                    userLocationRepository.save(userLocation);
                                 }
                             }
                             //현재 위치가 다르다면
                             else{
-                                //날씨 갱신해
-                                
+                                //날씨 갱신
+                                String weather = null;
+                                try {
+                                    weather = weatherAPIService.getNowWeatherInfos(weatherLocationDto);
+                                } catch (Exception e) {
+                                    throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND);
+                                }
+                                //시간값 세팅
+                                userLocation.setWeaterTime(Timestamp.valueOf(LocalDateTime.now()));
+                                //날씨 세팅
+                                userLocation.setWeather(weather);
+                                userLocationRepository.save(userLocation);
                             }
                         }//날씨가 갱신이 완료됨
-                        //날씨가 같은가
-
+                        //만약 유저위치의 날씨가 캡슐 조건의 포함되어있지 않다면
+                        if(userLocation.getWeather().indexOf(timecapsuleCriteria.getWeatherStatus()) == -1 ){
+                            openAble = false;
+                        }
                     }
                 }
                 //시간 조건 확인 (한국)
