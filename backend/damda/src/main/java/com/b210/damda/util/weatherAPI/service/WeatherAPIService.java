@@ -8,6 +8,6 @@ import reactor.core.publisher.Mono;
 
 @Service
 public interface WeatherAPIService {
-    ResponseEntity<JsonNode> getNowWeatherInfos(WeatherLocationDTO weatherDTO) throws Exception;
-    ResponseEntity<JsonNode> convertWeatherDTO(Mono<String> response) throws Exception;
+    String getNowWeatherInfos(WeatherLocationDTO weatherDTO) throws Exception;
+    String convertWeatherDTO(Mono<String> response) throws Exception;
 }

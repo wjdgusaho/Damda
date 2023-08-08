@@ -34,6 +34,7 @@ public class Theme {
                 .description(this.description)
                 .price(this.price)
                 .icon(this.icon)
+                .type("THEME")
                 .build();
     }
 }

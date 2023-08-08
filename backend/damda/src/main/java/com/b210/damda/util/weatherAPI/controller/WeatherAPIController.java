@@ -17,15 +17,15 @@ public class WeatherAPIController {
 
     private final WeatherAPIService weatherAPIService;
 
-    //좌표로 현재 날씨 찾기
+    //좌표로 현재 날씨 찾기, FE에서 BE로 요청하는 엔드포인트
     @GetMapping("/now/weather")
-    public ResponseEntity<JsonNode> getNowWeatherInfos(@RequestParam("lan") double lan, @RequestParam("lat") double lat) throws Exception {
+    public String getNowWeatherInfos(@RequestParam("lan") double lan, @RequestParam("lat") double lat) throws Exception {
         WeatherLocationDTO weatherLocationDTO = new WeatherLocationDTO();
         weatherLocationDTO.setLan(lan);
         weatherLocationDTO.setLat(lat);
 
-        ResponseEntity<JsonNode> result = weatherAPIService.getNowWeatherInfos(weatherLocationDTO);
-        return result;
+        //ResponseEntity<JsonNode> result = weatherAPIService.getNowWeatherInfos(weatherLocationDTO);
+        return weatherAPIService.getNowWeatherInfos(weatherLocationDTO);
     }
 
 

@@ -13,6 +13,7 @@ public class ThemeShopDTO {
     private int price;
     private String icon;
     private boolean isUserHave;
+    private String type;
 
     //private List<ThemeDetailDTO> items;
 

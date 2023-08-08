@@ -38,7 +38,7 @@ public class SSEController {
     //로그아웃 시 스트림 제거
     @GetMapping(value = "/sse/logout")
     public void logout() {
-        eventStreamService.disconnectStream();
+        eventStreamService.disconnectStream(true);
     }
 
     //테스트용
@@ -56,13 +56,6 @@ public class SSEController {
     @GetMapping(value = "/sse/test/reject")
     public void test3(@RequestParam long no) {
         friendEventService.friendDenyEvent(no);
-    }
-
-
-    //테스트용2
-    @GetMapping(value = "sse/size")
-    public void test() {
-        eventStreamService.test();
     }
 
 }
