@@ -41,6 +41,7 @@ export const ShopPage = function () {
   const [decoItemList, setDecoItemList] = useState<decoItemType[]>([])
   const [comp, setComp] = useState("Sticker")
   const [activeComponent, setActiveComponent] = useState("Sticker")
+  const UserData = useSelector((state: RootState) => state.auth.userInfo)
 
   useEffect(() => {
     console.log("token", token)
@@ -69,6 +70,7 @@ export const ShopPage = function () {
     setActiveComponent(compName)
   }
 
+  console.log("userData", UserData)
   return (
     <div>
       <SubHeader></SubHeader>
@@ -77,7 +79,7 @@ export const ShopPage = function () {
           <TextStyle className="text-xl">상점</TextStyle>
         </div>
         <CoinContainer>
-          <TextStyle className="text-sm">30코인 보유중</TextStyle>
+          <TextStyle className="text-sm">{UserData.coin} 코인</TextStyle>
         </CoinContainer>
       </div>
       <div className="flex justify-evenly mt-6 mb-8">
@@ -121,18 +123,29 @@ interface StickerProps {
 }
 
 export const Sticker: React.FC<StickerProps> = ({ decoItemList }) => {
+  const [showOnlyOwned, setShowOnlyOwned] = useState(false)
+
+  const filteredDecoItems = showOnlyOwned
+    ? decoItemList.filter((d) => d.userHave)
+    : decoItemList
+
   return (
     <div>
       <div className="ml-8 mb-4">
-        <input type="checkbox" name="" id="" />
-        <label htmlFor="">
+        <input
+          id="isHave"
+          type="checkbox"
+          checked={showOnlyOwned}
+          onChange={() => setShowOnlyOwned(!showOnlyOwned)}
+        />
+        <label htmlFor="isHave">
           <TextStyle className="inline ml-2 opacity-70">
             보유중인 상품만
           </TextStyle>
         </label>
       </div>
-      {decoItemList.length > 0 &&
-        decoItemList.map((d) => (
+      {filteredDecoItems.length > 0 &&
+        filteredDecoItems.map((d) => (
           <div key={d.itemNo}>
             <Card
               name={"스티커 " + (d.itemNo - 2)}
@@ -379,7 +392,7 @@ const TextStyle = styled.div`
 const CoinContainer = styled.div`
   background-color: #ffffff2e;
   color: white;
-  width: 100px;
+  width: 120px;
   text-align: center;
   margin-left: auto;
   margin-right: 20px;
