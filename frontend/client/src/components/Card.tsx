@@ -167,7 +167,12 @@ const Card = function () {
       formData.append("cardImage", blob)
 
       if (timecapsuleNo.capsuleId !== undefined) {
-        formData.append("timecapsuleNo", timecapsuleNo.capsuleId)
+        formData.append(
+          "timecapsuleNo",
+          new Blob([JSON.stringify(timecapsuleNo.capsuleId)], {
+            type: "application/json",
+          })
+        )
       }
 
       const response = await axios.post(
