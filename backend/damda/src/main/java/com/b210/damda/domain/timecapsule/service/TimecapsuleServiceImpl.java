@@ -609,6 +609,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if(cirteriaDays.isEmpty()) timecapsuleDetail.getCriteriaInfo().setCirteriaDays(null);
         else timecapsuleDetail.getCriteriaInfo().setCirteriaDays(cirteriaDays);
 
+
         return timecapsuleDetail;
 
     }
@@ -974,7 +975,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE));
-
+        
         //완전히 삭제된 타임캡슐인가
         if (timecapsule.getRemoveDate() != null){
             throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
@@ -990,6 +991,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if(timecapsuleMapping.isHost()){
             timecapsule.setRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
         }
+        
+        // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
+        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, user.getUserNo()).get();
+
+        timecapsuleInvite.setStatus("REJECTED");
+        
 
         //유저 타임캡슐 값 감소
         user.setNowCapsuleCount(user.getNowCapsuleCount() - 1);
@@ -1046,6 +1053,11 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         //유저 타임캡슐 값 감소
         kickUser.setNowCapsuleCount(user.getNowCapsuleCount() - 1);
         userRepository.save(kickUser);
+
+        // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
+        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, user.getUserNo()).get();
+
+        timecapsuleInvite.setStatus("REJECTED");
 
         //참가자 감소
         timecapsule.setNowParticipant(timecapsule.getNowParticipant() - 1);
