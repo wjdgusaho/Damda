@@ -40,8 +40,8 @@ public class EventStreamService {
     }
 
     //최초 연결 시(로그인), 혹은 재연결 시 Flux 생성 및 Map에 저장
-    public Flux<ServerSentEvent<String>> connectStream(long userNo) {
-        //long userNo = addOnEventService.getUserNo();
+    public Flux<ServerSentEvent<String>> connectStream() {
+        long userNo = addOnEventService.getUserNo();
         log.info("connect 연결 성공, userNo : {}", userNo);
 
         //현재 연결된 스트림이 존재할 경우 새로운 스트림을 생성하지 않음
