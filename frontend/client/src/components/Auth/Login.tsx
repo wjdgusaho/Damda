@@ -1,14 +1,12 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { styled } from "styled-components"
 import axios from "axios"
 import { serverUrl, reqUrl } from "../../urls"
 import { SET_TOKEN, SET_USER } from "../../store/Auth"
 import { setRefreshToken } from "../../store/Cookie"
 import "../../index.css"
-import { EventSourcePolyfill } from "event-source-polyfill"
-import { RootState } from "../../store/Store"
 import {
   changeHeartTheme,
   changeMarbleTheme,
@@ -124,32 +122,6 @@ const Login = function () {
     setPassword(e.currentTarget.value)
   }
 
-  let eventSource: EventSource
-  const fetchsse = (token: string) => {
-    try {
-      eventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
-
-      eventSource.onmessage = (event) => {
-        const res = event.data
-        console.log(res)
-      }
-
-      eventSource.addEventListener("custom-event", (event) => {
-        console.log(event)
-      })
-
-      eventSource.onerror = (event) => {
-        console.log("Error event:", event)
-
-        eventSource.close()
-      }
-    } catch (error) {}
-  }
-
   function formSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -173,7 +145,6 @@ const Login = function () {
           setRefreshToken(refreshToken)
           dispatch(SET_TOKEN(accessToken))
           dispatch(SET_USER(userInfo))
-          fetchsse(accessToken)
           if (userInfo.nowTheme === 0) {
             dispatch(changeUniverseDarkTheme())
           } else if (userInfo.nowTheme === 1) {
