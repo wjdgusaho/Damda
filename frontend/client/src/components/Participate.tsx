@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
@@ -67,6 +67,12 @@ const HeaderWrap = styled.div`
 `
 
 const Participate = function () {
+  const [inviteCode, setInviteCode] = useState("")
+
+  function inputCode(e: React.FormEvent<HTMLInputElement>) {
+    setInviteCode(e.currentTarget.value)
+  }
+
   return (
     <Background>
       <HeaderWrap>
@@ -75,7 +81,7 @@ const Participate = function () {
       <Box>
         <>
           <div>초대 코드를 입력하세요</div>
-          <InputCode type="text" name="code" id="code" />
+          <InputCode onChange={inputCode} type="text" name="code" id="code" />
         </>
         <Btn>참여하기</Btn>
       </Box>
