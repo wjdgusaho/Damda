@@ -141,8 +141,14 @@ export const UserInfoChange = () => {
     if (file) {
       if (!isFileSizeValid(file)) {
         alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
+        if (imageRef.current) {
+          imageRef.current.value = ""
+        }
       } else if (!isAllowFiles(file)) {
         alert("파일 확장자는 .jpg, .jpeg, .png만 가능합니다.")
+        if (imageRef.current) {
+          imageRef.current.value = ""
+        }
       } else {
         setProfileImage(file)
         const reader = new FileReader()
@@ -152,10 +158,6 @@ export const UserInfoChange = () => {
         reader.readAsDataURL(file)
       }
     }
-    if (imageRef.current) {
-      imageRef.current.value = ""
-    }
-    setProfileImage(null)
   }
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {

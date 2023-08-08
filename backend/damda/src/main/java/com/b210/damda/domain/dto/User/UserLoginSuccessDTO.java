@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 
 @Getter
 @Builder
@@ -19,11 +21,9 @@ public class UserLoginSuccessDTO {
     private Long userNo;
     private int nowTheme;
     private int coin;
+    private Long expiredMs;
 
-    public UserLoginSuccessDTO() {
-    }
-
-    public UserLoginSuccessDTO(String accessToken, String refreshToken, String accountType, String nickname, String profileImage, Long userNo, int nowTheme, int coin) {
+    public UserLoginSuccessDTO(String accessToken, String refreshToken, String accountType, String nickname, String profileImage, Long userNo, int nowTheme, int coin, Long expiredMs) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.accountType = accountType;
@@ -32,5 +32,6 @@ public class UserLoginSuccessDTO {
         this.userNo = userNo;
         this.nowTheme = nowTheme;
         this.coin = coin;
+        this.expiredMs = expiredMs;
     }
 }

@@ -6,6 +6,8 @@ import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.friend.repository.FriendRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
+import com.b210.damda.util.exception.CommonException;
+import com.b210.damda.util.exception.CustomExceptionStatus;
 import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -112,6 +114,11 @@ public class FriendService {
 
         User friendUser = userRepository.findById(friendNo).get(); // 친구 유저 꺼냄
 
+        // 만약에 탈퇴했다면
+        if(friendUser.getDeleteDate() != null){
+            throw new CommonException(CustomExceptionStatus.USER_ALREADY_DEACTIVATED);
+        }
+
         UserFriend findFriend = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser); // 나와 친구인 UserFriend를 하나 찾음.
 
         findFriend.updateFavoriteAdd(); // 즐겨찾기 추가
@@ -151,6 +158,7 @@ public class FriendService {
     }
 
     // 친구 수락
+    @Transactional
     public void friendReqeustAccept(Long friendNo){
 
         Long userNo = getUserNo();
@@ -160,19 +168,29 @@ public class FriendService {
 
 
         // 현재 유저와 친구의 데이터를 꺼냄
-        UserFriend FindByCurrentUser = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser);
+        UserFriend currentUserFriendship = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser);
+        // 요청 데이터가 없는 경우, 내가 요청받은 상태가 아닌 경우
+        if(currentUserFriendship == null || !currentUserFriendship.getStatus().equals("RECEIVED")){
+            throw new CommonException(CustomExceptionStatus.NOT_REQUESTED_FRIEND);
+        }
+
         // 친구 유저와 현재 유저의 데이터를 꺼냄
-        UserFriend FindByFriendUser = friendRepository.getUserFriendByUserAndFriend(friendUser, currentUser);
+        UserFriend friendUserFriendship = friendRepository.getUserFriendByUserAndFriend(friendUser, currentUser);
+        // 요청 데이터가 없는 경우, 친구가 요청한 상태가 아닌 경우
+        if(friendUserFriendship == null || !friendUserFriendship.getStatus().equals("REQUESTED")){
+            throw new CommonException(CustomExceptionStatus.NOT_REQUESTED_FRIEND);
+        }
 
-        FindByCurrentUser.acceptFriendRequest(); // 둘 다 "ACCEPTED"로 바꾸고 응답시간 추가
-        FindByFriendUser.acceptFriendRequest();
+        currentUserFriendship.acceptFriendRequest(); // 둘 다 "ACCEPTED"로 바꾸고 응답시간 추가
+        friendUserFriendship.acceptFriendRequest();
 
-        friendRepository.save(FindByCurrentUser); // 수동 저장
-        friendRepository.save(FindByFriendUser);
+        friendRepository.save(currentUserFriendship); // 수동 저장
+        friendRepository.save(friendUserFriendship);
 
     }
 
     // 친구 거절
+    @Transactional
     public void friendReqeustReject(Long friendNo){
 
         Long userNo = getUserNo();
@@ -180,43 +198,54 @@ public class FriendService {
 
         User friendUser = userRepository.findById(friendNo).get(); // 친구 유저를 찾음,
 
-
         // 현재 유저와 친구의 데이터를 꺼냄
-        UserFriend FindByCurrentUser = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser);
+        UserFriend currentUserFriendship = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser);
+        // 요청 데이터가 없는 경우, 내가 요청받은 상태가 아닌 경우
+        if(currentUserFriendship == null || !currentUserFriendship.getStatus().equals("RECEIVED")){
+            throw new CommonException(CustomExceptionStatus.NOT_REQUESTED_FRIEND);
+        }
+
         // 친구 유저와 현재 유저의 데이터를 꺼냄
-        UserFriend FindByFriendUser = friendRepository.getUserFriendByUserAndFriend(friendUser, currentUser);
+        UserFriend friendUserFriendship = friendRepository.getUserFriendByUserAndFriend(friendUser, currentUser);
+        // 요청 데이터가 없는 경우, 친구가 요청한 상태가 아닌 경우
+        if(friendUserFriendship == null || !friendUserFriendship.getStatus().equals("REQUESTED")){
+            throw new CommonException(CustomExceptionStatus.NOT_REQUESTED_FRIEND);
+        }
 
-        FindByCurrentUser.rejectFriendRequest(); // 둘 다 "ACCEPTED"로 바꾸고 응답시간 추가
-        FindByFriendUser.rejectFriendRequest();
+        currentUserFriendship.rejectFriendRequest(); // 둘 다 "REJECTED"로 바꾸고 응답시간 추가
+        friendUserFriendship.rejectFriendRequest();
 
-        friendRepository.save(FindByCurrentUser); // 수동 저장
-        friendRepository.save(FindByFriendUser);
+        friendRepository.save(currentUserFriendship); // 수동 저장
+        friendRepository.save(friendUserFriendship);
     }
 
     // 친구 삭제
+    @Transactional
     public void friendDelete(Long friendNo){
         Long userNo = getUserNo();
         User currentUser = userRepository.findById(userNo).get(); // 현재 유저를 찾음.
 
         User friendUser = userRepository.findById(friendNo).get(); // 친구 유저를 찾음,
 
-
         // 현재 유저와 친구의 데이터를 꺼냄
-        UserFriend FindByCurrentUser = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser);
+        UserFriend currentUserFriendship = friendRepository.getUserFriendByUserAndFriend(currentUser, friendUser);
+        // 요청 데이터가 없는 경우, 내가 요청받은 상태가 아닌 경우
+        if(currentUserFriendship == null || !currentUserFriendship.getStatus().equals("ACCEPTED")){
+            throw new CommonException(CustomExceptionStatus.NOT_REQUESTED_FRIEND);
+        }
+
         // 친구 유저와 현재 유저의 데이터를 꺼냄
-        UserFriend FindByFriendUser = friendRepository.getUserFriendByUserAndFriend(friendUser, currentUser);
+        UserFriend friendUserFriendship = friendRepository.getUserFriendByUserAndFriend(friendUser, currentUser);
+        // 요청 데이터가 없는 경우, 친구가 요청한 상태가 아닌 경우
+        if(friendUserFriendship == null || !friendUserFriendship.getStatus().equals("ACCEPTED")){
+            throw new CommonException(CustomExceptionStatus.NOT_REQUESTED_FRIEND);
+        }
 
-        FindByCurrentUser.FriendDelete(); // 둘 다 ""로 바꾸고 응답시간 null로 바꿈
-        FindByFriendUser.FriendDelete();
+        currentUserFriendship.FriendDelete(); // 둘 다 ""로 바꾸고 응답시간 null로 바꿈
+        friendUserFriendship.FriendDelete();
 
-        friendRepository.save(FindByCurrentUser); // 수동 저장
-        friendRepository.save(FindByFriendUser);
+        friendRepository.save(currentUserFriendship); // 수동 저장
+        friendRepository.save(friendUserFriendship);
 
     }
-
-    //친구 확인
-    // 받은 친구요청 조회
-//    public List<FriendRequestListDTO> checkFriendRequest(){
-//
-//    }
 }
