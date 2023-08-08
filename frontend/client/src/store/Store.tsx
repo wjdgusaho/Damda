@@ -9,6 +9,7 @@ import thunk from "redux-thunk"
 import authReducer from "./Auth"
 import theme from "./Theme"
 import Timecapsule from "./Timecapsule"
+import alarm from "./Alarm"
 
 const persistConfig = {
   key: "root",
@@ -17,6 +18,7 @@ const persistConfig = {
 
 const reducers = combineReducers({
   auth: authReducer,
+  alarm: alarm,
   theme: theme.reducer,
   timecapsule: Timecapsule,
 })
