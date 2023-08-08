@@ -32,20 +32,10 @@ public class SSEController {
         friendEventService.checkAllFriendEvent();
         //2. 확인하지 못했던 타임 캡슐 알림 로직
 
-        return eventStreamService.connectStream(12);
+        return eventStreamService.connectStream();
     }
 
     //로그아웃 시 스트림 제거
-    @GetMapping(value = "/sse/login31")
-    public Flux<ServerSentEvent<String>> login31() {
-        log.info("로그인 개방");
-        //1. 확인하지 못했던 친구 상태 알림 로직
-        friendEventService.checkAllFriendEvent();
-        //2. 확인하지 못했던 타임 캡슐 알림 로직
-
-        return eventStreamService.connectStream(31);
-    }
-
     @GetMapping(value = "/sse/logout")
     public void logout() {
         eventStreamService.disconnectStream();
