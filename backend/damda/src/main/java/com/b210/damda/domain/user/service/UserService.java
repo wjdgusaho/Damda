@@ -81,7 +81,7 @@ public class UserService {
         if(multipartFile.isEmpty() && multipartFile.getSize() == 0){
             fileUri = "https://damda.s3.ap-northeast-2.amazonaws.com/profile.jpg";
         }else{
-            fileUri = s3UploadService.saveFile(multipartFile);
+            fileUri = s3UploadService.profileSaveFile(multipartFile);
         }
         String encode = encoder.encode(userOriginRegistDTO.getUserPw()); // 비밀번호 암호화
 
@@ -404,7 +404,7 @@ public class UserService {
         User user = byId.get();
 
         if(!multipartFile.isEmpty()){
-            String uri = s3UploadService.saveFile(multipartFile);
+            String uri = s3UploadService.profileSaveFile(multipartFile);
             user.updateprofileImage(uri);
         }
 

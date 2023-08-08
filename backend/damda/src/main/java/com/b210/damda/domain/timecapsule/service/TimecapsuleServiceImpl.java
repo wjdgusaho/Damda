@@ -65,7 +65,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final S3UploadService s3UploadService;
 
     private final int MAX_PARTICIOPANT = 10;
-    private final Long MAX_FILESIZE = 100L;
+    private final Long MAX_FILESIZE = (long) 50 * (1024 * 1024);
     private final int NOW_PARTICIOPANT = 1;
     /*
         유저 정보 불러오기
@@ -498,7 +498,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
         } else {
             try {
-                fileUri = s3UploadService.saveFile(cardImage);
+                fileUri = s3UploadService.cardSaveFile(cardImage);
             } catch (IOException e) {
                 throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
             }
@@ -942,7 +942,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         String fileUrl = "";
         try {
-            fileUrl = s3UploadService.saveFile(file);
+            fileUrl = s3UploadService.fileSaveFile(file);
         } catch (IOException e) {
             throw new  CommonException(CustomExceptionStatus.FILE_NOT_UPLOAD);
         }
