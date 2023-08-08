@@ -19,6 +19,7 @@ import com.b210.damda.domain.timecapsule.repository.*;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
+import com.b210.damda.util.weatherAPI.service.WeatherAPIService;
 import com.b210.damda.util.weatherAPI.service.WeatherLocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +62,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
+    private final WeatherAPIService weatherAPIService;
     private final ShopService shopService;
     private final S3UploadService s3UploadService;
 
@@ -147,7 +149,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             /*
                 오픈조건 검증 로직
              */
-
             //목표 타임캡슐이라면
             if(mainTimecapsule.getType().equals("GOAL")){
                 List<TimecapsuleCard> cards = timecapsuleCardRepository
@@ -200,18 +201,39 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                                 // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상인 경우
                                 if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1) {
                                     //날씨 갱신
-
+                                    String weather = null;
+                                    try {
+                                        weather = weatherAPIService.getNowWeatherInfos(weatherLocationDto);
+                                    } catch (Exception e) {
+                                        throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND);
+                                    }
+                                    //시간값 세팅
+                                    userLocation.setWeaterTime(Timestamp.valueOf(LocalDateTime.now()));
+                                    //날씨 세팅
+                                    userLocation.setWeather(weather);
+                                    userLocationRepository.save(userLocation);
                                 }
                             }
                             //현재 위치가 다르다면
                             else{
-                                //날씨 갱신해
-
+                                //날씨 갱신
+                                String weather = null;
+                                try {
+                                    weather = weatherAPIService.getNowWeatherInfos(weatherLocationDto);
+                                } catch (Exception e) {
+                                    throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND);
+                                }
+                                //시간값 세팅
+                                userLocation.setWeaterTime(Timestamp.valueOf(LocalDateTime.now()));
+                                //날씨 세팅
+                                userLocation.setWeather(weather);
+                                userLocationRepository.save(userLocation);
                             }
+                        }//날씨가 갱신이 완료됨
+                        //만약 유저위치의 날씨가 캡슐 조건의 포함되어있지 않다면
+                        if(userLocation.getWeather().indexOf(timecapsuleCriteria.getWeatherStatus()) == -1 ){
+                            openAble = false;
                         }
-
-                        //날씨가 같은가
-
                     }
                 }
                 //시간 조건 확인 (한국)
@@ -476,22 +498,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         String fileUri = "";
         log.info(cardImage.toString());
-        
-//        FileOutputStream stream = null;
-//        if(cardImage == null || cardImage.trim().equals("")) {
-//            throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
-//        }
-//
-//        String cardBinaryDate = cardImage.replaceAll("data:image/png;base64,", "");
-//        byte[] file = Base64.decodeBase64(cardBinaryDate);
-//        //랜덤 이미지
-//        String fileName = UUID.randomUUID().toString();
-//
-//        try {
-//            fileUri = s3UploadService.saveFileBase64(file, fileName);
-//        } catch (IOException e) {
-//            throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
-//        }
 
         //S3에 저장
         if (cardImage.isEmpty() && cardImage.getSize() == 0) {
@@ -511,18 +517,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //카드 세팅
         TimecapsuleCard card = new TimecapsuleCard();
-        card.setTimecapsule(timecapsuleRepository.findById(
-                timecapsule.getTimecapsuleNo()).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)));
-        card.setUserNo(userRepository.findByUserNo(
-              user.getUserNo()).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER)));
+        card.setTimecapsule(timecapsule);
+        card.setUser(user);
         card.setImagePath(fileUri);
         card.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
 
         TimecapsuleCard saveCard = timecapsuleCardRepository.save(card);
-
-
 
         //에러메세지
         if (saveCard.getTimecapsuleCardNo() == null) {
