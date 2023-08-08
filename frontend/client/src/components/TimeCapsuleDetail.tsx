@@ -56,6 +56,17 @@ interface DataType {
   }[]
 }
 
+interface FriendDataType {
+  userNo: number
+  profileImage: string
+  nickname: string
+  status: string
+}
+
+interface FriendListDataType {
+  data: FriendDataType[]
+}
+
 const calculateDday = (endDate: string) => {
   const currentDate = new Date()
   const dateString = currentDate.toISOString().slice(0, 10)
@@ -212,7 +223,9 @@ const FriendBox = styled.div`
   width: 17rem;
   background-color: ${(props) => props.theme.color100};
   border-radius: 50px;
-  padding: 30px;
+  padding: 30px 20px;
+  height: 300px;
+  overflow: scroll;
 `
 
 const FileInputBox = styled.div`
@@ -269,6 +282,18 @@ const FileCencelBtn = styled.button`
 
 const FileSubmitBtn = styled(FileCencelBtn)`
   background-color: ${(props) => props.theme.color500};
+`
+
+const InviteRequestBtn = styled.button`
+  width: 67px;
+  height: 28px;
+  border-radius: 30px;
+  background-color: ${(props) => props.theme.color200};
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+`
+
+const InvitedBtn = styled(InviteRequestBtn)`
+  background-color: #cfcfcf;
 `
 
 const TimeCapsuleDetail = function () {
@@ -394,10 +419,42 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [deleteModalIsOpen, setDeleteModalIsOpen] = React.useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
-
   const { capsuleId = "" } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
+  const [friendList, setFriendList] = useState<FriendListDataType | undefined>()
+
+  const inviteFriendClick = async (userNo: number) => {
+    try {
+      const response = await axios({
+        method: "PATCH",
+        url: serverUrl + "timecapsule/invite",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        data: {
+          timecapsuleNo: capsuleId,
+          friendNo: userNo,
+        },
+      })
+      if (response.data.code === 200) {
+        getFriendList()
+      } else if (response.data.code === -6006) {
+        alert("없는 유저 입니다.")
+      } else if (response.data.code === -6002) {
+        alert("존재하지 않는 타임캡슐 입니다.")
+      } else if (response.data.code === -3010) {
+        alert("이미 초대된 회원입니다.")
+      } else if (response.data.code === -3014) {
+        alert("해당 유저는 이미 참여 중입니다.")
+      } else if (response.data.code === -3015) {
+        alert("이미 강퇴 당했거나 나간 유저입니다.")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleExitClick = async () => {
     try {
@@ -491,6 +548,22 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     }
   }
 
+  const getFriendList = async () => {
+    try {
+      const response = await axios({
+        method: "GET",
+        url: serverUrl + `timecapsule/invite?timecapsuleNo=${capsuleId}`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
+      setFriendList(response.data)
+    } catch (error) {
+      console.log("Error fetching data:", error)
+    }
+  }
+
   function openModal() {
     setIsOpen(true)
     getFileSize()
@@ -529,6 +602,8 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       clearInterval(interval)
     }
   }, [oneDayLater])
+
+  console.log(friendList?.data)
 
   return (
     <div className="relative">
@@ -694,6 +769,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                     <InviteBtn
                       onClick={() => {
                         setIsInvite(false)
+                        getFriendList()
                       }}
                     >
                       +
@@ -726,8 +802,11 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                           타임캡슐의 남은 용량 :{" "}
                           {fileSizeData?.maxFileSize !== undefined &&
                           fileSizeData?.nowFilesize !== undefined
-                            ? fileSizeData?.maxFileSize -
-                              fileSizeData?.nowFilesize
+                            ? Math.floor(
+                                (fileSizeData?.maxFileSize -
+                                  fileSizeData?.nowFilesize) /
+                                  (1024 * 1024)
+                              )
                             : "0"}
                           MB
                           <img
@@ -819,11 +898,56 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <HightLight />
               </div>
               <FriendBox className="flex flex-col mt-2">
-                <div>친구목록</div>
-                생각이 많은 건 말이야 당연히 해야 할 일이야 나에겐 우리가 지금
-                일순위야 안전한 유리병을 핑계로 바람을 가둬 둔 것 같지만 기억나?
-                그날의 우리가 잡았던 그 손엔 말이야 설레임보다 커다란 믿음이
-                담겨서 난 함박웃음을 지었지만 울음이 날 것도 같았어
+                <div style={{ fontSize: "13px" }}>친구 목록</div>
+                {friendList?.data &&
+                  friendList.data.map((friend, idx) => (
+                    <div key={idx}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <img
+                            style={{
+                              backgroundColor: "#fff",
+                              borderRadius: "50%",
+                              width: "44px",
+                              height: "44px",
+                              boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                              margin: "8px",
+                              objectFit: "cover",
+                            }}
+                            src={friend.profileImage}
+                            alt="profilepic"
+                          />
+                          <div
+                            className="flex flex-col"
+                            style={{ fontWeight: "500", marginLeft: "4px" }}
+                          >
+                            {friend.nickname}
+                            <span
+                              style={{
+                                fontSize: "13px",
+                                opacity: "70%",
+                                fontWeight: "300",
+                              }}
+                            >
+                              #{friend.userNo}
+                            </span>
+                          </div>
+                        </div>
+                        {friend.status === "" ||
+                        friend.status === "REJECTED" ? (
+                          <InviteRequestBtn
+                            onClick={() => inviteFriendClick(friend.userNo)}
+                          >
+                            초대
+                          </InviteRequestBtn>
+                        ) : friend.status === "NOTREAD" ? (
+                          <InvitedBtn>요청됨</InvitedBtn>
+                        ) : friend.status === "ACCEPTED" ? (
+                          <InvitedBtn>참여중</InvitedBtn>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
               </FriendBox>
               <BackBtn
                 onClick={() => {

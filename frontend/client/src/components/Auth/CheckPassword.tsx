@@ -1,13 +1,13 @@
 import React, { useState } from "react"
 import tw from "tailwind-styled-components"
 import { serverUrl } from "../../urls"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
 import { getCookieToken } from "../../store/Cookie"
 import { GetNewTokens } from "./RefreshTokenApi"
-import { ThemeProvider, styled } from "styled-components"
+import { styled } from "styled-components"
 import { SubHeader } from "../inc/SubHeader"
 
 const Box = tw.div`
