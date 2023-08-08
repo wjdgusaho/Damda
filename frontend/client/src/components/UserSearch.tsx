@@ -119,8 +119,13 @@ const UserSearch = function () {
             </div>
           ) : (
             <div>
-              {searchList.map((user: UserInfo) => (
-                <UserItem key={user.userNo} User={user} />
+              {searchList.map((user: UserInfo, index: number) => (
+                <UserItem
+                  key={index}
+                  User={user}
+                  searchList={searchList}
+                  setSearchList={setSearchList}
+                />
               ))}
             </div>
           )}
@@ -130,7 +135,17 @@ const UserSearch = function () {
   )
 }
 
-const UserItem = function ({ User }: { User: UserInfo }) {
+const UserItem = function ({
+  key,
+  User,
+  searchList,
+  setSearchList,
+}: {
+  key: number
+  User: UserInfo
+  searchList: UserInfo[]
+  setSearchList: React.Dispatch<React.SetStateAction<UserInfo[]>>
+}) {
   let token = useSelector((state: RootState) => state.auth.accessToken)
 
   const handleRequest = function (event: React.MouseEvent<HTMLButtonElement>) {
@@ -146,9 +161,16 @@ const UserItem = function ({ User }: { User: UserInfo }) {
       },
     })
       .then((response) => {
-        // 응답값 확인 후 적용하기.
-        console.log(response)
-        User.status = "REQUESTED"
+        const code = response.data.code
+        alert(response.data.message)
+        if (code === 200) {
+          const newList = searchList.map((user) => {
+            if (user.userNo === User.userNo) {
+              user.status = "REQUESTED"
+            }
+            return user
+          })
+        }
       })
       .catch((error) => console.error(error))
   }
