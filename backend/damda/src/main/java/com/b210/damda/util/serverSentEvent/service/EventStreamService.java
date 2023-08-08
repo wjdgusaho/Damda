@@ -48,12 +48,6 @@ public class EventStreamService {
         long userNo = addOnEventService.getUserNo();
         log.info("connect 연결 성공, userNo : {}", userNo);
 
-        //현재 연결된 스트림이 존재할 경우 기존 스트림을 제거
-        if (userFluxSinkMap.get(userNo) != null) {
-            log.info("기존 스트림 제거");
-            disconnectStream(); //로그아웃 로직
-        }
-
         //접속 시간 등록
         lastResponseTimes.put(userNo, LocalDateTime.now());
 
