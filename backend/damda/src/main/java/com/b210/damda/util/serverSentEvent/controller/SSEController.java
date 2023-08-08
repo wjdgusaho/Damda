@@ -42,16 +42,22 @@ public class SSEController {
     }
 
     //테스트용
-    @GetMapping(value = "/sse/test")
+
+    @GetMapping(value = "/sse/test/request")
     public void test(@RequestParam long no) {
         friendEventService.friendRequestEvent(no);
-    }    @GetMapping(value = "/sse/2")
+    }
+
+    @GetMapping(value = "/sse/test/accept")
     public void test2(@RequestParam long no) {
         friendEventService.friendAcceptEvent(no);
-    }    @GetMapping(value = "/sse/test3")
+    }
+
+    @GetMapping(value = "/sse/test/reject")
     public void test3(@RequestParam long no) {
         friendEventService.friendDenyEvent(no);
     }
+
 
     //테스트용2
     @GetMapping(value = "sse/size")
