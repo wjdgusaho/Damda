@@ -782,11 +782,23 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
               {capsuleData.capsuleType === "CLASSIC" ? (
                 <>
                   <div className="flex w-56 my-2 mt-5">
-                    <FileIcon
-                      src="../../assets/icons/file.png"
-                      alt="fileicon"
-                    />
-                    <span onClick={openModal}>파일 첨부하기</span>
+                    {capsuleData.myInfo.fileAble ? (
+                      <>
+                        <FileIcon
+                          src="../../assets/icons/file.png"
+                          alt="fileicon"
+                        />
+                        <span onClick={openModal}>파일 첨부하기</span>
+                      </>
+                    ) : (
+                      <>
+                        <FileIcon
+                          src="../../assets/icons/file.png"
+                          alt="fileicon"
+                        />
+                        <span>파일 첨부 완료</span>
+                      </>
+                    )}
 
                     <Modal
                       isOpen={modalIsOpen}
