@@ -65,9 +65,9 @@ export const List = function () {
       )}
       {friendList.length !== 0 && (
         <div>
-          {friendList.map((f: FriendType) => (
+          {friendList.map((f: FriendType, index: number) => (
             <FriendCard
-              key={f.userNo}
+              key={index}
               friend={f}
               friendList={friendList}
               setFriendList={setFriendList}
@@ -113,9 +113,9 @@ export const Request = function () {
       )}
       {requestList.length !== 0 && (
         <div>
-          {requestList.map((f: FriendType) => (
+          {requestList.map((f: FriendType, index: number) => (
             <RequestCard
-              key={f.userNo}
+              key={index}
               friend={f}
               requestList={requestList}
               setRequestList={setRequestList}
@@ -128,10 +128,12 @@ export const Request = function () {
 }
 
 const FriendCard = function ({
+  key,
   friend,
   friendList,
   setFriendList,
 }: {
+  key: number
   friend: FriendType
   friendList: FriendType[]
   setFriendList: React.Dispatch<React.SetStateAction<FriendType[]>>
@@ -149,15 +151,17 @@ const FriendCard = function ({
       data: {
         userNo: friend.userNo,
       },
-    }).then((response) => {
-      const code = response.data.code
-      alert(response.data.message)
-      if (code === 200) {
-        let newList = friendList
-        newList[friend.userNo].isFavorite = true
-        setFriendList(newList)
-      }
     })
+      .then((response) => {
+        const code = response.data.code
+        alert(response.data.message)
+        if (code === 200) {
+          let newList = friendList
+          newList[key].isFavorite = true
+          setFriendList(newList)
+        }
+      })
+      .catch((error) => console.error(error))
   }
 
   const favoriteCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -171,15 +175,17 @@ const FriendCard = function ({
       data: {
         userNo: friend.userNo,
       },
-    }).then((response) => {
-      const code = response.data.code
-      alert(response.data.message)
-      if (code === 200) {
-        let newList = friendList
-        newList[friend.userNo].isFavorite = false
-        setFriendList(newList)
-      }
     })
+      .then((response) => {
+        const code = response.data.code
+        alert(response.data.message)
+        if (code === 200) {
+          let newList = friendList
+          newList[key].isFavorite = false
+          setFriendList(newList)
+        }
+      })
+      .catch((error) => console.error(error))
   }
 
   return (
@@ -209,10 +215,12 @@ const FriendCard = function ({
   )
 }
 const RequestCard = function ({
+  key,
   friend,
   requestList,
   setRequestList,
 }: {
+  key: number
   friend: FriendType
   requestList: FriendType[]
   setRequestList: React.Dispatch<React.SetStateAction<FriendType[]>>
