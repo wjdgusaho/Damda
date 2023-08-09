@@ -43,7 +43,9 @@ public class JwtSuccessHandler implements AuthenticationSuccessHandler {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         // 카카오 연동 해제 API 호출
-        String KakaoRevokeEndpoint = "https://kapi.kakao.com/v1/user/unlink";
+        //연동해제 : https://kapi.kakao.com/v1/user/unlink
+        //로그아웃 : https://kapi.kakao.com/v1/user/logout
+        String KakaoRevokeEndpoint = "https://kapi.kakao.com/v1/user/logout";
         ResponseEntity<String> kakaoResponse = restTemplate.exchange(KakaoRevokeEndpoint, HttpMethod.POST, entity, String.class);
 
         // 에러 처리 (옵션)
@@ -52,7 +54,6 @@ public class JwtSuccessHandler implements AuthenticationSuccessHandler {
             log.error("카카오톡 연동 해제 에러... : {}", kakaoResponse.getBody());
         }
 
-
-        response.sendRedirect("https://damda.online/dummykakao?code=" + userCode);
+        response.sendRedirect("https://damda.online:443/dummykakao?code=" + userCode);
     }
 }
