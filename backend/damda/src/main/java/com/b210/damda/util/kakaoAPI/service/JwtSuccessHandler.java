@@ -54,6 +54,6 @@ public class JwtSuccessHandler implements AuthenticationSuccessHandler {
             log.error("카카오톡 연동 해제 에러... : {}", kakaoResponse.getBody());
         }
 
-        response.sendRedirect("https://damda.online:443/dummykakao?code=" + userCode);
+        response.sendRedirect("https://damda.online/dummykakao?code=" + userCode);
     }
 }

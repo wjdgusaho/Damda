@@ -95,7 +95,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         userLog.setUser(user);
         UserLog save = userLogRepository.save(userLog);
 
-        //컨트롤러에서 유저 정보를 필요할때 그때 사용한다.
+        //유저 정보를 필요할때 그때 사용한다.
         return new PrincipalDetails(user, oAuth2User.getAttributes(), userRequest.getAccessToken().getTokenValue());
 
     }
