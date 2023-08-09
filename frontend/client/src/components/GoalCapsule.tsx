@@ -425,7 +425,9 @@ const GoalCapsule = function () {
             ))}
           </div>
           <ContentWrap>
-            <Content>벌칙</Content>
+            <Content>
+              벌칙<span>최대 30자</span>
+            </Content>
           </ContentWrap>
           <InputBox
             onChange={inputPenalty}
