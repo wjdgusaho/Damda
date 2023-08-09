@@ -60,7 +60,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String nickname = oAuth2UserInfo.getName();
         String profileImage = oAuth2UserInfo.getImagePath();
         if(profileImage == null){
-            profileImage = "https://damda.s3.ap-northeast-2.amazonaws.com/profile.jpg";
+            profileImage = "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/profile.jpg";
         }
 
         log.info(email);

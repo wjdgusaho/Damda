@@ -26,7 +26,6 @@ import java.util.Optional;
 @Slf4j
 public class KakaoAPIController {
 
-
     @Value("${jwt.secret}")
     private String secretKey;
 
@@ -80,7 +79,6 @@ public class KakaoAPIController {
 
             refreshTokenRepository.save(refreshTokenUser); // 리프레시 토큰 저장.
         }
-
 
         return new ResponseEntity<>(tokens, HttpStatus.OK);
     }

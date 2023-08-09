@@ -12,6 +12,14 @@ import java.util.List;
 @Repository
 public interface FriendRepository extends JpaRepository<UserFriend, Long> {
 
+//    // 친구 추가 요청(유저)
+//    @Query("SELECT uf FROM UserFriend uf WHERE uf.user = :user AND uf.friend = :friend AND uf.friend.deleteDate != null")
+//    UserFriend getUserFriendByUserAndFriendAndDeleteDate(@Param("user") User user, @Param("friend") User friend);
+//
+//    // 친구 추가 요청(친구)
+//    @Query("SELECT uf FROM UserFriend uf WHERE uf.user = :friend AND uf.friend = :user AND uf.friend.deleteDate != null")
+//    UserFriend getUserFriendByFriendAndUserAndDeleteDate(@Param("user") User user, @Param("friend") User friend);
+
     // 나와 친구의 번호로 친구목록 찾기
     @Query("SELECT u FROM UserFriend u WHERE u.user = :user AND u.friend.deleteDate = null  AND u.friend.userNo = :userNo")
     UserFriend getUserFriendByUserANDFriendNo(@Param("user") User user, @Param("userNo") Long userNo);
