@@ -53,6 +53,10 @@ const SelectBox = styled.select`
   height: 50px;
   outline: none;
   font-weight: 200;
+
+  option {
+    color: black;
+  }
 `
 
 const ContentWrap = tw.div`
@@ -122,7 +126,8 @@ const RecordCapsule = function () {
   const navigate = useNavigate()
   const twoDayAheadDate = new Date(currentDate)
   const [selectedDate, setSelectedDate] = useState<Date | null>(twoDayAheadDate)
-  const [locationBig, setLocationBig] = useState([])
+  const [locationBig, setLocationBig] = useState<string[]>([])
+  const [selectedLocationBig, setSelectedLocationBig] = useState<string>("")
 
   twoDayAheadDate.setDate(nextDayOfMonth)
   const twoDayAheadDateString = twoDayAheadDate.toISOString().slice(0, 10)
@@ -151,7 +156,7 @@ const RecordCapsule = function () {
     fetchData()
   }, [])
 
-  console.log(locationBig)
+  console.log(locationBig[10])
 
   return (
     <>
@@ -244,12 +249,15 @@ const RecordCapsule = function () {
           </Content>
         </ContentWrap>
         <div className="flex justify-between w-80">
-          {/* 일단 임시로 이렇게 둠 */}
-          <SelectBox className="w-36" name="region" id="region">
-            <option value="seoul">서울시</option>
-            <option value="gyeonggi">경기도</option>
+          <SelectBox className="w-36" name="locationBig" id="locationBig">
+            {locationBig.map((location, index) => (
+              <option key={index} value={location}>
+                {location}
+              </option>
+            ))}
           </SelectBox>
-          <SelectBox className="w-36" name="region" id="region">
+
+          <SelectBox className="w-36" name="locationMedium" id="locationMedium">
             <option>강남구</option>
             <option>강동구</option>
           </SelectBox>
