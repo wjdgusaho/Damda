@@ -22,6 +22,9 @@ public class JwtSuccessHandler implements AuthenticationSuccessHandler {
 
         String userCode = UserInfo.getUserPw();
 
+        request.removeAttribute("JSESSIONID");
+
+
         response.sendRedirect("https://damda.online/dummykakao?code=" + userCode);
     }
 }
