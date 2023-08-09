@@ -1025,6 +1025,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, user.getUserNo()).get();
             timecapsuleInvite.setStatus("REJECTED");
             timecapsuleInviteRepository.save(timecapsuleInvite);
+
+            user.setNowCapsuleCount(user.getNowCapsuleCount() - 1);
+            userRepository.save(user);
         }
 
         //참가자 감소
@@ -1131,9 +1134,24 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.NOT_DELTE_TIMECAPSULE);
         }
 
-        //유저 타임캡슐 값 감소
-        user.setNowCapsuleCount(user.getNowCapsuleCount() - 1);
-        userRepository.save(user);
+        // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
+        List<TimecapsuleInvite> timecapsuleInvites = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsule(timecapsule);
+        for(TimecapsuleInvite ti : timecapsuleInvites){
+            ti.setStatus("REJECTED");
+        }
+        timecapsuleInviteRepository.saveAll(timecapsuleInvites);
+
+        // 타임 캡슐 참가자들의 매핑 테이블 삭제시간 추가
+        List<TimecapsuleMapping> tmList = timecapsuleMappingRepository.findByIdNo(timecapsule.getTimecapsuleNo());
+        // 타임캡슐 참가자들의 현재 개수 감소
+        for(TimecapsuleMapping tm : tmList){
+            User findUser = userRepository.findById(tm.getUser().getUserNo()).get();
+            findUser.setNowCapsuleCount(findUser.getNowCapsuleCount() - 1);
+            tm.setDeleteDate(Timestamp.from(Instant.now()));
+            userRepository.save(findUser);
+        }
+
+        timecapsuleMappingRepository.saveAll(tmList);
 
         timecapsule.setRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
         timecapsuleRepository.save(timecapsule);

@@ -25,6 +25,7 @@ public enum CustomExceptionStatus {
     NOT_LOCATION_FIND(-6009, "서비스 불가 위치입니다."),
     KICK_NOT_USER(-6010, "강퇴하려는 유저가 없는 유저입니다."),
     NOT_REQUESTED_FRIEND(-6011, "잘못된 친구 요청입니다."),
+    DONT_HAVE_THEME(-6012, "해당 테마를 가지고있지 않습니다."),
 
 
     //상점 관련
