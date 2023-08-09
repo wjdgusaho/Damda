@@ -68,6 +68,9 @@ function Main() {
 
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [eventSource, setEventSource] = useState<EventSource | null>(null)
+  const [otherEventSource, setOtherEventSource] = useState<EventSource | null>(
+    null
+  )
 
   const handleOnline = () => {
     setIsOnline(true)
@@ -130,16 +133,21 @@ function Main() {
         // serverUrl + (내가 보낼 url 주소)
         // headers에는 토큰 값. 헤더 이외의 값 추가하려면 , 뒤에 넣을 것.
 
-        const otherEventSource = new EventSourcePolyfill(
-          serverUrl + "sse/check",
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
+        if (otherEventSource === null) {
+          const otherESource = new EventSourcePolyfill(
+            serverUrl + "sse/check",
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
+          )
+          console.log(otherESource)
+
+          otherESource.onmessage = (event) => {
+            console.log("check message : ", event)
           }
-        )
-        otherEventSource.onmessage = (event) => {
-          console.log("check message : ", event)
+          setOtherEventSource(otherESource)
         }
       })
       newEventSource.addEventListener("end-of-stream", (event) => {

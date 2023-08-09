@@ -7,6 +7,8 @@ import { useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
 import { FriendType } from "../Friend"
 import { CapsuleType } from "../MainPage"
+import axios from "axios"
+import { serverUrl } from "../../urls"
 
 const TextStyle = styled.p`
   font-family: "pretendard";
@@ -116,9 +118,22 @@ export const MainHeader = function () {
   const alarmTimecapsuleData = useSelector(
     (state: RootState) => state.alarm.timecapsule
   )
+  const token = useSelector((state: RootState) => state.auth.accessToken)
 
   const handleClose = () => {
     setModalOpen(false)
+  }
+
+  const test = () => {
+    axios({
+      method: "GET",
+      url: serverUrl + "sse/test",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => console.log(response))
+      .catch((error) => console.error(error))
   }
 
   return (
@@ -191,6 +206,11 @@ export const MainHeader = function () {
             className="h-6"
           />
         </div>
+      </div>
+      <div>
+        <button className="bg-white" onClick={test}>
+          sse 버튼!
+        </button>
       </div>
       <div className="flex items-center justify-end mr-8 mt-8">
         <TextStyle className="opacity-80 mr-2">
