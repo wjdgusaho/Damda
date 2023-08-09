@@ -28,9 +28,9 @@ export const TimecapsuleOpen = function () {
     lastGamma = gamma
   }
   return (
-    <div>
+    <div className="text-center">
       <p>타임캡슐 열리는 모습 보이기</p>
-      <p className="text-white bg-black">
+      <p className="text-black bg-white">
         {lastBeta}, {lastGamma}
       </p>
     </div>
