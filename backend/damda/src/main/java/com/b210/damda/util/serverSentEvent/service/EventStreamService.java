@@ -58,6 +58,23 @@ public class EventStreamService {
         long userNo = addOnEventService.getUserNo();
         log.info("connectStream, userNo : {}", userNo);
 
+        // 기존 스트림 제거
+        if(userFluxSinkMap.containsKey(userNo)) {
+            log.info("기존 {}의 스트림Flux가 존재하기에 Sink를 종료합니다.", userNo);
+            // 1. 기존의 FluxSink 종료
+            userFluxSinkMap.get(userNo).complete();
+
+            // 2. maintainConnectFlux 종료
+            if(disconnectProcessors.containsKey(userNo)) {
+                disconnectProcessors.get(userNo).onComplete();
+                disconnectProcessors.remove(userNo);
+            }
+
+            //3. Map에 기록 제거
+            userFluxSinkMap.remove(userNo);
+        }
+
+
         //접속 시간 등록
         lastResponseTimes.put(userNo, LocalDateTime.now());
 
@@ -91,7 +108,7 @@ public class EventStreamService {
         return Flux.merge(dataFlux, maintainConnectFlux.takeUntil(other -> dataFlux == null));
     }
 
-    //클라이언트에서 응답 존재할 경우 마지막 시간 갱신
+    //클라이언트에서 응답 존재할 경우(정상적으로 연결이 이어질 경우) 마지막 시간 갱신
     public void checkConnection() {
         log.info("checkConnection : 클라이언트에서 응답 수신하였음");
         lastResponseTimes.put(addOnEventService.getUserNo(), LocalDateTime.now());
@@ -101,13 +118,6 @@ public class EventStreamService {
     public void disconnectStream() {
         log.info("disconnectStream(), 로그아웃");
         long userNo = addOnEventService.getUserNo();
-        //프로세서 종료
-        DirectProcessor<Void> processor = disconnectProcessors.get(userNo);
-        if (processor != null) {
-            log.info("processor.onComplete()");
-            processor.onComplete(); //종료
-            disconnectProcessors.remove(userNo);
-        }
 
         //로그아웃 알림
         ServerSentEvent<String> logoutEvent = addOnEventService.buildServerSentEvent("custom-event", "로그아웃 진행");
@@ -120,13 +130,7 @@ public class EventStreamService {
     //미답신 시 종료 로직
     public void disconnectStream(long userNo) {
         log.info("disconnectStream, 미답신 {}", userNo);
-        //프로세서 종료
-        DirectProcessor<Void> processor = disconnectProcessors.get(userNo);
-        if (processor != null) {
-            log.info("processor.onComplete()");
-            processor.onComplete(); //종료
-            disconnectProcessors.remove(userNo);
-        }
+
 
         //끊어짐 알림
         ServerSentEvent<String> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", "클라이언트 미답신으로 인한 연결 끊어짐");
@@ -139,6 +143,15 @@ public class EventStreamService {
     //저장된 스트림 종료 및 싱크 제거
     public void endAndRemoveStream(long userNo) {
         log.info("endAndRemoveStream, 저장된 스트림 종료 및 싱크 제거, {}", userNo);
+
+        //프로세서 종료
+        DirectProcessor<Void> processor = disconnectProcessors.get(userNo);
+        if (processor != null) {
+            log.info("processor.onComplete()");
+            processor.onComplete(); //종료
+            disconnectProcessors.remove(userNo);
+        }
+
         FluxSink<ServerSentEvent<String>> sink = userFluxSinkMap.get(userNo);
         if (sink != null) {
             sink.complete();  // 스트림 종료
