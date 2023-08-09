@@ -122,6 +122,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     public List<MainTimecapsuleListDTO> workTimecapsule(WeatherLocationDTO weatherLocationDto) {
         Long userNo = getUserNo();
 
+        log.info(weatherLocationDto.toString());
+
         User user = userRepository.findByUserNo(userNo).orElseThrow(
                 () -> new CommonException(CustomExceptionStatus.NOT_USER));
 
@@ -188,50 +190,31 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                             userLocation.setUser(user);
                             userLocation.setLocalBig(location.getLocalBig());
                             userLocation.setLocalMedium(location.getLocalMedium());
-                            //날씨 조회 - 저장
-                            userLocation.setWeaterTime(Timestamp.valueOf(LocalDateTime.now()));
-                            userLocationRepository.save(userLocation);
+                            userLocation.setWeatherTime(Timestamp.valueOf(LocalDateTime.now()));
+                            //날씨 조회 하면서 저장
+                            userLocation = renewWeather(weatherLocationDto, userLocation);
                         }
                         else{
                             //현재 위치랑 같다면
                             if (userLocation.getLocalBig().equals(location.getLocalBig()) &&
                                     userLocation.getLocalMedium().equals(location.getLocalMedium())) {
                                 //날씨 갱신이 필요한가 - 현재 시간과 userLocationTime의 시간값의 차이를 계산
-                                LocalDateTime userLocationTime = userLocation.getWeaterTime().toLocalDateTime();
+                                LocalDateTime userLocationTime = userLocation.getWeatherTime().toLocalDateTime();
                                 long hourDifference = LocalDateTime.now().getHour() - userLocationTime.getHour();
-                                // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상인 경우
-                                if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1) {
+                                // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상이거나 , 날씨 정보값이 null인경우
+                                log.info(weatherLocationDto.toString());
+                                if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1
+                                        || userLocation.getWeather() == null || userLocation.getWeather().trim().equals("")) {
                                     //날씨 갱신
-                                    String weather = null;
-                                    try {
-                                        weather = weatherAPIService.getNowWeatherInfos(weatherLocationDto);
-                                    } catch (Exception e) {
-                                        throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND);
-                                    }
-                                    //시간값 세팅
-                                    userLocation.setWeaterTime(Timestamp.valueOf(LocalDateTime.now()));
-                                    //날씨 세팅
-                                    userLocation.setWeather(weather);
-                                    userLocationRepository.save(userLocation);
+                                    userLocation = renewWeather(weatherLocationDto, userLocation);
                                 }
                             }
                             //현재 위치가 다르다면
                             else{
                                 //날씨 갱신
-                                String weather = null;
-                                try {
-                                    weather = weatherAPIService.getNowWeatherInfos(weatherLocationDto);
-                                } catch (Exception e) {
-                                    throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND);
-                                }
-                                //시간값 세팅
-                                userLocation.setWeaterTime(Timestamp.valueOf(LocalDateTime.now()));
-                                //날씨 세팅
-                                userLocation.setWeather(weather);
-                                userLocationRepository.save(userLocation);
+                                userLocation = renewWeather(weatherLocationDto, userLocation);
                             }
                         }//날씨가 갱신이 완료됨
-                        //만약 유저위치의 날씨가 캡슐 조건의 포함되어있지 않다면
                         if(userLocation.getWeather().indexOf(timecapsuleCriteria.getWeatherStatus()) == -1 ){
                             openAble = false;
                         }
@@ -1157,7 +1140,21 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     }
 
+    public UserLocation renewWeather(WeatherLocationDTO weatherLocationDto, UserLocation userLocation){
+        String weather = null;
+        try {
+            weather = weatherAPIService.getNowWeatherInfos(weatherLocationDto);
+        } catch (Exception e) {
+            throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND);
+        }
+        //시간값 세팅
+        userLocation.setWeatherTime(Timestamp.valueOf(LocalDateTime.now()));
+        //날씨 세팅
+        userLocation.setWeather(weather);
+        UserLocation saveUserLocation = userLocationRepository.save(userLocation);
 
+        return saveUserLocation;
+    }
 
     public String createKey() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
