@@ -126,18 +126,89 @@ const RecordCapsule = function () {
   const navigate = useNavigate()
   const twoDayAheadDate = new Date(currentDate)
   const [selectedDate, setSelectedDate] = useState<Date | null>(twoDayAheadDate)
-  const [locationBig, setLocationBig] = useState<string[]>([])
+  const [locationBig, setLocationBig] = useState<string[]>(["없음"])
   const [selectedLocationBig, setSelectedLocationBig] = useState<string>("")
+  const [locationMedium, setLocationMedium] = useState<string[]>([])
+  const [selectedLocationMedium, setSelectedLocationMedium] =
+    useState<string>("")
+  const [weatherValue, setWeatherValue] = useState<string>("")
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [timeValue, setTimeValue] = useState<[string, string, string]>([
+    "",
+    "",
+    "",
+  ])
 
   twoDayAheadDate.setDate(nextDayOfMonth)
   const twoDayAheadDateString = twoDayAheadDate.toISOString().slice(0, 10)
+
+  function inputTitle(e: React.FormEvent<HTMLInputElement>) {
+    setTitle(e.currentTarget.value)
+  }
+
+  function inputDescription(e: React.FormEvent<HTMLInputElement>) {
+    setDescription(e.currentTarget.value)
+  }
 
   function handleDatePickerKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     e.preventDefault()
   }
 
+  function handleWeatherChange(value: string) {
+    setWeatherValue(value)
+  }
+
+  function handleTimeChange(value: [string, string, string]) {
+    setTimeValue(value)
+  }
+
+  const handleLocationBigChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newValue = e.target.value
+
+    if (newValue === "없음") {
+      setSelectedLocationBig(newValue)
+      setSelectedLocationMedium("")
+    } else {
+      setSelectedLocationBig(newValue)
+      fetchLocationMediumData()
+    }
+  }
+
+  const handleLocationMediumChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const newValue = e.target.value
+
+    setSelectedLocationMedium(newValue)
+    fetchLocationMediumData()
+  }
+
   useEffect(() => {
-    const fetchData = async () => {
+    setLocationMedium([])
+    fetchLocationMediumData()
+  }, [selectedLocationBig])
+
+  const fetchLocationMediumData = async () => {
+    if (selectedLocationBig !== "없음") {
+      try {
+        const response = await axios({
+          method: "GET",
+          url: serverUrl + `location/medium?bigLocation=${selectedLocationBig}`,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+        })
+        setLocationMedium(response.data)
+      } catch (error) {
+        console.log("데이터 가져오기 오류:", error)
+      }
+    }
+  }
+
+  useEffect(() => {
+    const fetchLocationBigData = async () => {
       try {
         const response = await axios({
           method: "GET",
@@ -147,161 +218,260 @@ const RecordCapsule = function () {
             Authorization: "Bearer " + token,
           },
         })
-        setLocationBig(response.data)
+        console.log(response.data)
+        setLocationBig([
+          ...locationBig,
+          response.data[10],
+          response.data[6],
+          response.data[15],
+          response.data[1],
+          response.data[9],
+          response.data[5],
+          response.data[0],
+          response.data[2],
+          response.data[4],
+          response.data[16],
+          response.data[11],
+          response.data[12],
+          response.data[14],
+          response.data[8],
+          response.data[7],
+          response.data[3],
+          response.data[13],
+        ])
       } catch (error) {
         console.log("Error fetching data:", error)
       }
     }
 
-    fetchData()
+    fetchLocationBigData()
   }, [])
 
-  console.log(locationBig[10])
+  function FormSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    axios({
+      method: "POST",
+      url: serverUrl + "timecapsule/create",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        title: title,
+        type: "RECORD",
+        description: description,
+        goalCard: 0,
+        openDate: selectedDate,
+        criteria: {
+          type: "OPEN",
+          localBig: selectedLocationBig,
+          localMedium: selectedLocationMedium,
+          weatherStatus: weatherValue,
+          startTime: timeValue[0],
+          endTime: timeValue[1],
+          timeKr: timeValue[2],
+        },
+        cardInputDay: null,
+        penalty: null,
+      },
+    })
+      .then((res) => {
+        if (res.data.code === 200) {
+          console.log(res.data)
+          navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
+        } else if (res.data.code === -4004) {
+          alert(
+            "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
+          )
+          navigate("/main")
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
 
   return (
     <>
       <SubHeader />
       <Box className="w-80 m-auto">
         <Title>기록 타임캡슐을 만들어요</Title>
-        <ContentWrap>
-          <Content>
-            이름
-            <span>최대 10자</span>
-          </Content>
-        </ContentWrap>
-        <InputBox className="w-80" type="text" maxLength={10} />
-        <ContentWrap>
-          <Content>
-            한줄설명
-            <span>최대 30자</span>
-          </Content>
-        </ContentWrap>
-        <InputBox className="w-80" type="text" maxLength={30} />
-        <ContentWrap>
-          <Content>캡슐 공개일</Content>
-        </ContentWrap>
-        <DatePicker
-          className="datePicker w-80"
-          formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
-          dateFormat="yyyy-MM-dd"
-          locale={ko}
-          minDate={new Date(twoDayAheadDateString)}
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-          onKeyDown={handleDatePickerKeyDown}
-        />
-        <ContentWrap>
-          <Content>
-            캡슐 공개시간
-            <span>캡슐이 열릴 시간대를 설정해요</span>
-          </Content>
-          <HelpIcon
-            onClick={() => setIsHelp(!isHelp)}
-            src="assets/icons/questionMark.png"
-            alt="helpicon"
+        <form onSubmit={FormSubmit}>
+          <ContentWrap>
+            <Content>
+              이름
+              <span>최대 10자</span>
+            </Content>
+          </ContentWrap>
+          <InputBox
+            onChange={inputTitle}
+            className="w-80"
+            type="text"
+            maxLength={10}
           />
-        </ContentWrap>
-        <div>
-          {isHelp ? <Info src="../../helptimeinfo.png" alt="helpinfo" /> : null}
-        </div>
-        <div className="mt-6">
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="none"
-            name="time"
-            defaultChecked
+          <ContentWrap>
+            <Content>
+              한줄설명
+              <span>최대 30자</span>
+            </Content>
+          </ContentWrap>
+          <InputBox
+            onChange={inputDescription}
+            className="w-80"
+            type="text"
+            maxLength={30}
           />
-          <RadioBtn htmlFor="none">없음</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="dawn"
-            name="time"
+          <ContentWrap>
+            <Content>캡슐 공개일</Content>
+          </ContentWrap>
+          <DatePicker
+            className="datePicker w-80"
+            formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
+            dateFormat="yyyy-MM-dd"
+            locale={ko}
+            minDate={new Date(twoDayAheadDateString)}
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            onKeyDown={handleDatePickerKeyDown}
           />
-          <RadioBtn htmlFor="dawn">새벽</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="morning"
-            name="time"
-          />
-          <RadioBtn htmlFor="morning">아침</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="afternoon"
-            name="time"
-          />
-          <RadioBtn htmlFor="afternoon">오후</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="night"
-            name="time"
-          />
-          <RadioBtn htmlFor="night">밤</RadioBtn>
-        </div>
-        <ContentWrap>
-          <Content>
-            캡슐 공개위치
-            <span>특정 위치에만 열리도록 설정해요</span>
-          </Content>
-        </ContentWrap>
-        <div className="flex justify-between w-80">
-          <SelectBox className="w-36" name="locationBig" id="locationBig">
-            {locationBig.map((location, index) => (
-              <option key={index} value={location}>
-                {location}
-              </option>
-            ))}
-          </SelectBox>
+          <ContentWrap>
+            <Content>
+              캡슐 공개시간
+              <span>캡슐이 열릴 시간대를 설정해요</span>
+            </Content>
+            <HelpIcon
+              onClick={() => setIsHelp(!isHelp)}
+              src="assets/icons/questionMark.png"
+              alt="helpicon"
+            />
+          </ContentWrap>
+          <div>
+            {isHelp ? (
+              <Info src="../../helptimeinfo.png" alt="helpinfo" />
+            ) : null}
+          </div>
+          <div className="mt-6">
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="none"
+              name="time"
+              onChange={() => handleTimeChange(["", "", ""])}
+              defaultChecked
+            />
+            <RadioBtn htmlFor="none">없음</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="dawn"
+              name="time"
+              onChange={() => handleTimeChange(["00", "06", "새벽"])}
+            />
+            <RadioBtn htmlFor="dawn">새벽</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="morning"
+              name="time"
+              onChange={() => handleTimeChange(["06", "12", "아침"])}
+            />
+            <RadioBtn htmlFor="morning">아침</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="afternoon"
+              name="time"
+              onChange={() => handleTimeChange(["12", "18", "오후"])}
+            />
+            <RadioBtn htmlFor="afternoon">오후</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="night"
+              name="time"
+              onChange={() => handleTimeChange(["18", "24", "밤"])}
+            />
+            <RadioBtn htmlFor="night">밤</RadioBtn>
+          </div>
+          <ContentWrap>
+            <Content>
+              캡슐 공개위치
+              <span>특정 위치에만 열리도록 설정해요</span>
+            </Content>
+          </ContentWrap>
+          <div className="flex justify-between w-80">
+            <SelectBox
+              className="w-36"
+              name="locationBig"
+              id="locationBig"
+              onChange={handleLocationBigChange}
+            >
+              {locationBig.map((location, index) => (
+                <option key={index} value={location}>
+                  {location}
+                </option>
+              ))}
+            </SelectBox>
 
-          <SelectBox className="w-36" name="locationMedium" id="locationMedium">
-            <option>강남구</option>
-            <option>강동구</option>
-          </SelectBox>
-        </div>
-        <ContentWrap>
-          <Content>
-            캡슐 공개날씨
-            <span>특정 날씨에만 열리도록 설정해요</span>
-          </Content>
-        </ContentWrap>
-        <div className="w-80 mt-6 flex justify-evenly">
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="weather_none"
-            name="weather"
-            defaultChecked
-          />
-          <RadioBtn htmlFor="weather_none">없음</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="snow"
-            name="weather"
-          />
-          <RadioBtn htmlFor="snow">눈</RadioBtn>
-          <input
-            style={{ display: "none" }}
-            type="radio"
-            id="rain"
-            name="weather"
-          />
-          <RadioBtn htmlFor="rain">비</RadioBtn>
-        </div>
-        <BtnWrap>
-          <CancelBtn
-            onClick={() => {
-              navigate(-1)
-            }}
-          >
-            취소
-          </CancelBtn>
-          <SubmitBtn>생성</SubmitBtn>
-        </BtnWrap>
+            <SelectBox
+              className="w-36"
+              name="locationMedium"
+              id="locationMedium"
+              onChange={handleLocationMediumChange}
+            >
+              {locationMedium.map((location, index) => (
+                <option key={index} value={location}>
+                  {location}
+                </option>
+              ))}
+            </SelectBox>
+          </div>
+          <ContentWrap>
+            <Content>
+              캡슐 공개날씨
+              <span>특정 날씨에만 열리도록 설정해요</span>
+            </Content>
+          </ContentWrap>
+          <div className="w-80 mt-6 flex justify-evenly">
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="weather_none"
+              name="weather"
+              defaultChecked
+              onChange={() => handleWeatherChange("")}
+            />
+            <RadioBtn htmlFor="weather_none">없음</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="snow"
+              name="weather"
+              onChange={() => handleWeatherChange("SNOW")}
+            />
+            <RadioBtn htmlFor="snow">눈</RadioBtn>
+            <input
+              style={{ display: "none" }}
+              type="radio"
+              id="rain"
+              name="weather"
+              onChange={() => handleWeatherChange("RAIN")}
+            />
+            <RadioBtn htmlFor="rain">비</RadioBtn>
+          </div>
+          <BtnWrap>
+            <CancelBtn
+              type="button"
+              onClick={() => {
+                navigate(-1)
+              }}
+            >
+              취소
+            </CancelBtn>
+            <SubmitBtn type="submit">생성</SubmitBtn>
+          </BtnWrap>
+        </form>
       </Box>
     </>
   )
