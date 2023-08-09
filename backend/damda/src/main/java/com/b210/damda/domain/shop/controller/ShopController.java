@@ -1,6 +1,6 @@
 package com.b210.damda.domain.shop.controller;
 
-import com.b210.damda.domain.dto.ThemeShopDTO;
+import com.b210.damda.domain.dto.theme.ThemeShopDTO;
 import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
 import com.b210.damda.domain.shop.service.ShopService;
 import com.b210.damda.util.response.CommonResponse;

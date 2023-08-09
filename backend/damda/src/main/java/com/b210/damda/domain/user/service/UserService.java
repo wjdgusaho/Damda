@@ -8,6 +8,8 @@ import com.b210.damda.domain.entity.*;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.entity.User.UserLog;
+import com.b210.damda.domain.entity.theme.Theme;
+import com.b210.damda.domain.entity.theme.ThemeMapping;
 import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.friend.repository.FriendRepository;
 import com.b210.damda.domain.shop.repository.ItemsMappingRepository;
