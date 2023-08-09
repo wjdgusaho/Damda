@@ -1,14 +1,10 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 export const TimecapsuleOpen = function () {
-  window.addEventListener("deviceorientation", handleOrientation)
-
   let lastBeta: number | null = null
   let lastGamma: number | null = null
-
   function handleOrientation(event: DeviceOrientationEvent) {
     const { alpha, beta, gamma } = event
-    console.log("alpha : ", alpha, "beta : ", beta, "gamma : ", gamma)
 
     if (lastBeta === null || lastGamma === null) {
       lastBeta = beta
@@ -29,12 +25,13 @@ export const TimecapsuleOpen = function () {
     lastBeta = beta
     lastGamma = gamma
   }
-  return (
-    <div className="text-center">
-      <p>타임캡슐 열리는 모습 보이기</p>
-      <p className="text-black bg-white">
-        {lastBeta ? lastBeta : 0}, {lastGamma ? lastGamma : 0}
-      </p>
-    </div>
-  )
+
+  useEffect(() => {
+    window.addEventListener("deviceorientation", handleOrientation)
+
+    return () => {
+      window.removeEventListener("deviceorientation", handleOrientation)
+    }
+  }, [])
+  return <div className="text-center"></div>
 }
