@@ -573,6 +573,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         // 현재 타임캡슐의 인원 +1
         timecapsule.updateNowParticipant();
         timecapsuleRepository.save(timecapsule);
+
+        // 유저의 타임캡슐 + 1
+        user.setNowCapsuleCount(user.getNowCapsuleCount() + 1);
+        userRepository.save(user);
         
         // 타임캡슐 매핑 만들어서 저장
         TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping(timecapsule, user);
