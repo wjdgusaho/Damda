@@ -40,7 +40,7 @@ public class EventStreamService {
     //최초 연결 시(로그인), 혹은 재연결 시 Flux 생성 및 Map에 저장
     public Flux<ServerSentEvent<String>> connectStream() {
         long userNo = addOnEventService.getUserNo();
-        log.info("connect 연결 성공, userNo : {}", userNo);
+        log.info("connectStream, userNo : {}", userNo);
 
         //접속 시간 등록
         lastResponseTimes.put(userNo, LocalDateTime.now());
@@ -54,13 +54,13 @@ public class EventStreamService {
 
         // 연결을 계속하기 위해 일정 시간마다 Event를 전송함. 해당 Flux는 기존 FluxSink와 별도의 로직이다.
         Flux<ServerSentEvent<String>> maintainConnectFlux =
-                Flux.interval(Duration.ofSeconds(5))
+                Flux.interval(Duration.ofSeconds(3))
                         .takeUntilOther(processor)  // processor가 신호를 보내면(로그아웃) 중지
                         .doOnEach(signal -> {
-                            // 현재 시간 측정하여 15초 동안 응답이 없을 경우 중지(커넥션 종료)
+                            // 현재 시간 측정하여 19초 동안 응답이 없을 경우 중지(커넥션 종료)
                             LocalDateTime lastResponseTime = lastResponseTimes.get(userNo);
                             log.warn("(부재)다음 {} 초 동안 응답이 없었음.", Duration.between(lastResponseTime, LocalDateTime.now()).toSeconds());
-                            if (lastResponseTime != null && Duration.between(lastResponseTime, LocalDateTime.now()).toSeconds() > 15) {
+                            if (lastResponseTime != null && Duration.between(lastResponseTime, LocalDateTime.now()).toSeconds() > 19) {
                                 disconnectStream(userNo);
                             }
                             //만약 답장 왔을 경우 해당 Map에 현재 시간으로 갱신하는 로직 추가
