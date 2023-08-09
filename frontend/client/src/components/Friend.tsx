@@ -32,6 +32,7 @@ const Friend = function () {
 
 export const List = function () {
   const [friendList, setFriendList] = useState<FriendType[]>([])
+  const [favoriteFriendList, setFavoriteFriendList] = useState<FriendType[]>([])
   const token = useSelector((state: RootState) => state.auth.accessToken)
   useEffect(() => {
     axios({
@@ -43,14 +44,23 @@ export const List = function () {
       },
     })
       .then((response) => {
-        setFriendList(response.data.data.result)
-        console.log(response.data)
+        const newlist = response.data.data.result
+        setFriendList(
+          newlist.filter((f: FriendType) => {
+            return f.favorite === false
+          })
+        )
+        setFavoriteFriendList(
+          newlist.filter((f: FriendType) => {
+            return f.favorite === true
+          })
+        )
       })
       .catch((error) => console.error(error))
   }, [])
   return (
     <div>
-      {friendList.length === 0 && (
+      {friendList.length === 0 && favoriteFriendList.length === 0 && (
         <div className="text-center mt-20">
           <TextStyle className="text-victoria-400">
             친구를 찾으러 떠나볼까요?
@@ -61,6 +71,18 @@ export const List = function () {
             alt="Astronaut-4"
           />
           <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
+        </div>
+      )}
+      {favoriteFriendList.length !== 0 && (
+        <div>
+          {favoriteFriendList.map((f: FriendType) => (
+            <FriendCard
+              key={f.userNo}
+              friend={f}
+              friendList={favoriteFriendList}
+              setFriendList={setFavoriteFriendList}
+            ></FriendCard>
+          ))}
         </div>
       )}
       {friendList.length !== 0 && (
@@ -194,6 +216,29 @@ const FriendCard = function ({
       .catch((error) => console.error(error))
   }
 
+  const friendDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+    axios({
+      method: "PATCH",
+      url: serverUrl + "friend/delete",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        userNo: friend.userNo,
+      },
+    }).then((response) => {
+      const code = response.data.code
+      alert(response.data.message)
+      if (code === 200 || code === -9005) {
+        let newList = friendList.filter((f) => {
+          return f.userNo !== friend.userNo
+        })
+        setFriendList(newList)
+      }
+    })
+  }
+
   return (
     <div className="flex w-10/12 items-center m-auto p-2">
       <img
@@ -215,7 +260,9 @@ const FriendCard = function ({
             <img src="/assets/icons/star.png" alt="즐겨찾기안됨" />
           </button>
         )}
-        <img className="w-5" src="/assets/icons/button_x.png" alt="삭제" />
+        <button className="w-5" onClick={friendDelete}>
+          <img src="/assets/icons/button_x.png" alt="삭제" />
+        </button>
       </div>
     </div>
   )
