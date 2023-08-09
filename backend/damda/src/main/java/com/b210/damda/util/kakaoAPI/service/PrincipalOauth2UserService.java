@@ -87,9 +87,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         }
         else{
             user = optionalUser.get();
-            System.out.println("유저있음"+user);
-            log.info("로그인 성공");
-            log.info("로그인 성공2"+ user);
+            log.info("로그인 성공"+ user);
         }
 
         // 카카오 유저 로그인 로그 저장
