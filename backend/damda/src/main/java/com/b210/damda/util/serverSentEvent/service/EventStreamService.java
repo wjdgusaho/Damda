@@ -40,8 +40,17 @@ public class EventStreamService {
 
     public void test() {
         log.warn("테스트 userFluxSinkMap 값 : {}", userFluxSinkMap.size());
+        for (int i = 0; i < userFluxSinkMap.size(); i++) {
+            log.info("details : {}", userFluxSinkMap.get(i));
+        }
         log.warn("테스트 disconnectProcessors 값 : {}", disconnectProcessors.size());
+        for (int i = 0; i < disconnectProcessors.size(); i++) {
+            log.info("details : {}", disconnectProcessors.get(i));
+        }
         log.warn("테스트 lastResponseTimes 값 : {}", lastResponseTimes.size());
+        for (int i = 0; i < lastResponseTimes.size(); i++) {
+            log.info("details : {}", lastResponseTimes.get(i));
+        }
     }
 
     //최초 연결 시(로그인), 혹은 재연결 시 Flux 생성 및 Map에 저장
@@ -66,7 +75,6 @@ public class EventStreamService {
                         .doOnEach(signal -> {
                             // 현재 시간 측정하여 19초 동안 응답이 없을 경우 중지(커넥션 종료)
                             LocalDateTime lastResponseTime = lastResponseTimes.get(userNo);
-                            log.warn("(부재)다음 {} 초 동안 응답이 없었음.", Duration.between(lastResponseTime, LocalDateTime.now()).toSeconds());
                             if (lastResponseTime != null && Duration.between(lastResponseTime, LocalDateTime.now()).toSeconds() > 19) {
                                 disconnectStream(userNo);
                             }
@@ -75,7 +83,6 @@ public class EventStreamService {
                         .map(new Function<Long, ServerSentEvent<String>>() {
                             @Override
                             public ServerSentEvent<String> apply(Long tick) {
-                                log.info("heartbeat, tick : {} userNo : {}", tick, userNo);
                                 return addOnEventService.buildServerSentEvent("check-connection", "heartbeat");
                             }
                         });
@@ -92,6 +99,7 @@ public class EventStreamService {
 
     //로그아웃시 종료 로직
     public void disconnectStream() {
+        log.info("disconnectStream(), 로그아웃");
         long userNo = addOnEventService.getUserNo();
         //프로세서 종료
         DirectProcessor<Void> processor = disconnectProcessors.get(userNo);
@@ -111,6 +119,7 @@ public class EventStreamService {
 
     //미답신 시 종료 로직
     public void disconnectStream(long userNo) {
+        log.info("disconnectStream, 미답신 {}", userNo);
         //프로세서 종료
         DirectProcessor<Void> processor = disconnectProcessors.get(userNo);
         if (processor != null) {
@@ -129,10 +138,10 @@ public class EventStreamService {
 
     //저장된 스트림 종료 및 싱크 제거
     public void endAndRemoveStream(long userNo) {
+        log.info("endAndRemoveStream, 저장된 스트림 종료 및 싱크 제거, {}", userNo);
         FluxSink<ServerSentEvent<String>> sink = userFluxSinkMap.get(userNo);
         if (sink != null) {
             sink.complete();  // 스트림 종료
-            log.info("disconnect : 스트림 종료, {}", userNo);
         }
         userFluxSinkMap.remove(userNo);
         lastResponseTimes.remove(userNo);
