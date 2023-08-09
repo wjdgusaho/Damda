@@ -4,11 +4,13 @@ import com.b210.damda.domain.dto.ItemsMappingDTO;
 import com.b210.damda.domain.dto.Timecapsule.MyItemListDTO;
 import com.b210.damda.domain.entity.User.User;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
 @Setter
+@ToString
 public class ItemsMapping {
 
     @Id
@@ -22,6 +24,14 @@ public class ItemsMapping {
     @ManyToOne
     @JoinColumn(name = "item_no")
     private Items items;
+
+    public ItemsMapping() {
+    }
+
+    public ItemsMapping(User user, Items items) {
+        this.user = user;
+        this.items = items;
+    }
 
     public ItemsMappingDTO tothemeMappingDTO(){
         return ItemsMappingDTO.builder()
