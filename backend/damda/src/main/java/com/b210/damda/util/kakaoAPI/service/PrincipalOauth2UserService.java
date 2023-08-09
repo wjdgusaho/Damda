@@ -60,7 +60,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String nickname = oAuth2UserInfo.getName();
         String profileImage = oAuth2UserInfo.getImagePath();
         if(profileImage == null){
-            profileImage = "https://damda.s3.ap-northeast-2.amazonaws.com/profile.jpg";
+            profileImage = "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/profile.jpg";
         }
 
         log.info(email);
@@ -87,9 +87,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         }
         else{
             user = optionalUser.get();
-            System.out.println("유저있음"+user);
-            log.info("로그인 성공");
-            log.info("로그인 성공2"+ user);
+            log.info("로그인 성공"+ user);
         }
 
         // 카카오 유저 로그인 로그 저장
@@ -97,8 +95,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         userLog.setUser(user);
         UserLog save = userLogRepository.save(userLog);
 
-        //컨트롤러에서 유저 정보를 필요할때 그때 사용한다.
-        return new PrincipalDetails(user, oAuth2User.getAttributes());
+        //유저 정보를 필요할때 그때 사용한다.
+        return new PrincipalDetails(user, oAuth2User.getAttributes(), userRequest.getAccessToken().getTokenValue());
 
     }
 
