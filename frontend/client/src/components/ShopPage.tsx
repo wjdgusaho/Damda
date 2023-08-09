@@ -311,6 +311,8 @@ export const Card: React.FC<CardProps> = ({
         /* eslint-disable no-restricted-globals */
         location.reload()
         dispatch(SET_COIN(UserData.coin - price))
+      } else {
+        alert(response.data.message)
       }
     }
     if (type === "THEME") {
@@ -333,6 +335,8 @@ export const Card: React.FC<CardProps> = ({
         /* eslint-disable no-restricted-globals */
         location.reload()
         dispatch(SET_COIN(UserData.coin - price))
+      } else {
+        alert(response.data.message)
       }
     }
     if (type === "STORAGE") {
@@ -362,8 +366,6 @@ export const Card: React.FC<CardProps> = ({
       }
     }
     if (type === "CAPSULE") {
-      alert(`구매하기 함수 넘어옴 ${capsuleNo}`)
-
       const body = {
         itemNo: "2",
       }
@@ -505,7 +507,8 @@ export const ModalBuyInner: React.FC<ModalBuyInnerProps> = ({ name, icon }) => {
       </div>
       <div className="w-2/3 p-2">
         <TextStyle7 className="opacity-70 text-lg !text-black">
-          {name} 을<br /> 구매하시겠습니까?
+          {name} 을(를)
+          <br /> 구매하시겠습니까?
         </TextStyle7>
       </div>
     </div>
