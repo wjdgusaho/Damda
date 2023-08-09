@@ -368,6 +368,11 @@ public class ShopServiceImpl implements ShopService{
        timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsuleNo)
                .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE));
 
+       // 해당 타임캡슐이 삭제됐다면
+        if(timecapsule.getRemoveDate() != null){
+            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+        }
+
         //타임캡슐의 용량이 최대라면
        if(timecapsule.getMaxFileSize() >= MAX_FILE_SIZE){
             throw new CommonException(CustomExceptionStatus.CAPSULE_MAXSIZE);
