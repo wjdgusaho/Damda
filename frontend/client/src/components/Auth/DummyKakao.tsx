@@ -26,18 +26,20 @@ export const DummyKakao = () => {
         data: { code: code },
       })
         .then((response) => {
-          if (response.data.accessToken) {
-            setRefreshToken(response.data.refreshToken)
-            dispatch(SET_TOKEN(response.data.accessToken))
-            dispatch(SET_USER(response.data.accountType))
-            navigate("/main")
-          } else {
-            const data = {
-              message:
-                "카카오 로그인에 실패하셨습니다. 다시 시도해주시거나, 서비스 회원가입 진행을 해주세요.",
-            }
-            navigate("/login", { state: data })
-          }
+          console.log(response)
+
+          // if (response.data.accessToken) {
+          //   setRefreshToken(response.data.refreshToken)
+          //   dispatch(SET_TOKEN(response.data.accessToken))
+          //   dispatch(SET_USER(response.data.accountType))
+          //   navigate("/main")
+          // } else {
+          //   const data = {
+          //     message:
+          //       "카카오 로그인에 실패하셨습니다. 다시 시도해주시거나, 서비스 회원가입 진행을 해주세요.",
+          //   }
+          //   navigate("/login", { state: data })
+          // }
         })
         .catch((err) => console.error(err))
     }
