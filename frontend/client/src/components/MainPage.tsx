@@ -123,7 +123,7 @@ export const MainPage = function () {
               <Slider ref={slickRef} {...settings} className="">
                 {capsuleList.map((c: CapsuleType) => (
                   <Capsule key={c.timecapsuleNo} className="text-center">
-                    {c.type !== "new" && (
+                    {c.isRegisted && (
                       <div className="relative">
                         {c.type === "GOAL" && (
                           // 목표 타임캡슐인 경우
@@ -151,18 +151,20 @@ export const MainPage = function () {
                             ></ProgressBar>
                           </div>
                         )}
-                        {/* 퍼센트가 다 찼을 때 */}
-                        {calculateProgressPercentage(c.sDate, c.eDate) >=
-                          100 && (
+                        {/* 열람조건을 달성하고 등록이 완료되었을때 */}
+                        {c.state && c.isRegisted && (
                           <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-white absolute"></div>
                         )}
                         <FloatingImage
                           capsulenum={"capsule" + c.capsuleIconNo}
                           className="h-52 m-auto mt-10"
+                          onClick={() => {
+                            navigate(`/timecapsule/detail/${c.timecapsuleNo}`)
+                          }}
                         />
                       </div>
                     )}
-                    {c.type === "new" && (
+                    {!c.isRegisted && (
                       // 24시간 내의 타임캡슐인 경우
                       <div>
                         <Dday className="m-auto !opacity-80 mt-2">NEW!</Dday>
@@ -170,6 +172,9 @@ export const MainPage = function () {
                         <FloatingImage
                           capsulenum={"capsule" + c.capsuleIconNo}
                           className="h-52 m-auto mt-14 grayscale"
+                          onClick={() => {
+                            navigate(`/timecapsule/detail/${c.timecapsuleNo}`)
+                          }}
                         />
                       </div>
                     )}

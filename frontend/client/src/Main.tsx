@@ -35,6 +35,7 @@ import { GetNewTokens } from "./components/Auth/RefreshTokenApi"
 import { getCookieToken } from "./store/Cookie"
 import { SET_TOKEN } from "./store/Auth"
 import { serverUrl } from "./urls"
+import { TimecapsuleOpen } from "./components/TimecapsuleOpen"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
@@ -93,6 +94,7 @@ function Main() {
     return () => {
       window.removeEventListener("online", handleOnline)
       window.removeEventListener("offline", handleOffline)
+      closeEventSource()
     }
   }, [])
 
@@ -133,25 +135,19 @@ function Main() {
         // serverUrl + (내가 보낼 url 주소)
         // headers에는 토큰 값. 헤더 이외의 값 추가하려면 , 뒤에 넣을 것.
 
-        if (otherEventSource === null) {
-          const otherESource = new EventSourcePolyfill(
-            serverUrl + "sse/check",
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-              },
-            }
-          )
-          console.log(otherESource)
-
-          otherESource.onmessage = (event) => {
-            console.log("check message : ", event)
-          }
-          setOtherEventSource(otherESource)
+        const otherESource = new EventSourcePolyfill(serverUrl + "sse/check", {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        otherESource.onmessage = (event) => {
+          console.log("check message : ", event)
         }
+        setOtherEventSource(otherESource)
       })
       newEventSource.addEventListener("end-of-stream", (event) => {
-        console.log(event)
+        closeEventSource()
+        initializeEventSource()
       })
 
       // 신경쓰지 않아도 됨.
@@ -206,6 +202,10 @@ function Main() {
               <Route
                 path="/timecapsule/detail/:capsuleId/"
                 element={<TimeCapsuleDetail />}
+              ></Route>
+              <Route
+                path="/timecapsule/open"
+                element={<TimecapsuleOpen />}
               ></Route>
             </Routes>
           </BrowserRouter>
