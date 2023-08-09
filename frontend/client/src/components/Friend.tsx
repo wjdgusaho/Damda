@@ -58,6 +58,22 @@ export const List = function () {
       })
       .catch((error) => console.error(error))
   }, [])
+
+  const changeAlign = () => {
+    const newlist = [...favoriteFriendList, ...friendList]
+    setFriendList(
+      newlist.filter((f: FriendType) => {
+        return f.favorite === false
+      })
+    )
+    setFavoriteFriendList(
+      newlist.filter((f: FriendType) => {
+        return f.favorite === true
+      })
+    )
+    console.log(newlist)
+  }
+
   return (
     <div>
       {friendList.length === 0 && favoriteFriendList.length === 0 && (
@@ -81,6 +97,7 @@ export const List = function () {
               friend={f}
               friendList={favoriteFriendList}
               setFriendList={setFavoriteFriendList}
+              changeAlign={changeAlign}
             ></FriendCard>
           ))}
         </div>
@@ -93,6 +110,7 @@ export const List = function () {
               friend={f}
               friendList={friendList}
               setFriendList={setFriendList}
+              changeAlign={changeAlign}
             ></FriendCard>
           ))}
         </div>
@@ -153,10 +171,12 @@ const FriendCard = function ({
   friend,
   friendList,
   setFriendList,
+  changeAlign,
 }: {
   friend: FriendType
   friendList: FriendType[]
   setFriendList: React.Dispatch<React.SetStateAction<FriendType[]>>
+  changeAlign: () => void
 }) {
   const token = useSelector((state: RootState) => state.auth.accessToken)
 
@@ -183,6 +203,7 @@ const FriendCard = function ({
             return f
           })
           setFriendList(newList)
+          changeAlign()
         }
       })
       .catch((error) => console.error(error))
