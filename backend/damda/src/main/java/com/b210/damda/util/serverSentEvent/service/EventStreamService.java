@@ -2,6 +2,7 @@ package com.b210.damda.util.serverSentEvent.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +37,12 @@ public class EventStreamService {
 
     //마지막 heartbeat 시간대 체크 : 서버는 클라이언트의 연결 상태를 위해 주기적으로 마지막 접속 시간을 체크함, 클라이언트의 답신이 없어질 경우 끊어짐으로 판단
     private final Map<Long, LocalDateTime> lastResponseTimes = new ConcurrentHashMap<>();
+
+    public void test() {
+        log.warn("테스트 userFluxSinkMap 값 : {}", userFluxSinkMap.size());
+        log.warn("테스트 disconnectProcessors 값 : {}", disconnectProcessors.size());
+        log.warn("테스트 lastResponseTimes 값 : {}", lastResponseTimes.size());
+    }
 
     //최초 연결 시(로그인), 혹은 재연결 시 Flux 생성 및 Map에 저장
     public Flux<ServerSentEvent<String>> connectStream() {
