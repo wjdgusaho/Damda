@@ -35,4 +35,8 @@ public interface TimecapsuleMappingRepository extends JpaRepository<TimecapsuleM
 
     Optional<TimecapsuleMapping> findByUserAndTimecapsule(User user, Timecapsule timecapsule);
 
+    // 유저의 타임캡슐 확인(용량 늘리기)
+    @Query("SELECT tm FROM TimecapsuleMapping tm WHERE tm.user = :user AND tm.deleteDate = null")
+    List<TimecapsuleMapping> findByUserAndDeleteNot(User user);
+
 }

@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.SQLOutput;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -996,7 +997,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
         );
 
-        //만약 나가가는 사람이 방장일경우 캡슐방 폭파
+        //만약 나가는 사람이 방장일경우 캡슐방 폭파
         if(timecapsuleMapping.isHost()){
             // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
             List<TimecapsuleInvite> timecapsuleInvites = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsule(timecapsule);
@@ -1005,15 +1006,26 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             }
             timecapsuleInviteRepository.saveAll(timecapsuleInvites);
             timecapsule.setRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
+
+            // 타임 캡슐 참가자들의 매핑 테이블 삭제시간 추가
+            List<TimecapsuleMapping> tmList = timecapsuleMappingRepository.findByIdNo(timecapsule.getTimecapsuleNo());
+            // 타임캡슐 참가자들의 현재 개수 감소
+            for(TimecapsuleMapping tm : tmList){
+                User findUser = userRepository.findById(tm.getUser().getUserNo()).get();
+                findUser.setNowCapsuleCount(findUser.getNowCapsuleCount() - 1);
+                tm.setDeleteDate(Timestamp.from(Instant.now()));
+                userRepository.save(findUser);
+            }
+
+            timecapsuleMappingRepository.saveAll(tmList);
+
+            return;
+
         }else{
             TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, user.getUserNo()).get();
             timecapsuleInvite.setStatus("REJECTED");
             timecapsuleInviteRepository.save(timecapsuleInvite);
         }
-
-        //유저 타임캡슐 값 감소
-        user.setNowCapsuleCount(user.getNowCapsuleCount() - 1);
-        userRepository.save(user);
 
         //참가자 감소
         timecapsule.setNowParticipant(timecapsule.getNowParticipant() - 1);
