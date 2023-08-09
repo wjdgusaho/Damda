@@ -1149,9 +1149,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             findUser.setNowCapsuleCount(findUser.getNowCapsuleCount() - 1);
             tm.setDeleteDate(Timestamp.from(Instant.now()));
             userRepository.save(findUser);
+            timecapsuleMappingRepository.save(tm);
         }
-
-        timecapsuleMappingRepository.saveAll(tmList);
 
         timecapsule.setRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
         timecapsuleRepository.save(timecapsule);
