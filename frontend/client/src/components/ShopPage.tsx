@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, createContext } from "react"
 import { SubHeader } from "./inc/SubHeader"
 import { styled, css } from "styled-components"
 import Modal from "react-modal"
@@ -221,7 +221,13 @@ export const Capsule: React.FC<CapsuleProps> = ({ capsuleItemList }) => {
       {capsuleItemList.length > 0 &&
         capsuleItemList.map((c) => (
           <div key={c.itemNo}>
-            <Card name={c.name} price={c.price} desc={c.description}></Card>
+            <Card
+              name={c.name}
+              price={c.price}
+              desc={c.description}
+              icon={c.icon}
+              type={c.type}
+            ></Card>
             <CardLine></CardLine>
           </div>
         ))}
@@ -239,6 +245,13 @@ interface CardProps {
   type?: string
 }
 
+const CapsuleNoContext = createContext<{
+  value: number
+  setValue: React.Dispatch<React.SetStateAction<number>>
+}>({
+  value: -1,
+  setValue: () => {},
+})
 export const Card: React.FC<CardProps> = ({
   no,
   name,
@@ -249,9 +262,11 @@ export const Card: React.FC<CardProps> = ({
   type,
 }) => {
   const [modalIsOpen, setIsOpen] = React.useState(false)
+  const [modalCapacitylIsOpen, setIsCapacityOpen] = React.useState(false)
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const dispatch = useDispatch()
   const UserData = useSelector((state: RootState) => state.auth.userInfo)
+  const [CapsuleNo, setCapsuleNo] = useState<number>(-1)
 
   function openModal() {
     setIsOpen(true)
@@ -261,7 +276,20 @@ export const Card: React.FC<CardProps> = ({
     setIsOpen(false)
   }
 
-  const buyItem = async (type: string, no: number, price: number) => {
+  function openCapacityModal() {
+    setIsCapacityOpen(true)
+  }
+  function closeCapacityModal() {
+    setIsCapacityOpen(false)
+  }
+
+  const buyItem = async (
+    type: string,
+    no: number,
+    price: number,
+    capsuleNo?: number
+  ) => {
+    console.log("type : ", type)
     const newNo = "" + no
     if (type === "DECO") {
       const body = {
@@ -283,64 +311,185 @@ export const Card: React.FC<CardProps> = ({
         /* eslint-disable no-restricted-globals */
         location.reload()
         dispatch(SET_COIN(UserData.coin - price))
+      } else {
+        alert(response.data.message)
+      }
+    }
+    if (type === "THEME") {
+      const body = {
+        themeNo: newNo,
+      }
+      const response = await axios.post(
+        serverUrl + "shop/purchase/theme",
+        body,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      console.log(response.data)
+      if (response.data.code === 200) {
+        alert("테마 구매가 완료되었습니다.")
+        closeModal()
+        /* eslint-disable no-restricted-globals */
+        location.reload()
+        dispatch(SET_COIN(UserData.coin - price))
+      } else {
+        alert(response.data.message)
+      }
+    }
+    if (type === "STORAGE") {
+      const body = {
+        timecapsuleNo: capsuleNo + "",
+        itemNo: "1",
+      }
+      const response = await axios.post(
+        serverUrl + "shop/purchase/timecapsule/size",
+        body,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      console.log(response.data)
+      if (response.data.code === 200) {
+        alert("용량추가 구매가 완료되었습니다.")
+        closeCapacityModal()
+        closeModal()
+        /* eslint-disable no-restricted-globals */
+        location.reload()
+        dispatch(SET_COIN(UserData.coin - price))
+      } else {
+        alert(response.data.message)
+      }
+    }
+    if (type === "CAPSULE") {
+      const body = {
+        itemNo: "2",
+      }
+      const response = await axios.post(
+        serverUrl + "shop/purchase/timecapsule/limit",
+        body,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      console.log(response.data)
+      if (response.data.code === 200) {
+        alert("캡슐추가 구매가 완료되었습니다.")
+        closeCapacityModal()
+        closeModal()
+        /* eslint-disable no-restricted-globals */
+        location.reload()
+        dispatch(SET_COIN(UserData.coin - price))
+      } else {
+        alert(response.data.message)
       }
     }
   }
 
   return (
-    <div className="w-80 h-40 bg-white bg-opacity-10 m-auto rounded-3xl flex shadow-2xl">
-      <div className="w-40 h-40 bg-white opacity-100 rounded-3xl">
-        <img className="w-full h-full " src={icon} alt="카드이미지" />
-      </div>
-      <div className="w-40 h-40 text-center">
-        <TextStyle className="mt-1 text-white text-lg">{name}</TextStyle>
-        <div className="flex justify-center items-center w-20 h-6 mt-1 bg-white bg-opacity-10 rounded-full m-auto">
-          <TextStyle className=" text-white text-sm">{price}코인</TextStyle>
+    <CapsuleNoContext.Provider
+      value={{ value: CapsuleNo, setValue: setCapsuleNo }}
+    >
+      <div className="w-80 h-40 bg-white bg-opacity-10 m-auto rounded-3xl flex shadow-2xl">
+        <div className="w-40 h-40 bg-white opacity-100 rounded-3xl">
+          <img className="w-full h-full " src={icon} alt="카드이미지" />
         </div>
-        <div className="flex justify-center items-center w-36 h-14 mt-1 m-auto">
-          <TextStyle className=" text-white text-sm">{desc}</TextStyle>
-        </div>
-        <div
-          onClick={!isHave ? openModal : undefined}
-          className="flex justify-center items-center w-24 h-6 mt-2 bg-white bg-opacity-30 rounded-full m-auto"
-        >
-          <TextStyle className=" text-white text-md">
-            {isHave ? "보유중" : "구매하기"}
-          </TextStyle>
-        </div>
-      </div>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={customStyles}
-        contentLabel="BUY Modal"
-      >
-        {name === "용량추가" && <ModalCapsuleInner></ModalCapsuleInner>}
-        {name === "캡슐추가" && <ModalCapsuleInner></ModalCapsuleInner>}
-        {name !== "캡슐추가" && name !== "용량추가" && (
-          <ModalBuyInner name={name} icon={icon}></ModalBuyInner>
-        )}
-        <div className="flex mt-4 w-48 m-auto justify-between">
-          <ModalButton className="bg-black bg-opacity-0" onClick={closeModal}>
-            취소
-          </ModalButton>
-          <ModalButton
-            className="bg-black bg-opacity-10"
-            onClick={() => {
-              if (
-                type !== undefined &&
-                no !== undefined &&
-                price !== undefined
-              ) {
-                buyItem(type, no, price)
-              }
-            }}
+        <div className="w-40 h-40 text-center">
+          <TextStyle className="mt-1 text-white text-lg">{name}</TextStyle>
+          <div className="flex justify-center items-center w-20 h-6 mt-1 bg-white bg-opacity-10 rounded-full m-auto">
+            <TextStyle className=" text-white text-sm">{price}코인</TextStyle>
+          </div>
+          <div className="flex justify-center items-center w-36 h-14 mt-1 m-auto">
+            <TextStyle className=" text-white text-sm">{desc}</TextStyle>
+          </div>
+          <div
+            onClick={!isHave ? openModal : undefined}
+            className="flex justify-center items-center w-24 h-6 mt-2 bg-white bg-opacity-30 rounded-full m-auto"
           >
-            구매
-          </ModalButton>
+            <TextStyle className=" text-white text-md">
+              {isHave ? "보유중" : "구매하기"}
+            </TextStyle>
+          </div>
         </div>
-      </Modal>
-    </div>
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="BUY Modal"
+        >
+          {name === "용량추가" && <ModalCapsuleInner></ModalCapsuleInner>}
+          {name !== "용량추가" && (
+            <ModalBuyInner name={name} icon={icon}></ModalBuyInner>
+          )}
+          <div className="flex mt-4 w-48 m-auto justify-between">
+            <ModalButton className="bg-black bg-opacity-0" onClick={closeModal}>
+              취소
+            </ModalButton>
+            <ModalButton
+              className="bg-black bg-opacity-10"
+              onClick={() => {
+                // 스티커, 테마 구매 시
+                if (
+                  type !== undefined &&
+                  no !== undefined &&
+                  price !== undefined
+                ) {
+                  buyItem(type, no, price)
+                }
+                // 캡슐추가 구매 시
+                if (type === "CAPSULE" && price !== undefined) {
+                  buyItem(type, 0, price)
+                }
+                // 타임캡슐 용량 구매 시
+                if (type !== undefined && CapsuleNo !== -1) {
+                  openCapacityModal()
+                }
+              }}
+            >
+              구매
+            </ModalButton>
+          </div>
+        </Modal>
+        <Modal
+          isOpen={modalCapacitylIsOpen}
+          onRequestClose={closeCapacityModal}
+          style={customStyles}
+          contentLabel="BUY Modal"
+        >
+          <ModalBuyInner name={name} icon={icon}></ModalBuyInner>
+          <div className="flex mt-4 w-48 m-auto justify-between">
+            <ModalButton
+              className="bg-black bg-opacity-0"
+              onClick={() => {
+                closeCapacityModal()
+              }}
+            >
+              취소
+            </ModalButton>
+            <ModalButton
+              className="bg-black bg-opacity-10"
+              onClick={() => {
+                if (
+                  type !== undefined &&
+                  CapsuleNo !== undefined &&
+                  price !== undefined
+                ) {
+                  buyItem(type, 0, price, CapsuleNo)
+                }
+              }}
+            >
+              구매
+            </ModalButton>
+          </div>
+        </Modal>
+      </div>
+    </CapsuleNoContext.Provider>
   )
 }
 
@@ -358,48 +507,124 @@ export const ModalBuyInner: React.FC<ModalBuyInnerProps> = ({ name, icon }) => {
       </div>
       <div className="w-2/3 p-2">
         <TextStyle7 className="opacity-70 text-lg !text-black">
-          {name} 을<br /> 구매하시겠습니까?
+          {name} 을(를)
+          <br /> 구매하시겠습니까?
         </TextStyle7>
       </div>
     </div>
   )
 }
 
+interface TimeCapsuleListType {
+  capsuleIconNo?: number
+  maxFileSize?: number
+  nowFileSize?: number
+  timecapsuleNo?: number
+  title?: string
+}
+
 // 타임캡슐 용량 구매 팝업
 const ModalCapsuleInner = function () {
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const [timeCapsuleList, setTimeCapsuleList] = useState<TimeCapsuleListType[]>(
+    []
+  )
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          serverUrl + "shop/purchase/timecapsule/list",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
+        setTimeCapsuleList(response.data.data.timecapsuleList)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchData()
+  }, [])
+
   return (
     <div className="text-center">
-      <TextStyle7 className="opacity-70 text-lg mb-4">
+      <TextStyle7 className="opacity-70 text-lg mb-4 !text-black">
         타임캡슐을 선택해주세요
       </TextStyle7>
       <div className="border-solid border-gray-700 border rounded-2xl w-full p-4">
-        <MyCapsule />
-        <MyCapsule />
-        <MyCapsule />
+        {timeCapsuleList.length > 0 &&
+          timeCapsuleList.map((t) => (
+            <div key={t.timecapsuleNo}>
+              <MyCapsule
+                capsuleIconNo={t.capsuleIconNo}
+                maxFileSize={t.maxFileSize}
+                nowFileSize={t.nowFileSize}
+                timecapsuleNo={t.timecapsuleNo}
+                title={t.title}
+              />
+            </div>
+          ))}
       </div>
     </div>
   )
 }
-
+interface MyCapsuleProps {
+  capsuleIconNo?: number
+  maxFileSize?: number
+  nowFileSize?: number
+  timecapsuleNo?: number
+  title?: string
+}
 // 내가 가진 타임캡슐
-const MyCapsule = function () {
+export const MyCapsule: React.FC<MyCapsuleProps> = ({
+  capsuleIconNo,
+  maxFileSize,
+  nowFileSize,
+  timecapsuleNo,
+  title,
+}) => {
+  const [isSelected, setIsSelected] = useState(false)
+
+  const handleRadioClick = () => {
+    setIsSelected(!isSelected)
+  }
+
   return (
-    <div className="flex m-auto mb-1 rounded-lg p-2 justify-around items-center">
-      <div className="w-2/12">
-        <img
-          className="filter drop-shadow-md"
-          src="/assets/universe/Planet-5.png"
-          alt=""
-        />
-      </div>
-      <div className="w-8/12 text-left pl-3">
-        <TextStyle5 className="">우리 1년 뒤 보자!</TextStyle5>
-        <TextStyle3 className="text-xs ">300 / 500 MB</TextStyle3>
-      </div>
-      <div className="w-2/12">
-        <input type="radio" name="" id="" />
-      </div>
-    </div>
+    <CapsuleNoContext.Consumer>
+      {({ value, setValue }) => (
+        <div className="flex m-auto mb-1 rounded-lg p-2 justify-around items-center">
+          <div className="w-2/12">
+            <img
+              className="filter drop-shadow-md"
+              src="/assets/universe/Planet-5.png"
+              alt=""
+            />
+          </div>
+          <div className="w-8/12 text-left pl-3">
+            <TextStyle5 className="!text-black">{title}</TextStyle5>
+            <TextStyle3 className="text-xs !text-black">
+              {nowFileSize} / {(maxFileSize! / (1024 * 1024)).toFixed(0)} MB
+            </TextStyle3>
+          </div>
+          <div className="w-2/12">
+            <input
+              type="radio"
+              name="myCapsuleRadio"
+              checked={isSelected}
+              onChange={() => {
+                handleRadioClick()
+                if (timecapsuleNo !== undefined) {
+                  setValue(timecapsuleNo)
+                }
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </CapsuleNoContext.Consumer>
   )
 }
 
