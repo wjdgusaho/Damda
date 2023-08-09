@@ -71,7 +71,6 @@ export const List = function () {
         return f.favorite === true
       })
     )
-    console.log(newlist)
   }
 
   return (
@@ -232,6 +231,7 @@ const FriendCard = function ({
             return f
           })
           setFriendList(newList)
+          changeAlign()
         }
       })
       .catch((error) => console.error(error))
@@ -256,6 +256,7 @@ const FriendCard = function ({
           return f.userNo !== friend.userNo
         })
         setFriendList(newList)
+        changeAlign()
       }
     })
   }
