@@ -5,6 +5,12 @@ import { setRefreshToken } from "../../store/Cookie"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { SET_USER, SET_TOKEN } from "../../store/Auth"
+import {
+  changeHeartTheme,
+  changeMarbleTheme,
+  changeUniverseDarkTheme,
+  changeUniverseLightTheme,
+} from "../../store/Theme"
 
 export const DummyKakao = () => {
   const navigate = useNavigate()
@@ -26,17 +32,23 @@ export const DummyKakao = () => {
         data: { code: code },
       })
         .then((response) => {
-          if (response.data.accessToken) {
-            setRefreshToken(response.data.refreshToken)
-            dispatch(SET_TOKEN(response.data.accessToken))
-            dispatch(SET_USER(response.data.accountType))
-            navigate("/main")
-          } else {
-            const data = {
-              message:
-                "카카오 로그인에 실패하셨습니다. 다시 시도해주시거나, 서비스 회원가입 진행을 해주세요.",
+          alert(response.data.message)
+          if (response.data.code === 200) {
+            const { accessToken, refreshToken, ...userInfo } =
+              response.data.data
+            setRefreshToken(refreshToken)
+            dispatch(SET_TOKEN(accessToken))
+            dispatch(SET_USER(userInfo))
+            if (userInfo.nowTheme === 0) {
+              dispatch(changeUniverseDarkTheme())
+            } else if (userInfo.nowTheme === 1) {
+              dispatch(changeUniverseLightTheme())
+            } else if (userInfo.nowTheme === 2) {
+              dispatch(changeHeartTheme())
+            } else if (userInfo.nowTheme === 3) {
+              dispatch(changeMarbleTheme())
             }
-            navigate("/login", { state: data })
+            navigate("/tutorial")
           }
         })
         .catch((err) => console.error(err))

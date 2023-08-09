@@ -189,7 +189,7 @@ const Card = function () {
       console.log(response.data.code)
       if (response.data.code === 200) {
         alert("정상적으로 저장되었습니다.")
-        // navigate(-1)
+        navigate(-1)
       } else if (response.data.code === 200) {
         alert("오늘은 이미 카드작성을 완료하였습니다.")
       } else {
