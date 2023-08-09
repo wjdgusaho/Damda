@@ -89,13 +89,6 @@ public class EventStreamService {
         Flux<ServerSentEvent<String>> maintainConnectFlux =
                 Flux.interval(Duration.ofSeconds(3))
                         .takeUntilOther(processor)  // processor가 신호를 보내면(로그아웃) 중지
-                        .doOnEach(signal -> {
-                            // 현재 시간 측정하여 19초 동안 응답이 없을 경우 중지(커넥션 종료)
-                            LocalDateTime lastResponseTime = lastResponseTimes.get(userNo);
-                            if (lastResponseTime != null && Duration.between(lastResponseTime, LocalDateTime.now()).toSeconds() > 19) {
-                                disconnectStream(userNo);
-                            }
-                        })
                         .map(new Function<Long, ServerSentEvent<String>>() {
                             @Override
                             public ServerSentEvent<String> apply(Long tick) {
