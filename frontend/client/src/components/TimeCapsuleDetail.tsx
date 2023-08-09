@@ -405,7 +405,9 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     : ""
   const isHost = capsuleData.myInfo.host
   const isCardAble = capsuleData.myInfo.cardAble
-  const isFileAble = capsuleData.myInfo.fileAble
+  // const isFileAble = capsuleData.myInfo.fileAble
+  const [isFileAble, setIsFileAble] = useState(capsuleData.myInfo.fileAble)
+
   const navigate = useNavigate()
   const oneDayLater = useMemo(() => {
     const date = new Date(capsuleData.registDate)
@@ -541,6 +543,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
           data: formData,
         })
         console.log(response.data)
+        setIsFileAble(false)
         closeModal()
       } catch (error) {
         console.log(error)
@@ -593,17 +596,18 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         const minutes = Math.floor(
           (timeDiffer % (1000 * 60 * 60)) / (1000 * 60)
         )
+        const seconds = Math.floor((timeDiffer % (1000 * 60)) / 1000)
+
         const formattedHours = hours.toString().padStart(2, "0")
         const formattedMinutes = minutes.toString().padStart(2, "0")
-        setTimer(`${formattedHours}:${formattedMinutes}`)
+        const formattedSeconds = seconds.toString().padStart(2, "0")
+        setTimer(`${formattedHours}:${formattedMinutes}:${formattedSeconds}`)
       }
     }, 1000)
     return () => {
       clearInterval(interval)
     }
   }, [oneDayLater])
-
-  console.log(friendList?.data)
 
   return (
     <div className="relative">
@@ -782,7 +786,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
               {capsuleData.capsuleType === "CLASSIC" ? (
                 <>
                   <div className="flex w-56 my-2 mt-5">
-                    {capsuleData.myInfo.fileAble ? (
+                    {isFileAble ? (
                       <>
                         <FileIcon
                           src="../../assets/icons/file.png"
