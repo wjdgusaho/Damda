@@ -1,9 +1,13 @@
-import React from "react"
+import React, { useState } from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
 import { useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
+import axios from "axios"
+import { serverUrl } from "../urls"
+import { useSelector } from "react-redux"
+import { RootState } from "../store/Store"
 
 const Background = styled.div`
   background-image: url(${(props) => props.theme.bgImg});
@@ -16,7 +20,7 @@ const Background = styled.div`
   position: relative;
 `
 
-const Box = styled.div`
+const Box = styled.form`
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -67,17 +71,52 @@ const HeaderWrap = styled.div`
 `
 
 const Participate = function () {
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const [inviteCode, setInviteCode] = useState("")
+  const navigate = useNavigate()
+
+  function inputCode(e: React.FormEvent<HTMLInputElement>) {
+    setInviteCode(e.currentTarget.value)
+  }
+
+  function FormSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    axios({
+      method: "POST",
+      url: serverUrl + "timecapsule/join",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        inviteCode: inviteCode,
+      },
+    })
+      .then((res) => {
+        if (res.data.code === 200) {
+          console.log(res.data.data.timecapsule.timecapsuleNo)
+          navigate(
+            `/timecapsule/detail/${res.data.data.timecapsule.timecapsuleNo}`
+          )
+        } else if (res.data.code === -6002) {
+          alert("타임캠슐이 존재하지 않습니다")
+        } // 더 추가할거임
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
   return (
     <Background>
       <HeaderWrap>
         <SubHeader />
       </HeaderWrap>
-      <Box>
-        <>
-          <div>초대 코드를 입력하세요</div>
-          <InputCode type="text" name="code" id="code" />
-        </>
-        <Btn>참여하기</Btn>
+      <Box onSubmit={FormSubmit}>
+        <div>초대 코드를 입력하세요</div>
+        <InputCode onChange={inputCode} type="text" name="code" id="code" />
+        <Btn type="submit">참여하기</Btn>
       </Box>
     </Background>
   )

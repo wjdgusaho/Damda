@@ -113,6 +113,7 @@ const Box = styled.div`
   box-shadow: 0px 4px 4px 4px rgb(0, 0, 0, 0.25);
   color: ${(props) => props.theme.color900};
   min-height: 34rem;
+  padding: 0px 15px;
 `
 
 const Title = styled.div`
@@ -192,8 +193,8 @@ const CardCompleteBtn = styled(CardBtn)`
 const BackBtn = styled.div`
   color: ${(props) => props.theme.color950};
   font-size: 16px;
-  position: absolute;
-  bottom: 0;
+  /* position: absolute; */
+  /* bottom: 0; */
 `
 
 const FileIcon = styled.img`
@@ -405,7 +406,12 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     : ""
   const isHost = capsuleData.myInfo.host
   const isCardAble = capsuleData.myInfo.cardAble
-  const isFileAble = capsuleData.myInfo.fileAble
+  // const isFileAble = capsuleData.myInfo.fileAble
+  const [isFileAble, setIsFileAble] = useState(capsuleData.myInfo.fileAble)
+  const [nowParticipant, setNowParticipant] = useState(
+    capsuleData.nowParticipant
+  )
+
   const navigate = useNavigate()
   const oneDayLater = useMemo(() => {
     const date = new Date(capsuleData.registDate)
@@ -541,6 +547,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
           data: formData,
         })
         console.log(response.data)
+        setIsFileAble(false)
         closeModal()
       } catch (error) {
         console.log(error)
@@ -559,6 +566,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         },
       })
       setFriendList(response.data)
+      console.log(response.data)
     } catch (error) {
       console.log("Error fetching data:", error)
     }
@@ -593,17 +601,18 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         const minutes = Math.floor(
           (timeDiffer % (1000 * 60 * 60)) / (1000 * 60)
         )
+        const seconds = Math.floor((timeDiffer % (1000 * 60)) / 1000)
+
         const formattedHours = hours.toString().padStart(2, "0")
         const formattedMinutes = minutes.toString().padStart(2, "0")
-        setTimer(`${formattedHours}:${formattedMinutes}`)
+        const formattedSeconds = seconds.toString().padStart(2, "0")
+        setTimer(`${formattedHours}:${formattedMinutes}:${formattedSeconds}`)
       }
     }, 1000)
     return () => {
       clearInterval(interval)
     }
   }, [oneDayLater])
-
-  console.log(friendList?.data)
 
   return (
     <div className="relative">
@@ -669,7 +678,9 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <HightLight />
                 <div>{capsuleData.title}</div>
               </div>
-              <div style={{ fontSize: "14px" }}>{capsuleData.description}</div>
+              <div style={{ fontSize: "14px", textAlign: "center" }}>
+                {capsuleData.description}
+              </div>
               {capsuleData.capsuleType !== "CLASSIC" ? (
                 <div className="text-center mt-3">
                   타임캡슐이 등록되고 나면 <br />
@@ -702,7 +713,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                   에 공개됩니다
                 </div>
               )}
-
               <div>
                 {isHost ? (
                   <div className="flex justify-center flex-wrap w-80">
@@ -766,112 +776,187 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                         )}
                       </div>
                     ))}
-                    <InviteBtn
-                      onClick={() => {
-                        setIsInvite(false)
-                        getFriendList()
-                      }}
-                    >
-                      +
-                    </InviteBtn>
+                    {nowParticipant < 10 ? (
+                      <InviteBtn
+                        onClick={() => {
+                          setIsInvite(false)
+                          getFriendList()
+                        }}
+                      >
+                        +
+                      </InviteBtn>
+                    ) : null}
                   </div>
-                ) : null}
+                ) : (
+                  <div className="flex justify-center flex-wrap w-80">
+                    {capsuleData.partInfo.map((part, idx) => (
+                      <div key={part.userNo} className="flex flex-col">
+                        {idx === 0 ? (
+                          <>
+                            <div className="relative">
+                              <img
+                                style={{
+                                  backgroundColor: "#fff",
+                                  borderRadius: "50%",
+                                  width: "44px",
+                                  height: "44px",
+                                  boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                                  margin: "8px",
+                                }}
+                                src={part.profileImage}
+                                alt="profilepic"
+                              />
+                              <img
+                                src="../../assets/icons/crown.png"
+                                alt="crown"
+                                width="27px"
+                                height="22px"
+                                style={{
+                                  position: "absolute",
+                                  top: "-7px",
+                                  left: "16px",
+                                }}
+                              />
+                            </div>
+                            <span
+                              style={{ fontSize: "12px", textAlign: "center" }}
+                            >
+                              {part.nickname}
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <div className="relative">
+                              <img
+                                style={{
+                                  backgroundColor: "#fff",
+                                  borderRadius: "50%",
+                                  width: "44px",
+                                  height: "44px",
+                                  boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                                  margin: "8px",
+                                }}
+                                src={part.profileImage}
+                                alt="profilepic"
+                              />
+                            </div>
+                            <span
+                              style={{ fontSize: "12px", textAlign: "center" }}
+                            >
+                              {part.nickname}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {/* 여기 일단 임시로 null (방장 아닐 때) */}
               </div>
 
-              {capsuleData.capsuleType === "CLASSIC" ? (
-                <>
-                  <div className="flex w-56 my-2 mt-5">
-                    <FileIcon
-                      src="../../assets/icons/file.png"
-                      alt="fileicon"
-                    />
-                    <span onClick={openModal}>파일 첨부하기</span>
-
-                    <Modal
-                      isOpen={modalIsOpen}
-                      onRequestClose={closeModal}
-                      style={customStyles}
-                      contentLabel="Example Modal"
-                    >
-                      <ModalContent>
-                        <ModalTitle className="mb-2">
-                          파일을 선택해주세요
-                        </ModalTitle>
-                        <div className="flex items-center">
-                          타임캡슐의 남은 용량 :{" "}
-                          {fileSizeData?.maxFileSize !== undefined &&
-                          fileSizeData?.nowFilesize !== undefined
-                            ? Math.floor(
-                                (fileSizeData?.maxFileSize -
-                                  fileSizeData?.nowFilesize) /
-                                  (1024 * 1024)
-                              )
-                            : "0"}
-                          MB
-                          <img
-                            className="ml-2"
-                            src="../../assets/icons/volumeUp.png"
-                            alt="volumeUp"
-                            width="54px"
-                            onClick={() => {
-                              navigate("/shop")
-                            }}
-                          />
-                        </div>
-                        <input
-                          style={{ display: "none" }}
-                          type="file"
-                          name="file"
-                          id="file"
-                          accept="audio/*, video/*"
-                          onChange={handleFileChange}
-                        />
-                        {selectedFile === null ? (
-                          <FileInputBox className="flex my-4 items-center pl-3">
-                            <FileIcon2
-                              src="../../assets/icons/file.png"
-                              alt="fileicon"
-                            />
-                            <label htmlFor="file">파일을 선택하세요</label>
-                          </FileInputBox>
-                        ) : (
-                          <FileInputBox className="flex my-4 items-center pl-3">
-                            <FileIcon2
-                              src="../../assets/icons/file.png"
-                              alt="fileicon"
-                            />
-                            <label htmlFor="file">{selectedFile}</label>
-                          </FileInputBox>
-                        )}
-                        <div style={{ textAlign: "center" }}>
-                          등록 후에는 삭제 및 변경할 수 없어요. <br />
-                          등록하시겠어요?
-                        </div>
-                        <div>
-                          <FileCencelBtn type="button" onClick={closeModal}>
-                            취소
-                          </FileCencelBtn>
-                          <FileSubmitBtn onClick={handleFileSubmit}>
-                            등록
-                          </FileSubmitBtn>
-                        </div>
-                      </ModalContent>
-                    </Modal>
-                  </div>
-                  {isCardAble ? (
-                    <CardBtn
-                      onClick={() => {
-                        navigate(`/card/${capsuleId}`)
-                      }}
-                    >
-                      카드 작성하기
-                    </CardBtn>
+              <>
+                <div className="flex w-56 my-2 mt-5">
+                  {isFileAble ? (
+                    <>
+                      <FileIcon
+                        src="../../assets/icons/file.png"
+                        alt="fileicon"
+                      />
+                      <span onClick={openModal}>파일 첨부하기</span>
+                    </>
                   ) : (
-                    <CardCompleteBtn>카드 작성완료</CardCompleteBtn>
+                    <>
+                      <FileIcon
+                        src="../../assets/icons/file.png"
+                        alt="fileicon"
+                      />
+                      <span>파일 첨부 완료</span>
+                    </>
                   )}
-                </>
-              ) : null}
+
+                  <Modal
+                    isOpen={modalIsOpen}
+                    onRequestClose={closeModal}
+                    style={customStyles}
+                    contentLabel="Example Modal"
+                  >
+                    <ModalContent>
+                      <ModalTitle className="mb-2">
+                        파일을 선택해주세요
+                      </ModalTitle>
+                      <div className="flex items-center">
+                        타임캡슐의 남은 용량 :{" "}
+                        {fileSizeData?.maxFileSize !== undefined &&
+                        fileSizeData?.nowFilesize !== undefined
+                          ? Math.floor(
+                              (fileSizeData?.maxFileSize -
+                                fileSizeData?.nowFilesize) /
+                                (1024 * 1024)
+                            )
+                          : "0"}
+                        MB
+                        <img
+                          className="ml-2"
+                          src="../../assets/icons/volumeUp.png"
+                          alt="volumeUp"
+                          width="54px"
+                          onClick={() => {
+                            navigate("/shop")
+                          }}
+                        />
+                      </div>
+                      <input
+                        style={{ display: "none" }}
+                        type="file"
+                        name="file"
+                        id="file"
+                        accept="audio/*, video/*"
+                        onChange={handleFileChange}
+                      />
+                      {selectedFile === null ? (
+                        <FileInputBox className="flex my-4 items-center pl-3">
+                          <FileIcon2
+                            src="../../assets/icons/file.png"
+                            alt="fileicon"
+                          />
+                          <label htmlFor="file">파일을 선택하세요</label>
+                        </FileInputBox>
+                      ) : (
+                        <FileInputBox className="flex my-4 items-center pl-3">
+                          <FileIcon2
+                            src="../../assets/icons/file.png"
+                            alt="fileicon"
+                          />
+                          <label htmlFor="file">{selectedFile}</label>
+                        </FileInputBox>
+                      )}
+                      <div style={{ textAlign: "center" }}>
+                        등록 후에는 삭제 및 변경할 수 없어요. <br />
+                        등록하시겠어요?
+                      </div>
+                      <div>
+                        <FileCencelBtn type="button" onClick={closeModal}>
+                          취소
+                        </FileCencelBtn>
+                        <FileSubmitBtn onClick={handleFileSubmit}>
+                          등록
+                        </FileSubmitBtn>
+                      </div>
+                    </ModalContent>
+                  </Modal>
+                </div>
+                {isCardAble ? (
+                  <CardBtn
+                    onClick={() => {
+                      navigate(`/card/${capsuleId}`)
+                    }}
+                  >
+                    카드 작성하기
+                  </CardBtn>
+                ) : (
+                  <CardCompleteBtn>카드 작성완료</CardCompleteBtn>
+                )}
+              </>
 
               <BackBtn
                 onClick={() => {
@@ -1070,7 +1155,9 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
             <div>{capsuleData.title}</div>
             <HightLight />
           </div>
-          <div style={{ fontSize: "14px" }}>{capsuleData.description}</div>
+          <div style={{ fontSize: "14px", textAlign: "center" }}>
+            {capsuleData.description}
+          </div>
 
           {capsuleData.criteriaInfo.cirteriaDays ? (
             <div className="text-center mt-3">
@@ -1271,11 +1358,7 @@ interface HelpProps {
 const BlurBg = styled.div`
   height: 100vh;
   width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  position: fixed;
   background-color: rgb(9, 6, 52, 0.57);
   z-index: 2;
   display: flex;
@@ -1284,6 +1367,7 @@ const BlurBg = styled.div`
   justify-content: center;
   align-items: center;
   font-family: "Pretendard";
+  overflow: hidden;
 `
 
 const CancelBtn = styled.img`
