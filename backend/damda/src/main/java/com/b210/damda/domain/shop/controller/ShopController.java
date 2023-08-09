@@ -116,4 +116,21 @@ public class ShopController {
 
         return response;
     }
+
+    /*
+        테마 리스트 받아오기
+     */
+    @GetMapping("themelist")
+    public DataResponse<Map<String, Object>> themeList(){
+
+        List<ThemeShopDTO> themeList = shopService.getThemeList();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("themeList", themeList);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 목록 조회 성공");
+        response.setData(result);
+
+        return response;
+    }
 }

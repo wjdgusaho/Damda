@@ -23,6 +23,11 @@ public class SSEController {
     private final FriendEventService friendEventService;
     private final TimeCapsuleEventService timeCapsuleEventService;
 
+    @GetMapping(value = "/sse/test")
+    public void test() {
+        eventStreamService.test();
+    }
+
     //최초 접속 시 로그인 이벤트. 이를 통해 스트림 파이프라인 구축 가능
     //MediaType 명시를 통해 엔드포인트가 text/event-stream을 반환하도록 강제함.
     @GetMapping(value = "/sse/login")
@@ -41,6 +46,11 @@ public class SSEController {
         eventStreamService.disconnectStream();
     }
 
+    //heartbeat 응답 스트림
+    @GetMapping(value = "/sse/check")
+    public void checkConnection() {
+        eventStreamService.checkConnection();
+    }
     //테스트용
 
     @GetMapping(value = "/sse/test/request")

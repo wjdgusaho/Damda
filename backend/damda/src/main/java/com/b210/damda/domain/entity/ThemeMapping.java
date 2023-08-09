@@ -4,6 +4,7 @@ import com.b210.damda.domain.dto.ThemeMappingDTO;
 import com.b210.damda.domain.entity.User.User;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@ToString
 public class ThemeMapping {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +26,14 @@ public class ThemeMapping {
     @ManyToOne
     @JoinColumn(name = "theme_no")
     private Theme theme;
+
+    public ThemeMapping() {
+    }
+
+    public ThemeMapping(User user, Theme theme) {
+        this.user = user;
+        this.theme = theme;
+    }
 
     public ThemeMappingDTO tothemeMappingDTO(){
         return ThemeMappingDTO.builder()
