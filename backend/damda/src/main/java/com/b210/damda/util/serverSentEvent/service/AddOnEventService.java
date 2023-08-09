@@ -1,6 +1,9 @@
 package com.b210.damda.util.serverSentEvent.service;
 
+import com.b210.damda.domain.dto.serverSentEvent.ServerSentEventDTO;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.core.Authentication;
@@ -14,8 +17,11 @@ import java.time.format.DateTimeFormatter;
  *  EventService의 원활한 구현을 위한 부가 메서드 집합
  */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class AddOnEventService {
+
+    private final ObjectMapper objectMapper;
 
     //Find NowUser
     public Long getUserNo(){
@@ -26,12 +32,14 @@ public class AddOnEventService {
         return userNo;
     }
 
-    //Event Builder
-    public ServerSentEvent<String> buildServerSentEvent(String eventName, String data) {
-        return ServerSentEvent.<String>builder()
+
+    //Event Builder(DTO)
+    public ServerSentEvent<JsonNode> buildServerSentEvent(String eventName, ServerSentEventDTO data) {
+        JsonNode jsonData = objectMapper.valueToTree(data); //json 타입으로 변환
+        return ServerSentEvent.<JsonNode>builder()
                 .id(data.toString())
                 .event(eventName)
-                .data(data)
+                .data(jsonData)
                 .build();
     }
 
