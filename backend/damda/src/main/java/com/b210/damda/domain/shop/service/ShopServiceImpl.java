@@ -314,7 +314,9 @@ public class ShopServiceImpl implements ShopService{
     public List<TimecapsuleShopDTO> timecapsuleList() {
 
         Long userNo = getUserNo();
-        List<TimecapsuleMapping> timecapsules = timecapsuleMappingRepository.findByUserUserNo(userNo);
+        User user = userRepository.findById(userNo).get();
+
+        List<TimecapsuleMapping> timecapsules = timecapsuleMappingRepository.findByUserAndDeleteNot(user);
 
         //타임캡슐이 있는지?
         if(timecapsules.size() < 1){
@@ -323,7 +325,7 @@ public class ShopServiceImpl implements ShopService{
         //진행중인 타임캡슐
         List<TimecapsuleMapping> workTimecapsules = new ArrayList<>();
         for(TimecapsuleMapping timecapsule : timecapsules){
-            if( timecapsule.isSave() == false) workTimecapsules.add(timecapsule);
+            if( timecapsule.isSave() == false ) workTimecapsules.add(timecapsule);
         }
 
         //진행중인 타임캡슐이 없다면

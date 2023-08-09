@@ -108,15 +108,11 @@ public class UserService {
 
         // 3번 아이템 꺼냄
         Items items = itemsRepository.findByItemNo(3L).get();
-        System.out.println(items.toString());
 
         // 스티커 무료 제공
         ItemsMapping itemsMapping = new ItemsMapping(savedUser, items);
         itemsMappingRepository.save(itemsMapping);
 
-        System.out.println(itemsMapping.toString());
-
-        System.out.println(123);
         // 1번 테마 꺼냄
         Theme theme = themeRepository.findById(1L).get();
 
