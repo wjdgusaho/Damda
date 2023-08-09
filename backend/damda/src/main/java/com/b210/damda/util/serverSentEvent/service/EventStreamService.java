@@ -119,27 +119,24 @@ public class EventStreamService {
         log.info("disconnectStream(), 로그아웃");
         long userNo = addOnEventService.getUserNo();
 
+        //저장된 스트림 종료 및 싱크 제거, 응답 기록 제거
+        endAndRemoveStream(userNo);
+
         //로그아웃 알림
         ServerSentEvent<String> logoutEvent = addOnEventService.buildServerSentEvent("custom-event", "로그아웃 진행");
         sendEvent(userNo, logoutEvent);
-
-        //저장된 스트림 종료 및 싱크 제거, 응답 기록 제거
-        endAndRemoveStream(userNo);
     }
 
     //미답신 시 종료 로직
     public void disconnectStream(long userNo) {
         log.info("disconnectStream, 미답신 {}", userNo);
-
+        //저장된 스트림 종료 및 싱크 제거
+        endAndRemoveStream(userNo);
 
         //끊어짐 알림
         ServerSentEvent<String> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", "클라이언트 미답신으로 인한 연결 끊어짐");
         sendEvent(userNo, disconnectEvent);
-
-        //저장된 스트림 종료 및 싱크 제거
-        endAndRemoveStream(userNo);
     }
-
     //저장된 스트림 종료 및 싱크 제거
     public void endAndRemoveStream(long userNo) {
         log.info("endAndRemoveStream, 저장된 스트림 종료 및 싱크 제거, {}", userNo);
