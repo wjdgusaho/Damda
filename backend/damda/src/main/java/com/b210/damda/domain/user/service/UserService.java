@@ -12,6 +12,8 @@ import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.friend.repository.FriendRepository;
 import com.b210.damda.domain.shop.repository.ItemsMappingRepository;
 import com.b210.damda.domain.shop.repository.ItemsRepository;
+import com.b210.damda.domain.shop.repository.ThemeMappingRepository;
+import com.b210.damda.domain.shop.repository.ThemeRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
@@ -49,13 +51,16 @@ public class UserService {
     private SignupEmailLogRepository signupEmailLogRepository;
     private ItemsMappingRepository itemsMappingRepository;
     private ItemsRepository itemsRepository;
+    private ThemeMappingRepository themeMappingRepository;
+    private ThemeRepository themeRepository;
 
     private static Long acExpiredMs = 1000 * 60 * 30L * (48 * 30); // 액세스 토큰의 만료 시간(30분) * 48 * 30 = 30일
 
     @Autowired
     public UserService(UserRepository userRepository, UserLogRepository userLogRepository, BCryptPasswordEncoder encoder, RefreshTokenRepository refreshTokenRepository,
                        EmailSendLogRepository emailSendLogRepository, FriendRepository friendRepository, S3UploadService s3UploadService, SignupEmailLogRepository signupEmailLogRepository,
-                       ItemsMappingRepository itemsMappingRepository, ItemsRepository itemsRepository) {
+                       ItemsMappingRepository itemsMappingRepository, ItemsRepository itemsRepository, ThemeMappingRepository themeMappingRepository,
+                       ThemeRepository themeRepository) {
         this.userRepository = userRepository;
         this.userLogRepository = userLogRepository;
         this.encoder = encoder;
@@ -66,6 +71,8 @@ public class UserService {
         this.signupEmailLogRepository = signupEmailLogRepository;
         this.itemsMappingRepository = itemsMappingRepository;
         this.itemsRepository = itemsRepository;
+        this.themeMappingRepository = themeMappingRepository;
+        this.themeRepository = themeRepository;
     }
 
     /*
@@ -99,15 +106,23 @@ public class UserService {
         // 유저 데이터 저장
         User savedUser = userRepository.save(userOriginRegistDTO.toEntity());
 
-        User user = userOriginRegistDTO.toEntity();
-
         // 3번 아이템 꺼냄
         Items items = itemsRepository.findByItemNo(3L).get();
+        System.out.println(items.toString());
 
         // 스티커 무료 제공
-        ItemsMapping itemsMapping = new ItemsMapping(user, items);
+        ItemsMapping itemsMapping = new ItemsMapping(savedUser, items);
         itemsMappingRepository.save(itemsMapping);
-        
+
+        System.out.println(itemsMapping.toString());
+
+        System.out.println(123);
+        // 1번 테마 꺼냄
+        Theme theme = themeRepository.findById(1L).get();
+
+        ThemeMapping themeMapping = new ThemeMapping(savedUser, theme);
+        themeMappingRepository.save(themeMapping);
+
         return savedUser;
     }
 

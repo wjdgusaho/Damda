@@ -4,11 +4,13 @@ import com.b210.damda.domain.dto.ItemsMappingDTO;
 import com.b210.damda.domain.dto.Timecapsule.MyItemListDTO;
 import com.b210.damda.domain.entity.User.User;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
 @Setter
+@ToString
 public class ItemsMapping {
 
     @Id
