@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SSEScheduledComponent {
 
+    private final EventStreamService eventStreamService;
 
     @Scheduled(fixedRate = 3000) // 테스터
     public void scheduledTask() {
@@ -35,6 +36,7 @@ public class SSEScheduledComponent {
 4.  'userFluxSinkMap'과 'disconnectProcessors'에 둘 다 값이 있고, 실제 스트림이 있다면 정상적인 연결로 판단한다(접속중)
 5. 만약 아니라면, 비정상적인 로직으로 판단하고 전부 제거하고 종료한다.
          */
+
 
         //동시성 문제? => 어차피 동시성으로 close되어도, 로그아웃 로직 발생 시 FE에서 자동으로 재연결을 수행한다.
         Map<Long, FluxSink<ServerSentEvent<JsonNode>>> nowUserFluxSinkMap = EventStreamService.userFluxSinkMap;
@@ -49,6 +51,7 @@ public class SSEScheduledComponent {
             //일단 테스트용으로 1분 해놨음
             if(duration.toMinutes() >= 1) {
                 log.warn("{} 님이 부재중 1분 이상입니다. 시간 : {} ", userNo, duration.toMinutes());
+                eventStreamService.disconnectStream(userNo); //장기 미접속으로 인한 삭제 로직 진행
             }
 
         }
