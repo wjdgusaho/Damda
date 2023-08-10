@@ -41,32 +41,4 @@ public class SSEController {
         return eventStreamService.connectStream();
     }
 
-    //로그아웃 시 스트림 제거
-    @GetMapping(value = "/sse/logout")
-    public void logout() {
-        eventStreamService.disconnectStream();
-    }
-
-    //heartbeat 응답 스트림
-    @GetMapping(value = "/sse/check")
-    public void checkConnection() {
-        eventStreamService.checkConnection();
-    }
-    //테스트용
-
-    @GetMapping(value = "/sse/test/request")
-    public void test(@RequestParam long no) {
-//        friendEventService.friendRequestEvent(no);
-    }
-
-    @GetMapping(value = "/sse/test/accept")
-    public void test2(@RequestParam long no) {
-//        friendEventService.friendAcceptEvent(no);
-    }
-
-    @GetMapping(value = "/sse/test/reject")
-    public void test3(@RequestParam long no) {
-//        friendEventService.friendDenyEvent(no);
-    }
-
 }
