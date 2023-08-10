@@ -28,10 +28,10 @@
         private String profileImage;
         @Builder.Default
         @Column(nullable = false, columnDefinition = "integer default 0")
-        private int coin = 1000;
+        private int coin = 5000;
         @Builder.Default
         @Column(nullable = false, columnDefinition = "integer default 0")
-        private int nowTheme = 0;
+        private int nowTheme = 1;
         @CreatedDate
         @Column(nullable = false)
         private LocalDateTime registDate;

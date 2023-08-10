@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -45,10 +47,14 @@ public class AddOnEventService {
 
     //Time Sender
     public String getNowTime() {
-        LocalDateTime currentDateTime = LocalDateTime.now(); //현재 시간
+        // Asia/Seoul 시간대 설정
+        ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+
+        // 현재 시간을 Asia/Seoul 시간대로 변환
+        ZonedDateTime seoulTime = ZonedDateTime.of(LocalDateTime.now(), seoulZone);
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yy년 MM월 dd일");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH시 mm분");
-        return "[ " + currentDateTime.format(dateFormatter) + ", " + currentDateTime.format(timeFormatter) + " ]";
+        return "[ " + seoulTime.format(dateFormatter) + ", " + seoulTime.format(timeFormatter) + " ]";
     }
 
 
