@@ -47,14 +47,9 @@ public class AddOnEventService {
 
     //Time Sender
     public String getNowTime(LocalDateTime dateTime) {
-        // Asia/Seoul 시간대 설정
-        ZoneId seoulZone = ZoneId.of("Asia/Seoul");
-
-        // 현재 시간을 Asia/Seoul 시간대로 변환
-        ZonedDateTime seoulTime = ZonedDateTime.of(dateTime, seoulZone);
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yy년 MM월 dd일");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH시 mm분");
-        return "[ " + seoulTime.format(dateFormatter) + ", " + seoulTime.format(timeFormatter) + " ]";
+        return "[ " + dateTime.format(dateFormatter) + ", " + dateTime.format(timeFormatter) + " ]";
     }
 
 
