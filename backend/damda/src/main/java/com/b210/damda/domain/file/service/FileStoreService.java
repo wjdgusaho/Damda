@@ -1,12 +1,19 @@
 package com.b210.damda.domain.file.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.transfer.MultipleFileDownload;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferProgress;
+import com.amazonaws.util.IOUtils;
 import com.b210.damda.domain.entity.Timecapsule.Timecapsule;
+import com.b210.damda.domain.entity.Timecapsule.TimecapsuleCard;
 import com.b210.damda.domain.entity.Timecapsule.TimecapsuleMapping;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.file.util.FileUtil;
+import com.b210.damda.domain.timecapsule.repository.TimecapsuleCardRepository;
 import com.b210.damda.domain.timecapsule.repository.TimecapsuleMappingRepository;
 import com.b210.damda.domain.timecapsule.repository.TimecapsuleRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
@@ -16,6 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,6 +37,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
@@ -46,15 +59,19 @@ public class FileStoreService {
     private final TimecapsuleMappingRepository timecapsuleMappingRepository;
     private final UserRepository userRepository;
     private final TimecapsuleRepository timecapsuleRepository;
-
+    private final AmazonS3 amazonS3;
+    private final TimecapsuleCardRepository timecapsuleCardRepository;
 
     @Autowired
     public FileStoreService(TransferManager transferManager, TimecapsuleMappingRepository timecapsuleMappingRepository,
-                            UserRepository userRepository, TimecapsuleRepository timecapsuleRepository) {
+                            UserRepository userRepository, TimecapsuleRepository timecapsuleRepository, AmazonS3 amazonS3,
+                            TimecapsuleCardRepository timecapsuleCardRepository) {
         this.transferManager = transferManager;
         this.timecapsuleMappingRepository = timecapsuleMappingRepository;
         this.userRepository = userRepository;
         this.timecapsuleRepository = timecapsuleRepository;
+        this.amazonS3 = amazonS3;
+        this.timecapsuleCardRepository = timecapsuleCardRepository;
     }
 
     /*
@@ -167,6 +184,40 @@ public class FileStoreService {
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    // 카드 사진 다운로드
+    public ResponseEntity<byte[]> getObject(Long timecapsuleCardNo) throws IOException{
+
+        Optional<TimecapsuleCard> findCard = timecapsuleCardRepository.findById(timecapsuleCardNo);
+        // 카드가 없음
+        if(findCard.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_CARD);
+        }
+
+        TimecapsuleCard timecapsuleCard = findCard.get();
+
+        String imagePath = timecapsuleCard.getImagePath();
+
+        if (imagePath.startsWith("https://")) {
+            URL url = new URL(imagePath);
+            imagePath = url.getPath().substring(1);  // 첫번째 '/'를 제거하기 위해 substring 사용
+        }
+
+        System.out.println(imagePath);
+        S3Object o = amazonS3.getObject(new GetObjectRequest(bucket, imagePath));
+        System.out.println(o);
+        S3ObjectInputStream objectInputStream = o.getObjectContent();
+        byte[] bytes = IOUtils.toByteArray(objectInputStream);
+
+        String fileName = URLEncoder.encode(imagePath, "UTF-8").replaceAll("\\+", "%20");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        httpHeaders.setContentLength(bytes.length);
+        httpHeaders.setContentDispositionFormData("attachment", fileName);
+
+        return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+
     }
 
 }
