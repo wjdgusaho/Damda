@@ -129,6 +129,9 @@ function Main() {
       newEventSource.addEventListener("custom-event", (event) => {
         console.log("Custom : ", event)
       })
+      newEventSource.addEventListener("friend-event", (event) => {
+        console.log("Friend : ", event)
+      })
       newEventSource.addEventListener("check-connection", (event) => {
         console.log("Check connection : ", event)
 
