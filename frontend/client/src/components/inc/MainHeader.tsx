@@ -117,7 +117,7 @@ export const MainHeader = function () {
   const [modalOpen, setModalOpen] = useState(false)
   const alarmFriendData = useSelector((state: RootState) => state.alarm.friends)
   const alarmTimecapsuleData = useSelector(
-    (state: RootState) => state.alarm.timecapsule
+    (state: RootState) => state.alarm.timecapsules
   )
   const token = useSelector((state: RootState) => state.auth.accessToken)
 
@@ -203,11 +203,6 @@ export const MainHeader = function () {
             className="h-6"
           />
         </div>
-      </div>
-      <div>
-        <button className="bg-white" onClick={test}>
-          sse 버튼!
-        </button>
       </div>
       {/* <div className="flex items-center justify-end mr-8 mt-8">
         <TextStyle className="opacity-80 mr-2">
