@@ -67,6 +67,13 @@ interface FriendListDataType {
   data: FriendDataType[]
 }
 
+declare global {
+  interface Window {
+    Kakao: any
+  }
+  const Kakao: any
+}
+
 const calculateDday = (endDate: string) => {
   const currentDate = new Date()
   const dateString = currentDate.toISOString().slice(0, 10)
@@ -357,6 +364,19 @@ const TimeCapsuleDetail = function () {
     ],
   })
 
+  //카카오 javaScript 생성
+  useEffect(() => {
+    const script = document.createElement("script")
+    script.src = "https://developers.kakao.com/sdk/js/kakao.js"
+    script.async = true
+
+    document.body.appendChild(script)
+
+    return () => {
+      document.body.removeChild(script)
+    }
+  }, [])
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -621,6 +641,50 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     }
   }, [oneDayLater])
 
+  function kakaoShare() {
+    console.log("Kakao : ", window.Kakao)
+    if (window.Kakao) {
+      const kakao = window.Kakao
+
+      // 중복 initialization 방지
+      if (!kakao.isInitialized()) {
+        kakao.init("e25afc7dead08f60a151179a01026248")
+      }
+
+      kakao.Link.sendDefault({
+        objectType: "feed",
+        content: {
+          title: "당신의 스쳐가는 시간을 의미있게 담다",
+          description:
+            "친구가 담다에서 기다리고있어요 \n메인화면에서 캡슐코드를 입력해주세요.",
+          imageUrl:
+            "https://damda.s3.ap-northeast-2.amazonaws.com/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C/Frame+45.png",
+          link: {
+            mobileWebUrl: "https://damda.online",
+            webUrl: "https://damda.online",
+          },
+        },
+        itemContent: {
+          items: [
+            {
+              item: "캡슐코드",
+              itemOp: `${capsuleData.inviteCode}`,
+            },
+          ],
+        },
+        buttons: [
+          {
+            title: "담다 접속하기",
+            link: {
+              mobileWebUrl: "https://damda.online",
+              webUrl: "https://damda.online",
+            },
+          },
+        ],
+      })
+    }
+  }
+
   return (
     <div className="relative">
       {isHelp && capsuleData.myInfo.host ? (
@@ -693,6 +757,39 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                   타임캡슐이 등록되고 나면 <br />
                   매일 1장의 카드와 파일을 업로드 할 수 있어요
                 </div>
+              ) : null}
+
+              {capsuleData.criteriaInfo.cirteriaDays ? (
+                <div className="text-center mt-3">
+                  매주{" "}
+                  {capsuleData.criteriaInfo.cirteriaDays?.map((day) => (
+                    <span key={day.dayEn} className="font-bold">
+                      {day.dayKr}{" "}
+                    </span>
+                  ))}{" "}
+                  기록해요
+                </div>
+              ) : null}
+
+              {capsuleData.criteriaInfo.weatherStatus ||
+              capsuleData.criteriaInfo.localBig ? (
+                <>
+                  <div className="text-center mt-3">
+                    <span className="font-bold">
+                      {capsuleData.criteriaInfo.weatherStatus === "RAIN"
+                        ? "비"
+                        : capsuleData.criteriaInfo.weatherStatus === "SNOW"
+                        ? "눈"
+                        : null}
+                    </span>{" "}
+                    오는 날 <br />
+                    <span className="font-bold">
+                      {capsuleData.criteriaInfo.localBig}{" "}
+                      {capsuleData.criteriaInfo.localMedium}
+                    </span>{" "}
+                    에서 열 수 있어요
+                  </div>
+                </>
               ) : null}
 
               {capsuleData.penalty ? (
@@ -990,6 +1087,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <HightLight />
                 {/* 공유하기 버튼 */}
                 <Shareimg
+                  onClick={kakaoShare}
                   className="absolute"
                   src="../../assets/icons/share.png"
                   alt="share"
@@ -1195,7 +1293,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <span className="font-bold">
                   {capsuleData.criteriaInfo.localBig}{" "}
                   {capsuleData.criteriaInfo.localMedium}
-                </span>
+                </span>{" "}
                 에서 열 수 있어요
               </div>
             </>
