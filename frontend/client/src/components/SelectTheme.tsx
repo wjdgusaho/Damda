@@ -3,12 +3,7 @@ import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
 import { SubHeader } from "./inc/SubHeader"
-import {
-  changeUniverseDarkTheme,
-  changeUniverseLightTheme,
-  changeHeartTheme,
-  changeMarbleTheme,
-} from "../store/Theme"
+import { SET_THEME } from "../store/Theme"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
@@ -77,14 +72,7 @@ const SelectTheme = function () {
             <img
               onClick={() => {
                 if (themeList[index].userHave) {
-                  if (themeList[index].themeNo === 1)
-                    dispatch(changeUniverseDarkTheme())
-                  if (themeList[index].themeNo === 2)
-                    dispatch(changeUniverseLightTheme())
-                  if (themeList[index].themeNo === 3)
-                    dispatch(changeHeartTheme())
-                  if (themeList[index].themeNo === 4)
-                    dispatch(changeMarbleTheme())
+                  dispatch(SET_THEME(themeList[index].themeNo))
                 }
               }}
               className={

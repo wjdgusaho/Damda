@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 import {
   universeDarkTheme,
   universeLightTheme,
@@ -6,30 +6,24 @@ import {
   marbleTheme,
 } from "../theme"
 
+const themeList = [
+  universeDarkTheme, // dummy data (don't use)
+  universeDarkTheme,
+  universeLightTheme,
+  heartTheme,
+  marbleTheme,
+]
+
 let theme = createSlice({
   name: "theme",
-  initialState: universeDarkTheme,
+  initialState: themeList[0],
   reducers: {
-    changeUniverseDarkTheme() {
-      return universeDarkTheme
-    },
-    changeUniverseLightTheme() {
-      return universeLightTheme
-    },
-    changeHeartTheme() {
-      return heartTheme
-    },
-    changeMarbleTheme() {
-      return marbleTheme
+    SET_THEME: (state, action: PayloadAction<number>) => {
+      return themeList[action.payload]
     },
   },
 })
 
-export let {
-  changeUniverseDarkTheme,
-  changeUniverseLightTheme,
-  changeHeartTheme,
-  changeMarbleTheme,
-} = theme.actions
+export let { SET_THEME } = theme.actions
 
 export default theme
