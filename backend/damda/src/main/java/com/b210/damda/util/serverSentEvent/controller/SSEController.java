@@ -24,10 +24,6 @@ public class SSEController {
     private final FriendEventService friendEventService;
     private final TimeCapsuleEventService timeCapsuleEventService;
 
-    @GetMapping(value = "/sse/test")
-    public void test() {
-        eventStreamService.test();
-    }
 
     //최초 접속 시 로그인 이벤트. 이를 통해 스트림 파이프라인 구축 가능
     //MediaType 명시를 통해 엔드포인트가 text/event-stream을 반환하도록 강제함.
@@ -35,10 +31,15 @@ public class SSEController {
     public Flux<ServerSentEvent<JsonNode>> login() {
         log.info("로그인 개방");
         //1. 확인하지 못했던 친구 상태 알림 로직
-        //friendEventService.checkAllFriendEvent();
+        friendEventService.checkAllFriendEvent();
         //2. 확인하지 못했던 타임 캡슐 알림 로직
 
         return eventStreamService.connectStream();
+    }
+
+    @GetMapping(value = "/sse/check")
+    public void checkConnection() {
+        eventStreamService.checkConnection();
     }
 
 }

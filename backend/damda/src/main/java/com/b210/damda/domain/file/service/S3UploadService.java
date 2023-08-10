@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -55,8 +57,11 @@ public class S3UploadService {
             throw new CommonException(CustomExceptionStatus.EXTENSION_ERROR_IMAGE);
         }
 
-        String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
-        String newFilename = "timecapsule/"+ timecapsuleNo + "/card/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
+        LocalDateTime current = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+        String formatted = current.format(formatter);
+
+        String newFilename = "timecapsule/" + timecapsuleNo + "/card/" + formatted + multipartFile.getOriginalFilename(); // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
@@ -75,8 +80,12 @@ public class S3UploadService {
             throw new CommonException(CustomExceptionStatus.EXTENSION_ERROR_FILE);
         }
 
-        String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
-        String newFilename = "timecapsule/" + timecapsuleNo + "/file/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
+        LocalDateTime current = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+        String formatted = current.format(formatter);
+
+
+        String newFilename = "timecapsule/" + timecapsuleNo + "/file/" + formatted + multipartFile.getOriginalFilename(); // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
@@ -84,17 +93,6 @@ public class S3UploadService {
 
         amazonS3.putObject(bucket, newFilename, multipartFile.getInputStream(), metadata);
         return amazonS3.getUrl(bucket, newFilename).toString();
-    }
-
-    public ResponseEntity<UrlResource> downloadImage(String originalFilename) {
-        UrlResource urlResource = new UrlResource(amazonS3.getUrl(bucket, originalFilename));
-
-        String contentDisposition = "attachment; filename=\"" +  originalFilename + "\"";
-
-        // header에 CONTENT_DISPOSITION 설정을 통해 클릭 시 다운로드 진행
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-                .body(urlResource);
     }
 
     // 사진 확장자 검사

@@ -43,21 +43,6 @@ public class EventStreamService {
     //마지막 heartbeat 시간대 체크 : 서버는 클라이언트의 연결 상태를 위해 주기적으로 마지막 접속 시간을 체크함, 클라이언트의 답신이 장기간 없을 경우 끊어짐으로 판단
     static public final Map<Long, LocalDateTime> lastResponseTimes = new ConcurrentHashMap<>();
 
-    public void test() {
-        log.warn("테스트 userFluxSinkMap 값 : {}", userFluxSinkMap.size());
-        for (int i = 0; i < userFluxSinkMap.size(); i++) {
-            log.info("details : {}", userFluxSinkMap.get(i));
-        }
-        log.warn("테스트 disconnectProcessors 값 : {}", disconnectProcessors.size());
-        for (int i = 0; i < disconnectProcessors.size(); i++) {
-            log.info("details : {}", disconnectProcessors.get(i));
-        }
-        log.warn("테스트 lastResponseTimes 값 : {}", lastResponseTimes.size());
-        for (int i = 0; i < lastResponseTimes.size(); i++) {
-            log.info("details : {}", lastResponseTimes.get(i));
-        }
-    }
-
     //최초 연결 시(로그인), 혹은 재연결 시 Flux 생성 및 Map에 저장
     public Flux<ServerSentEvent<JsonNode>> connectStream() {
         long userNo = addOnEventService.getUserNo();
@@ -66,7 +51,7 @@ public class EventStreamService {
 
         //이후 재연결 로직 발생
         //접속 시간 등록
-        lastResponseTimes.put(userNo, LocalDateTime.now());
+        lastResponseTimes.put(userNo, LocalDateTime.now().plusHours(9));
 
         //Sink맵 추가 후, onDispose 이벤트 시 제거하는 Flux 생성
         Flux<ServerSentEvent<JsonNode>> dataFlux = Flux.create(sink -> userFluxSinkMap.put(userNo, sink.onDispose(() -> userFluxSinkMap.remove(userNo))));
@@ -82,7 +67,7 @@ public class EventStreamService {
                         .map(new Function<Long, ServerSentEvent<JsonNode>>() {
                             @Override
                             public ServerSentEvent<JsonNode> apply(Long tick) {
-                                return addOnEventService.buildServerSentEvent("check-connection", new ServerSentEventDTO(null, "heartbeat", LocalDateTime.now().toString()));
+                                return addOnEventService.buildServerSentEvent("check-connection", new ServerSentEventDTO(null, null,null,"heartbeat", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
                             }
                         });
 
@@ -99,37 +84,36 @@ public class EventStreamService {
     //클라이언트에서 응답 존재할 경우(정상적으로 연결이 이어질 경우) 마지막 시간 갱신
     public void checkConnection() {
         log.info("checkConnection : 클라이언트에서 응답 수신하였음");
-        lastResponseTimes.put(addOnEventService.getUserNo(), LocalDateTime.now());
+        lastResponseTimes.put(addOnEventService.getUserNo(), LocalDateTime.now().plusHours(9));
     }
 
     //로그아웃시 종료 로직
     public void disconnectStream() {
-        log.info("disconnectStream(), 로그아웃");
         long userNo = addOnEventService.getUserNo();
-
+        log.info("disconnectStream(), 로그아웃 유저 {}", userNo);
         //저장된 스트림 종료 및 싱크 제거, 응답 기록 제거
         endAndRemoveStream(userNo);
 
         //로그아웃 알림
-        ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("custom-event", new ServerSentEventDTO(null, "로그아웃 진행", LocalDateTime.now().toString() ));
+        ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("logout-event", new ServerSentEventDTO(null, null, null, "로그아웃 진행", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
         sendEvent(userNo, logoutEvent);
     }
 
-//    //미답신 시 종료 로직 : 현재 비정상적 종료를 시행할 경우 BE -> Client로 전송이 되지 않아 Dead Code이다..
-//    public void disconnectStream(long userNo) {
-//        log.info("disconnectStream, 미답신 {}", userNo);
-//        //저장된 스트림 종료 및 싱크 제거
-//        endAndRemoveStream(userNo);
-//
-//        //끊어짐 알림
-//        ServerSentEvent<JsonNode> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", new ServerSentEventDTO(null, "클라이언트 미답신으로 인한 연결 끊어짐", LocalDateTime.now().toString()));
-//        sendEvent(userNo, disconnectEvent);
-//    }
+    //미답신 시 종료 로직 : 현재 비정상적 종료를 시행, 스케줄러에서 사용
+    public void disconnectStream(long userNo) {
+        log.info("disconnectStream, 미답신 {}", userNo);
+
+        //끊어짐 알림 : 해당 알림이 클라이언트로 가고, 클라이언트가 만약 현재 접속중이라면 10초 뒤에 다시 로그인 로직을 실행한다.
+        ServerSentEvent<JsonNode> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", new ServerSentEventDTO(null, null, null, "클라이언트 장기 미답신으로 인한 연결 끊어짐", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
+        sendEvent(userNo, disconnectEvent);
+
+        //저장된 스트림 종료 및 싱크 제거
+        endAndRemoveStream(userNo);
+    }
 
     //저장된 스트림 종료 및 싱크 제거, 외부 스케줄러에서 종료 로직을 사용할 수 있기에 synchronized 처리하였다.
     public synchronized void endAndRemoveStream(long userNo) {
         log.info("endAndRemoveStream, 저장된 스트림 종료 및 싱크 제거 Map에 유저 정보 제거, {}", userNo);
-
 
         //실제 연결된 Reactive Stream Sink를 제거한다.
         FluxSink<ServerSentEvent<JsonNode>> sink = userFluxSinkMap.get(userNo);
