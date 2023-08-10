@@ -12,14 +12,15 @@ export const toastOption: ToastOptions = {
   theme: "light",
 }
 
-interface FriendType {
-  userNo: number
-  nickname: string
-  profileImage: string
+export interface alarmFriendType {
+  fromUser: number
+  fromName: string
+  fromImage: string
+  content: string
   date: string
 }
 
-interface CapsuleType {
+export interface alarmCapsuleType {
   timecapsuleNo: number
   type: string
   sDate: string
@@ -32,8 +33,8 @@ interface CapsuleType {
 }
 
 interface alarmData {
-  friends: FriendType[]
-  timecapsules: CapsuleType[]
+  friends: alarmFriendType[]
+  timecapsules: alarmCapsuleType[]
 }
 
 const initialState: alarmData = {
@@ -45,10 +46,10 @@ export const alarmSlice = createSlice({
   name: "alarm",
   initialState,
   reducers: {
-    ADD_FRIENDS: (state, action: PayloadAction<FriendType>) => {
+    ADD_FRIENDS: (state, action: PayloadAction<alarmFriendType>) => {
       state.friends.concat(action.payload)
     },
-    ADD_TIMECAPSULES: (state, action: PayloadAction<CapsuleType>) => {
+    ADD_TIMECAPSULES: (state, action: PayloadAction<alarmCapsuleType>) => {
       state.timecapsules.concat(action.payload)
     },
     DELETE_ALARM_ALL: (state) => {

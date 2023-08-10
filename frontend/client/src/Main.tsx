@@ -39,7 +39,7 @@ import { SET_TOKEN } from "./store/Auth"
 import { serverUrl } from "./urls"
 import { TimecapsuleOpen } from "./components/TimecapsuleOpen"
 import TimecapsuleResult from "./components/TimecapsuleResult"
-import { ADD_FRIENDS, toastOption } from "./store/Alarm"
+import { ADD_FRIENDS, alarmFriendType, toastOption } from "./store/Alarm"
 import { EmptyPage } from "./components/EmptyPage"
 
 function Main() {
@@ -120,24 +120,18 @@ function Main() {
           Authorization: "Bearer " + token,
         },
       })
-      // 이건 왜있는지 잘 모르겠음...
-      newEventSource.onmessage = (event) => {
-        console.log("Message : ", event)
-      }
       // 에러가 났을 때 발생하는 이벤트 함수
       newEventSource.onerror = (event) => {
         console.log("Error event : ", event)
+        closeEventSource()
       }
       // addEventListener : 특정 이벤트 string 값을 서버에서 받으면 콜백함수를 실행한다.
       // 콜백함수 : (event) => {}  <-- 이렇게 쓰는게 하나의 콜백함수.
-      newEventSource.addEventListener("custom-event", (event) => {
-        console.log("Custom : ", event)
-      })
       newEventSource.addEventListener("friend-event", (event: any) => {
-        console.log("Friend : ", event)
-        const data = JSON.parse(event["data"])
-        toast.info("친구 요청이 왔습니다.", toastOption)
-        dispatch(ADD_FRIENDS(data.fromUser))
+        // console.log("Friend : ", event)
+        const data: alarmFriendType = JSON.parse(event["data"])
+        toast.info(`${data.fromUser}${data.content}\n${data.date}`, toastOption)
+        dispatch(ADD_FRIENDS(data))
       })
       newEventSource.addEventListener("check-connection", (event: any) => {
         // 새롭게 서버로 보낼 이벤트소스
@@ -148,14 +142,15 @@ function Main() {
             Authorization: "Bearer " + token,
           },
         })
-        otherESource.onmessage = (event) => {
-          console.log("check message : ", event)
-        }
-        otherESource.onerror = (event) => {
-          console.log("check error : ", event)
-        }
+        // otherESource.onmessage = (event) => {
+        //   console.log("check message : ", event)
+        // }
+        // otherESource.onerror = (event) => {
+        //   console.log("check error : ", event)
+        // }
         setOtherEventSource(otherESource)
       })
+      // 장기간 미응답으로 연결을 해제하고 다시 연결함.
       newEventSource.addEventListener("end-of-stream", (event) => {
         closeEventSource()
         setTimeout(() => {
