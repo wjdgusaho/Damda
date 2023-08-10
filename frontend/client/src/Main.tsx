@@ -4,6 +4,8 @@ import { RootState } from "./store/Store"
 import { useDispatch, useSelector } from "react-redux"
 import { CookiesProvider } from "react-cookie"
 import { EventSourcePolyfill } from "event-source-polyfill"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 import MainPage from "./components/MainPage"
 import { CheckPassword } from "./components/Auth/CheckPassword"
@@ -131,6 +133,7 @@ function Main() {
       })
       newEventSource.addEventListener("friend-event", (event) => {
         console.log("Friend : ", event)
+        toast.info("친구 요청이 왔습니다.")
       })
       newEventSource.addEventListener("check-connection", (event: any) => {
         console.log("Check connection : ", event)
@@ -173,6 +176,7 @@ function Main() {
   return (
     <ThemeProvider theme={themeState}>
       <div className="Main">
+        <ToastContainer />
         <CookiesProvider>
           <BrowserRouter>
             <Routes>
