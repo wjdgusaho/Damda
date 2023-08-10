@@ -1,6 +1,6 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.theme;
 
-import com.b210.damda.domain.dto.ThemeMappingDTO;
+import com.b210.damda.domain.dto.theme.ThemeMappingDTO;
 import com.b210.damda.domain.entity.User.User;
 import lombok.Getter;
 import lombok.Setter;

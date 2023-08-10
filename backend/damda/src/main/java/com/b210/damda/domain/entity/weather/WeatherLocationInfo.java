@@ -14,7 +14,7 @@ public class WeatherLocationInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "weather_location_info_no")
+    @Column(name = "id")
     private long id;
 
     @Column(name = "local_big")

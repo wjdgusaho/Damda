@@ -26,7 +26,7 @@ public class UserLocation {
     @JoinColumn(name = "user_no")
     private User user;
 
-    private Timestamp weaterTime;
+    private Timestamp weatherTime;
 
     private String weather;
 
