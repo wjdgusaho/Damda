@@ -174,10 +174,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                     catch (Exception e) { throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND); }
 
                     //위치가 있을경우
-                    if (timecapsuleCriteria.getLocalBig() != null) {   
+                    if (timecapsuleCriteria.getLocalBig() != null && !timecapsuleCriteria.getLocalBig().trim().equals("")) {
                         //LocalBig과 LocalMedium 이 같지 않으면 오픈 조건 미성립!
                         if(timecapsuleCriteria.getLocalBig().equals(location.getLocalBig()) && 
-                            timecapsuleCriteria.getLocalMedium().equals(location.getLocalMedium())) continue;
+                            timecapsuleCriteria.getLocalMedium().equals(location.getLocalMedium()));
                         else openAble = false;
                     }
                     //날씨가 있는 경우
