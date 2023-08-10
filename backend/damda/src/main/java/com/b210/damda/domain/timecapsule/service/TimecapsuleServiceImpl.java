@@ -71,7 +71,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final Long MAX_FILESIZE = (long) 50 * (1024 * 1024);
     private final int NOW_PARTICIOPANT = 1;
     /*
-        유저 정보 불러오기
+        시큐리티에있는 유저NO 불러오기
      */
     public Long getUserNo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -83,6 +83,44 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     // 24시간이 지났는지 판단
     long millisecondsInADay = 24 * 60 * 60 * 1000;  // 24시간을 밀리초로 변환
+
+    /*
+        유저 정보 불러오기
+     */
+    public User getUser(Long userNo){
+        User user = userRepository.findByUserNo(userNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_USER));
+        return user;
+    }
+
+    /*
+        타임캡슐 정보 불러오기
+     */
+    public Timecapsule getTimecapsule(Long timecapsuleNo){
+        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
+                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE));
+
+        //완전히 삭제된 타임캡슐이라면
+        if (timecapsule.getRemoveDate() != null){
+            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+        }
+
+        return timecapsule;
+    }
+
+    /*
+        유저 맵핑 정보 불러오기
+     */
+    public TimecapsuleMapping getTimecapsuleMapping(Long userNo, Long timecapsuleNo){
+        //캡슐 - 유저 매핑된게 아니라면
+        TimecapsuleMapping myMapping = timecapsuleMappingRepository
+                .findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsuleNo)
+                .orElseThrow(
+                        () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE));
+
+        return myMapping;
+    }
+
 
     /*
         타임캡슐 리스트 받아오기
@@ -121,11 +159,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public List<MainTimecapsuleListDTO> workTimecapsule(WeatherLocationDTO weatherLocationDto) {
         Long userNo = getUserNo();
-
-        log.info(weatherLocationDto.toString());
-
-        User user = userRepository.findByUserNo(userNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER));
+        User user = getUser(userNo);
 
         Map<String,List<TimecapsuleMapping>> allTimecapsuleList = getTimecapsuleList(userNo);
 
@@ -282,10 +316,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     public Long createTimecapsule(TimecapsuleCreateDTO timecapsuleCreateDTO) {
 
         Long userNo = getUserNo();
-        //타임캡슐 생성 불가 로직
-        User user = userRepository.findByUserNo(userNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER));
+        User user = getUser(userNo);
 
+        //타임캡슐 생성 불가 로직 ( 최대값 도달 )
         if(user.getMaxCapsuleCount() <= user.getNowCapsuleCount()){
             throw new CommonException(CustomExceptionStatus.NOT_CREATE_TIMECAPSULE_USERLIMIT);
         }
@@ -335,14 +368,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
              }
          }
 
-         //타임캡슐 유저 맵핑
+         //타임캡슐 유저 맵핑 (생성)
          TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping();
          timecapsuleMapping.setUser(userRepository.findByUserNo(userNo).orElseThrow(
                  () -> new CommonException(CustomExceptionStatus.NOT_USER)));
          timecapsuleMapping.setTimecapsule(saveTimecapsule);
          timecapsuleMapping.setHost(true);
-
-         // 저장
          TimecapsuleMapping saveMapping = timecapsuleMappingRepository.save(timecapsuleMapping);
 
          // 저장 에러
@@ -357,31 +388,19 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         return saveTimecapsule.getTimecapsuleNo();
     }
 
+    /*
+        타임캡슐 디테일
+     */
     @Override
     public TimecapsuleDetailDTO getTimecapsuleDetail(Long timecapsuleNo){
         Long userNo = getUserNo();
 
         //유저
-        User user = userRepository.findByUserNo(userNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER)
-        );
-
+        User user = getUser(userNo);
         //타임캡슐
-        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)
-        );
-
-        //완전히 삭제된 타임캡슐이라면
-        if (timecapsule.getRemoveDate() != null){
-            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
-        }
-
-        //캡슐 - 유저 매핑된게 아니라면
-        TimecapsuleMapping myMapping = timecapsuleMappingRepository
-                .findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsuleNo)
-                .orElseThrow(
-                        () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
-                );
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        //타임캡슐 맵핑여부
+        TimecapsuleMapping myMapping = getTimecapsuleMapping(userNo, timecapsuleNo);
 
         //삭제시간이 있다면
         if(myMapping.getDeleteDate() != null){
@@ -455,29 +474,15 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
      */
     @Override
     public void registCard(MultipartFile cardImage, Long timecapsuleNo) {
-        Long userNo = getUserNo();
         //유저
-        User user = userRepository.findByUserNo(userNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER)
-        );
-
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
         //타임캡슐
-        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)
-        );
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        //캡슐 - 유저 맵핑
+        TimecapsuleMapping myMapping = getTimecapsuleMapping(userNo, timecapsuleNo);
 
-        //완전히 삭제된 타임캡슐이라면
-        if (timecapsule.getRemoveDate() != null){
-            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
-        }
-
-        //캡슐 - 유저 매핑된게 아니라면
-        TimecapsuleMapping myMapping = timecapsuleMappingRepository
-                .findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsule.getTimecapsuleNo())
-                .orElseThrow(
-                        () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
-                );
-
+        //오늘은 이미카드작성을 하였습니다.
         if(myMapping.isCardAble() == false){
             throw new CommonException(CustomExceptionStatus.ALREADY_CARD_UPLOAD);
         }
@@ -863,28 +868,13 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public Map<String, Object> timecapsuleFileSize(Long timecapsuleNo) {
 
-        Long userNo = getUserNo();
         //유저
-        User user = userRepository.findByUserNo(userNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER)
-        );
-
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
         //타임캡슐
-        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)
-        );
-
-        //완전히 삭제된 타임캡슐인가
-        if (timecapsule.getRemoveDate() != null){
-            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
-        }
-
-        //캡슐 - 유저 매핑된게 아니라면
-        TimecapsuleMapping myMapping = timecapsuleMappingRepository
-                .findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsuleNo)
-                .orElseThrow(
-                        () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
-                );
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        //캡슐 - 유저 맵핑
+        TimecapsuleMapping myMapping = getTimecapsuleMapping(userNo, timecapsuleNo);
 
         Map<String, Object> fileInfo = new HashMap<>();
         fileInfo.put("maxFileSize", timecapsule.getMaxFileSize());
@@ -899,27 +889,15 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public Map<String, Object> timecapsuleFileUpload(MultipartFile file, Long timecapsuleNo) {
 
-        Long userNo = getUserNo();
         //유저
-        User user = userRepository.findByUserNo(userNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER)
-        );
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
         //타임캡슐
-        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE)
-        );
-        //완전히 삭제된 타임캡슐인가
-        if (timecapsule.getRemoveDate() != null){
-            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
-        }
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        //캡슐 - 유저 맵핑
+        TimecapsuleMapping myMapping = getTimecapsuleMapping(userNo, timecapsuleNo);
 
-        //캡슐 - 유저 매핑된게 아니라면
-        TimecapsuleMapping myMapping = timecapsuleMappingRepository
-                .findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsule.getTimecapsuleNo())
-                .orElseThrow(
-                        () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
-                );
-
+        //오늘은 이미 파일업로드 하였습니다.
         if(myMapping.isFileAble() == false){
             throw new CommonException(CustomExceptionStatus.ALREADY_FILE_UPLOAD);
         }
@@ -965,22 +943,13 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public void timecapsuleExit(Long timecapsuleNo) {
 
-        User user = userRepository.findByUserNo(this.getUserNo()).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER));
-
-        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE));
-        
-        //완전히 삭제된 타임캡슐인가
-        if (timecapsule.getRemoveDate() != null){
-            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
-        }
-
-        TimecapsuleMapping timecapsuleMapping = timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(
-                user.getUserNo(), timecapsule.getTimecapsuleNo()
-        ).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
-        );
+        //유저
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
+        //타임캡슐
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        //캡슐 - 유저 맵핑
+        TimecapsuleMapping timecapsuleMapping = getTimecapsuleMapping(userNo, timecapsuleNo);
 
         //만약 나가는 사람이 방장일경우 캡슐방 폭파
         if(timecapsuleMapping.isHost()){
@@ -1029,22 +998,13 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public void timecapsuleKick(Long timecapsuleNo, Long kickUserNo) {
 
-        User user = userRepository.findByUserNo(this.getUserNo()).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER));
-
-        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE));
-
-        //완전히 삭제된 타임캡슐인가
-        if (timecapsule.getRemoveDate() != null){
-            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
-        }
-
-        TimecapsuleMapping userTimecapsule = timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(
-                user.getUserNo(), timecapsule.getTimecapsuleNo()
-        ).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
-        );
+        //유저
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
+        //타임캡슐
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        //캡슐 - 유저 맵핑
+        TimecapsuleMapping userTimecapsule = getTimecapsuleMapping(userNo, timecapsuleNo);
 
         //강퇴하려는 유저
         User kickUser = userRepository.findByUserNo(kickUserNo).orElseThrow(
@@ -1089,22 +1049,13 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public void timecapsuleDelete(Long timecapsuleNo) {
 
-        User user = userRepository.findByUserNo(this.getUserNo()).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_USER));
-
-        Timecapsule timecapsule = timecapsuleRepository.findById(timecapsuleNo).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE));
-
-        //완전히 삭제된 타임캡슐인가
-        if (timecapsule.getRemoveDate() != null){
-            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
-        }
-
-        TimecapsuleMapping userTimecapsule = timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(
-                user.getUserNo(), timecapsule.getTimecapsuleNo()
-        ).orElseThrow(
-                () -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE)
-        );
+        //유저
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
+        //타임캡슐
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        //캡슐 - 유저 맵핑
+        TimecapsuleMapping userTimecapsule = getTimecapsuleMapping(userNo, timecapsuleNo);
 
         //반장이 아닌경우
         if(userTimecapsule.isHost() == false){
@@ -1171,8 +1122,5 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         return key.toString();
     }
-
-
-
 
 }
