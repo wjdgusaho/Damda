@@ -46,7 +46,7 @@ public class S3UploadService {
         return amazonS3.getUrl(bucket, newFilename).toString();
     }
 
-    public String cardSaveFile(MultipartFile multipartFile) throws IOException {
+    public String cardSaveFile(MultipartFile multipartFile, Long timecapsuleNo) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 파일 확장자
 
@@ -56,7 +56,7 @@ public class S3UploadService {
         }
 
         String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
-        String newFilename = "timecapsule-card/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
+        String newFilename = "timecapsule/"+ timecapsuleNo + "/card/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
@@ -66,7 +66,7 @@ public class S3UploadService {
         return amazonS3.getUrl(bucket, newFilename).toString();
     }
 
-    public String fileSaveFile(MultipartFile multipartFile) throws IOException {
+    public String fileSaveFile(MultipartFile multipartFile, Long timecapsuleNo) throws IOException {
         String originalFilename = multipartFile.getOriginalFilename();
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".")); // 파일 확장자
 
@@ -76,7 +76,7 @@ public class S3UploadService {
         }
 
         String randomName = UUID.randomUUID().toString(); // 랜덤한 문자열 생성
-        String newFilename = "timecapsule-file/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
+        String newFilename = "timecapsule/" + timecapsuleNo + "/file/" + randomName + extension; // 랜덤한 문자열과 확장자를 합쳐서 새 파일명 생성
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
