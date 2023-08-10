@@ -330,7 +330,7 @@ const Card = function () {
           <div className="flex">
             <img
               className="w-8 mr-1"
-              src="/assets/icons/profile_1.png"
+              src={UserData.profileImage}
               alt="프로필사진"
             />
             <span className="mt-1 font-light text-neutral-500">
@@ -514,7 +514,7 @@ const InputResult = styled.div<ContentProps>`
 
 const TitleBG = styled.div<TitleProps>`
   width: ${(props) => props.width};
-  background-color: #ff4a4a7b;
+  background-color: #ffffffa3;
   height: 7px;
 `
 interface ContentProps {

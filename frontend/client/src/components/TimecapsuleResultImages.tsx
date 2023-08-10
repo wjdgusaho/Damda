@@ -78,7 +78,7 @@ const TimecapsuleResultImages = function () {
         style={customStyles}
       >
         <div>
-          <img src={selectedImageUrl} alt="Selected" />
+          <img className="w-96" src={selectedImageUrl} alt="Selected" />
         </div>
       </Modal>
     </ImgConainer>
