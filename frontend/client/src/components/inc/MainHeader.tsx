@@ -79,8 +79,12 @@ const customStyles = {
 
 const ModalCard = tw.div`
   mt-5 p-3 text-lilac-900 bg-white opacity-80 rounded-3xl shadow-2xl
-  inline-flex items-center
+  inline-flex items-center flex-wrap
   w-72
+`
+
+const ModalBtn = tw.button`
+  mx-auto shadow-xl
 `
 
 const AlarmFriendComponent = function ({
@@ -96,16 +100,17 @@ const AlarmFriendComponent = function ({
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
       <div>
-        <AlertImg src={friend.fromImage} alt="defalut" />
+        <AlertImg src={friend.fromProfileImage} alt="defalut" />
       </div>
       <div className="ml-2" style={{ width: "150px" }}>
         <p>
-          <span>{friend.fromName}</span>
+          <span className="text-lilac-600 font-bold">{friend.fromName}</span>
+          <span className="text-gray-400">#{friend.fromUser}</span>
           {friend.content}
         </p>
       </div>
       <div>
-        <button onClick={handleMove}>친구 페이지로 이동하기</button>
+        <ModalBtn onClick={handleMove}>친구 페이지로 이동하기</ModalBtn>
       </div>
     </ModalCard>
   )
