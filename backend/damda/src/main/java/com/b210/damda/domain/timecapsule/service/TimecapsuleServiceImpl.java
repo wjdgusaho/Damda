@@ -1071,6 +1071,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, kickUserNo).get();
 
         timecapsuleInvite.setStatus("REJECTED");
+        timecapsuleInviteRepository.save(timecapsuleInvite);
 
         //참가자 감소
         timecapsule.setNowParticipant(timecapsule.getNowParticipant() - 1);
