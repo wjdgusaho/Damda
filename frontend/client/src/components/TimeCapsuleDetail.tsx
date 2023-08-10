@@ -456,6 +456,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [deleteModalIsOpen, setDeleteModalIsOpen] = React.useState(false)
   const [kickOutModalIsOpen, setKickOutModalIsOpen] = React.useState(false)
+  const [exitModalIsOpen, setExitModalIsOpen] = React.useState(false)
 
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
@@ -522,7 +523,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     }
   }
 
-  const handleExitClick = async () => {
+  const handleDeleteClick = async () => {
     try {
       const response = await axios({
         method: "PATCH",
@@ -549,6 +550,35 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         alert("해당 타임캡슐의 방장이 아닙니다.")
       } else if (response.data.code === -3009) {
         alert("생성 후 24시간 이내에만 삭제할 수 있습니다.")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleExitClick = async () => {
+    try {
+      const response = await axios({
+        method: "PATCH",
+        url: serverUrl + "timecapsule/exit",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        data: {
+          timecapsuleNo: capsuleId,
+        },
+      })
+      if (response.data.code === 200) {
+        navigate("/main")
+      } else if (response.data.code === -6006) {
+        alert("존재하지 않는 유저입니다.")
+      } else if (response.data.code === -6002) {
+        alert("존재하지 않는 타임캡슐 입니다.")
+      } else if (response.data.code === -6008) {
+        alert("이미 삭제된 타임캡슐 입니다.")
+      } else if (response.data.code === -5008) {
+        alert("해당 유저의 타임캡슐이 아닙니다.")
       }
     } catch (error) {
       console.log(error)
@@ -649,6 +679,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     setDeleteModalIsOpen(false)
   }
 
+  function openExitModal() {
+    setExitModalIsOpen(true)
+  }
+
+  function closeExitModal() {
+    setExitModalIsOpen(false)
+  }
+
   function openKickOutModal(userNo: number, userNickname: string) {
     setKickOutModalIsOpen(true)
     setKickOutedUserNo(userNo)
@@ -747,11 +785,22 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
             alt="questionMark"
           />
           <CapsuleGray capsuleIcon={capsuleData.capsuleIcon} />
-          <ExitImg
-            onClick={openDeleteModal}
-            src="../../assets/icons/bin_dark.png"
-            alt="bin"
-          />
+          {isHost ? (
+            <ExitImg
+              onClick={openDeleteModal}
+              src="../../assets/icons/bin_dark.png"
+              alt="bin"
+            />
+          ) : (
+            <ExitImg
+              onClick={openExitModal}
+              src="../../assets/icons/exit.png"
+              alt="exit"
+              width="22.5px"
+              height="22.5px"
+            />
+          )}
+
           <Modal
             isOpen={deleteModalIsOpen}
             onRequestClose={closeDeleteModal}
@@ -765,10 +814,29 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <FileCencelBtn type="button" onClick={closeDeleteModal}>
                   취소
                 </FileCencelBtn>
-                <FileSubmitBtn onClick={handleExitClick}>삭제</FileSubmitBtn>
+                <FileSubmitBtn onClick={handleDeleteClick}>삭제</FileSubmitBtn>
               </div>
             </ModalContent>
           </Modal>
+
+          <Modal
+            isOpen={exitModalIsOpen}
+            onRequestClose={closeExitModal}
+            style={customStyles}
+            contentLabel="ExitModal"
+          >
+            <ModalContent>
+              <ModalTitle className="my-2">정말 나가시겠어요?</ModalTitle>
+              <div>한 번 나가면 다시 들어올 수 없어요.</div>
+              <div className="mt-2">
+                <FileCencelBtn type="button" onClick={closeExitModal}>
+                  취소
+                </FileCencelBtn>
+                <FileSubmitBtn onClick={handleExitClick}>나가기</FileSubmitBtn>
+              </div>
+            </ModalContent>
+          </Modal>
+
           <TimerWrap>
             {timer}
             <div className="-mt-1">뒤에 등록돼요</div>
