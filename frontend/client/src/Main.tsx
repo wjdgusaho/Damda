@@ -132,8 +132,10 @@ function Main() {
       newEventSource.addEventListener("friend-event", (event) => {
         console.log("Friend : ", event)
       })
-      newEventSource.addEventListener("check-connection", (event) => {
+      newEventSource.addEventListener("check-connection", (event: any) => {
         console.log("Check connection : ", event)
+        const data = JSON.parse(event["data"])
+        console.log(data, data.formUser, data.content)
 
         // 새롭게 서버로 보낼 이벤트소스
         // serverUrl + (내가 보낼 url 주소)
