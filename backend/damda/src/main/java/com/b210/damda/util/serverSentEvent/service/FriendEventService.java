@@ -2,6 +2,7 @@ package com.b210.damda.util.serverSentEvent.service;
 
 import com.b210.damda.domain.dto.serverSentEvent.friend.FriendEventEnum;
 import com.b210.damda.domain.dto.serverSentEvent.ServerSentEventDTO;
+import com.b210.damda.domain.dto.serverSentEvent.friend.GetRequestToMeDTO;
 import com.b210.damda.domain.dto.serverSentEvent.friend.UserNameAndImageDTO;
 import com.b210.damda.domain.friend.repository.FriendRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 친구 이벤트와 관련된 서비스입니다.
@@ -43,7 +47,7 @@ public class FriendEventService {
                 break;
         }
 
-        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new ServerSentEventDTO(userNo.toString(), fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, addOnEventService.getNowTime()));
+        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new ServerSentEventDTO(userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, addOnEventService.getNowTime(LocalDateTime.now())));
         eventStreamService.sendEvent(fromNo, event);
     }
 
@@ -51,8 +55,15 @@ public class FriendEventService {
     public void checkAllFriendEvent() {
         log.info("나에게 온 친구 요청 알림 로직");
         Long userNo = addOnEventService.getUserNo();
+        List<GetRequestToMeDTO> requests = friendRepository.getRequestToMe(userNo);
+        String eventName = "friend-event";
+        String context = "님으로부터 친구 요청이 도착했습니다. ";
 
-
+        for (GetRequestToMeDTO request : requests) {
+            ServerSentEvent<JsonNode> event =
+                    addOnEventService.buildServerSentEvent(eventName, new ServerSentEventDTO(request.getFromNo(),
+                            request.getFromName(), request.getFromProfileImage(), context, addOnEventService.getNowTime(request.getDate())));
+            eventStreamService.sendEvent(userNo, event);
+        }
     }
-
 }

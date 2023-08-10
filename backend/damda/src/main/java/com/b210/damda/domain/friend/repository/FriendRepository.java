@@ -1,5 +1,6 @@
 package com.b210.damda.domain.friend.repository;
 
+import com.b210.damda.domain.dto.serverSentEvent.friend.GetRequestToMeDTO;
 import com.b210.damda.domain.dto.serverSentEvent.friend.UserNameAndImageDTO;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.User.UserFriend;
@@ -49,7 +50,8 @@ public interface FriendRepository extends JpaRepository<UserFriend, Long> {
     UserNameAndImageDTO getUserNameAndImage(Long userNo);
 
     //해당 유저로 요청한 사람들의 정보 가져오기
-//    @Query("SELECT u.friend, u.profileImage From UserFriend u Where u.userNo = :userNo")
-//    List<UserFriend> getRequestToMe(Long friendNo);
+    @Query("SELECT new com.b210.damda.domain.dto.serverSentEvent.friend.GetRequestToMeDTO(uf.user.nickname, uf.user.userNo, uf.requestDate, uf.user.profileImage) FROM UserFriend uf WHERE uf.friend.userNo = :friendNo and uf.status = 'REQUESTED'")
+    List<GetRequestToMeDTO> getRequestToMe(@Param("friendNo") Long friendNo);
+
 
 }
