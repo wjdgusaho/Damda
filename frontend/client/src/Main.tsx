@@ -130,7 +130,10 @@ function Main() {
       newEventSource.addEventListener("friend-event", (event: any) => {
         // console.log("Friend : ", event)
         const data: alarmFriendType = JSON.parse(event["data"])
-        toast.info(`${data.fromUser}${data.content}\n${data.date}`, toastOption)
+        toast.info(
+          `${data.fromName}#${data.fromUser}\n${data.content}\n${data.date}`,
+          toastOption
+        )
         dispatch(ADD_FRIENDS(data))
       })
       newEventSource.addEventListener("check-connection", (event: any) => {

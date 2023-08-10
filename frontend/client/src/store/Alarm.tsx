@@ -47,10 +47,10 @@ export const alarmSlice = createSlice({
   initialState,
   reducers: {
     ADD_FRIENDS: (state, action: PayloadAction<alarmFriendType>) => {
-      state.friends.concat(action.payload)
+      state.friends = state.friends.concat(action.payload)
     },
     ADD_TIMECAPSULES: (state, action: PayloadAction<alarmCapsuleType>) => {
-      state.timecapsules.concat(action.payload)
+      state.timecapsules = state.timecapsules.concat(action.payload)
     },
     DELETE_ALARM_ALL: (state) => {
       state = initialState

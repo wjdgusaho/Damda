@@ -136,18 +136,6 @@ export const MainHeader = function () {
     setModalOpen(false)
   }
 
-  const test = () => {
-    axios({
-      method: "GET",
-      url: serverUrl + "sse/test",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then((response) => console.log(response))
-      .catch((error) => console.error(error))
-  }
-
   return (
     <div>
       <Modal
