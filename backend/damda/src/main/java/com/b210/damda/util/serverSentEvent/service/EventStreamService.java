@@ -104,9 +104,8 @@ public class EventStreamService {
 
     //로그아웃시 종료 로직
     public void disconnectStream() {
-        log.info("disconnectStream(), 로그아웃");
         long userNo = addOnEventService.getUserNo();
-
+        log.info("disconnectStream(), 로그아웃 유저 {}", userNo);
         //저장된 스트림 종료 및 싱크 제거, 응답 기록 제거
         endAndRemoveStream(userNo);
 
@@ -115,21 +114,20 @@ public class EventStreamService {
         sendEvent(userNo, logoutEvent);
     }
 
-//    //미답신 시 종료 로직 : 현재 비정상적 종료를 시행할 경우 BE -> Client로 전송이 되지 않아 Dead Code이다..
-//    public void disconnectStream(long userNo) {
-//        log.info("disconnectStream, 미답신 {}", userNo);
-//        //저장된 스트림 종료 및 싱크 제거
-//        endAndRemoveStream(userNo);
-//
-//        //끊어짐 알림
-//        ServerSentEvent<JsonNode> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", new ServerSentEventDTO(null, "클라이언트 미답신으로 인한 연결 끊어짐", LocalDateTime.now().toString()));
-//        sendEvent(userNo, disconnectEvent);
-//    }
+    //미답신 시 종료 로직 : 현재 비정상적 종료를 시행, 스케줄러에서 사용
+    public void disconnectStream(long userNo) {
+        log.info("disconnectStream, 미답신 {}", userNo);
+        //저장된 스트림 종료 및 싱크 제거
+        endAndRemoveStream(userNo);
+
+        //끊어짐 알림
+        ServerSentEvent<JsonNode> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", new ServerSentEventDTO(null, "클라이언트 장기 미답신으로 인한 연결 끊어짐", LocalDateTime.now().toString()));
+        sendEvent(userNo, disconnectEvent);
+    }
 
     //저장된 스트림 종료 및 싱크 제거, 외부 스케줄러에서 종료 로직을 사용할 수 있기에 synchronized 처리하였다.
     public synchronized void endAndRemoveStream(long userNo) {
         log.info("endAndRemoveStream, 저장된 스트림 종료 및 싱크 제거 Map에 유저 정보 제거, {}", userNo);
-
 
         //실제 연결된 Reactive Stream Sink를 제거한다.
         FluxSink<ServerSentEvent<JsonNode>> sink = userFluxSinkMap.get(userNo);
