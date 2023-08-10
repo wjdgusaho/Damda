@@ -695,6 +695,39 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 </div>
               ) : null}
 
+              {capsuleData.criteriaInfo.cirteriaDays ? (
+                <div className="text-center mt-3">
+                  매주{" "}
+                  {capsuleData.criteriaInfo.cirteriaDays?.map((day) => (
+                    <span key={day.dayEn} className="font-bold">
+                      {day.dayKr}{" "}
+                    </span>
+                  ))}{" "}
+                  기록해요
+                </div>
+              ) : null}
+
+              {capsuleData.criteriaInfo.weatherStatus ||
+              capsuleData.criteriaInfo.localBig ? (
+                <>
+                  <div className="text-center mt-3">
+                    <span className="font-bold">
+                      {capsuleData.criteriaInfo.weatherStatus === "RAIN"
+                        ? "비"
+                        : capsuleData.criteriaInfo.weatherStatus === "SNOW"
+                        ? "눈"
+                        : null}
+                    </span>{" "}
+                    오는 날 <br />
+                    <span className="font-bold">
+                      {capsuleData.criteriaInfo.localBig}{" "}
+                      {capsuleData.criteriaInfo.localMedium}
+                    </span>{" "}
+                    에서 열 수 있어요
+                  </div>
+                </>
+              ) : null}
+
               {capsuleData.penalty ? (
                 <div className="text-center mt-3">
                   카드를 가장 적게 작성한 친구는 <br />{" "}
@@ -1195,7 +1228,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <span className="font-bold">
                   {capsuleData.criteriaInfo.localBig}{" "}
                   {capsuleData.criteriaInfo.localMedium}
-                </span>
+                </span>{" "}
                 에서 열 수 있어요
               </div>
             </>
