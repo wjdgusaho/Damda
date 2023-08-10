@@ -186,7 +186,7 @@ function Main() {
                 <Route path="/" element={<LandingPage />}></Route>
                 <Route path="/login/" element={<Login />}></Route>
                 <Route path="/dummykakao/" element={<DummyKakao />}></Route>
-                <Route path="*" element={<EmptyPage />}></Route>
+                <Route path="/*" element={<EmptyPage />}></Route>
               </Routes>
             )}
             {token && (
@@ -236,7 +236,7 @@ function Main() {
                   element={<TimecapsuleResult />}
                 ></Route>
                 {/* 그 이외의 없는 페이지 */}
-                <Route path="*" element={<EmptyPage />}></Route>
+                <Route path="/*" element={<EmptyPage />}></Route>
               </Routes>
             )}
           </BrowserRouter>
