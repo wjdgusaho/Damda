@@ -27,18 +27,18 @@ public class FriendEventService {
     private final AddOnEventService addOnEventService;   //공통 로직에서 사용되는 이벤트 메서드
     private final FriendService friendService;
 
-    public void friendEventService(long fromNo, FriendEventEnum eventEnum) {
+    public void friendEventService(long fromNo, FriendEventEnum type) {
         Long userNo = addOnEventService.getUserNo();
         log.info("가져온 유저 값,test : ", userNo);
         String context = "default";
         String eventName = "friend-event";
 
-        switch (eventEnum) {
+        switch (type) {
             case ACCEPT:
                 context = "님이 친구 요청을 승낙했습니다!";
                 break;
             case REQUEST:
-                context = "로부터 친구 요청이 도착했습니다. ";
+                context = "님으로부터 친구 요청이 도착했습니다. ";
                 break;
             case REJECT:
                 context = "님이 친구 요청을 거절했습니다...";
