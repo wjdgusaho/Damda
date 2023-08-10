@@ -10,6 +10,9 @@ import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
 import Modal from "react-modal"
+import TimecapsuleResultMembers from "./TimecapsuleResultMembers"
+import TimecapsuleResultImages from "./TimecapsuleResultImages"
+import TimecapsuleResultRank from "./TimecapsuleResultRank"
 
 const Box = styled.div`
   display: flex;
@@ -75,7 +78,12 @@ const TimecapsuleResult = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const navigate = useNavigate()
+  const [comp, setComp] = useState("members")
+  const [activeComponent, setActiveComponent] = useState("members")
 
+  const handleNavClick = (compName: string) => {
+    setActiveComponent(compName)
+  }
   return (
     <>
       <Box>
@@ -88,10 +96,39 @@ const TimecapsuleResult = function () {
             <div className="invisible">더미 데이터</div>
             <HightLight />
           </div>
-          <div style={{ fontSize: "14px", textAlign: "center" }}>
-            상세내용 아이스 바닐라 라떼
+
+          <div className="flex mb-2 mt-2">
+            <Nav
+              onClick={() => {
+                setComp("members")
+                handleNavClick("members")
+              }}
+              isActive={activeComponent === "members"}
+            >
+              상세
+            </Nav>
+            <Nav
+              onClick={() => {
+                setComp("images")
+                handleNavClick("images")
+              }}
+              isActive={activeComponent === "images"}
+            >
+              카드
+            </Nav>
+            <Nav
+              onClick={() => {
+                setComp("rank")
+                handleNavClick("rank")
+              }}
+              isActive={activeComponent === "rank"}
+            >
+              순위
+            </Nav>
           </div>
-          <div>이제 여기만 갈아끼우면 됩니다</div>
+          {comp === "members" && <TimecapsuleResultMembers />}
+          {comp === "images" && <TimecapsuleResultImages />}
+          {comp === "rank" && <TimecapsuleResultRank />}
           <BackBtn
             onClick={() => {
               navigate(-1)
@@ -106,4 +143,26 @@ const TimecapsuleResult = function () {
   )
 }
 
+const Nav = styled.div<{ isActive: boolean }>`
+  position: relative;
+  text-decoration: none;
+  font-family: "pretendard";
+  font-weight: 400;
+  color: ${(props) => props.theme.color700};
+  transition: color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  width: 80px;
+  justify-content: center;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    width: 100%;
+    height: 1px;
+    background-color: ${(props) => props.theme.color700};
+    display: ${(props) => (props.isActive ? "block" : "none")};
+  }
+`
 export default TimecapsuleResult
