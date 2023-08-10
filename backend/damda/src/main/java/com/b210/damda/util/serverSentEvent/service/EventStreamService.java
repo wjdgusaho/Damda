@@ -51,7 +51,7 @@ public class EventStreamService {
 
         //이후 재연결 로직 발생
         //접속 시간 등록
-        lastResponseTimes.put(userNo, LocalDateTime.now());
+        lastResponseTimes.put(userNo, LocalDateTime.now().plusHours(9));
 
         //Sink맵 추가 후, onDispose 이벤트 시 제거하는 Flux 생성
         Flux<ServerSentEvent<JsonNode>> dataFlux = Flux.create(sink -> userFluxSinkMap.put(userNo, sink.onDispose(() -> userFluxSinkMap.remove(userNo))));
@@ -67,7 +67,7 @@ public class EventStreamService {
                         .map(new Function<Long, ServerSentEvent<JsonNode>>() {
                             @Override
                             public ServerSentEvent<JsonNode> apply(Long tick) {
-                                return addOnEventService.buildServerSentEvent("check-connection", new ServerSentEventDTO(null, null,null,"heartbeat", addOnEventService.getNowTime(LocalDateTime.now())));
+                                return addOnEventService.buildServerSentEvent("check-connection", new ServerSentEventDTO(null, null,null,"heartbeat", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
                             }
                         });
 
@@ -84,7 +84,7 @@ public class EventStreamService {
     //클라이언트에서 응답 존재할 경우(정상적으로 연결이 이어질 경우) 마지막 시간 갱신
     public void checkConnection() {
         log.info("checkConnection : 클라이언트에서 응답 수신하였음");
-        lastResponseTimes.put(addOnEventService.getUserNo(), LocalDateTime.now());
+        lastResponseTimes.put(addOnEventService.getUserNo(), LocalDateTime.now().plusHours(9));
     }
 
     //로그아웃시 종료 로직
@@ -95,7 +95,7 @@ public class EventStreamService {
         endAndRemoveStream(userNo);
 
         //로그아웃 알림
-        ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("logout-event", new ServerSentEventDTO(null, null, null, "로그아웃 진행", addOnEventService.getNowTime(LocalDateTime.now())));
+        ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("logout-event", new ServerSentEventDTO(null, null, null, "로그아웃 진행", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
         sendEvent(userNo, logoutEvent);
     }
 
@@ -104,7 +104,7 @@ public class EventStreamService {
         log.info("disconnectStream, 미답신 {}", userNo);
 
         //끊어짐 알림 : 해당 알림이 클라이언트로 가고, 클라이언트가 만약 현재 접속중이라면 10초 뒤에 다시 로그인 로직을 실행한다.
-        ServerSentEvent<JsonNode> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", new ServerSentEventDTO(null, null, null, "클라이언트 장기 미답신으로 인한 연결 끊어짐", addOnEventService.getNowTime(LocalDateTime.now())));
+        ServerSentEvent<JsonNode> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", new ServerSentEventDTO(null, null, null, "클라이언트 장기 미답신으로 인한 연결 끊어짐", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
         sendEvent(userNo, disconnectEvent);
 
         //저장된 스트림 종료 및 싱크 제거
