@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react"
 import "../index.css"
-import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
 import { SubHeader } from "./inc/SubHeader"
 import { SET_THEME } from "../store/Theme"
@@ -46,7 +45,6 @@ const SelectTheme = function () {
   const token = useSelector((state: RootState) => state.auth.accessToken)
 
   useEffect(() => {
-    console.log("token", token)
     const fetchData = async () => {
       try {
         const response = await axios.get(serverUrl + "shop/list", {
@@ -55,13 +53,32 @@ const SelectTheme = function () {
           },
         })
         setThemeList(response.data.data.themeList)
-        console.log("themeList", response.data.data.themeList)
       } catch (error) {
         console.error(error)
       }
     }
     fetchData()
   }, [])
+
+  const handleChangeTheme = (themeNo: number) => {
+    axios({
+      method: "PATCH",
+      url: serverUrl + "theme/set-my-theme",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        nowTheme: themeNo,
+      },
+    })
+      .then((response) => {
+        alert(response.data.message)
+        if (response.data.code === 200) {
+          dispatch(SET_THEME(themeNo))
+        }
+      })
+      .catch((error) => console.error(error))
+  }
 
   return (
     <>
@@ -72,7 +89,7 @@ const SelectTheme = function () {
             <img
               onClick={() => {
                 if (themeList[index].userHave) {
-                  dispatch(SET_THEME(themeList[index].themeNo))
+                  handleChangeTheme(themeList[index].themeNo)
                 }
               }}
               className={
