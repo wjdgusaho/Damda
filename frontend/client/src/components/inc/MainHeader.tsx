@@ -57,15 +57,19 @@ const RefreshIcon = styled.div`
   height: 25px;
 `
 
+const AlertImg = styled.img`
+  width: 60px;
+  height: 60px;
+`
+
 const customStyles = {
   content: {
     top: "20%",
     left: "50%",
     right: "auto",
     bottom: "auto",
-    marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "65%",
+    width: "330px",
     border: "0px",
     backgroundColor: "rgba(255,255,255,0)",
   },
@@ -75,21 +79,18 @@ const customStyles = {
 }
 
 const ModalCard = tw.div`
-  mt-5 p-8 text-lilac-900 bg-white opacity-80 rounded-3xl shadow-2xl
-  flex items-center
+  mt-5 p-3 text-lilac-900 bg-white opacity-80 rounded-3xl shadow-2xl
+  inline-flex items-center
+  w-72
 `
 
 const AlarmFriendComponent = function ({ friend }: { friend: FriendType }) {
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
-      <div className="w-24" style={{ alignSelf: "start" }}>
-        <img
-          src={friend.profileImage}
-          alt="defalut"
-          style={{ width: "75px", height: "75px" }}
-        />
+      <div>
+        <AlertImg src={friend.profileImage} alt="defalut" />
       </div>
-      <div className="ml-2" style={{ width: "28rem" }}>
+      <div className="ml-2" style={{ width: "150px" }}>
         <p>
           <span>{friend.nickname}</span>님께서,
         </p>
@@ -154,14 +155,10 @@ export const MainHeader = function () {
               <ModalCard
                 style={{ fontFamily: "Pretendard", fontWeight: "600" }}
               >
-                <div className="w-24" style={{ alignSelf: "start" }}>
-                  <img
-                    src="assets/icons/popup.png"
-                    alt="defalut"
-                    style={{ width: "75px", height: "75px" }}
-                  />
+                <div>
+                  <AlertImg src="assets/icons/popup.png" alt="defalut" />
                 </div>
-                <div className="ml-2" style={{ width: "28rem" }}>
+                <div className="ml-2" style={{ width: "150px" }}>
                   <p>받은 알람이 없습니다.</p>
                 </div>
               </ModalCard>
@@ -212,12 +209,12 @@ export const MainHeader = function () {
           sse 버튼!
         </button>
       </div>
-      <div className="flex items-center justify-end mr-8 mt-8">
+      {/* <div className="flex items-center justify-end mr-8 mt-8">
         <TextStyle className="opacity-80 mr-2">
           날씨, 위치 업데이트 하기
         </TextStyle>
         <RefreshIcon className="h-7" />
-      </div>
+      </div> */}
     </div>
   )
 }
