@@ -95,3 +95,19 @@ self.addEventListener("activate", (event) => {
     })
   )
 })
+
+// Handle service worker update and page refresh
+self.addEventListener("controllerchange", () => {
+  if (self.skipWaiting) {
+    self.skipWaiting()
+    if (self.clients && self.clients.claim) {
+      self.clients.claim()
+    }
+    // Send a refresh message to inform the user to refresh the page
+    self.clients.matchAll().then((clients) => {
+      clients.forEach((client) => {
+        client.postMessage({ type: "REFRESH_PAGE" })
+      })
+    })
+  }
+})
