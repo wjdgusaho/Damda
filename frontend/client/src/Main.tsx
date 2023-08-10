@@ -39,6 +39,8 @@ import { SET_TOKEN } from "./store/Auth"
 import { serverUrl } from "./urls"
 import { TimecapsuleOpen } from "./components/TimecapsuleOpen"
 import TimecapsuleResult from "./components/TimecapsuleResult"
+import { ADD_FRIENDS, toastOption } from "./store/Alarm"
+import { EmptyPage } from "./components/EmptyPage"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
@@ -131,19 +133,16 @@ function Main() {
       newEventSource.addEventListener("custom-event", (event) => {
         console.log("Custom : ", event)
       })
-      newEventSource.addEventListener("friend-event", (event) => {
+      newEventSource.addEventListener("friend-event", (event: any) => {
         console.log("Friend : ", event)
-        toast.info("친구 요청이 왔습니다.")
+        const data = JSON.parse(event["data"])
+        toast.info("친구 요청이 왔습니다.", toastOption)
+        dispatch(ADD_FRIENDS(data.fromUser))
       })
       newEventSource.addEventListener("check-connection", (event: any) => {
-        console.log("Check connection : ", event)
-        const data = JSON.parse(event["data"])
-        console.log(data, data.formUser, data.content)
-
         // 새롭게 서버로 보낼 이벤트소스
         // serverUrl + (내가 보낼 url 주소)
         // headers에는 토큰 값. 헤더 이외의 값 추가하려면 , 뒤에 넣을 것.
-
         const otherESource = new EventSourcePolyfill(serverUrl + "sse/check", {
           headers: {
             Authorization: "Bearer " + token,
@@ -152,11 +151,16 @@ function Main() {
         otherESource.onmessage = (event) => {
           console.log("check message : ", event)
         }
+        otherESource.onerror = (event) => {
+          console.log("check error : ", event)
+        }
         setOtherEventSource(otherESource)
       })
       newEventSource.addEventListener("end-of-stream", (event) => {
         closeEventSource()
-        initializeEventSource()
+        setTimeout(() => {
+          initializeEventSource()
+        }, 10000)
       })
 
       // 신경쓰지 않아도 됨.
@@ -179,49 +183,64 @@ function Main() {
         <ToastContainer />
         <CookiesProvider>
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<LandingPage />}></Route>
-              <Route path="/user/" element={<CheckPassword />}></Route>
-              <Route path="/user-info/" element={<UserInfoChange />}></Route>
-              <Route path="/shop/" element={<ShopPage />}></Route>
-              <Route path="/timecapsule/" element={<TimecapsulePage />}></Route>
-              <Route path="/card/:capsuleId" element={<Card />}></Route>
-              <Route path="/friend/" element={<Friend />}>
-                <Route path="list" element={<List />}></Route>
-                <Route path="request" element={<Request />}></Route>
-              </Route>
-              <Route path="/friend/search" element={<UserSearch />}></Route>
-              <Route path="/login/" element={<Login />}></Route>
-              <Route path="/signup/" element={<SignUp />}></Route>
-              <Route path="/logout/" element={<Logout />}></Route>
-              <Route path="/main/" element={<MainPage />}></Route>
-              <Route path="/findPassword/" element={<FindPassword />}></Route>
-              <Route path="/tutorial/" element={<Tutorial />}></Route>
-              <Route path="/dummykakao/" element={<DummyKakao />}></Route>
-              <Route path="/menu/" element={<Menu />}></Route>
-              <Route
-                path="/savetimecapsule/"
-                element={<SavedTimecapsule />}
-              ></Route>
-              <Route path="/participate/" element={<Participate />}></Route>
-              <Route path="/selecttype/" element={<SelectType />}></Route>
-              <Route path="/classic/" element={<ClassicCapsule />}></Route>
-              <Route path="/record/" element={<RecordCapsule />}></Route>
-              <Route path="/goal/" element={<GoalCapsule />}></Route>
-              <Route path="/selecttheme/" element={<SelectTheme />}></Route>
-              <Route
-                path="/timecapsule/detail/:capsuleId/"
-                element={<TimeCapsuleDetail />}
-              ></Route>
-              <Route
-                path="/timecapsule/open"
-                element={<TimecapsuleOpen />}
-              ></Route>
-              <Route
-                path="/timecapsule/open/:capsuleId"
-                element={<TimecapsuleResult />}
-              ></Route>
-            </Routes>
+            {!token && (
+              <Routes>
+                <Route path="/" element={<LandingPage />}></Route>
+                <Route path="/login/" element={<Login />}></Route>
+                <Route path="/dummykakao/" element={<DummyKakao />}></Route>
+                <Route path="*" element={<EmptyPage />}></Route>
+              </Routes>
+            )}
+            {token && (
+              <Routes>
+                <Route path="/" element={<LandingPage />}></Route>
+                <Route path="/user/" element={<CheckPassword />}></Route>
+                <Route path="/user-info/" element={<UserInfoChange />}></Route>
+                <Route path="/shop/" element={<ShopPage />}></Route>
+                <Route
+                  path="/timecapsule/"
+                  element={<TimecapsulePage />}
+                ></Route>
+                <Route path="/card/:capsuleId" element={<Card />}></Route>
+                <Route path="/friend/" element={<Friend />}>
+                  <Route path="list" element={<List />}></Route>
+                  <Route path="request" element={<Request />}></Route>
+                </Route>
+                <Route path="/friend/search" element={<UserSearch />}></Route>
+                <Route path="/login/" element={<Login />}></Route>
+                <Route path="/signup/" element={<SignUp />}></Route>
+                <Route path="/logout/" element={<Logout />}></Route>
+                <Route path="/main/" element={<MainPage />}></Route>
+                <Route path="/findPassword/" element={<FindPassword />}></Route>
+                <Route path="/tutorial/" element={<Tutorial />}></Route>
+                <Route path="/dummykakao/" element={<DummyKakao />}></Route>
+                <Route path="/menu/" element={<Menu />}></Route>
+                <Route
+                  path="/savetimecapsule/"
+                  element={<SavedTimecapsule />}
+                ></Route>
+                <Route path="/participate/" element={<Participate />}></Route>
+                <Route path="/selecttype/" element={<SelectType />}></Route>
+                <Route path="/classic/" element={<ClassicCapsule />}></Route>
+                <Route path="/record/" element={<RecordCapsule />}></Route>
+                <Route path="/goal/" element={<GoalCapsule />}></Route>
+                <Route path="/selecttheme/" element={<SelectTheme />}></Route>
+                <Route
+                  path="/timecapsule/detail/:capsuleId/"
+                  element={<TimeCapsuleDetail />}
+                ></Route>
+                <Route
+                  path="/timecapsule/open"
+                  element={<TimecapsuleOpen />}
+                ></Route>
+                <Route
+                  path="/timecapsule/open/:capsuleId"
+                  element={<TimecapsuleResult />}
+                ></Route>
+                {/* 그 이외의 없는 페이지 */}
+                <Route path="*" element={<EmptyPage />}></Route>
+              </Routes>
+            )}
           </BrowserRouter>
         </CookiesProvider>
       </div>

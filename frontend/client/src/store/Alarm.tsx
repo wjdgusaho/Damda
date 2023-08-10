@@ -1,26 +1,55 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { FriendType } from "../components/Friend"
-import { CapsuleType } from "../components/MainPage"
+import { ToastOptions } from "react-toastify"
+
+export const toastOption: ToastOptions = {
+  position: "top-right",
+  autoClose: false,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: false,
+  draggable: true,
+  progress: undefined,
+  theme: "light",
+}
+
+interface FriendType {
+  userNo: number
+  nickname: string
+  profileImage: string
+  date: string
+}
+
+interface CapsuleType {
+  timecapsuleNo: number
+  type: string
+  sDate: string
+  eDate: string
+  name: string
+  capsuleIconNo: string
+  curCard: number
+  goalCard: number
+  date: string
+}
 
 interface alarmData {
   friends: FriendType[]
-  timecapsule: CapsuleType[]
+  timecapsules: CapsuleType[]
 }
 
 const initialState: alarmData = {
   friends: [],
-  timecapsule: [],
+  timecapsules: [],
 }
 
 export const alarmSlice = createSlice({
   name: "alarm",
   initialState,
   reducers: {
-    SET_FRIENDS: (state, action: PayloadAction<[FriendType]>) => {
-      state.friends = action.payload
+    ADD_FRIENDS: (state, action: PayloadAction<FriendType>) => {
+      state.friends.concat(action.payload)
     },
-    SET_TIMECAPSULES: (state, action: PayloadAction<[CapsuleType]>) => {
-      state.timecapsule = action.payload
+    ADD_TIMECAPSULES: (state, action: PayloadAction<CapsuleType>) => {
+      state.timecapsules.concat(action.payload)
     },
     DELETE_ALARM_ALL: (state) => {
       state = initialState
@@ -28,6 +57,7 @@ export const alarmSlice = createSlice({
   },
 })
 
-export const { SET_FRIENDS, DELETE_ALARM_ALL } = alarmSlice.actions
+export const { ADD_FRIENDS, ADD_TIMECAPSULES, DELETE_ALARM_ALL } =
+  alarmSlice.actions
 
 export default alarmSlice.reducer
