@@ -15,7 +15,7 @@ public enum CustomExceptionStatus {
     //존재 관련
     THEMA_NOT_FOUND(-6000, "해당 테마가 존재하지 않습니다."),
     ITEM_NOT_FOUND(-6001, "해당 아이템이 존재하지 않습니다."),
-    NOT_TIMECAPSULE(-6002, "타임캠슐이 존재하지 않습니다."),
+        NOT_TIMECAPSULE(-6002, "타임캠슐이 존재하지 않습니다."),
     NOT_WORK_TIMECAPSULE(-6003, "현재 진행중인 타임캡슐이 없습니다."),
     NOT_SAVE_TIMECAPSULE(-6004, "저장된 타임캡슐이 없습니다."),
     NOT_CARD(-6005, "작성된 카드가 없습니다."),
@@ -82,6 +82,9 @@ public enum CustomExceptionStatus {
     FILE_NOT_UPLOAD(-3015, "파일 업로드에 실패했습니다"),
     ALREADY_CARD_UPLOAD(-3016, "오늘은 카드 작성을 하셨습니다"),
     ALREADY_FILE_UPLOAD(-3017, "오늘은 파일 업로드를 하셨습니다"),
+    NOT_USER_TIMECAPSULE(-3018, "해당 유저의 타임캡슐이 아닙니다."),
+    NOT_SAVED_TIMECAPSULE(-3019, "저장되지 않은 타임캡슐입니다."),
+    NOT_OPEN_TIMECAPSULE(-3020, "아직 열지 않은 타임캡슐입니다."),
 
     // 확장자 문제
     EXTENSION_ERROR_IMAGE(-8000, "사진 확장자만 등록 가능합니다."),

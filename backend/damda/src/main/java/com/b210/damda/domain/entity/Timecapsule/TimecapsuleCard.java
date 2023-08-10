@@ -1,5 +1,6 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleCardDTO;
 import com.b210.damda.domain.entity.User.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,4 +35,13 @@ public class TimecapsuleCard {
     public TimecapsuleCard(){
     }
 
+    public TimecapsuleCardDTO toTimecapsuleCardDTO(){
+        return TimecapsuleCardDTO.builder()
+                .timecapsuleCardNo(this.timecapsuleCardNo)
+                .timecapsuleNo(this.timecapsule.getTimecapsuleNo())
+                .imagePath(this.imagePath)
+                .userNo(this.user.getUserNo())
+                .createTime(this.createTime)
+                .build();
+    }
 }

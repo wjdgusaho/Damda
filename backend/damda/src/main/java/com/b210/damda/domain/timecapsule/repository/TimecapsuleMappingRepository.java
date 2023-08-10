@@ -39,4 +39,7 @@ public interface TimecapsuleMappingRepository extends JpaRepository<TimecapsuleM
     @Query("SELECT tm FROM TimecapsuleMapping tm WHERE tm.user = :user AND tm.deleteDate = null")
     List<TimecapsuleMapping> findByUserAndDeleteNot(@Param("user") User user);
 
+    // 유저의 저장된 타임캡슐 꺼내기
+    @Query("SELECT tm FROM TimecapsuleMapping tm WHERE tm.user = :user AND tm.timecapsule = :timecapsule")
+    TimecapsuleMapping findByUserAndTimecapsuleGet(@Param("user") User user, @Param("timecapsule") Timecapsule timecapsule);
 }

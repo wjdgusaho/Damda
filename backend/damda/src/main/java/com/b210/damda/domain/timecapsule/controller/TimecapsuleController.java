@@ -264,13 +264,44 @@ public class TimecapsuleController {
     public DataResponse<Map<String, Object>> timecapsuleFileUpload(@RequestPart("fileContent") MultipartFile file,
                                                                    @RequestParam("timeCapsuleNo") Long timecapsuleNo){
 
-        log.info("file : {} ",file);
-        log.info("No : " + timecapsuleNo.toString());
-
         Map<String, Object>  result = timecapsuleService.timecapsuleFileUpload(file, timecapsuleNo);
 
         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "파일 저장 성공");
         //response.setData(result);
+        return response;
+    }
+
+
+    /*
+        타임캡슐 SimpleInfo 반환
+     */
+    @GetMapping("simpleinfo")
+    public DataResponse<Map<String, Object>> timecapsuleSimpleInfo(@RequestParam("timecapsuleNo") Long timecapsuleNo){
+
+        TimecapsuleSimpleDTO simpleInfo = timecapsuleService.timecapsuleSimpleInfo(timecapsuleNo);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("timecapsuleSimpleInfo", simpleInfo);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 간단정보 조회 성공");
+        response.setData(result);
+        return response;
+
+    }
+
+    /*
+        타임캡슐 작성된 카드 목록 반환
+     */
+    @GetMapping("cardlist")
+    public DataResponse<Map<String, Object>> timecapsuleCardList(@RequestParam("timecapsuleNo") Long timecapsuleNo){
+
+        List<TimecapsuleCardDTO> cardList = timecapsuleService.timecapsuleCardList(timecapsuleNo);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("cardList", cardList);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "카드 리스트 조회 성공");
+        response.setData(result);
         return response;
     }
 

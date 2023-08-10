@@ -9,7 +9,6 @@ import com.b210.damda.util.emailAPI.service.EmailService;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.b210.damda.util.response.DataResponse;
-import com.b210.damda.util.serverSentEvent.controller.SSEController;
 import com.b210.damda.util.serverSentEvent.service.EventStreamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -27,12 +25,14 @@ public class UserController {
     public UserService userService;
     public EmailService emailService;
     private final FileStoreService fileStoreService;
+    private final EventStreamService eventStreamService;
 
     @Autowired
-    public UserController(UserService userService, EmailService emailService, FileStoreService fileStoreService) {
+    public UserController(UserService userService, EmailService emailService, FileStoreService fileStoreService, EventStreamService eventStreamService) {
         this.userService = userService;
         this.emailService = emailService;
         this.fileStoreService = fileStoreService;
+        this.eventStreamService = eventStreamService;
     }
 
     // 회원가입 요청
@@ -165,6 +165,7 @@ public class UserController {
     @PostMapping("logout")
     public DataResponse<Map<String, Object>> logout(@RequestHeader(value="Authorization") String token){
         try{
+            eventStreamService.disconnectStream();
             userService.logout(token);
             return new DataResponse<>(200, "로그아웃 성공");
         }catch (CommonException e){

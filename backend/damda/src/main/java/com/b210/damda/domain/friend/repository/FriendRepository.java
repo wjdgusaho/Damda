@@ -1,5 +1,7 @@
 package com.b210.damda.domain.friend.repository;
 
+import com.b210.damda.domain.dto.serverSentEvent.friend.GetRequestToMeDTO;
+import com.b210.damda.domain.dto.serverSentEvent.friend.UserNameAndImageDTO;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.User.UserFriend;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,7 +34,6 @@ public interface FriendRepository extends JpaRepository<UserFriend, Long> {
     @Query("SELECT u FROM UserFriend u WHERE u.user = :user AND u.friend = :friend")
     UserFriend getUserFriendByUserAndFriend(@Param("user") User user, @Param("friend") User friend);
 
-
     @Query("SELECT u FROM UserFriend u WHERE u.user = :user AND u.status = :status")
     List<UserFriend> findUserFriendByUserFriend(@Param("user") User friend, @Param("status") String status);
 
@@ -43,4 +44,14 @@ public interface FriendRepository extends JpaRepository<UserFriend, Long> {
     //나에게 요청한 모든 유저의 pk 가져오기
     @Query("SELECT u.user.userNo FROM UserFriend u WHERE u.friend.userNo = :friendNo AND u.status = :status")
     List<Long> findUserNoByFriendNoAndStatus(@Param("friendNo") Long friendNo, @Param("status") String status);
+
+    //해당 유저의 이름과 이미지 가져오기
+    @Query("SELECT u.nickname, u.profileImage From User u Where u.userNo = :userNo")
+    UserNameAndImageDTO getUserNameAndImage(Long userNo);
+
+    //해당 유저로 요청한 사람들의 정보 가져오기
+    @Query("SELECT new com.b210.damda.domain.dto.serverSentEvent.friend.GetRequestToMeDTO(uf.user.nickname, uf.user.userNo, uf.requestDate, uf.user.profileImage) FROM UserFriend uf WHERE uf.friend.userNo = :friendNo and uf.status = 'REQUESTED'")
+    List<GetRequestToMeDTO> getRequestToMe(@Param("friendNo") Long friendNo);
+
+
 }
