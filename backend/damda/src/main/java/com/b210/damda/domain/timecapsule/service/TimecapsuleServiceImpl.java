@@ -936,6 +936,38 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         return null;
     }
 
+    @Override
+    public TimecapsuleSimpleDTO timecapsuleSimpleInfo(Long timecapsuleNo) {
+
+        //유저 검증을해야하는지..?
+
+        //타임캡슐 (삭제 검증 ok)
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        TimecapsuleSimpleDTO simpleDTO = timecapsule.toTimecapsuleSimpleDTO();
+
+        return simpleDTO;
+    }
+
+    @Override
+    public List<TimecapsuleCardDTO> timecapsuleCardList(Long timecapsuleNo) {
+
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        TimecapsuleMapping timecapsuleMapping = getTimecapsuleMapping(user.getUserNo(), timecapsule.getTimecapsuleNo());
+
+        List<TimecapsuleCardDTO> cardList = timecapsuleCardRepository.findByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo())
+                .stream()
+                .map(TimecapsuleCard::toTimecapsuleCardDTO).collect(Collectors.toList());
+
+        //작성된 카드가 없는경우
+        if(cardList.isEmpty()){
+            throw new  CommonException(CustomExceptionStatus.NOT_CARD);
+        }
+
+        return cardList;
+    }
+
 
     /*
         타임캡슐 나가기
