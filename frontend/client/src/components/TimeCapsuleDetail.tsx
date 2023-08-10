@@ -208,7 +208,7 @@ const FileIcon2 = styled(FileIcon)`
   margin-top: 0;
 `
 
-const InviteBtn = styled.button`
+const InviteBtn = styled.div`
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -217,7 +217,8 @@ const InviteBtn = styled.button`
   font-size: 50px;
   font-weight: 200;
   text-align: center;
-  line-height: 44px;
+  line-height: 38px;
+  margin-top: 8px;
 `
 
 const FriendBox = styled.div`
@@ -266,6 +267,10 @@ const ModalContent = styled.div`
 const ModalTitle = styled.div`
   font-size: 20px;
   font-weight: 700;
+
+  span {
+    color: ${(props) => props.theme.color500};
+  }
 `
 
 // 취소 등록 버튼
@@ -441,14 +446,42 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [timer, setTimer] = useState<string>("")
   const [isInvite, setIsInvite] = useState(true)
   const [isHelp, setIsHelp] = useState(false)
+
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [deleteModalIsOpen, setDeleteModalIsOpen] = React.useState(false)
+  const [kickOutModalIsOpen, setKickOutModalIsOpen] = React.useState(false)
+
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const { capsuleId = "" } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
   const [friendList, setFriendList] = useState<FriendListDataType | undefined>()
+  const [kickOutedUserNo, setKickOutedUserNo] = useState<number>(0)
+  const [kickOutedUserNickname, setKickOutedUserNickname] = useState<string>()
+
+  const kickOutUser = async (userNo: number) => {
+    try {
+      const response = await axios({
+        method: "PATCH",
+        url: serverUrl + "timecapsule/kick",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        data: {
+          timecapsuleNo: capsuleId + "",
+          kickUserNo: userNo + "",
+        },
+      })
+      if (response.data.code === 200) {
+        closeKickOutModal()
+        console.log(response.data)
+      } // 나중에 추가할거임
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const inviteFriendClick = async (userNo: number) => {
     try {
@@ -607,6 +640,16 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
   function closeDeleteModal() {
     setDeleteModalIsOpen(false)
+  }
+
+  function openKickOutModal(userNo: number, userNickname: string) {
+    setKickOutModalIsOpen(true)
+    setKickOutedUserNo(userNo)
+    setKickOutedUserNickname(userNickname)
+  }
+
+  function closeKickOutModal() {
+    setKickOutModalIsOpen(false)
   }
 
   useEffect(() => {
@@ -823,7 +866,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                               />
                             </div>
                             <span
-                              style={{ fontSize: "12px", textAlign: "center" }}
+                              style={{
+                                fontSize: "12px",
+                                textAlign: "center",
+                                width: "63px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                              }}
                             >
                               {part.nickname}
                             </span>
@@ -843,9 +893,33 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                                 src={part.profileImage}
                                 alt="profilepic"
                               />
+                              {/* 강퇴하기 */}
+                              <img
+                                onClick={() =>
+                                  openKickOutModal(part.userNo, part.nickname)
+                                }
+                                src="../../assets/icons/kickout.png"
+                                alt="kickout"
+                                width="15px"
+                                height="15px"
+                                style={{
+                                  position: "absolute",
+                                  top: "7.5px",
+                                  right: "5px",
+                                  filter:
+                                    "drop-shadow(0px 4px 4px rgb(0, 0, 0, 0.4))",
+                                }}
+                              />
                             </div>
                             <span
-                              style={{ fontSize: "12px", textAlign: "center" }}
+                              style={{
+                                fontSize: "12px",
+                                textAlign: "center",
+                                width: "63px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                              }}
                             >
                               {part.nickname}
                             </span>
@@ -896,7 +970,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                               />
                             </div>
                             <span
-                              style={{ fontSize: "12px", textAlign: "center" }}
+                              style={{
+                                fontSize: "12px",
+                                textAlign: "center",
+                                width: "63px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                              }}
                             >
                               {part.nickname}
                             </span>
@@ -918,7 +999,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                               />
                             </div>
                             <span
-                              style={{ fontSize: "12px", textAlign: "center" }}
+                              style={{
+                                fontSize: "12px",
+                                textAlign: "center",
+                                width: "63px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                              }}
                             >
                               {part.nickname}
                             </span>
@@ -930,6 +1018,30 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 )}
                 {/* 여기 일단 임시로 null (방장 아닐 때) */}
               </div>
+
+              <Modal
+                isOpen={kickOutModalIsOpen}
+                onRequestClose={closeKickOutModal}
+                style={customStyles}
+                contentLabel="KickOutModal"
+              >
+                <ModalContent>
+                  <ModalTitle className="my-2 text-center">
+                    정말 <span>{kickOutedUserNickname}</span>
+                    님을 <br />
+                    추방하시겠습니까?
+                  </ModalTitle>
+                  <div>한 번 추방하면 다시 들어올 수 없습니다.</div>
+                  <div className="mt-2">
+                    <FileCencelBtn type="button" onClick={closeKickOutModal}>
+                      취소
+                    </FileCencelBtn>
+                    <FileSubmitBtn onClick={() => kickOutUser(kickOutedUserNo)}>
+                      추방
+                    </FileSubmitBtn>
+                  </div>
+                </ModalContent>
+              </Modal>
 
               <>
                 <div className="flex w-56 my-2 mt-5">
