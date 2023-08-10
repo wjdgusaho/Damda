@@ -4,13 +4,11 @@ import com.b210.damda.domain.dto.Friend.FriendListDTO;
 import com.b210.damda.domain.dto.Friend.FriendNoRequestDTO;
 import com.b210.damda.domain.dto.Friend.FriendRequestListDTO;
 import com.b210.damda.domain.dto.User.UserDTO;
-import com.b210.damda.domain.dto.serverSentEvent.FriendEventEnum;
-import com.b210.damda.domain.entity.User.UserFriend;
+import com.b210.damda.domain.dto.serverSentEvent.friend.FriendEventEnum;
 import com.b210.damda.domain.friend.service.FriendService;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.response.DataResponse;
 import com.b210.damda.util.serverSentEvent.service.FriendEventService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
