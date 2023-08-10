@@ -36,6 +36,7 @@ public class ThemeSerivce {
         return userNo;
     }
 
+    // 유저의 테마 변경
     public void changeUserTheme(ThemeChangeDTO themeChangeDTO){
         
         // 유저 찾음
@@ -51,7 +52,7 @@ public class ThemeSerivce {
         }
 
         // 유저의 테마를 변경
-        user.setNowTheme(themeChangeDTO.getNowTheme().intValue());
+        user.setNowTheme(themeChangeDTO.getNowTheme().intValue() - 1);
         userRepository.save(user);
     }
 }
