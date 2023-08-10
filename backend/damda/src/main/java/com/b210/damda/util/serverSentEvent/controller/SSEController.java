@@ -31,7 +31,7 @@ public class SSEController {
     public Flux<ServerSentEvent<JsonNode>> login() {
         log.info("로그인 개방");
         //1. 확인하지 못했던 친구 상태 알림 로직
-        //friendEventService.checkAllFriendEvent();
+        friendEventService.checkAllFriendEvent();
         //2. 확인하지 못했던 타임 캡슐 알림 로직
 
         return eventStreamService.connectStream();

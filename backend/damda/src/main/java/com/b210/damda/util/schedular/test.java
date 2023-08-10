@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class test {
 
-    final FriendEventService friendEventService;
-
-    @Scheduled(fixedRate = 3000) // 테스터
-    public void test() {
-        friendEventService.checkAllFriendEvent();
-    }
+//    final FriendEventService friendEventService;
+//
+//    @Scheduled(fixedRate = 3000) // 테스터
+//    public void test() {
+//        friendEventService.checkAllFriendEvent();
+//    }
 }
