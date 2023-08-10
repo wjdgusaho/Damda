@@ -1,4 +1,4 @@
-plugins {
+	plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.13'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
@@ -51,6 +51,8 @@ dependencies {
 
 	// S3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'net.lingala.zip4j:zip4j:2.6.1' // 압축 다운로드
+	implementation 'org.apache.commons:commons-text:1.9' // 랜덤 문자열 생성
 
 	//BASE64
 	implementation 'commons-codec:commons-codec:1.15'

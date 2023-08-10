@@ -24,6 +24,7 @@ import java.util.function.Function;
 /**
  * 해당 서비스는 Flux를 통해 스트림 데이터를 제어하고(로그인/로그아웃)
  * 이벤트 발생 시 이를 연결된 스트림을 찾아 전송하는 이음매 역할을 한다.
+ * 학습용이기에, 실제 로직보다 주석이 많을 수 있습니다.
  */
 @Service
 @RequiredArgsConstructor
@@ -32,13 +33,14 @@ public class EventStreamService {
 
     private final AddOnEventService addOnEventService;
 
-    //스트림 저장 : 동시성 처리를 위해 ConcurrentHashMap 사용, 해당 Map에 개별적인 클라이언트들의 Reactive Stream이 연결되어 저장(FluxSink 저장)
+    //스트림 저장 : 동시성 처리를 위해 ConcurrentHashMap 사용, 해당 Map에 개별적인 클라이언트들의 Reactive Stream의 기록이 연결되어 저장(FluxSink 저장)
+    //주의 : 실제 스트림이 저장된 것은 아님
     static public final Map<Long, FluxSink<ServerSentEvent<JsonNode>>> userFluxSinkMap = new ConcurrentHashMap<>();
 
     //자동 연결(heartbeat)통로 저장 : 자동으로 서버 -> 클라이언트로 주기적 요청을 보내는 스트림(maintainConnectFlux) 제거를 위한 Processors를 생성 후 보관
     static public final Map<Long, DirectProcessor<Void>> disconnectProcessors = new ConcurrentHashMap<>();
 
-    //마지막 heartbeat 시간대 체크 : 서버는 클라이언트의 연결 상태를 위해 주기적으로 마지막 접속 시간을 체크함, 클라이언트의 답신이 없어질 경우 끊어짐으로 판단
+    //마지막 heartbeat 시간대 체크 : 서버는 클라이언트의 연결 상태를 위해 주기적으로 마지막 접속 시간을 체크함, 클라이언트의 답신이 장기간 없을 경우 끊어짐으로 판단
     static public final Map<Long, LocalDateTime> lastResponseTimes = new ConcurrentHashMap<>();
 
     public void test() {
@@ -60,24 +62,9 @@ public class EventStreamService {
     public Flux<ServerSentEvent<JsonNode>> connectStream() {
         long userNo = addOnEventService.getUserNo();
         log.info("connectStream, userNo : {}", userNo);
+        endAndRemoveStream(userNo);
 
-        // 기존 스트림 제거
-        if(userFluxSinkMap.containsKey(userNo)) {
-            log.info("기존 {}의 스트림Flux가 존재하기에 Sink를 종료합니다.", userNo);
-            // 1. 기존의 FluxSink 종료
-            userFluxSinkMap.get(userNo).complete();
-
-            // 2. maintainConnectFlux 종료
-            if(disconnectProcessors.containsKey(userNo)) {
-                disconnectProcessors.get(userNo).onComplete();
-                disconnectProcessors.remove(userNo);
-            }
-
-            //3. Map에 기록 제거
-            userFluxSinkMap.remove(userNo);
-        }
-
-
+        //이후 재연결 로직 발생
         //접속 시간 등록
         lastResponseTimes.put(userNo, LocalDateTime.now());
 
@@ -99,8 +86,14 @@ public class EventStreamService {
                             }
                         });
 
-        //takeUntil을 사용하여 dataFlux가 종료되면 maintainConnectFlux도 종료되도록 설정
-        return Flux.merge(dataFlux, maintainConnectFlux.takeUntil(other -> dataFlux == null));
+        /*
+        두 개의 Flux 스트림 (dataFlux와 maintainConnectFlux)을 병합,
+        두 스트림에서 발생하는 이벤트들이 순차적으로 나타나지 않고, 각 스트림에서 이벤트가 발생할 때마다 해당 이벤트를 다음 단계로 전달하는 것을 의미
+
+        즉, 이 병합된 스트림은 서버에서 클라이언트로 이어진 하나의 통로(reactive stream)에 연결되며,
+        이 통로를 통해 dataFlux 또는 maintainConnectFlux에서 발생하는 이벤트가 서버에서 클라이언트로 전송
+         */
+        return Flux.merge(dataFlux, maintainConnectFlux);
     }
 
     //클라이언트에서 응답 존재할 경우(정상적으로 연결이 이어질 경우) 마지막 시간 갱신
@@ -122,34 +115,42 @@ public class EventStreamService {
         sendEvent(userNo, logoutEvent);
     }
 
-    //미답신 시 종료 로직
-    public void disconnectStream(long userNo) {
-        log.info("disconnectStream, 미답신 {}", userNo);
-        //저장된 스트림 종료 및 싱크 제거
-        endAndRemoveStream(userNo);
+//    //미답신 시 종료 로직 : 현재 비정상적 종료를 시행할 경우 BE -> Client로 전송이 되지 않아 Dead Code이다..
+//    public void disconnectStream(long userNo) {
+//        log.info("disconnectStream, 미답신 {}", userNo);
+//        //저장된 스트림 종료 및 싱크 제거
+//        endAndRemoveStream(userNo);
+//
+//        //끊어짐 알림
+//        ServerSentEvent<JsonNode> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", new ServerSentEventDTO(null, "클라이언트 미답신으로 인한 연결 끊어짐", LocalDateTime.now().toString()));
+//        sendEvent(userNo, disconnectEvent);
+//    }
 
-        //끊어짐 알림
-        ServerSentEvent<JsonNode> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", new ServerSentEventDTO(null, "클라이언트 미답신으로 인한 연결 끊어짐", LocalDateTime.now().toString()));
-        sendEvent(userNo, disconnectEvent);
-    }
-    //저장된 스트림 종료 및 싱크 제거
-    public void endAndRemoveStream(long userNo) {
-        log.info("endAndRemoveStream, 저장된 스트림 종료 및 싱크 제거, {}", userNo);
+    //저장된 스트림 종료 및 싱크 제거, 외부 스케줄러에서 종료 로직을 사용할 수 있기에 synchronized 처리하였다.
+    public synchronized void endAndRemoveStream(long userNo) {
+        log.info("endAndRemoveStream, 저장된 스트림 종료 및 싱크 제거 Map에 유저 정보 제거, {}", userNo);
 
-        //프로세서 종료
+
+        //실제 연결된 Reactive Stream Sink를 제거한다.
+        FluxSink<ServerSentEvent<JsonNode>> sink = userFluxSinkMap.get(userNo);
+        if (sink != null) {
+            sink.complete();  // 실제 스트림 종료
+        }
+        //이후 Map 객체에 명시되었던 user정보를 제거한다.
+        if(userFluxSinkMap.get(userNo) != null) userFluxSinkMap.remove(userNo);
+
+
+        //이후 주기적으로 HeartBeat를 보내는 maintainConnectFlux를 제거하기 위해 Proccessor를 제거한다.
+        //주 : 해당 Flux는 .takeUntilOther(processor)를 통해 해당 프로세스와 연결되었다.
         DirectProcessor<Void> processor = disconnectProcessors.get(userNo);
         if (processor != null) {
             log.info("processor.onComplete()");
-            processor.onComplete(); //종료
-            disconnectProcessors.remove(userNo);
+            processor.onComplete(); //프로세서 종료
+            disconnectProcessors.remove(userNo); //프로세서 정보를 가진 Map에서도 삭제
         }
 
-        FluxSink<ServerSentEvent<JsonNode>> sink = userFluxSinkMap.get(userNo);
-        if (sink != null) {
-            sink.complete();  // 스트림 종료
-        }
-        userFluxSinkMap.remove(userNo);
-        lastResponseTimes.remove(userNo);
+        //마지막으로 Times 배열에 유저 정보를 제거한다. 이로써 완전히 스트림과, 스트림이 명시된 Map이 제거되었다.
+        if(lastResponseTimes.get(userNo) != null) lastResponseTimes.remove(userNo);
     }
 
     //특정 이벤트를 발생시켜 특정 사용자에게 이벤트를 전송
