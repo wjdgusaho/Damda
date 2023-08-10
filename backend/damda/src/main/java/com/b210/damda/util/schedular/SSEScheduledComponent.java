@@ -32,11 +32,9 @@ public class SSEScheduledComponent {
 1. 일정 시간마다 스케줄러가 시행된다.
 2. lastResponseTimes Map을 순회하여 현재 시간과 비교하여 오래 '연결이 없는' userNo를 찾아낸다.
 3. 해당 userNo를 장시 미접속 로그로 판단하고, disconnectStream(userNo)로 시행한다.
-4. 해당 메서드 실행 시 모든 스트림과 저장 내역이 종료된다.
+4. 해당 메서드 실행 시 모든 스트림과 저장 내역이 종료된다. 만약 접속 중인 클라이언트라면, FE에서 자동으로 재연결을 수행한다.(end-of-stream event)
          */
 
-
-        //동시성 문제? => 어차피 동시성으로 close되어도, 로그아웃 로직 발생 시 FE에서 자동으로 재연결을 수행한다.
         Map<Long, FluxSink<ServerSentEvent<JsonNode>>> nowUserFluxSinkMap = EventStreamService.userFluxSinkMap;
         // 방법 1: 향상된 for 루프 사용
         for (Map.Entry<Long, LocalDateTime> entry : EventStreamService.lastResponseTimes.entrySet()) {
