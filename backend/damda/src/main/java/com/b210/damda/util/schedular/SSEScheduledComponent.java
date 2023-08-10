@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.DirectProcessor;
 import reactor.core.publisher.FluxSink;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,8 +41,11 @@ public class SSEScheduledComponent {
         // 방법 1: 향상된 for 루프 사용
         for (Map.Entry<Long, LocalDateTime> entry : EventStreamService.lastResponseTimes.entrySet()) {
             Long userId = entry.getKey();
-//            String value = entry.getValue();
-            log.warn("TEST : 기록있는 유저 : {}", userId);
+            LocalDateTime userLastResponse = entry.getValue(); //유저의 마지막 응답 시간
+            log.warn("TEST : 기록있는 유저 : {}, 마지막 시간 : {}", userId, userLastResponse);
+            log.warn("시간 차이 : {}", Duration.between(LocalDateTime.now(), userLastResponse));
+
+
         }
     }
 
