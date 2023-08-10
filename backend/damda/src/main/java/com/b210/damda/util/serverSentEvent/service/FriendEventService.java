@@ -1,19 +1,14 @@
 package com.b210.damda.util.serverSentEvent.service;
 
-import com.b210.damda.domain.dto.serverSentEvent.FriendEventEnum;
+import com.b210.damda.domain.dto.serverSentEvent.friend.FriendEventEnum;
 import com.b210.damda.domain.dto.serverSentEvent.ServerSentEventDTO;
+import com.b210.damda.domain.dto.serverSentEvent.friend.UserNameAndImageDTO;
 import com.b210.damda.domain.friend.repository.FriendRepository;
-import com.b210.damda.domain.friend.service.FriendService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * 친구 이벤트와 관련된 서비스입니다.
@@ -34,9 +29,7 @@ public class FriendEventService {
         String eventName = "friend-event";
 
         //fromNo를 통해 해당 유저의 이름과 이미지를 받아온다.
-        String fromName = friendRepository.getUserNickname(fromNo);
-        String fromImage = friendRepository.getUserProfileImage(fromNo);
-        log.info("DEBUG {} {}", fromName, fromImage);
+        UserNameAndImageDTO fromInfo = friendRepository.getUserNameAndImage(fromNo);
 
         switch (type) {
             case ACCEPT:
@@ -50,14 +43,15 @@ public class FriendEventService {
                 break;
         }
 
-        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new ServerSentEventDTO(userNo.toString(), fromName, fromImage, context, addOnEventService.getNowTime()));
+        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new ServerSentEventDTO(userNo.toString(), fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, addOnEventService.getNowTime()));
         eventStreamService.sendEvent(fromNo, event);
     }
 
-
     //첫 로그인 시 밀렸던 모든 친구들을 조회하기
     public void checkAllFriendEvent() {
-        log.info("부재중 모든 친구 체크 요청 로직 실행");
+        log.info("나에게 온 친구 요청 알림 로직");
+        Long userNo = addOnEventService.getUserNo();
+
 
     }
 
