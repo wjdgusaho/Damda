@@ -1,6 +1,5 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.theme;
 
-import com.b210.damda.domain.dto.ThemeDetailDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

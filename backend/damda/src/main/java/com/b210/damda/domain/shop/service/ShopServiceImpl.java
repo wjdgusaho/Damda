@@ -1,8 +1,12 @@
 package com.b210.damda.domain.shop.service;
 
 import com.b210.damda.domain.dto.*;
+import com.b210.damda.domain.dto.theme.ThemeMappingDTO;
+import com.b210.damda.domain.dto.theme.ThemeShopDTO;
 import com.b210.damda.domain.entity.*;
 import com.b210.damda.domain.entity.User.User;
+import com.b210.damda.domain.entity.theme.Theme;
+import com.b210.damda.domain.entity.theme.ThemeMapping;
 import com.b210.damda.domain.shop.repository.*;
 import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
 import com.b210.damda.domain.entity.Timecapsule.Timecapsule;
@@ -363,6 +367,11 @@ public class ShopServiceImpl implements ShopService{
         //해당 유저가 맵핑된 타임캡슐이 아니란면
        timecapsuleMappingRepository.findByUserUserNoAndTimecapsuleTimecapsuleNo(userNo, timecapsuleNo)
                .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_TIMECAPSULE));
+
+       // 해당 타임캡슐이 삭제됐다면
+        if(timecapsule.getRemoveDate() != null){
+            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+        }
 
         //타임캡슐의 용량이 최대라면
        if(timecapsule.getMaxFileSize() >= MAX_FILE_SIZE){

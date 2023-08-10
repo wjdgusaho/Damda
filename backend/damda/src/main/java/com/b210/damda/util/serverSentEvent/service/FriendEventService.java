@@ -1,6 +1,8 @@
 package com.b210.damda.util.serverSentEvent.service;
 
+import com.b210.damda.domain.dto.serverSentEvent.ServerSentEventDTO;
 import com.b210.damda.domain.friend.service.FriendService;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.codec.ServerSentEvent;
@@ -28,32 +30,23 @@ public class FriendEventService {
     public void friendRequestEvent(long friendNo) {
         Long userNo = addOnEventService.getUserNo();
         log.info("가져온 유저 값 : ", userNo);
-        String eventName = "custom-event";
-        String eventData = userNo + "로부터 친구 요청이 도착했습니다. " + addOnEventService.getNowTime();
 
         //eventBuilder로 이벤트 생성
-        ServerSentEvent<String> event = addOnEventService.buildServerSentEvent(eventName, eventData);
+        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent("custom-event", new ServerSentEventDTO(userNo.toString(), "로부터 친구 요청이 도착했습니다. ", addOnEventService.getNowTime()));
         eventStreamService.sendEvent(friendNo, event);
     }
 
     //친구 요청 수락 이벤트(내가 상대방의 친구 요청을 승낙함)
     public void friendAcceptEvent(long fromNo) {
         Long userNo = addOnEventService.getUserNo();
-        String eventName = "custom-event";
-        String eventData = userNo + "님이 친구 요청을 승낙했습니다!"  + addOnEventService.getNowTime();
-
-        ServerSentEvent<String> event = addOnEventService.buildServerSentEvent(eventName, eventData);
+        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent("custom-event", new ServerSentEventDTO(userNo.toString(), "님이 친구 요청을 승낙했습니다!", addOnEventService.getNowTime()));
         eventStreamService.sendEvent(fromNo, event);
     }
 
     //친구 요청 거절 이벤트(요청 받은 내가 상대방에게 알림 전송)
     public void friendDenyEvent(long fromNo) {
         Long userNo = addOnEventService.getUserNo();
-//        Long userNo = 18L;
-        String eventName = "custom-event";
-        String eventData = userNo + "님이 친구 요청을 거절했습니다..."  + addOnEventService.getNowTime();
-
-        ServerSentEvent<String> event = addOnEventService.buildServerSentEvent(eventName, eventData);
+        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent("custom-event", new ServerSentEventDTO(userNo.toString(), "님이 친구 요청을 거절했습니다...", addOnEventService.getNowTime()));
         eventStreamService.sendEvent(fromNo, event);
     }
 

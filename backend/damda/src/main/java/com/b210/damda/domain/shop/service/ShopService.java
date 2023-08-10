@@ -2,6 +2,8 @@ package com.b210.damda.domain.shop.service;
 
 import com.b210.damda.domain.dto.*;
 import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
+import com.b210.damda.domain.dto.theme.ThemeMappingDTO;
+import com.b210.damda.domain.dto.theme.ThemeShopDTO;
 
 import java.util.List;
 import java.util.Map;
