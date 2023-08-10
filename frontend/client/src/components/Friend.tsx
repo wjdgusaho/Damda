@@ -4,8 +4,9 @@ import { styled } from "styled-components"
 import { NavLink, Outlet, Link } from "react-router-dom"
 import axios from "axios"
 import { serverUrl } from "../urls"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../store/Store"
+import { DELETE_FRIENDS } from "../store/Alarm"
 
 const Friend = function () {
   return (
@@ -299,6 +300,7 @@ const RequestCard = function ({
   setRequestList: React.Dispatch<React.SetStateAction<FriendType[]>>
 }) {
   const token = useSelector((state: RootState) => state.auth.accessToken)
+  const dispatch = useDispatch()
   const requestAccept = (event: React.MouseEvent<HTMLButtonElement>) => {
     axios({
       method: "PATCH",
@@ -319,6 +321,7 @@ const RequestCard = function ({
             (request) => request.userNo !== friend.userNo
           )
           setRequestList(newList)
+          dispatch(DELETE_FRIENDS(friend.userNo))
         }
       })
       .catch((error) => console.error(error))
@@ -344,6 +347,7 @@ const RequestCard = function ({
             (request) => request.userNo !== friend.userNo
           )
           setRequestList(newList)
+          dispatch(DELETE_FRIENDS(friend.userNo))
         }
       })
       .catch((error) => console.error(error))

@@ -21,6 +21,7 @@ const Box = styled.div`
   align-items: center;
   color: ${(props) => props.theme.colorCommon};
   font-family: "Pretendard";
+  margin-bottom: 30px;
 `
 
 const Title = tw.div`
