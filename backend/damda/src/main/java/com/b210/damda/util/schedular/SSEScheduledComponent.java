@@ -40,11 +40,16 @@ public class SSEScheduledComponent {
         Map<Long, FluxSink<ServerSentEvent<JsonNode>>> nowUserFluxSinkMap = EventStreamService.userFluxSinkMap;
         // 방법 1: 향상된 for 루프 사용
         for (Map.Entry<Long, LocalDateTime> entry : EventStreamService.lastResponseTimes.entrySet()) {
-            Long userId = entry.getKey();
+            Long userNo = entry.getKey();
             LocalDateTime userLastResponse = entry.getValue(); //유저의 마지막 응답 시간
-            log.warn("TEST : 기록있는 유저 : {}, 마지막 시간 : {}", userId, userLastResponse);
-            log.warn("시간 차이 : {}", Duration.between(LocalDateTime.now(), userLastResponse));
+            Duration duration = Duration.between(userLastResponse, LocalDateTime.now()); //시간 차이
+            log.warn("TEST : 기록있는 유저 : {}, 마지막 시간 : {}", userNo, userLastResponse);
+            log.warn("시간 차이 : {}", duration);
 
+            //일단 테스트용으로 1분 해놨음
+            if(duration.toMinutes() >= 1) {
+                log.warn("{} 님이 부재중 1분 이상입니다. 시간 : {} ", userNo, duration.toMinutes());
+            }
 
         }
     }
