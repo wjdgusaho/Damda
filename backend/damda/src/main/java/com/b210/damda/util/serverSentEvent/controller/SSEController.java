@@ -41,4 +41,9 @@ public class SSEController {
         return eventStreamService.connectStream();
     }
 
+    @GetMapping(value = "/sse/check")
+    public void checkConnection() {
+        eventStreamService.checkConnection();
+    }
+
 }
