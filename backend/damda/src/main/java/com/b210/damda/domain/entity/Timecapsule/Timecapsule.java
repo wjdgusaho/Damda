@@ -1,9 +1,6 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
-import com.b210.damda.domain.dto.Timecapsule.MainTimecapsuleListDTO;
-import com.b210.damda.domain.dto.Timecapsule.SaveTimecapsuleListDTO;
-import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDetailDTO;
-import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
+import com.b210.damda.domain.dto.Timecapsule.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -132,6 +129,15 @@ public class Timecapsule {
     // 현재 타임캡슐 인원 +1
     public void updateNowParticipant(){
         this.nowParticipant = nowParticipant + 1;
+    }
+
+    public TimecapsuleSimpleDTO toTimecapsuleSimpleDTO(){
+        return TimecapsuleSimpleDTO.builder()
+                .timecapsuleNo(this.timecapsuleNo)
+                .title(this.title)
+                .type(this.type)
+                .capsuleIconNo("capsule"+this.capsuleIconNo)
+                .build();
     }
 
 }
