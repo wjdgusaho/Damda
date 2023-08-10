@@ -3,6 +3,7 @@ package com.b210.damda.config;
 import com.b210.damda.util.filter.JwtFilter;
 import com.b210.damda.domain.user.service.UserService;
 import com.b210.damda.util.kakaoAPI.service.JwtSuccessHandler;
+import com.b210.damda.util.kakaoAPI.service.KakaoFailHandler;
 import com.b210.damda.util.kakaoAPI.service.PrincipalOauth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +55,7 @@ public class SecurityConfig{
                 .oauth2Login()
                     .loginPage("/user/login")
                     .successHandler(new JwtSuccessHandler())
-                    .failureUrl("/user/login")
+                    .failureHandler(new KakaoFailHandler())
                     .userInfoEndpoint().userService(principalOauth2UserService)
                 .and();
 
