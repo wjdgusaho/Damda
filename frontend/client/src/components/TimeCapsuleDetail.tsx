@@ -418,7 +418,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     : ""
   const isHost = capsuleData.myInfo.host
   const isCardAble = capsuleData.myInfo.cardAble
-  // const isFileAble = capsuleData.myInfo.fileAble
   const [isFileAble, setIsFileAble] = useState(capsuleData.myInfo.fileAble)
   const [nowParticipant, setNowParticipant] = useState(
     capsuleData.nowParticipant
@@ -753,21 +752,28 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
               {capsuleData.criteriaInfo.weatherStatus ||
               capsuleData.criteriaInfo.localBig ? (
                 <>
-                  <div className="text-center mt-3">
-                    <span className="font-bold">
-                      {capsuleData.criteriaInfo.weatherStatus === "RAIN"
-                        ? "비"
-                        : capsuleData.criteriaInfo.weatherStatus === "SNOW"
-                        ? "눈"
-                        : null}
-                    </span>{" "}
-                    오는 날 <br />
-                    <span className="font-bold">
-                      {capsuleData.criteriaInfo.localBig}{" "}
-                      {capsuleData.criteriaInfo.localMedium}
-                    </span>{" "}
-                    에서 열 수 있어요
-                  </div>
+                  {capsuleData.criteriaInfo.weatherStatus ? (
+                    <div>
+                      <span className="font-bold">
+                        {capsuleData.criteriaInfo.weatherStatus === "RAIN"
+                          ? "비"
+                          : capsuleData.criteriaInfo.weatherStatus === "SNOW"
+                          ? "눈"
+                          : null}
+                      </span>{" "}
+                      오는 날
+                    </div>
+                  ) : null}
+                  {capsuleData.criteriaInfo.localBig ? (
+                    <>
+                      <span className="font-bold">
+                        {capsuleData.criteriaInfo.localBig}{" "}
+                        {capsuleData.criteriaInfo.localMedium}{" "}
+                        <span className="font-normal">에서</span>
+                      </span>{" "}
+                    </>
+                  ) : null}
+                  열 수 있어요
                 </>
               ) : null}
 
@@ -1215,6 +1221,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
     : ""
   const navigate = useNavigate()
   const isCardAble = capsuleData.myInfo.cardAble
+  const [isFileAble, setIsFileAble] = useState(capsuleData.myInfo.fileAble)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
 
@@ -1222,6 +1229,9 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+
+  console.log(capsuleData.myInfo.fileAble)
+  console.log(isFileAble)
 
   const getFileSize = async () => {
     try {
@@ -1275,6 +1285,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           data: formData,
         })
         console.log(response.data)
+        setIsFileAble(false)
         closeModal()
       } catch (error) {
         console.log(error)
@@ -1290,6 +1301,10 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   function closeModal() {
     setIsOpen(false)
   }
+
+  useEffect(() => {
+    setIsFileAble(capsuleData.myInfo.fileAble)
+  }, [capsuleData])
 
   return (
     <>
@@ -1395,7 +1410,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           {capsuleData.capsuleType === "CLASSIC" ? null : (
             <>
               <div className="flex w-56 my-2 mt-5">
-                {capsuleData.myInfo.fileAble ? (
+                {isFileAble ? (
                   <>
                     <FileIcon
                       src="../../assets/icons/file.png"
