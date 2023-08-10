@@ -29,6 +29,10 @@ export const Logout = function () {
           console.log(event)
         }
 
+        eventSource.addEventListener("logout-event", (event) => {
+          eventSource.close()
+        })
+
         eventSource.onerror = (event) => {
           console.log(event)
           eventSource.close()
