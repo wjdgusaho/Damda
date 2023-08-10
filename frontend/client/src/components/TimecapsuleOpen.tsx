@@ -38,7 +38,7 @@ export const TimecapsuleOpen = function () {
         shakeCnt--
         if (shakeCnt <= 0) {
           // 여기에 다음 열린 후에 페이지로 들어가도록 만들어주세요.
-          navigate("/")
+          navigate("/main")
         }
       }
     }
