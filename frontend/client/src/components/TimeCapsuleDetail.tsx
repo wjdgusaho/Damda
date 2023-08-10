@@ -357,6 +357,19 @@ const TimeCapsuleDetail = function () {
     ],
   })
 
+  //카카오 javaScript 생성
+  useEffect(() => {
+    const script = document.createElement("script")
+    script.src = "https://developers.kakao.com/sdk/js/kakao.js"
+    script.async = true
+
+    document.body.appendChild(script)
+
+    return () => {
+      document.body.removeChild(script)
+    }
+  }, [])
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -620,6 +633,30 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       clearInterval(interval)
     }
   }, [oneDayLater])
+
+  function kakaoShare() {
+    if (window.Kakao) {
+      const kakao = window.Kakao
+
+      // 중복 initialization 방지
+      if (!kakao.isInitialized()) {
+        kakao.init("e25afc7dead08f60a151179a01026248")
+      }
+
+      Kakao.Link.sendDefault({
+        objectType: "feed",
+        content: {
+          title: "담다",
+          description: "담다2",
+          imageUrl: "http..",
+          link: {
+            mobileWebUrl: "https://damda.online",
+            webUrl: "https://damda.online",
+          },
+        },
+      })
+    }
+  }
 
   return (
     <div className="relative">
@@ -1023,6 +1060,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <HightLight />
                 {/* 공유하기 버튼 */}
                 <Shareimg
+                  onClick={kakaoShare}
                   className="absolute"
                   src="../../assets/icons/share.png"
                   alt="share"
