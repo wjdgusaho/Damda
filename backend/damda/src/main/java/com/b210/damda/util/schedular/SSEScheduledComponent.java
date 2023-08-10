@@ -25,6 +25,8 @@ public class SSEScheduledComponent {
 
     private final EventStreamService eventStreamService;
 
+
+
     @Scheduled(fixedRate = 3000) // 테스터
     public void scheduledTask() {
         log.info("스케줄링된 작업 실행: {}", System.currentTimeMillis());
