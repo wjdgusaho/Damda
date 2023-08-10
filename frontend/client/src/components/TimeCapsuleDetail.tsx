@@ -297,6 +297,13 @@ const InvitedBtn = styled(InviteRequestBtn)`
   background-color: #cfcfcf;
 `
 
+const Shareimg = styled.img`
+  right: -25px;
+  top: 5px;
+  width: 16px;
+  height: 20px;
+`
+
 const TimeCapsuleDetail = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
@@ -676,7 +683,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
               </Title>
               <div className="text-2xl font-bold relative mb-1">
                 <HightLight />
-                <div>{capsuleData.title}</div>
+                <div className="invisible">{capsuleData.title}</div>
               </div>
               <div style={{ fontSize: "14px", textAlign: "center" }}>
                 {capsuleData.description}
@@ -686,6 +693,39 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                   타임캡슐이 등록되고 나면 <br />
                   매일 1장의 카드와 파일을 업로드 할 수 있어요
                 </div>
+              ) : null}
+
+              {capsuleData.criteriaInfo.cirteriaDays ? (
+                <div className="text-center mt-3">
+                  매주{" "}
+                  {capsuleData.criteriaInfo.cirteriaDays?.map((day) => (
+                    <span key={day.dayEn} className="font-bold">
+                      {day.dayKr}{" "}
+                    </span>
+                  ))}{" "}
+                  기록해요
+                </div>
+              ) : null}
+
+              {capsuleData.criteriaInfo.weatherStatus ||
+              capsuleData.criteriaInfo.localBig ? (
+                <>
+                  <div className="text-center mt-3">
+                    <span className="font-bold">
+                      {capsuleData.criteriaInfo.weatherStatus === "RAIN"
+                        ? "비"
+                        : capsuleData.criteriaInfo.weatherStatus === "SNOW"
+                        ? "눈"
+                        : null}
+                    </span>{" "}
+                    오는 날 <br />
+                    <span className="font-bold">
+                      {capsuleData.criteriaInfo.localBig}{" "}
+                      {capsuleData.criteriaInfo.localMedium}
+                    </span>{" "}
+                    에서 열 수 있어요
+                  </div>
+                </>
               ) : null}
 
               {capsuleData.penalty ? (
@@ -981,6 +1021,12 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
               <div className="text-2xl font-bold relative mb-1">
                 <div>{capsuleData.inviteCode}</div>
                 <HightLight />
+                {/* 공유하기 버튼 */}
+                <Shareimg
+                  className="absolute"
+                  src="../../assets/icons/share.png"
+                  alt="share"
+                />
               </div>
               <FriendBox className="flex flex-col mt-2">
                 <div style={{ fontSize: "13px" }}>친구 목록</div>
@@ -1182,7 +1228,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <span className="font-bold">
                   {capsuleData.criteriaInfo.localBig}{" "}
                   {capsuleData.criteriaInfo.localMedium}
-                </span>
+                </span>{" "}
                 에서 열 수 있어요
               </div>
             </>

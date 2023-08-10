@@ -174,10 +174,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                     catch (Exception e) { throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND); }
 
                     //위치가 있을경우
-                    if (timecapsuleCriteria.getLocalBig() != null) {   
+                    if (timecapsuleCriteria.getLocalBig() != null && !timecapsuleCriteria.getLocalBig().trim().equals("")) {
                         //LocalBig과 LocalMedium 이 같지 않으면 오픈 조건 미성립!
                         if(timecapsuleCriteria.getLocalBig().equals(location.getLocalBig()) && 
-                            timecapsuleCriteria.getLocalMedium().equals(location.getLocalMedium())) continue;
+                            timecapsuleCriteria.getLocalMedium().equals(location.getLocalMedium()));
                         else openAble = false;
                     }
                     //날씨가 있는 경우
@@ -235,7 +235,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 }else openAble = false;
                 //모든 조건이 지나긴후
                 mainTimecapsule.setState(openAble);
+                System.out.println(123);
             }
+            System.out.println(123);
             timecapsuleList.add(mainTimecapsule);
         }
 
@@ -488,7 +490,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.NOT_CARDIMAGE);
         } else {
             try {
-                fileUri = s3UploadService.cardSaveFile(cardImage);
+                fileUri = s3UploadService.cardSaveFile(cardImage, timecapsuleNo);
             } catch (IOException e) {
                 throw new CommonException(CustomExceptionStatus.NOT_S3_CARD_SAVE);
             }
@@ -930,7 +932,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         String fileUrl = "";
         try {
-            fileUrl = s3UploadService.fileSaveFile(file);
+            fileUrl = s3UploadService.fileSaveFile(file, timecapsuleNo);
         } catch (IOException e) {
             throw new  CommonException(CustomExceptionStatus.FILE_NOT_UPLOAD);
         }
