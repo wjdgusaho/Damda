@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 이벤트와 관련된 서비스입니다.
+ * 친구 이벤트와 관련된 서비스입니다.
  */
 
 @Service
@@ -58,6 +58,7 @@ public class FriendEventService {
     //첫 로그인 시 밀렸던 모든 친구들을 조회하기
     public void checkAllFriendEvent() {
         log.info("부재중 모든 친구 체크 요청 로직 실행");
+
     }
 
 }

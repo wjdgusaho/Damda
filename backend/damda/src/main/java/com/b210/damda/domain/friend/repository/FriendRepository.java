@@ -32,7 +32,6 @@ public interface FriendRepository extends JpaRepository<UserFriend, Long> {
     @Query("SELECT u FROM UserFriend u WHERE u.user = :user AND u.friend = :friend")
     UserFriend getUserFriendByUserAndFriend(@Param("user") User user, @Param("friend") User friend);
 
-
     @Query("SELECT u FROM UserFriend u WHERE u.user = :user AND u.status = :status")
     List<UserFriend> findUserFriendByUserFriend(@Param("user") User friend, @Param("status") String status);
 
@@ -51,4 +50,6 @@ public interface FriendRepository extends JpaRepository<UserFriend, Long> {
     //해당 유저의 프로필 이미지 가져오기
     @Query("SELECT u.profileImage From User u Where u.userNo = :userNo")
     String getUserProfileImage(Long userNo);
+
+    //
 }
