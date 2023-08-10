@@ -89,6 +89,9 @@ export const UserInfoChange = () => {
     userPw: "",
     userPwCheck: "",
     nickname: useSelector((state: RootState) => state.auth.userInfo.nickname),
+    accountType: useSelector(
+      (state: RootState) => state.auth.userInfo.accountType
+    ),
   })
   const [isChangePassword, setIsChangePassword] = useState(false)
   const [userNicknameCondition, setUserNicknameCondition] = useState(0)
@@ -337,14 +340,18 @@ export const UserInfoChange = () => {
         ) : (
           <></>
         )}
-        <label htmlFor="CheckPassword">비밀번호 변경하기</label>
-        <input
-          name="CheckPassword"
-          className="justify-self-start"
-          type="checkbox"
-          checked={isChangePassword}
-          onChange={handleCheckBox}
-        />
+        {userdata.accountType === "ORIGIN" && (
+          <>
+            <label htmlFor="CheckPassword">비밀번호 변경하기</label>
+            <input
+              name="CheckPassword"
+              className="justify-self-start"
+              type="checkbox"
+              checked={isChangePassword}
+              onChange={handleCheckBox}
+            />
+          </>
+        )}
         {isChangePassword && (
           <div>
             <p>
