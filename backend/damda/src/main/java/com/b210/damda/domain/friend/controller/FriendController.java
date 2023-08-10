@@ -4,6 +4,7 @@ import com.b210.damda.domain.dto.Friend.FriendListDTO;
 import com.b210.damda.domain.dto.Friend.FriendNoRequestDTO;
 import com.b210.damda.domain.dto.Friend.FriendRequestListDTO;
 import com.b210.damda.domain.dto.User.UserDTO;
+import com.b210.damda.domain.dto.serverSentEvent.FriendEventEnum;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.friend.service.FriendService;
 import com.b210.damda.util.exception.CommonException;
@@ -35,7 +36,8 @@ public class FriendController {
     public DataResponse<Map<String, Object>> friendRequest(@RequestBody UserDTO userDTO){
         try{
             friendService.friendRequest(userDTO.getUserNo());
-            friendEventService.friendRequestEvent(userDTO.getUserNo());
+//            friendEventService.friendRequestEvent(userDTO.getUserNo());
+            friendEventService.friendEventService(userDTO.getUserNo(), FriendEventEnum.REQUEST);
             return new DataResponse<>(200, "친구 신청이 완료되었습니다.");
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
@@ -114,7 +116,8 @@ public class FriendController {
     public DataResponse<Map<String, Object>> friendAccept(@RequestBody FriendNoRequestDTO friendNoRequestDTO){
         try{
             friendService.friendReqeustAccept(friendNoRequestDTO.getUserNo());
-            friendEventService.friendAcceptEvent(friendNoRequestDTO.getUserNo());
+//            friendEventService.friendAcceptEvent(friendNoRequestDTO.getUserNo());
+            friendEventService.friendEventService(friendNoRequestDTO.getUserNo(), FriendEventEnum.ACCEPT);
             return new DataResponse<>(200, "친구 신청 수락");
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
@@ -128,7 +131,8 @@ public class FriendController {
     public DataResponse<Map<String, Object>> friendReject(@RequestBody FriendNoRequestDTO friendNoRequestDTO){
         try{
             friendService.friendReqeustReject(friendNoRequestDTO.getUserNo());
-            friendEventService.friendDenyEvent(friendNoRequestDTO.getUserNo());
+            //friendEventService.friendDenyEvent(friendNoRequestDTO.getUserNo());
+            friendEventService.friendEventService(friendNoRequestDTO.getUserNo(), FriendEventEnum.REJECT);
             return new DataResponse<>(200, "친구 신청 거절");
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());

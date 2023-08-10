@@ -29,8 +29,9 @@ public class FriendEventService {
 
     public void friendEventService(long fromNo, FriendEventEnum eventEnum) {
         Long userNo = addOnEventService.getUserNo();
-        log.info("가져온 유저 값 : ", userNo);
+        log.info("가져온 유저 값,test : ", userNo);
         String context = "default";
+        String eventName = "friend-event";
 
         switch (eventEnum) {
             case ACCEPT:
@@ -44,11 +45,11 @@ public class FriendEventService {
                 break;
         }
 
-        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent("friend-event", new ServerSentEventDTO(userNo.toString(), context, addOnEventService.getNowTime()));
+        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new ServerSentEventDTO(userNo.toString(), context, addOnEventService.getNowTime()));
         eventStreamService.sendEvent(fromNo, event);
     }
 
-//
+
 //    //친구 요청 이벤트 : 나(userNo) -> 친구 요청하는 사용자(frinedNo)
 //    public void friendRequestEvent(long friendNo) {
 //        Long userNo = addOnEventService.getUserNo();
@@ -72,10 +73,10 @@ public class FriendEventService {
 //        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent("custom-event", new ServerSentEventDTO(userNo.toString(), "님이 친구 요청을 거절했습니다...", addOnEventService.getNowTime()));
 //        eventStreamService.sendEvent(fromNo, event);
 //    }
-
-    //첫 로그인 시 밀렸던 모든 친구들을 조회하기
-    public void checkAllFriendEvent() {
-        log.info("부재중 모든 친구 체크 요청 로직 실행");
-    }
+//
+//    //첫 로그인 시 밀렸던 모든 친구들을 조회하기
+//    public void checkAllFriendEvent() {
+//        log.info("부재중 모든 친구 체크 요청 로직 실행");
+//    }
 
 }

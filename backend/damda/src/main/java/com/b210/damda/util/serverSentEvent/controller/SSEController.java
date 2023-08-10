@@ -35,7 +35,7 @@ public class SSEController {
     public Flux<ServerSentEvent<JsonNode>> login() {
         log.info("로그인 개방");
         //1. 확인하지 못했던 친구 상태 알림 로직
-        friendEventService.checkAllFriendEvent();
+        //friendEventService.checkAllFriendEvent();
         //2. 확인하지 못했던 타임 캡슐 알림 로직
 
         return eventStreamService.connectStream();
@@ -56,17 +56,17 @@ public class SSEController {
 
     @GetMapping(value = "/sse/test/request")
     public void test(@RequestParam long no) {
-        friendEventService.friendRequestEvent(no);
+//        friendEventService.friendRequestEvent(no);
     }
 
     @GetMapping(value = "/sse/test/accept")
     public void test2(@RequestParam long no) {
-        friendEventService.friendAcceptEvent(no);
+//        friendEventService.friendAcceptEvent(no);
     }
 
     @GetMapping(value = "/sse/test/reject")
     public void test3(@RequestParam long no) {
-        friendEventService.friendDenyEvent(no);
+//        friendEventService.friendDenyEvent(no);
     }
 
 }
