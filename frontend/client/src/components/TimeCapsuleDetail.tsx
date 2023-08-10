@@ -67,6 +67,13 @@ interface FriendListDataType {
   data: FriendDataType[]
 }
 
+declare global {
+  interface Window {
+    Kakao: any
+  }
+  const Kakao: any
+}
+
 const calculateDday = (endDate: string) => {
   const currentDate = new Date()
   const dateString = currentDate.toISOString().slice(0, 10)
@@ -678,6 +685,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   }, [oneDayLater])
 
   function kakaoShare() {
+    console.log("Kakao : ", window.Kakao)
     if (window.Kakao) {
       const kakao = window.Kakao
 
@@ -686,17 +694,36 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         kakao.init("e25afc7dead08f60a151179a01026248")
       }
 
-      Kakao.Link.sendDefault({
+      kakao.Link.sendDefault({
         objectType: "feed",
         content: {
-          title: "담다",
-          description: "담다2",
-          imageUrl: "http..",
+          title: "당신의 스쳐가는 시간을 의미있게 담다",
+          description:
+            "친구가 담다에서 기다리고있어요 \n 메인화면에서 캡슐코드를 입력해주세요.",
+          imageUrl:
+            "https://damda.s3.ap-northeast-2.amazonaws.com/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C/Frame+45.png",
           link: {
             mobileWebUrl: "https://damda.online",
             webUrl: "https://damda.online",
           },
         },
+        itemContent: {
+          items: [
+            {
+              item: "캡슐코드",
+              itemOp: "ABCD",
+            },
+          ],
+        },
+        buttons: [
+          {
+            title: "담다 접속하기",
+            link: {
+              mobileWebUrl: "https://damda.online",
+              webUrl: "https://damda.online",
+            },
+          },
+        ],
       })
     }
   }
