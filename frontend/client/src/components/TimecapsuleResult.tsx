@@ -91,10 +91,12 @@ const TimecapsuleResult = function () {
           <img src="../../assets/universe/Planet-9.png" alt="dummyimg" />
         </CapsuleImg>
         <>
-          <Title className="text-2xl font-bold mb-1 mt-28">더미 데이터</Title>
-          <div className="text-2xl font-bold relative mb-1 mt-28">
-            <div className="invisible">더미 데이터</div>
-            <HightLight />
+          <div className="z-0">
+            <Title className="text-2xl font-bold mb-1 mt-28">더미 데이터</Title>
+            <div className="text-2xl font-bold relative mb-1 mt-28">
+              <div className="invisible">더미 데이터</div>
+              <HightLight />
+            </div>
           </div>
 
           <div className="flex mb-2 mt-2">
