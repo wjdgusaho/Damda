@@ -42,7 +42,7 @@ public class SSEScheduledComponent {
         for (Map.Entry<Long, LocalDateTime> entry : EventStreamService.lastResponseTimes.entrySet()) {
             Long userNo = entry.getKey();
             LocalDateTime userLastResponse = entry.getValue(); //유저의 마지막 응답 시간
-            Duration duration = Duration.between(userLastResponse, LocalDateTime.now()); //시간 차이
+            Duration duration = Duration.between(userLastResponse, LocalDateTime.now().plusHours(9)); //시간 차이
             log.warn("TEST : 기록있는 유저 : {}, 마지막 시간 : {}", userNo, userLastResponse);
             log.warn("시간 차이 : {}", duration);
 
