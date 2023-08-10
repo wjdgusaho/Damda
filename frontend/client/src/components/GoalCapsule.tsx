@@ -248,49 +248,57 @@ const GoalCapsule = function () {
       .filter((item) => checkItems.includes(item.id))
       .map((item) => item.eng)
 
-    axios({
-      method: "POST",
-      url: serverUrl + "timecapsule/create",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      data: {
-        title: title,
-        type: "GOAL",
-        description: description,
-        goalCard: goalNumber,
-        openDate: null,
-        criteria: {
-          type: "CARD",
-          localBig: null,
-          localMedium: null,
-          weatherStatus: null,
-          startTime: timeValue[0],
-          endTime: timeValue[1],
-          timeKr: timeValue[2],
+    if (!title) {
+      alert("타임캡슐 이름을 입력해주세요.")
+    } else if (!description) {
+      alert("한줄설명을 입력해주세요.")
+    } else if (!goalNumber) {
+      alert("달성도를 설정해주세요.")
+    } else {
+      axios({
+        method: "POST",
+        url: serverUrl + "timecapsule/create",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
         },
-        cardInputDay: inputDay,
-        penalty: {
-          penalty: isPenalty,
-          penaltyDescription: penaltyDes,
+        data: {
+          title: title,
+          type: "GOAL",
+          description: description,
+          goalCard: goalNumber,
+          openDate: null,
+          criteria: {
+            type: "CARD",
+            localBig: null,
+            localMedium: null,
+            weatherStatus: null,
+            startTime: timeValue[0],
+            endTime: timeValue[1],
+            timeKr: timeValue[2],
+          },
+          cardInputDay: inputDay,
+          penalty: {
+            penalty: isPenalty,
+            penaltyDescription: penaltyDes,
+          },
         },
-      },
-    })
-      .then((res) => {
-        if (res.data.code === 200) {
-          console.log(res.data)
-          navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
-        } else if (res.data.code === -4004) {
-          alert(
-            "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
-          )
-          navigate("/main")
-        }
       })
-      .catch((err) => {
-        console.log(err)
-      })
+        .then((res) => {
+          if (res.data.code === 200) {
+            console.log(res.data)
+            navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
+          } else if (res.data.code === -4004) {
+            alert(
+              "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
+            )
+            navigate("/main")
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
   }
 
   return (

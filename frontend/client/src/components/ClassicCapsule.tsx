@@ -149,46 +149,52 @@ const ClassicCapsule = function () {
   function FormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    axios({
-      method: "POST",
-      url: serverUrl + "timecapsule/create",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      data: {
-        title: title,
-        type: "CLASSIC",
-        description: description,
-        goalCard: 0,
-        openDate: selectedDate,
-        criteria: {
-          type: "OPEN",
-          localBig: null,
-          localMedium: null,
-          weatherStatus: null,
-          startTime: timeValue[0],
-          endTime: timeValue[1],
-          timeKr: timeValue[2],
+    if (!title) {
+      alert("타임캡슐 이름을 입력해주세요.")
+    } else if (!description) {
+      alert("한줄설명을 입력해주세요.")
+    } else {
+      axios({
+        method: "POST",
+        url: serverUrl + "timecapsule/create",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
         },
-        cardInputDay: [],
-        penalty: null,
-      },
-    })
-      .then((res) => {
-        if (res.data.code === 200) {
-          console.log(res.data)
-          navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
-        } else if (res.data.code === -4004) {
-          alert(
-            "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
-          )
-          navigate("/main")
-        }
+        data: {
+          title: title,
+          type: "CLASSIC",
+          description: description,
+          goalCard: 0,
+          openDate: selectedDate,
+          criteria: {
+            type: "OPEN",
+            localBig: null,
+            localMedium: null,
+            weatherStatus: null,
+            startTime: timeValue[0],
+            endTime: timeValue[1],
+            timeKr: timeValue[2],
+          },
+          cardInputDay: [],
+          penalty: null,
+        },
       })
-      .catch((err) => {
-        console.log(err)
-      })
+        .then((res) => {
+          if (res.data.code === 200) {
+            console.log(res.data)
+            navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
+          } else if (res.data.code === -4004) {
+            alert(
+              "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
+            )
+            navigate("/main")
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
   }
 
   return (
