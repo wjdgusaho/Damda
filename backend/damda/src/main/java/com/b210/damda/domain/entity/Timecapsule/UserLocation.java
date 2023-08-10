@@ -18,8 +18,10 @@ public class UserLocation {
     @Id  @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userLocationNo;
 
+    @Column(name = "local_big")
     private String localBig;
 
+    @Column(name = "local_medium")
     private String localMedium;
 
     @ManyToOne
