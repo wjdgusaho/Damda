@@ -79,3 +79,19 @@ self.addEventListener("message", (event) => {
 })
 
 // Any other custom service worker logic can go here.
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames
+          .filter((cacheName) => {
+            // Update your cache names if needed
+            return cacheName.startsWith("workbox-precache-v2")
+          })
+          .map((cacheName) => {
+            return caches.delete(cacheName)
+          })
+      )
+    })
+  )
+})
