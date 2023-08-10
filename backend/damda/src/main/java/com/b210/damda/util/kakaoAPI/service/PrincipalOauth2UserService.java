@@ -1,8 +1,16 @@
 package com.b210.damda.util.kakaoAPI.service;
 
 
+import com.b210.damda.domain.entity.Items;
+import com.b210.damda.domain.entity.ItemsMapping;
 import com.b210.damda.domain.entity.User.UserLog;
 
+import com.b210.damda.domain.entity.theme.Theme;
+import com.b210.damda.domain.entity.theme.ThemeMapping;
+import com.b210.damda.domain.shop.repository.ItemsMappingRepository;
+import com.b210.damda.domain.shop.repository.ItemsRepository;
+import com.b210.damda.domain.shop.repository.ThemeMappingRepository;
+import com.b210.damda.domain.shop.repository.ThemeRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.domain.user.service.UserService;
@@ -30,14 +38,24 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     private final UserService userService;
     private final UserLogRepository userLogRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final ItemsMappingRepository itemsMappingRepository;
+    private final ItemsRepository itemsRepository;
+    private final ThemeMappingRepository themeMappingRepository;
+    private final ThemeRepository themeRepository;
 
     @Autowired
-    public PrincipalOauth2UserService(UserRepository userRepository, BCryptPasswordEncoder encoder, UserService userService, UserLogRepository userLogRepository, RefreshTokenRepository refreshTokenRepository) {
+    public PrincipalOauth2UserService(UserRepository userRepository, BCryptPasswordEncoder encoder, UserService userService, UserLogRepository userLogRepository, RefreshTokenRepository refreshTokenRepository,
+                                      ItemsMappingRepository itemsMappingRepository, ItemsRepository itemsRepository, ThemeMappingRepository themeMappingRepository,
+                                      ThemeRepository themeRepository) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.userService = userService;
         this.userLogRepository = userLogRepository;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.itemsMappingRepository = itemsMappingRepository;
+        this.itemsRepository = itemsRepository;
+        this.themeMappingRepository = themeMappingRepository;
+        this.themeRepository = themeRepository;
     }
 
     @Override
@@ -82,8 +100,23 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .profileImage(profileImage)
                     .build();
 
+
+
             user = userRepository.save(user);
             System.out.println("유저없음"+user);
+
+            // 3번 아이템 꺼냄
+            Items items = itemsRepository.findByItemNo(3L).get();
+
+            // 스티커 무료 제공
+            ItemsMapping itemsMapping = new ItemsMapping(user, items);
+            itemsMappingRepository.save(itemsMapping);
+
+            // 1번 테마 꺼냄
+            Theme theme = themeRepository.findById(1L).get();
+
+            ThemeMapping themeMapping = new ThemeMapping(user, theme);
+            themeMappingRepository.save(themeMapping);
         }
         else{
             user = optionalUser.get();
