@@ -1068,7 +1068,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         userRepository.save(kickUser);
 
         // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
-        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, user.getUserNo()).get();
+        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, kickUserNo).get();
 
         timecapsuleInvite.setStatus("REJECTED");
 

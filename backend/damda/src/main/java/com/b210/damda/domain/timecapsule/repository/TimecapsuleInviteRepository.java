@@ -3,6 +3,8 @@ package com.b210.damda.domain.timecapsule.repository;
 import com.b210.damda.domain.entity.Timecapsule.Timecapsule;
 import com.b210.damda.domain.entity.Timecapsule.TimecapsuleInvite;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,5 +18,6 @@ public interface TimecapsuleInviteRepository extends JpaRepository<TimecapsuleIn
     List<TimecapsuleInvite> getTimecapsuleInviteByTimecapsule(Timecapsule timecapsule);
 
     // 친구 번호로 타임캡슐 초대 데이터를 찾음
-    Optional<TimecapsuleInvite> getTimecapsuleInviteByTimecapsuleAndGuestUserNo(Timecapsule timecapsule,Long UserNo);
+    @Query("SELECT ti FROM TimecapsuleInvite ti WHERE ti.timecapsule = :timecapsule AND ti.guestUserNo = :userNo")
+    Optional<TimecapsuleInvite> getTimecapsuleInviteByTimecapsuleAndGuestUserNo(@Param("timecapsule") Timecapsule timecapsule, @Param("userNo") Long userNo);
 }
