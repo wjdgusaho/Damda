@@ -82,7 +82,7 @@ public class EventStreamService {
                         .map(new Function<Long, ServerSentEvent<JsonNode>>() {
                             @Override
                             public ServerSentEvent<JsonNode> apply(Long tick) {
-                                return addOnEventService.buildServerSentEvent("check-connection", new ServerSentEventDTO(null, "heartbeat", LocalDateTime.now().toString()));
+                                return addOnEventService.buildServerSentEvent("check-connection", new ServerSentEventDTO(null, "heartbeat", addOnEventService.getNowTime()));
                             }
                         });
 
@@ -110,19 +110,20 @@ public class EventStreamService {
         endAndRemoveStream(userNo);
 
         //로그아웃 알림
-        ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("custom-event", new ServerSentEventDTO(null, "로그아웃 진행", LocalDateTime.now().toString() ));
+        ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("logout-event", new ServerSentEventDTO(null, "로그아웃 진행", addOnEventService.getNowTime()));
         sendEvent(userNo, logoutEvent);
     }
 
     //미답신 시 종료 로직 : 현재 비정상적 종료를 시행, 스케줄러에서 사용
     public void disconnectStream(long userNo) {
         log.info("disconnectStream, 미답신 {}", userNo);
+
+        //끊어짐 알림 : 해당 알림이 클라이언트로 가고, 클라이언트가 만약 현재 접속중이라면 10초 뒤에 다시 로그인 로직을 실행한다.
+        ServerSentEvent<JsonNode> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", new ServerSentEventDTO(null, "클라이언트 장기 미답신으로 인한 연결 끊어짐", addOnEventService.getNowTime()));
+        sendEvent(userNo, disconnectEvent);
+
         //저장된 스트림 종료 및 싱크 제거
         endAndRemoveStream(userNo);
-
-        //끊어짐 알림
-        ServerSentEvent<JsonNode> disconnectEvent = addOnEventService.buildServerSentEvent("end-of-stream", new ServerSentEventDTO(null, "클라이언트 장기 미답신으로 인한 연결 끊어짐", LocalDateTime.now().toString()));
-        sendEvent(userNo, disconnectEvent);
     }
 
     //저장된 스트림 종료 및 싱크 제거, 외부 스케줄러에서 종료 로직을 사용할 수 있기에 synchronized 처리하였다.
