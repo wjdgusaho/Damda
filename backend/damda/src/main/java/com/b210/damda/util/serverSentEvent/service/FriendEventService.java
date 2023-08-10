@@ -27,18 +27,18 @@ public class FriendEventService {
     private final AddOnEventService addOnEventService;   //공통 로직에서 사용되는 이벤트 메서드
     private final FriendService friendService;
 
-    public void friendEventService(long fromNo, FriendEventEnum eventEnum) {
+    public void friendEventService(long fromNo, FriendEventEnum type) {
         Long userNo = addOnEventService.getUserNo();
         log.info("가져온 유저 값,test : ", userNo);
         String context = "default";
         String eventName = "friend-event";
 
-        switch (eventEnum) {
+        switch (type) {
             case ACCEPT:
                 context = "님이 친구 요청을 승낙했습니다!";
                 break;
             case REQUEST:
-                context = "로부터 친구 요청이 도착했습니다. ";
+                context = "님으로부터 친구 요청이 도착했습니다. ";
                 break;
             case REJECT:
                 context = "님이 친구 요청을 거절했습니다...";
@@ -50,33 +50,9 @@ public class FriendEventService {
     }
 
 
-//    //친구 요청 이벤트 : 나(userNo) -> 친구 요청하는 사용자(frinedNo)
-//    public void friendRequestEvent(long friendNo) {
-//        Long userNo = addOnEventService.getUserNo();
-//        log.info("가져온 유저 값 : ", userNo);
-//
-//        //eventBuilder로 이벤트 생성
-//        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent("custom-event", new ServerSentEventDTO(userNo.toString(), "로부터 친구 요청이 도착했습니다. ", addOnEventService.getNowTime()));
-//        eventStreamService.sendEvent(friendNo, event);
-//    }
-//
-//    //친구 요청 수락 이벤트(내가 상대방의 친구 요청을 승낙함)
-//    public void friendAcceptEvent(long fromNo) {
-//        Long userNo = addOnEventService.getUserNo();
-//        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent("custom-event", new ServerSentEventDTO(userNo.toString(), "님이 친구 요청을 승낙했습니다!", addOnEventService.getNowTime()));
-//        eventStreamService.sendEvent(fromNo, event);
-//    }
-//
-//    //친구 요청 거절 이벤트(요청 받은 내가 상대방에게 알림 전송)
-//    public void friendDenyEvent(long fromNo) {
-//        Long userNo = addOnEventService.getUserNo();
-//        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent("custom-event", new ServerSentEventDTO(userNo.toString(), "님이 친구 요청을 거절했습니다...", addOnEventService.getNowTime()));
-//        eventStreamService.sendEvent(fromNo, event);
-//    }
-//
-//    //첫 로그인 시 밀렸던 모든 친구들을 조회하기
-//    public void checkAllFriendEvent() {
-//        log.info("부재중 모든 친구 체크 요청 로직 실행");
-//    }
+    //첫 로그인 시 밀렸던 모든 친구들을 조회하기
+    public void checkAllFriendEvent() {
+        log.info("부재중 모든 친구 체크 요청 로직 실행");
+    }
 
 }

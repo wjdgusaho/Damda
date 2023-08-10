@@ -36,7 +36,6 @@ public class FriendController {
     public DataResponse<Map<String, Object>> friendRequest(@RequestBody UserDTO userDTO){
         try{
             friendService.friendRequest(userDTO.getUserNo());
-//            friendEventService.friendRequestEvent(userDTO.getUserNo());
             friendEventService.friendEventService(userDTO.getUserNo(), FriendEventEnum.REQUEST);
             return new DataResponse<>(200, "친구 신청이 완료되었습니다.");
         }catch (CommonException e){
@@ -116,7 +115,6 @@ public class FriendController {
     public DataResponse<Map<String, Object>> friendAccept(@RequestBody FriendNoRequestDTO friendNoRequestDTO){
         try{
             friendService.friendReqeustAccept(friendNoRequestDTO.getUserNo());
-//            friendEventService.friendAcceptEvent(friendNoRequestDTO.getUserNo());
             friendEventService.friendEventService(friendNoRequestDTO.getUserNo(), FriendEventEnum.ACCEPT);
             return new DataResponse<>(200, "친구 신청 수락");
         }catch (CommonException e){
@@ -131,7 +129,6 @@ public class FriendController {
     public DataResponse<Map<String, Object>> friendReject(@RequestBody FriendNoRequestDTO friendNoRequestDTO){
         try{
             friendService.friendReqeustReject(friendNoRequestDTO.getUserNo());
-            //friendEventService.friendDenyEvent(friendNoRequestDTO.getUserNo());
             friendEventService.friendEventService(friendNoRequestDTO.getUserNo(), FriendEventEnum.REJECT);
             return new DataResponse<>(200, "친구 신청 거절");
         }catch (CommonException e){
