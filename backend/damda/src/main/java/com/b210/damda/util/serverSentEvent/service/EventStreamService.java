@@ -62,18 +62,7 @@ public class EventStreamService {
     public Flux<ServerSentEvent<JsonNode>> connectStream() {
         long userNo = addOnEventService.getUserNo();
         log.info("connectStream, userNo : {}", userNo);
-
-        // 1. 기존 스트림 제거
-        if(userFluxSinkMap.containsKey(userNo)) {
-            log.info("기존 {}의 스트림Flux가 존재하기에 Sink를 종료합니다.", userNo);
-            userFluxSinkMap.get(userNo).complete(); //기존의 FluxSink 종료
-            userFluxSinkMap.remove(userNo); //Map에 기록 제거
-        }
-        // 2. maintainConnectFlux 종료 및 제거
-        if(disconnectProcessors.containsKey(userNo)) {
-            disconnectProcessors.get(userNo).onComplete();
-            disconnectProcessors.remove(userNo);
-        }
+        endAndRemoveStream(userNo);
 
         //이후 재연결 로직 발생
         //접속 시간 등록
@@ -137,8 +126,8 @@ public class EventStreamService {
 //        sendEvent(userNo, disconnectEvent);
 //    }
 
-    //저장된 스트림 종료 및 싱크 제거
-    public void endAndRemoveStream(long userNo) {
+    //저장된 스트림 종료 및 싱크 제거, 외부 스케줄러에서 종료 로직을 사용할 수 있기에 synchronized 처리하였다.
+    public synchronized void endAndRemoveStream(long userNo) {
         log.info("endAndRemoveStream, 저장된 스트림 종료 및 싱크 제거 Map에 유저 정보 제거, {}", userNo);
 
 
@@ -161,7 +150,7 @@ public class EventStreamService {
         }
 
         //마지막으로 Times 배열에 유저 정보를 제거한다. 이로써 완전히 스트림과, 스트림이 명시된 Map이 제거되었다.
-        lastResponseTimes.remove(userNo);
+        if(lastResponseTimes.get(userNo) != null) lastResponseTimes.remove(userNo);
     }
 
     //특정 이벤트를 발생시켜 특정 사용자에게 이벤트를 전송
