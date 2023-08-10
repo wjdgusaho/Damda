@@ -167,7 +167,7 @@ const RecordCapsule = function () {
     const newValue = e.target.value
 
     if (newValue === "없음") {
-      setSelectedLocationBig(newValue)
+      setSelectedLocationBig("")
       setSelectedLocationMedium("")
     } else {
       setSelectedLocationBig(newValue)
@@ -266,7 +266,7 @@ const RecordCapsule = function () {
         criteria: {
           type: "OPEN",
           localBig: selectedLocationBig,
-          localMedium: selectedLocationMedium,
+          localMedium: selectedLocationMedium || locationMedium[0],
           weatherStatus: weatherValue,
           startTime: timeValue[0],
           endTime: timeValue[1],

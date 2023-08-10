@@ -7,12 +7,7 @@ import { serverUrl, reqUrl } from "../../urls"
 import { SET_TOKEN, SET_USER } from "../../store/Auth"
 import { setRefreshToken } from "../../store/Cookie"
 import "../../index.css"
-import {
-  changeHeartTheme,
-  changeMarbleTheme,
-  changeUniverseDarkTheme,
-  changeUniverseLightTheme,
-} from "../../store/Theme"
+import { SET_THEME } from "../../store/Theme"
 
 const Box = styled.div`
   display: flex;
@@ -145,15 +140,7 @@ const Login = function () {
           setRefreshToken(refreshToken)
           dispatch(SET_TOKEN(accessToken))
           dispatch(SET_USER(userInfo))
-          if (userInfo.nowTheme === 0) {
-            dispatch(changeUniverseDarkTheme())
-          } else if (userInfo.nowTheme === 1) {
-            dispatch(changeUniverseLightTheme())
-          } else if (userInfo.nowTheme === 2) {
-            dispatch(changeHeartTheme())
-          } else if (userInfo.nowTheme === 3) {
-            dispatch(changeMarbleTheme())
-          }
+          dispatch(SET_THEME(userInfo.nowTheme))
           navigate("/tutorial")
         }
       })

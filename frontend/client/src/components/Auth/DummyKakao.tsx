@@ -5,12 +5,7 @@ import { setRefreshToken } from "../../store/Cookie"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { SET_USER, SET_TOKEN } from "../../store/Auth"
-import {
-  changeHeartTheme,
-  changeMarbleTheme,
-  changeUniverseDarkTheme,
-  changeUniverseLightTheme,
-} from "../../store/Theme"
+import { SET_THEME } from "../../store/Theme"
 
 export const DummyKakao = () => {
   const navigate = useNavigate()
@@ -39,15 +34,7 @@ export const DummyKakao = () => {
             setRefreshToken(refreshToken)
             dispatch(SET_TOKEN(accessToken))
             dispatch(SET_USER(userInfo))
-            if (userInfo.nowTheme === 0) {
-              dispatch(changeUniverseDarkTheme())
-            } else if (userInfo.nowTheme === 1) {
-              dispatch(changeUniverseLightTheme())
-            } else if (userInfo.nowTheme === 2) {
-              dispatch(changeHeartTheme())
-            } else if (userInfo.nowTheme === 3) {
-              dispatch(changeMarbleTheme())
-            }
+            dispatch(SET_THEME(userInfo.nowTheme))
             navigate("/tutorial")
           }
         })

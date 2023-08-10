@@ -36,6 +36,7 @@ import { getCookieToken } from "./store/Cookie"
 import { SET_TOKEN } from "./store/Auth"
 import { serverUrl } from "./urls"
 import { TimecapsuleOpen } from "./components/TimecapsuleOpen"
+import TimecapsuleResult from "./components/TimecapsuleResult"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
@@ -206,6 +207,10 @@ function Main() {
               <Route
                 path="/timecapsule/open"
                 element={<TimecapsuleOpen />}
+              ></Route>
+              <Route
+                path="/timecapsule/open/:capsuleId"
+                element={<TimecapsuleResult />}
               ></Route>
             </Routes>
           </BrowserRouter>
