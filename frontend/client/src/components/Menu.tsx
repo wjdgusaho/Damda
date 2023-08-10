@@ -121,7 +121,11 @@ const Menu = function () {
         </MenuBtn>
         <LogoutBtn
           onClick={() => {
-            navigate("/logout")
+            if (UserData.accountType === "KAKAO") {
+              navigate("/user-info")
+            } else {
+              navigate("/logout")
+            }
           }}
         >
           로그아웃

@@ -58,7 +58,10 @@ const Card = function () {
   const [countList, setCountList] = useState<{ no: number; url: string }[]>([])
   const UserData = useSelector((state: RootState) => state.auth.userInfo)
   const token = useSelector((state: RootState) => state.auth.accessToken)
-
+  const currentDate = new Date()
+  const year = currentDate.getFullYear()
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0")
+  const day = String(currentDate.getDate()).padStart(2, "0")
   const navigate = useNavigate()
   const timecapsuleNo = useParams()
 
@@ -132,7 +135,7 @@ const Card = function () {
         })
         console.log(response)
         setStickerList(response.data.data.decoList)
-        setSticker(5)
+        setSticker(3)
       } catch (error) {
         console.error(error)
       }
@@ -331,11 +334,13 @@ const Card = function () {
               alt="프로필사진"
             />
             <span className="mt-1 font-light text-neutral-500">
-              <Text font={font}>달토끼맛 쿠키</Text>
+              <Text font={font}>{UserData.nickname}</Text>
             </span>
           </div>
           <div className="font-light text-neutral-500">
-            <Text font={font}>2023.02.03</Text>
+            <Text font={font}>
+              {year}.{month}.{day}
+            </Text>
           </div>
         </div>
         <div ref={StickerContainerArea}>
