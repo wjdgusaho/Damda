@@ -17,7 +17,7 @@ const Box = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: ${(props) => props.theme.colorCommon};
   font-family: "Pretendard";
   justify-content: center;
 `
@@ -33,15 +33,16 @@ const Content = styled.div`
   font-size: 1.25rem;
   font-weight: 300;
   span {
+    opacity: 0.47;
     font-size: 14px;
-    color: rgb(243, 245, 251, 0.47);
+    color: ${(props) => props.theme.colorCommon};
     margin-left: 15px;
   }
 `
 
 const InputBox = styled.input`
   background-color: rgb(255, 255, 255, 0);
-  border-bottom: 2px solid rgb(255, 255, 255, 0.83);
+  border-bottom: 2px solid ${(props) => props.theme.colorCommon};
   height: 50px;
   outline: none;
   font-weight: 200;
@@ -49,7 +50,6 @@ const InputBox = styled.input`
 
 const SelectBox = styled.select`
   background-color: rgb(255, 255, 255, 0);
-  border-bottom: 2px solid rgb(255, 255, 255, 0.83);
   height: 50px;
   outline: none;
   font-weight: 200;
@@ -100,11 +100,11 @@ const RadioBtn = styled.label`
 const SubmitBtn = styled.button`
   width: 130px;
   height: 49px;
-  background-color: #f6eef9; // lilac 100
-  color: #431f4c; // lilac 950
+  background-color: ${(props) => props.theme.color100};
+  color: ${(props) => props.theme.color900};
   border-radius: 30px;
   font-size: 24px;
-  box-shadow: 0px 4px 4px #534177;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
 `
 
 const CancelBtn = styled(SubmitBtn)`
@@ -116,6 +116,10 @@ const BtnWrap = tw.div`
   my-16
   flex
   justify-evenly
+`
+
+const DatePickerWrap = styled.div`
+  border-bottom: 2px solid ${(props) => props.theme.colorCommon};
 `
 
 const RecordCapsule = function () {
@@ -325,16 +329,18 @@ const RecordCapsule = function () {
           <ContentWrap>
             <Content>캡슐 공개일</Content>
           </ContentWrap>
-          <DatePicker
-            className="datePicker w-80"
-            formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
-            dateFormat="yyyy-MM-dd"
-            locale={ko}
-            minDate={new Date(twoDayAheadDateString)}
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            onKeyDown={handleDatePickerKeyDown}
-          />
+          <DatePickerWrap>
+            <DatePicker
+              className="datePicker w-80"
+              formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
+              dateFormat="yyyy-MM-dd"
+              locale={ko}
+              minDate={new Date(twoDayAheadDateString)}
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              onKeyDown={handleDatePickerKeyDown}
+            />
+          </DatePickerWrap>
           <ContentWrap>
             <Content>
               캡슐 공개시간
@@ -401,31 +407,35 @@ const RecordCapsule = function () {
             </Content>
           </ContentWrap>
           <div className="flex justify-between w-80">
-            <SelectBox
-              className="w-36"
-              name="locationBig"
-              id="locationBig"
-              onChange={handleLocationBigChange}
-            >
-              {locationBig.map((location, index) => (
-                <option key={index} value={location}>
-                  {location}
-                </option>
-              ))}
-            </SelectBox>
+            <DatePickerWrap>
+              <SelectBox
+                className="w-36"
+                name="locationBig"
+                id="locationBig"
+                onChange={handleLocationBigChange}
+              >
+                {locationBig.map((location, index) => (
+                  <option key={index} value={location}>
+                    {location}
+                  </option>
+                ))}
+              </SelectBox>
+            </DatePickerWrap>
 
-            <SelectBox
-              className="w-36"
-              name="locationMedium"
-              id="locationMedium"
-              onChange={handleLocationMediumChange}
-            >
-              {locationMedium.map((location, index) => (
-                <option key={index} value={location}>
-                  {location}
-                </option>
-              ))}
-            </SelectBox>
+            <DatePickerWrap>
+              <SelectBox
+                className="w-36"
+                name="locationMedium"
+                id="locationMedium"
+                onChange={handleLocationMediumChange}
+              >
+                {locationMedium.map((location, index) => (
+                  <option key={index} value={location}>
+                    {location}
+                  </option>
+                ))}
+              </SelectBox>
+            </DatePickerWrap>
           </div>
           <ContentWrap>
             <Content>

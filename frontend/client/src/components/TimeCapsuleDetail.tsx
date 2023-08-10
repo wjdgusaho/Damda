@@ -482,6 +482,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       })
       if (response.data.code === 200) {
         closeKickOutModal()
+        window.location.reload()
         console.log(response.data)
       } // 나중에 추가할거임
     } catch (error) {
