@@ -15,9 +15,10 @@ import org.springframework.stereotype.Service;
 public class ScheduledComponent {
     private final TimecapsuleRepository timecapsuleRepository;
 
-    @Scheduled(fixedRate = 2000) // 1초마다 실행
+    @Scheduled(fixedRate = 3000) // 1초마다 실행
     public void scheduledTask() {
         log.info("스케줄링된 작업 실행: {}", System.currentTimeMillis());
+        timecapsuleRepository.cardAble(true);
         // userFluxSinkMap에 접근
 //        log.info("size : {}", EventStreamService.userFluxSinkMap.size());
     }
