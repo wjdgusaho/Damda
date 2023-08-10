@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { getCookieToken, removeCookieToken } from "../../store/Cookie"
 import { DELETE_TOKEN, DELETE_USER } from "../../store/Auth"
 import { serverUrl } from "../../urls"
-import { changeUniverseDarkTheme } from "../../store/Theme"
+import { SET_THEME } from "../../store/Theme"
 import { DELETE_TIMECAPSULE } from "../../store/Timecapsule"
 import { EventSourcePolyfill } from "event-source-polyfill"
 import { RootState } from "../../store/Store"
@@ -48,7 +48,7 @@ export const Logout = function () {
       .then(() => {
         dispatch(DELETE_TOKEN())
         dispatch(DELETE_USER())
-        dispatch(changeUniverseDarkTheme())
+        dispatch(SET_THEME(1))
         dispatch(DELETE_TIMECAPSULE())
         removeCookieToken()
         navigate("/login")

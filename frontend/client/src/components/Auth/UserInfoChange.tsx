@@ -8,7 +8,7 @@ import { RootState } from "../../store/Store"
 import { DELETE_TOKEN, DELETE_USER, SET_USER } from "../../store/Auth"
 import Modal from "react-modal"
 import { DELETE_TIMECAPSULE } from "../../store/Timecapsule"
-import { changeUniverseDarkTheme } from "../../store/Theme"
+import { SET_THEME } from "../../store/Theme"
 import { removeCookieToken } from "../../store/Cookie"
 import styled from "styled-components"
 
@@ -244,7 +244,7 @@ export const UserInfoChange = () => {
           dispatch(DELETE_USER())
           dispatch(DELETE_TOKEN())
           dispatch(DELETE_TIMECAPSULE())
-          dispatch(changeUniverseDarkTheme())
+          dispatch(SET_THEME(0))
           removeCookieToken()
           navigate("/login")
         }
