@@ -188,8 +188,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         if(userLocation == null){
                             userLocation = new UserLocation();
                             userLocation.setUser(user);
-                            userLocation.setLocalBig(location.getLocalBig());
-                            userLocation.setLocalMedium(location.getLocalMedium());
+                            userLocation.setLocalBig(timecapsuleCriteria.getLocalBig());
+                            userLocation.setLocalMedium(timecapsuleCriteria.getLocalMedium());
                             userLocation.setWeatherTime(Timestamp.valueOf(LocalDateTime.now()));
                             //날씨 조회 하면서 저장
                             userLocation = renewWeather(weatherLocationDto, userLocation);
