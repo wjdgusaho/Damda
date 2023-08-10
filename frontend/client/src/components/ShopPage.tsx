@@ -554,7 +554,7 @@ const ModalCapsuleInner = function () {
       <TextStyle7 className="opacity-70 text-lg mb-4 !text-black">
         타임캡슐을 선택해주세요
       </TextStyle7>
-      <div className="border-solid border-gray-700 border rounded-2xl w-full p-4">
+      <div className="border-solid border-gray-700 border rounded-2xl w-full p-4 h-80 overflow-scroll">
         {timeCapsuleList.length > 0 &&
           timeCapsuleList.map((t) => (
             <div key={t.timecapsuleNo}>
@@ -597,16 +597,16 @@ export const MyCapsule: React.FC<MyCapsuleProps> = ({
       {({ value, setValue }) => (
         <div className="flex m-auto mb-1 rounded-lg p-2 justify-around items-center">
           <div className="w-2/12">
-            <img
+            <CapsuleImage
               className="filter drop-shadow-md"
-              src="/assets/universe/Planet-5.png"
-              alt=""
+              capsulenum={"capsule" + capsuleIconNo}
             />
           </div>
           <div className="w-8/12 text-left pl-3">
             <TextStyle5 className="!text-black">{title}</TextStyle5>
             <TextStyle3 className="text-xs !text-black">
-              {nowFileSize} / {(maxFileSize! / (1024 * 1024)).toFixed(0)} MB
+              {(nowFileSize! / (1024 * 1024)).toFixed(0)} /{" "}
+              {(maxFileSize! / (1024 * 1024)).toFixed(0)} MB
             </TextStyle3>
           </div>
           <div className="w-2/12">
@@ -714,6 +714,14 @@ const CardLine = styled.div`
   height: 1px;
   background-color: ${(props) => props.theme.colorCommon};
   margin: 20px auto 20px auto;
+`
+const CapsuleImage = styled.div<{ capsulenum: string }>`
+  position: relative;
+  background-image: url(${(props) => props.theme[props.capsulenum]});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 40px;
+  height: 40px;
 `
 
 export default ShopPage
