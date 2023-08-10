@@ -52,7 +52,7 @@ public class ThemeSerivce {
         }
 
         // 유저의 테마를 변경
-        user.setNowTheme(themeChangeDTO.getNowTheme().intValue() - 1);
+        user.setNowTheme(themeChangeDTO.getNowTheme().intValue());
         userRepository.save(user);
     }
 }
