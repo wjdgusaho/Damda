@@ -45,5 +45,5 @@ public interface TimecapsuleService {
 
     TimecapsuleSimpleDTO timecapsuleSimpleInfo(Long timecapsuleNo);
 
-    List<TimecapsuleCardDTO> timecapsuleCardList(Long timecapsuleNo);
+    List<TimecapsuleOpenCardDTO> timecapsuleCardList(Long timecapsuleNo);
 }
