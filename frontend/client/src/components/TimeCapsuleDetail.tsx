@@ -1517,25 +1517,76 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
             <div className="flex justify-center flex-wrap w-80">
               {capsuleData.partInfo.map((part, idx) => (
                 <div key={part.userNo} className="flex flex-col">
-                  <>
-                    <div className="relative">
-                      <img
+                  {idx === 0 ? (
+                    <>
+                      <div className="relative">
+                        <img
+                          style={{
+                            backgroundColor: "#fff",
+                            borderRadius: "50%",
+                            width: "44px",
+                            height: "44px",
+                            boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                            margin: "8px",
+                          }}
+                          src={part.profileImage}
+                          alt="profilepic"
+                        />
+                        <img
+                          src="../../assets/icons/crown.png"
+                          alt="crown"
+                          width="27px"
+                          height="22px"
+                          style={{
+                            position: "absolute",
+                            top: "-7px",
+                            left: "16px",
+                          }}
+                        />
+                      </div>
+                      <span
                         style={{
-                          backgroundColor: "#fff",
-                          borderRadius: "50%",
-                          width: "44px",
-                          height: "44px",
-                          boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
-                          margin: "8px",
+                          fontSize: "12px",
+                          textAlign: "center",
+                          width: "63px",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                          textOverflow: "ellipsis",
                         }}
-                        src={part.profileImage}
-                        alt="profilepic"
-                      />
-                    </div>
-                    <span style={{ fontSize: "12px", textAlign: "center" }}>
-                      {part.nickname}
-                    </span>
-                  </>
+                      >
+                        {part.nickname}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="relative">
+                        <img
+                          style={{
+                            backgroundColor: "#fff",
+                            borderRadius: "50%",
+                            width: "44px",
+                            height: "44px",
+                            boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                            margin: "8px",
+                          }}
+                          src={part.profileImage}
+                          alt="profilepic"
+                        />
+                      </div>
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          textAlign: "center",
+                          width: "63px",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {part.nickname}
+                      </span>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
