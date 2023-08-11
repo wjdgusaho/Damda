@@ -1,5 +1,7 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleOpenDetailDTO;
+import com.b210.damda.domain.dto.Timecapsule.TimecapsuleOpenRankDTO;
 import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailMyInfoDTO;
 import com.b210.damda.domain.dto.Timecapsule.detailchild.DetailPartInfoDTO;
 import com.b210.damda.domain.entity.User.User;
@@ -62,6 +64,14 @@ public class TimecapsuleMapping {
 
     public DetailPartInfoDTO toDetailPartInfoDTO(){
         return DetailPartInfoDTO.builder()
+                .userNo(this.user.getUserNo())
+                .nickname(this.user.getNickname())
+                .profileImage(this.user.getProfileImage())
+                .build();
+    }
+
+    public TimecapsuleOpenRankDTO toTimecapsuleOpenRankDTO(){
+        return TimecapsuleOpenRankDTO.builder()
                 .userNo(this.user.getUserNo())
                 .nickname(this.user.getNickname())
                 .profileImage(this.user.getProfileImage())

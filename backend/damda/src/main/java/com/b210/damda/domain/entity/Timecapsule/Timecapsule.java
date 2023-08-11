@@ -140,4 +140,17 @@ public class Timecapsule {
                 .build();
     }
 
+    public TimecapsuleOpenDetailDTO toTimecapsuleOpenDetailDTO(){
+        return TimecapsuleOpenDetailDTO.builder()
+                .timecapsuleNo(this.timecapsuleNo)
+                .registDate(this.registDate)
+                .openDate(this.openDate)
+                .title(this.title)
+                .description(this.description)
+                .goalCard(this.goalCard)
+                .penalty(this.timecapsulePenalty.getPenalty() == false ? null : this.timecapsulePenalty.toTimecapsulePenaltyDTO())
+                .criteriaInfo(this.timecapsuleCriteria.toTimecapsuleCriteriaDTO())
+                .build();
+    }
+
 }

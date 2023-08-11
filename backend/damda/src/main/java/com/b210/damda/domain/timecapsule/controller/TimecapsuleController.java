@@ -304,6 +304,36 @@ public class TimecapsuleController {
         response.setData(result);
         return response;
     }
+    
+    /*
+        타임캡슐 오픈 디테일
+     */
+    @GetMapping("open/detail")
+    public DataResponse<Map<String, Object>> timecapsuleOpenDetail(@RequestParam("timecapsuleNo") Long timecapsuleNo){
+
+        TimecapsuleOpenDetailDTO openDetail = timecapsuleService.timecapsuleOpenDetail(timecapsuleNo);
+
+        Map<String,Object> result = new HashMap<>();
+        result.put("timecapsuleOpenDetail", openDetail);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "오픈 디테일 조회 성공");
+        response.setData(result);
+        return response;
+    }
+
+    /*
+       오픈 랭킹
+     */
+    @GetMapping("open/rank")
+    public DataResponse<Map<String, Object>> timecpasuleOpenRank(@RequestParam("timecapsuleNo") Long timecapsuleNo){
+
+        Map<String, Object> openRank = timecapsuleService.timecapsuleOpenRank(timecapsuleNo);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "오픈 디테일 조회 성공");
+        response.setData(openRank);
+        return response;
+    }
+    
 
 }
 

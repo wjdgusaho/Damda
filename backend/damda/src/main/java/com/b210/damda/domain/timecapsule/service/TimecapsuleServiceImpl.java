@@ -973,6 +973,70 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         return cardList;
     }
 
+    /*
+        오픈 디테일
+     */
+    @Override
+    public TimecapsuleOpenDetailDTO timecapsuleOpenDetail(Long timecapsuleNo) {
+
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        TimecapsuleMapping timecapsuleMapping = getTimecapsuleMapping(user.getUserNo(), timecapsule.getTimecapsuleNo());
+
+        TimecapsuleOpenDetailDTO openDetail = timecapsule.toTimecapsuleOpenDetailDTO();
+
+        //삭제시간이 있다면
+        if(timecapsuleMapping.getDeleteDate() != null){
+            if(timecapsuleMapping.isSave())  throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+            else  throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+        //isSave가 false 이면서 deleteDate가 있는거를 제외한 참가자 조회
+        List<TimecapsuleMapping> participant = timecapsuleMappingRepository.findNotSavedButDeleted(timecapsuleNo);
+
+        openDetail.setPartInfo(
+                participant.stream().map(TimecapsuleMapping::toDetailPartInfoDTO)
+                        .collect(Collectors.toList())
+        );
+
+        return openDetail;
+    }
+
+    @Override
+    public Map<String, Object> timecapsuleOpenRank(Long timecapsuleNo) {
+
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        TimecapsuleMapping timecapsuleMapping = getTimecapsuleMapping(user.getUserNo(), timecapsule.getTimecapsuleNo());
+
+        TimecapsuleOpenDetailDTO openDetail = timecapsule.toTimecapsuleOpenDetailDTO();
+
+        //삭제시간이 있다면
+        if(timecapsuleMapping.getDeleteDate() != null){
+            if(timecapsuleMapping.isSave())  throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+            else  throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }
+
+        List<TimecapsuleMapping> openRankList = timecapsuleMappingRepository.findNotSavedButDeleted(timecapsuleNo);
+
+        List<TimecapsuleOpenRankDTO> openRankDTOList = new ArrayList<>();
+        for(TimecapsuleMapping openRank : openRankList){
+           Long cardCnt = timecapsuleCardRepository.countByTimecapsuleTimecapsuleNoAndUserUserNo(timecapsuleNo, userNo);
+
+           TimecapsuleOpenRankDTO rank = openRank.toTimecapsuleOpenRankDTO();
+           rank.setCardCnt(Math.toIntExact(cardCnt));
+
+            openRankDTOList.add(rank);
+        }
+
+        Map<String,Object> result = new HashMap<>();
+        result.put("userRank", openRankDTOList);
+        result.put("allCardCnt", timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsuleNo));
+
+        return  result;
+    }
+
 
     /*
         타임캡슐 나가기
