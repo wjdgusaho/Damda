@@ -31,20 +31,11 @@ public class S3Controller {
 
     // 타임캡슐 파일 저장
     @GetMapping(value = "/download/zip/timecapsule/{timecapsuleNo}/file", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public DataResponse<Map<String, Object>> downloadZip(@PathVariable("timecapsuleNo") Long timecapsuleNo, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
-        try{
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.addHeader("Content-Disposition", "attachment; filename=" + new String((RandomStringUtils.randomAlphanumeric(6) + "-s3-download.zip").getBytes("UTF-8"), "ISO-8859-1"));
-            String prefix = getPrefix(request.getRequestURI(), "/s3/download/zip");
-            System.out.println(prefix);
-            fileStoreService.downloadZip(prefix, response, timecapsuleNo);
-
-            return new DataResponse<>(200, "타임캡슐 파일 다운로드 성공");
-        }catch (CommonException e){
-            return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
-        }catch (Exception e){
-            return new DataResponse<>(500, "알 수 없는 에러가 발생하였습니다. 잠시 후 다시 시도해주세요.");
-        }
+    public void downloadZip(@PathVariable("timecapsuleNo") Long timecapsuleNo, HttpServletRequest request, HttpServletResponse response) throws IOException, InterruptedException {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.addHeader("Content-Disposition", "attachment; filename=" + new String((RandomStringUtils.randomAlphanumeric(6) + "-s3-download.zip").getBytes("UTF-8"), "ISO-8859-1"));
+        String prefix = getPrefix(request.getRequestURI(), "/s3/download/zip2/");
+        fileStoreService.downloadZip(prefix, response, timecapsuleNo);
     }
 
     @GetMapping("/download/timecapsule-card/{timecapsuleCardNo}/image")
