@@ -1030,6 +1030,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             openRankDTOList.add(rank);
         }
 
+        //정렬
+        Collections.sort(openRankDTOList, (o1, o2) -> Integer.compare(o2.getCardCnt(), o1.getCardCnt()));
+
         Map<String,Object> result = new HashMap<>();
         result.put("userRank", openRankDTOList);
         result.put("allCardCnt", timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsuleNo));
