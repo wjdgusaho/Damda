@@ -38,9 +38,9 @@ public class SSEController {
     }
 
     @GetMapping(value = "/sse/check")
-    public void checkConnection() {
+    public Flux<ServerSentEvent<JsonNode>> checkConnection() {
         log.info("hearbeat 체크 로직 동작");
-        eventStreamService.checkConnection();
+        return eventStreamService.checkConnection();
     }
 
 }
