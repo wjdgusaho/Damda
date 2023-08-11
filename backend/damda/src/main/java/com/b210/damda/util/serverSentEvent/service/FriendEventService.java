@@ -28,6 +28,8 @@ public class FriendEventService {
     private final FriendRepository friendRepository;
 
     public void friendEventService(long fromNo, FriendEventEnum type) {
+        log.warn("친구 관련 로직 작동(friendEventService)");
+
         Long userNo = addOnEventService.getUserNo();
         String context = "default";
         String eventName = "friend-event";

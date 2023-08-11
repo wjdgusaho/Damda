@@ -12,6 +12,8 @@ public class TimecapsuleSimpleDTO {
     private String title;
     private String type;
     private String capsuleIconNo;
+    private boolean isAlone;
+
 
     public TimecapsuleSimpleDTO(){
     }

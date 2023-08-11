@@ -40,6 +40,7 @@ public class Timecapsule {
     private int maxParticipant;
 
     @Column(columnDefinition = "integer default 1")
+    @Builder.Default
     private int nowParticipant = 1;
 
     @Column(name="invite_code")
