@@ -87,9 +87,10 @@ public class EventStreamService {
     }
 
     //클라이언트에서 응답 존재할 경우(정상적으로 연결이 이어질 경우) 마지막 시간 갱신
-    public void checkConnection() {
+    public Flux<ServerSentEvent<JsonNode>> checkConnection() {
         log.info("checkConnection : 클라이언트에서 응답 수신하였음");
         lastResponseTimes.put(addOnEventService.getUserNo(), LocalDateTime.now().plusHours(9));
+        return Flux.empty();
     }
 
     //로그아웃시 종료 로직
