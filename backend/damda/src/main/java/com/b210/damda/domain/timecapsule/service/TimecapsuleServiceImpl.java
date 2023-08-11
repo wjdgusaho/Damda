@@ -939,26 +939,31 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     @Override
     public TimecapsuleSimpleDTO timecapsuleSimpleInfo(Long timecapsuleNo) {
 
-        //유저 검증을해야하는지..?
+        //유저
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
+        //타임캡슐
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        //캡슐 - 유저 맵핑
+        TimecapsuleMapping myMapping = getTimecapsuleMapping(userNo, timecapsuleNo);
 
         //타임캡슐 (삭제 검증 ok)
-        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
         TimecapsuleSimpleDTO simpleDTO = timecapsule.toTimecapsuleSimpleDTO();
 
         return simpleDTO;
     }
 
     @Override
-    public List<TimecapsuleCardDTO> timecapsuleCardList(Long timecapsuleNo) {
+    public List<TimecapsuleOpenCardDTO> timecapsuleCardList(Long timecapsuleNo) {
 
         Long userNo = getUserNo();
         User user = getUser(userNo);
         Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
         TimecapsuleMapping timecapsuleMapping = getTimecapsuleMapping(user.getUserNo(), timecapsule.getTimecapsuleNo());
 
-        List<TimecapsuleCardDTO> cardList = timecapsuleCardRepository.findByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo())
+        List<TimecapsuleOpenCardDTO> cardList = timecapsuleCardRepository.findByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo())
                 .stream()
-                .map(TimecapsuleCard::toTimecapsuleCardDTO).collect(Collectors.toList());
+                .map(TimecapsuleCard::toTimecapsuleOpenCardDTO).collect(Collectors.toList());
 
         //작성된 카드가 없는경우
         if(cardList.isEmpty()){
