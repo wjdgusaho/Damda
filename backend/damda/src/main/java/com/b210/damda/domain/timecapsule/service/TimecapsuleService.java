@@ -46,4 +46,8 @@ public interface TimecapsuleService {
     TimecapsuleSimpleDTO timecapsuleSimpleInfo(Long timecapsuleNo);
 
     List<TimecapsuleOpenCardDTO> timecapsuleCardList(Long timecapsuleNo);
+
+    TimecapsuleOpenDetailDTO timecapsuleOpenDetail(Long timecapsuleNo);
+
+    Map<String, Object> timecapsuleOpenRank(Long timecapsuleNo);
 }
