@@ -87,11 +87,9 @@ public class FileStoreService {
 
     public void downloadZip(String prefix, HttpServletResponse response, Long timecapsuleNo) throws IOException, InterruptedException {
 
-        System.out.println(123);
         // 현재 유저 찾음
         Long userNo = getUserNo();
         User user = userRepository.findById(userNo).get();
-        System.out.println(123);
 
         // 현재 타임캡슐 찾음
         Optional<Timecapsule> timecapsuleFind = timecapsuleRepository.findById(timecapsuleNo);
@@ -99,37 +97,34 @@ public class FileStoreService {
         if(timecapsuleFind.isEmpty()){
             throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
         }
-        System.out.println(123);
 
         Timecapsule timecapsule = timecapsuleFind.get();
 
-        System.out.println(123);
         // 해당 유저의 타임캡슐이 아님
         TimecapsuleMapping timecapsuleMapping = timecapsuleMappingRepository.findByUserAndTimecapsuleGet(user, timecapsule);
         if(timecapsuleMapping == null){
             throw new CommonException(CustomExceptionStatus.NOT_USER_TIMECAPSULE);
         }
-        System.out.println(123);
         // 열리지 않은 타임캡슐
         if(timecapsuleMapping.getSaveDate() == null){
             throw new CommonException(CustomExceptionStatus.NOT_OPEN_TIMECAPSULE);
         }
-        System.out.println(123);
 
         // 저장되지 않은 타임캡슐
         if(!timecapsuleMapping.isSave()){
             throw new CommonException(CustomExceptionStatus.NOT_SAVED_TIMECAPSULE);
         }
 
-        System.out.println(123);
         // (1)
         // 서버 로컬에 생성되는 디렉토리, 해당 디렉토리에 파일이 다운로드된다
         File localDirectory = new File(RandomStringUtils.randomAlphanumeric(6) + "-s3-download.zip");
 
         try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
             // (2)
+            System.out.println(123);
             // TransferManager -> localDirectory에 파일 다운로드
             MultipleFileDownload downloadDirectory = transferManager.downloadDirectory(bucket, prefix, localDirectory);
+            System.out.println(123);
 
             // (3)
             // 다운로드 상태 확인
@@ -140,7 +135,7 @@ public class FileStoreService {
                 TransferProgress progress = downloadDirectory.getProgress();
                 double percentTransferred = progress.getPercentTransferred();
                 log.info("[" + prefix + "] " + decimalFormat.format(percentTransferred) + "% download progressing...");
-            }
+              }
             log.info("[" + prefix + "] download directory from S3 success!");
 
             // (4)q
@@ -189,13 +184,43 @@ public class FileStoreService {
     // 카드 사진 다운로드
     public ResponseEntity<byte[]> getObject(Long timecapsuleCardNo) throws IOException{
 
-        Optional<TimecapsuleCard> findCard = timecapsuleCardRepository.findById(timecapsuleCardNo);
-        // 카드가 없음
-        if(findCard.isEmpty()){
+        // 현재 유저 찾음
+        Long userNo = getUserNo();
+        User user = userRepository.findById(userNo).get();
+
+        // 타임캡슐 카드를 찾음
+        Optional<TimecapsuleCard> byCard = timecapsuleCardRepository.findById(timecapsuleCardNo);
+        // 카드가 존재하지 않으면
+        if(byCard.isEmpty()){
             throw new CommonException(CustomExceptionStatus.NOT_CARD);
         }
 
-        TimecapsuleCard timecapsuleCard = findCard.get();
+        TimecapsuleCard timecapsuleCard = byCard.get();
+
+        // 현재 타임캡슐을 찾음
+        Optional<Timecapsule> byTimecapsule = timecapsuleRepository.findById(timecapsuleCard.getTimecapsule().getTimecapsuleNo());
+        // 해당 타임캡슐이 없으면
+        if(byTimecapsule.isEmpty()){
+            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
+        }
+
+        Timecapsule timecapsule = byTimecapsule.get();
+
+        // 해당 유저의 타임캡슐이 아님
+        TimecapsuleMapping timecapsuleMapping = timecapsuleMappingRepository.findByUserAndTimecapsuleGet(user, timecapsule);
+        if(timecapsuleMapping == null){
+            throw new CommonException(CustomExceptionStatus.NOT_USER_TIMECAPSULE);
+        }
+
+        // 열리지 않은 타임캡슐
+        if(timecapsuleMapping.getSaveDate() == null){
+            throw new CommonException(CustomExceptionStatus.NOT_OPEN_TIMECAPSULE);
+        }
+
+        // 저장되지 않은 타임캡슐
+        if(!timecapsuleMapping.isSave()){
+            throw new CommonException(CustomExceptionStatus.NOT_SAVED_TIMECAPSULE);
+        }
 
         String imagePath = timecapsuleCard.getImagePath();
 
@@ -204,9 +229,7 @@ public class FileStoreService {
             imagePath = url.getPath().substring(1);  // 첫번째 '/'를 제거하기 위해 substring 사용
         }
 
-        System.out.println(imagePath);
         S3Object o = amazonS3.getObject(new GetObjectRequest(bucket, imagePath));
-        System.out.println(o);
         S3ObjectInputStream objectInputStream = o.getObjectContent();
         byte[] bytes = IOUtils.toByteArray(objectInputStream);
 
