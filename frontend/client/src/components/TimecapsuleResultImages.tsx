@@ -5,6 +5,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import axios from "axios"
 import { serverUrl } from "../urls"
+import { useParams } from "react-router-dom"
 
 interface cardType {
   userNo: string
@@ -16,6 +17,7 @@ const TimecapsuleResultImages = function () {
   const [selectedImageUrl, setSelectedImageUrl] = useState("")
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [cardList, setCardList] = useState<cardType[] | null>(null)
+  const { capsuleId } = useParams()
 
   const handleImageClick = (imgUrl: string) => {
     setSelectedImageUrl(imgUrl)
@@ -31,16 +33,12 @@ const TimecapsuleResultImages = function () {
     console.log("token", token)
     const fetchData = async () => {
       try {
-        // const timecapsuleNo = capsuleId
-        const timecapsuleNo = 54
+        const timecapsuleNo = capsuleId
         const response = await axios.get(
           serverUrl + `timecapsule/cardlist?timecapsuleNo=${timecapsuleNo}`,
           {
             headers: {
-              // Authorization: "Bearer " + token,
-              Authorization:
-                "Bearer " +
-                "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyTm8iOjMyLCJpYXQiOjE2OTE3MjQ2OTcsImV4cCI6MTY5NDMxNjY5N30.cZDrpn3oM03THUqciYCAtbYHiokekUMA-NbnAbUWIWE",
+              Authorization: "Bearer " + token,
             },
           }
         )

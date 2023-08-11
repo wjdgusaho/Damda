@@ -37,16 +37,12 @@ const TimecapsuleResult = function () {
     console.log("token", token)
     const fetchData = async () => {
       try {
-        // const timecapsuleNo = capsuleId
-        const timecapsuleNo = 54
+        const timecapsuleNo = capsuleId
         const response = await axios.get(
           serverUrl + `timecapsule/simpleinfo?timecapsuleNo=${timecapsuleNo}`,
           {
             headers: {
-              // Authorization: "Bearer " + token,
-              Authorization:
-                "Bearer " +
-                "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyTm8iOjMyLCJpYXQiOjE2OTE3MjQ2OTcsImV4cCI6MTY5NDMxNjY5N30.cZDrpn3oM03THUqciYCAtbYHiokekUMA-NbnAbUWIWE",
+              Authorization: "Bearer " + token,
             },
           }
         )
