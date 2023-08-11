@@ -165,6 +165,7 @@ public class UserController {
     @PostMapping("logout")
     public DataResponse<Map<String, Object>> logout(@RequestHeader(value="Authorization") String token){
         try{
+            eventStreamService.disconnectStream();
             userService.logout(token);
             return new DataResponse<>(200, "로그아웃 성공");
         }catch (CommonException e){

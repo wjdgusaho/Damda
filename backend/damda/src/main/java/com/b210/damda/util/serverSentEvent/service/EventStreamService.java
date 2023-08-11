@@ -49,14 +49,14 @@ public class EventStreamService {
         log.info("connectStream, userNo : {}", userNo);
 
 
-        log.info("여기 들어가서");
-//        endAndRemoveStream(userNo);
-        log.info("나올수가 없다.");
+//        log.info("여기 들어가서");
+////        endAndRemoveStream(userNo);
+//        log.info("나올수가 없다.");
 
         //이후 재연결 로직 발생
         //접속 시간 등록
         lastResponseTimes.put(userNo, LocalDateTime.now().plusHours(9));
-
+        log.info("접속 시간 등록 : {}", lastResponseTimes.get(userNo));
         //Sink맵 추가 후, onDispose 이벤트 시 제거하는 Flux 생성
         Flux<ServerSentEvent<JsonNode>> dataFlux = Flux.create(sink -> userFluxSinkMap.put(userNo, sink.onDispose(() -> userFluxSinkMap.remove(userNo))));
 
@@ -82,6 +82,7 @@ public class EventStreamService {
         즉, 이 병합된 스트림은 서버에서 클라이언트로 이어진 하나의 통로(reactive stream)에 연결되며,
         이 통로를 통해 dataFlux 또는 maintainConnectFlux에서 발생하는 이벤트가 서버에서 클라이언트로 전송
          */
+        log.info("Flux.merge() 수행");
         return Flux.merge(dataFlux, maintainConnectFlux);
     }
 

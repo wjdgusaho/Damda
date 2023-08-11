@@ -27,7 +27,7 @@ public class SSEController {
 
     //최초 접속 시 로그인 이벤트. 이를 통해 스트림 파이프라인 구축 가능
     //MediaType 명시를 통해 엔드포인트가 text/event-stream을 반환하도록 강제함.
-    @GetMapping(value = "/sse/login", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/sse/login")
     public Flux<ServerSentEvent<JsonNode>> login() {
         log.info("로그인 개방");
         //1. 확인하지 못했던 친구 상태 알림 로직
@@ -37,7 +37,7 @@ public class SSEController {
         return eventStreamService.connectStream();
     }
 
-    @GetMapping(value = "/sse/check", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/sse/check")
     public void checkConnection() {
         log.info("hearbeat 체크 로직 동작");
         eventStreamService.checkConnection();
