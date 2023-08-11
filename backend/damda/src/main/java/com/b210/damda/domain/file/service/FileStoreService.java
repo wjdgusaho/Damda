@@ -46,6 +46,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 @Service
@@ -88,8 +89,8 @@ public class FileStoreService {
     public void downloadZip(String prefix, HttpServletResponse response, Long timecapsuleNo) throws IOException, InterruptedException {
 
         // 현재 유저 찾음
-        Long userNo = getUserNo();
-        User user = userRepository.findById(userNo).get();
+//        Long userNo = getUserNo();
+        User user = userRepository.findById(73L).get();
 
         // 현재 타임캡슐 찾음
         Optional<Timecapsule> timecapsuleFind = timecapsuleRepository.findById(timecapsuleNo);
@@ -105,6 +106,7 @@ public class FileStoreService {
         if(timecapsuleMapping == null){
             throw new CommonException(CustomExceptionStatus.NOT_USER_TIMECAPSULE);
         }
+
         // 열리지 않은 타임캡슐
         if(timecapsuleMapping.getSaveDate() == null){
             throw new CommonException(CustomExceptionStatus.NOT_OPEN_TIMECAPSULE);
@@ -121,10 +123,8 @@ public class FileStoreService {
 
         try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
             // (2)
-            System.out.println(123);
             // TransferManager -> localDirectory에 파일 다운로드
             MultipleFileDownload downloadDirectory = transferManager.downloadDirectory(bucket, prefix, localDirectory);
-            System.out.println(123);
 
             // (3)
             // 다운로드 상태 확인
@@ -135,10 +135,10 @@ public class FileStoreService {
                 TransferProgress progress = downloadDirectory.getProgress();
                 double percentTransferred = progress.getPercentTransferred();
                 log.info("[" + prefix + "] " + decimalFormat.format(percentTransferred) + "% download progressing...");
-              }
+            }
             log.info("[" + prefix + "] download directory from S3 success!");
 
-            // (4)q
+            // (4)
             // 로컬 디렉토리 -> 압축하면서 다운로드
             log.info("compressing to zip file...");
             addFolderToZip(zipOut, localDirectory);

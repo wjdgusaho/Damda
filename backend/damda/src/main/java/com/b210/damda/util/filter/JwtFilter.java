@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter { // 모든 요청에 대해
         return path.startsWith("/user/login") || path.startsWith("/user/regist") || path.startsWith("/user/change-password/email")
                 || path.startsWith("/user/logout") || path.startsWith("/user/change-password/code") || path.startsWith("/api/kakao/login") || path.startsWith("/user/check-email")
                 || path.startsWith("/user/change-password/new") || path.startsWith("/user/refresh-token") || path.startsWith("/user/send-email")
-                || path.startsWith("/uploads");
+                || path.startsWith("/uploads") || path.startsWith("/s3/");
     }
 
     @Override
