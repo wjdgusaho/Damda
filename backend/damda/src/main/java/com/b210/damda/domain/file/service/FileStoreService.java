@@ -21,6 +21,7 @@ import com.b210.damda.domain.timecapsule.repository.TimecapsuleRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
+import com.b210.damda.util.response.DataResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,23 +33,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
-import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -91,73 +90,84 @@ public class FileStoreService {
         return userNo;
     }
 
-    public void downloadZip(String prefix, HttpServletResponse response, Long timecapsuleNo) throws IOException, InterruptedException {
-
-        // 현재 유저 찾음
+    public DataResponse<Map<String, Object>> downloadZip(String prefix, HttpServletResponse response, Long timecapsuleNo) throws IOException {
+            // 현재 유저 찾음
         Long userNo = getUserNo();
-        User user = userRepository.findById(userNo).get();
+            User user = userRepository.findById(userNo).get();
 
-        // 현재 타임캡슐 찾음
-        Optional<Timecapsule> timecapsuleFind = timecapsuleRepository.findById(timecapsuleNo);
-        // 타임캡슐이 존재하지 않으면
-        if(timecapsuleFind.isEmpty()){
-            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
-        }
-
-        Timecapsule timecapsule = timecapsuleFind.get();
-
-        // 해당 유저의 타임캡슐이 아님
-        TimecapsuleMapping timecapsuleMapping = timecapsuleMappingRepository.findByUserAndTimecapsuleGet(user, timecapsule);
-        if(timecapsuleMapping == null){
-            throw new CommonException(CustomExceptionStatus.NOT_USER_TIMECAPSULE);
-        }
-
-        // 열리지 않은 타임캡슐
-        if(timecapsuleMapping.getSaveDate() == null){
-            throw new CommonException(CustomExceptionStatus.NOT_OPEN_TIMECAPSULE);
-        }
-
-        // 저장되지 않은 타임캡슐
-        if(!timecapsuleMapping.isSave()){
-            throw new CommonException(CustomExceptionStatus.NOT_SAVED_TIMECAPSULE);
-        }
-
-        // 타임캡슐에 파일이 없으면
-        List<TimecapsuleFile> byTimecapsule = timecapsuleFileRepository.getByTimecapsule(timecapsule);
-        if(byTimecapsule.size() == 0){
-            throw new CommonException(CustomExceptionStatus.NOT_FOUND_FILE);
-        }
-
-        // (1)
-        // 서버 로컬에 생성되는 디렉토리, 해당 디렉토리에 파일이 다운로드된다
-        File localDirectory = new File(RandomStringUtils.randomAlphanumeric(6) + "-s3-download.zip");
-
-        try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
-            // (2)
-            // TransferManager -> localDirectory에 파일 다운로드
-            MultipleFileDownload downloadDirectory = transferManager.downloadDirectory(bucket, prefix, localDirectory);
-
-            // (3)
-            // 다운로드 상태 확인
-            log.info("[" + prefix + "] download progressing... start");
-            DecimalFormat decimalFormat = new DecimalFormat("##0.00");
-            while (!downloadDirectory.isDone()) {
-                Thread.sleep(1000);
-                TransferProgress progress = downloadDirectory.getProgress();
-                double percentTransferred = progress.getPercentTransferred();
-                log.info("[" + prefix + "] " + decimalFormat.format(percentTransferred) + "% download progressing...");
+            // 현재 타임캡슐 찾음
+            Optional<Timecapsule> timecapsuleFind = timecapsuleRepository.findById(timecapsuleNo);
+            // 타임캡슐이 존재하지 않으면
+            if (timecapsuleFind.isEmpty()) {
+                throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
             }
-            log.info("[" + prefix + "] download directory from S3 success!");
 
-            // (4)
-            // 로컬 디렉토리 -> 압축하면서 다운로드
-            log.info("compressing to zip file...");
-            addFolderToZip(zipOut, localDirectory);
-        } finally {
-            // (5)
-            // 로컬 디렉토리 삭제
-            FileUtil.remove(localDirectory);
-        }
+            Timecapsule timecapsule = timecapsuleFind.get();
+
+            // 해당 유저의 타임캡슐이 아님
+            TimecapsuleMapping timecapsuleMapping = timecapsuleMappingRepository.findByUserAndTimecapsuleGet(user, timecapsule);
+            if (timecapsuleMapping == null) {
+                throw new CommonException(CustomExceptionStatus.NOT_USER_TIMECAPSULE);
+            }
+
+            // 삭제된 타임캡슐
+            if (timecapsuleMapping.getDeleteDate() != null) {
+                throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
+            }
+
+            // 열리지 않은 타임캡슐
+            if (timecapsuleMapping.getSaveDate() == null) {
+                throw new CommonException(CustomExceptionStatus.NOT_OPEN_TIMECAPSULE);
+            }
+
+            // 저장되지 않은 타임캡슐
+            if (!timecapsuleMapping.isSave()) {
+                throw new CommonException(CustomExceptionStatus.NOT_SAVED_TIMECAPSULE);
+            }
+
+            // 타임캡슐에 파일이 없으면
+            List<TimecapsuleFile> byTimecapsule = timecapsuleFileRepository.getByTimecapsule(timecapsule);
+            if (byTimecapsule.size() == 0) {
+                throw new CommonException(CustomExceptionStatus.NOT_FOUND_FILE);
+            }
+
+            // (1)
+            // 서버 로컬에 생성되는 디렉토리, 해당 디렉토리에 파일이 다운로드된다
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            response.addHeader("Content-Disposition", "attachment; filename=" + new String((RandomStringUtils.randomAlphanumeric(6) + "-s3-download.zip").getBytes("UTF-8"), "ISO-8859-1"));
+            File localDirectory = new File(RandomStringUtils.randomAlphanumeric(6) + "-s3-download.zip");
+
+            try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
+                // (2)
+                // TransferManager -> localDirectory에 파일 다운로드
+                MultipleFileDownload downloadDirectory = transferManager.downloadDirectory(bucket, prefix, localDirectory);
+
+                // (3)
+                // 다운로드 상태 확인
+                log.info("[" + prefix + "] download progressing... start");
+                DecimalFormat decimalFormat = new DecimalFormat("##0.00");
+                while (!downloadDirectory.isDone()) {
+                    Thread.sleep(1000);
+                    TransferProgress progress = downloadDirectory.getProgress();
+                    double percentTransferred = progress.getPercentTransferred();
+                    log.info("[" + prefix + "] " + decimalFormat.format(percentTransferred) + "% download progressing...");
+                }
+                log.info("[" + prefix + "] download directory from S3 success!");
+
+                // (4)
+                // 로컬 디렉토리 -> 압축하면서 다운로드
+                log.info("compressing to zip file...");
+                addFolderToZip(zipOut, localDirectory);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } finally {
+                // (5)
+                // 로컬 디렉토리 삭제
+                FileUtil.remove(localDirectory);
+            }
+            return new DataResponse<>(200, "성공");
+
     }
 
     private void addFolderToZip(ZipOutputStream zipOut, File localDirectory) throws IOException {
@@ -211,6 +221,11 @@ public class FileStoreService {
         TimecapsuleMapping timecapsuleMapping = timecapsuleMappingRepository.findByUserAndTimecapsuleGet(user, timecapsule);
         if(timecapsuleMapping == null){
             throw new CommonException(CustomExceptionStatus.NOT_USER_TIMECAPSULE);
+        }
+
+        // 삭제된 타임캡슐
+        if(timecapsuleMapping.getDeleteDate() != null){
+            throw new CommonException(CustomExceptionStatus.DELETE_TIMECAPSULE);
         }
 
         // 열리지 않은 타임캡슐

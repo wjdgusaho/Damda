@@ -5,10 +5,9 @@ import tw from "tailwind-styled-components"
 import Modal from "react-modal"
 import { useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
-import { FriendType } from "../Friend"
-import { CapsuleType } from "../MainPage"
 import axios from "axios"
 import { serverUrl } from "../../urls"
+import { alarmCapsuleType, alarmFriendType } from "../../store/Alarm"
 
 const TextStyle = styled.p`
   font-family: "pretendard";
@@ -80,25 +79,38 @@ const customStyles = {
 
 const ModalCard = tw.div`
   mt-5 p-3 text-lilac-900 bg-white opacity-80 rounded-3xl shadow-2xl
-  inline-flex items-center
+  inline-flex items-center flex-wrap
   w-72
 `
 
-const AlarmFriendComponent = function ({ friend }: { friend: FriendType }) {
+const ModalBtn = tw.button`
+  mx-auto shadow-xl
+`
+
+const AlarmFriendComponent = function ({
+  friend,
+}: {
+  friend: alarmFriendType
+}) {
+  const navigate = useNavigate()
+
+  const handleMove = () => {
+    navigate("/friend/list")
+  }
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
       <div>
-        <AlertImg src={friend.profileImage} alt="defalut" />
+        <AlertImg src={friend.fromProfileImage} alt="defalut" />
       </div>
       <div className="ml-2" style={{ width: "150px" }}>
         <p>
-          <span>{friend.nickname}</span>님께서,
+          <span className="text-lilac-600 font-bold">{friend.fromName}</span>
+          <span className="text-gray-400">#{friend.fromUser}</span>
+          {friend.content}
         </p>
-        <p>친구요청이 왔어요</p>
       </div>
       <div>
-        <button>거절</button>
-        <button>수락</button>
+        <ModalBtn onClick={handleMove}>친구 페이지로 이동하기</ModalBtn>
       </div>
     </ModalCard>
   )
@@ -107,9 +119,13 @@ const AlarmFriendComponent = function ({ friend }: { friend: FriendType }) {
 const AlarmTimecapsuleComponent = function ({
   timecapsule,
 }: {
-  timecapsule: CapsuleType
+  timecapsule: alarmCapsuleType
 }) {
-  return <div></div>
+  return (
+    <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
+      <div></div>
+    </ModalCard>
+  )
 }
 
 export const MainHeader = function () {
@@ -117,24 +133,12 @@ export const MainHeader = function () {
   const [modalOpen, setModalOpen] = useState(false)
   const alarmFriendData = useSelector((state: RootState) => state.alarm.friends)
   const alarmTimecapsuleData = useSelector(
-    (state: RootState) => state.alarm.timecapsule
+    (state: RootState) => state.alarm.timecapsules
   )
   const token = useSelector((state: RootState) => state.auth.accessToken)
 
   const handleClose = () => {
     setModalOpen(false)
-  }
-
-  const test = () => {
-    axios({
-      method: "GET",
-      url: serverUrl + "sse/test",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    })
-      .then((response) => console.log(response))
-      .catch((error) => console.error(error))
   }
 
   return (
@@ -165,14 +169,14 @@ export const MainHeader = function () {
             )}
           {alarmFriendData.length !== 0 && (
             <div>
-              {alarmFriendData.map((friend: FriendType) => (
-                <AlarmFriendComponent key={friend.userNo} friend={friend} />
+              {alarmFriendData.map((friend: alarmFriendType) => (
+                <AlarmFriendComponent key={friend.fromUser} friend={friend} />
               ))}
             </div>
           )}
           {alarmTimecapsuleData.length !== 0 && (
             <div>
-              {alarmTimecapsuleData.map((timecapsule: CapsuleType) => (
+              {alarmTimecapsuleData.map((timecapsule: alarmCapsuleType) => (
                 <AlarmTimecapsuleComponent
                   key={timecapsule.timecapsuleNo}
                   timecapsule={timecapsule}
@@ -203,11 +207,6 @@ export const MainHeader = function () {
             className="h-6"
           />
         </div>
-      </div>
-      <div>
-        <button className="bg-white" onClick={test}>
-          sse 버튼!
-        </button>
       </div>
       {/* <div className="flex items-center justify-end mr-8 mt-8">
         <TextStyle className="opacity-80 mr-2">

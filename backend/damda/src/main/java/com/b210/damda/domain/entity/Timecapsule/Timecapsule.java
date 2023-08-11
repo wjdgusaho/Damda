@@ -1,9 +1,6 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
-import com.b210.damda.domain.dto.Timecapsule.MainTimecapsuleListDTO;
-import com.b210.damda.domain.dto.Timecapsule.SaveTimecapsuleListDTO;
-import com.b210.damda.domain.dto.Timecapsule.TimecapsuleDetailDTO;
-import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
+import com.b210.damda.domain.dto.Timecapsule.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -43,6 +40,7 @@ public class Timecapsule {
     private int maxParticipant;
 
     @Column(columnDefinition = "integer default 1")
+    @Builder.Default
     private int nowParticipant = 1;
 
     @Column(name="invite_code")
@@ -132,6 +130,29 @@ public class Timecapsule {
     // 현재 타임캡슐 인원 +1
     public void updateNowParticipant(){
         this.nowParticipant = nowParticipant + 1;
+    }
+
+    public TimecapsuleSimpleDTO toTimecapsuleSimpleDTO(){
+        return TimecapsuleSimpleDTO.builder()
+                .timecapsuleNo(this.timecapsuleNo)
+                .title(this.title)
+                .type(this.type)
+                .capsuleIconNo("capsule"+this.capsuleIconNo)
+                .build();
+    }
+
+    public TimecapsuleOpenDetailDTO toTimecapsuleOpenDetailDTO(){
+        return TimecapsuleOpenDetailDTO.builder()
+                .timecapsuleNo(this.timecapsuleNo)
+                .registDate(this.registDate)
+                .openDate(this.openDate)
+                .capsuleType(this.type)
+                .title(this.title)
+                .description(this.description)
+                .goalCard(this.goalCard)
+                .penalty(this.timecapsulePenalty.getPenalty() == false ? null : this.timecapsulePenalty.toTimecapsulePenaltyDTO())
+                .criteriaInfo(this.timecapsuleCriteria.toTimecapsuleCriteriaDTO())
+                .build();
     }
 
 }

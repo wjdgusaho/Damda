@@ -329,8 +329,15 @@ const Card = function () {
         <div className="flex justify-between p-2 text-sm">
           <div className="flex">
             <img
-              className="w-8 mr-1"
-              src="/assets/icons/profile_1.png"
+              style={{
+                backgroundColor: "#fff",
+                borderRadius: "50%",
+                width: "32px",
+                height: "32px",
+                objectFit: "cover",
+                marginRight: "8px",
+              }}
+              src={UserData.profileImage}
               alt="프로필사진"
             />
             <span className="mt-1 font-light text-neutral-500">
@@ -372,7 +379,7 @@ const Card = function () {
             }
             onClick={imgChange}
             alt="카드이미지"
-            className="flex w-40 h-40 items-center m-auto mt-4 mb-1"
+            className="flex w-40 h-40 items-center m-auto mt-4 mb-1 object-cover"
           />
           <input
             id="cardImage"
@@ -514,7 +521,7 @@ const InputResult = styled.div<ContentProps>`
 
 const TitleBG = styled.div<TitleProps>`
   width: ${(props) => props.width};
-  background-color: #ff4a4a7b;
+  background-color: #ffffffa3;
   height: 7px;
 `
 interface ContentProps {

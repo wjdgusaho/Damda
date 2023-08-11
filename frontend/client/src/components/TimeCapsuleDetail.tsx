@@ -67,6 +67,13 @@ interface FriendListDataType {
   data: FriendDataType[]
 }
 
+declare global {
+  interface Window {
+    Kakao: any
+  }
+  const Kakao: any
+}
+
 const calculateDday = (endDate: string) => {
   const currentDate = new Date()
   const dateString = currentDate.toISOString().slice(0, 10)
@@ -208,7 +215,7 @@ const FileIcon2 = styled(FileIcon)`
   margin-top: 0;
 `
 
-const InviteBtn = styled.button`
+const InviteBtn = styled.div`
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -217,7 +224,8 @@ const InviteBtn = styled.button`
   font-size: 50px;
   font-weight: 200;
   text-align: center;
-  line-height: 44px;
+  line-height: 38px;
+  margin-top: 8px;
 `
 
 const FriendBox = styled.div`
@@ -266,6 +274,10 @@ const ModalContent = styled.div`
 const ModalTitle = styled.div`
   font-size: 20px;
   font-weight: 700;
+
+  span {
+    color: ${(props) => props.theme.color500};
+  }
 `
 
 // 취소 등록 버튼
@@ -357,6 +369,19 @@ const TimeCapsuleDetail = function () {
     ],
   })
 
+  //카카오 javaScript 생성
+  useEffect(() => {
+    const script = document.createElement("script")
+    script.src = "https://developers.kakao.com/sdk/js/kakao.js"
+    script.async = true
+
+    document.body.appendChild(script)
+
+    return () => {
+      document.body.removeChild(script)
+    }
+  }, [])
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -413,7 +438,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     : ""
   const isHost = capsuleData.myInfo.host
   const isCardAble = capsuleData.myInfo.cardAble
-  // const isFileAble = capsuleData.myInfo.fileAble
   const [isFileAble, setIsFileAble] = useState(capsuleData.myInfo.fileAble)
   const [nowParticipant, setNowParticipant] = useState(
     capsuleData.nowParticipant
@@ -428,14 +452,44 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [timer, setTimer] = useState<string>("")
   const [isInvite, setIsInvite] = useState(true)
   const [isHelp, setIsHelp] = useState(false)
+
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [deleteModalIsOpen, setDeleteModalIsOpen] = React.useState(false)
+  const [kickOutModalIsOpen, setKickOutModalIsOpen] = React.useState(false)
+  const [exitModalIsOpen, setExitModalIsOpen] = React.useState(false)
+
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const { capsuleId = "" } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
   const [friendList, setFriendList] = useState<FriendListDataType | undefined>()
+  const [kickOutedUserNo, setKickOutedUserNo] = useState<number>(0)
+  const [kickOutedUserNickname, setKickOutedUserNickname] = useState<string>()
+
+  const kickOutUser = async (userNo: number) => {
+    try {
+      const response = await axios({
+        method: "PATCH",
+        url: serverUrl + "timecapsule/kick",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        data: {
+          timecapsuleNo: capsuleId + "",
+          kickUserNo: userNo + "",
+        },
+      })
+      if (response.data.code === 200) {
+        closeKickOutModal()
+        window.location.reload()
+        console.log(response.data)
+      } // 나중에 추가할거임
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const inviteFriendClick = async (userNo: number) => {
     try {
@@ -469,7 +523,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     }
   }
 
-  const handleExitClick = async () => {
+  const handleDeleteClick = async () => {
     try {
       const response = await axios({
         method: "PATCH",
@@ -496,6 +550,35 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         alert("해당 타임캡슐의 방장이 아닙니다.")
       } else if (response.data.code === -3009) {
         alert("생성 후 24시간 이내에만 삭제할 수 있습니다.")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleExitClick = async () => {
+    try {
+      const response = await axios({
+        method: "PATCH",
+        url: serverUrl + "timecapsule/exit",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        data: {
+          timecapsuleNo: capsuleId,
+        },
+      })
+      if (response.data.code === 200) {
+        navigate("/main")
+      } else if (response.data.code === -6006) {
+        alert("존재하지 않는 유저입니다.")
+      } else if (response.data.code === -6002) {
+        alert("존재하지 않는 타임캡슐 입니다.")
+      } else if (response.data.code === -6008) {
+        alert("이미 삭제된 타임캡슐 입니다.")
+      } else if (response.data.code === -5008) {
+        alert("해당 유저의 타임캡슐이 아닙니다.")
       }
     } catch (error) {
       console.log(error)
@@ -596,6 +679,24 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     setDeleteModalIsOpen(false)
   }
 
+  function openExitModal() {
+    setExitModalIsOpen(true)
+  }
+
+  function closeExitModal() {
+    setExitModalIsOpen(false)
+  }
+
+  function openKickOutModal(userNo: number, userNickname: string) {
+    setKickOutModalIsOpen(true)
+    setKickOutedUserNo(userNo)
+    setKickOutedUserNickname(userNickname)
+  }
+
+  function closeKickOutModal() {
+    setKickOutModalIsOpen(false)
+  }
+
   useEffect(() => {
     const interval = setInterval(() => {
       const currentTime = new Date()
@@ -621,6 +722,50 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     }
   }, [oneDayLater])
 
+  function kakaoShare() {
+    console.log("Kakao : ", window.Kakao)
+    if (window.Kakao) {
+      const kakao = window.Kakao
+
+      // 중복 initialization 방지
+      if (!kakao.isInitialized()) {
+        kakao.init("e25afc7dead08f60a151179a01026248")
+      }
+
+      kakao.Link.sendDefault({
+        objectType: "feed",
+        content: {
+          title: "당신의 스쳐가는 시간을 의미있게 담다",
+          description:
+            "친구가 담다에서 기다리고있어요 \n메인화면에서 캡슐코드를 입력해주세요.",
+          imageUrl:
+            "https://damda.s3.ap-northeast-2.amazonaws.com/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C/Frame+45.png",
+          link: {
+            mobileWebUrl: "https://damda.online",
+            webUrl: "https://damda.online",
+          },
+        },
+        itemContent: {
+          items: [
+            {
+              item: "캡슐코드",
+              itemOp: `${capsuleData.inviteCode}`,
+            },
+          ],
+        },
+        buttons: [
+          {
+            title: "담다 접속하기",
+            link: {
+              mobileWebUrl: "https://damda.online",
+              webUrl: "https://damda.online",
+            },
+          },
+        ],
+      })
+    }
+  }
+
   return (
     <div className="relative">
       {isHelp && capsuleData.myInfo.host ? (
@@ -640,11 +785,22 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
             alt="questionMark"
           />
           <CapsuleGray capsuleIcon={capsuleData.capsuleIcon} />
-          <ExitImg
-            onClick={openDeleteModal}
-            src="../../assets/icons/bin_dark.png"
-            alt="bin"
-          />
+          {isHost ? (
+            <ExitImg
+              onClick={openDeleteModal}
+              src="../../assets/icons/bin_dark.png"
+              alt="bin"
+            />
+          ) : (
+            <ExitImg
+              onClick={openExitModal}
+              src="../../assets/icons/exit.png"
+              alt="exit"
+              width="22.5px"
+              height="22.5px"
+            />
+          )}
+
           <Modal
             isOpen={deleteModalIsOpen}
             onRequestClose={closeDeleteModal}
@@ -658,10 +814,29 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <FileCencelBtn type="button" onClick={closeDeleteModal}>
                   취소
                 </FileCencelBtn>
-                <FileSubmitBtn onClick={handleExitClick}>삭제</FileSubmitBtn>
+                <FileSubmitBtn onClick={handleDeleteClick}>삭제</FileSubmitBtn>
               </div>
             </ModalContent>
           </Modal>
+
+          <Modal
+            isOpen={exitModalIsOpen}
+            onRequestClose={closeExitModal}
+            style={customStyles}
+            contentLabel="ExitModal"
+          >
+            <ModalContent>
+              <ModalTitle className="my-2">정말 나가시겠어요?</ModalTitle>
+              <div>한 번 나가면 다시 들어올 수 없어요.</div>
+              <div className="mt-2">
+                <FileCencelBtn type="button" onClick={closeExitModal}>
+                  취소
+                </FileCencelBtn>
+                <FileSubmitBtn onClick={handleExitClick}>나가기</FileSubmitBtn>
+              </div>
+            </ModalContent>
+          </Modal>
+
           <TimerWrap>
             {timer}
             <div className="-mt-1">뒤에 등록돼요</div>
@@ -693,6 +868,46 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                   타임캡슐이 등록되고 나면 <br />
                   매일 1장의 카드와 파일을 업로드 할 수 있어요
                 </div>
+              ) : null}
+
+              {capsuleData.criteriaInfo.cirteriaDays ? (
+                <div className="text-center mt-3">
+                  매주{" "}
+                  {capsuleData.criteriaInfo.cirteriaDays?.map((day) => (
+                    <span key={day.dayEn} className="font-bold">
+                      {day.dayKr}{" "}
+                    </span>
+                  ))}{" "}
+                  기록해요
+                </div>
+              ) : null}
+
+              {capsuleData.criteriaInfo.weatherStatus ||
+              capsuleData.criteriaInfo.localBig ? (
+                <>
+                  {capsuleData.criteriaInfo.weatherStatus ? (
+                    <div>
+                      <span className="font-bold">
+                        {capsuleData.criteriaInfo.weatherStatus === "RAIN"
+                          ? "비"
+                          : capsuleData.criteriaInfo.weatherStatus === "SNOW"
+                          ? "눈"
+                          : null}
+                      </span>{" "}
+                      오는 날
+                    </div>
+                  ) : null}
+                  {capsuleData.criteriaInfo.localBig ? (
+                    <>
+                      <span className="font-bold">
+                        {capsuleData.criteriaInfo.localBig}{" "}
+                        {capsuleData.criteriaInfo.localMedium}{" "}
+                        <span className="font-normal">에서</span>
+                      </span>{" "}
+                    </>
+                  ) : null}
+                  열 수 있어요
+                </>
               ) : null}
 
               {capsuleData.penalty ? (
@@ -753,7 +968,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                               />
                             </div>
                             <span
-                              style={{ fontSize: "12px", textAlign: "center" }}
+                              style={{
+                                fontSize: "12px",
+                                textAlign: "center",
+                                width: "63px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                              }}
                             >
                               {part.nickname}
                             </span>
@@ -773,9 +995,33 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                                 src={part.profileImage}
                                 alt="profilepic"
                               />
+                              {/* 강퇴하기 */}
+                              <img
+                                onClick={() =>
+                                  openKickOutModal(part.userNo, part.nickname)
+                                }
+                                src="../../assets/icons/kickout.png"
+                                alt="kickout"
+                                width="15px"
+                                height="15px"
+                                style={{
+                                  position: "absolute",
+                                  top: "7.5px",
+                                  right: "5px",
+                                  filter:
+                                    "drop-shadow(0px 4px 4px rgb(0, 0, 0, 0.4))",
+                                }}
+                              />
                             </div>
                             <span
-                              style={{ fontSize: "12px", textAlign: "center" }}
+                              style={{
+                                fontSize: "12px",
+                                textAlign: "center",
+                                width: "63px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                              }}
                             >
                               {part.nickname}
                             </span>
@@ -826,7 +1072,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                               />
                             </div>
                             <span
-                              style={{ fontSize: "12px", textAlign: "center" }}
+                              style={{
+                                fontSize: "12px",
+                                textAlign: "center",
+                                width: "63px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                              }}
                             >
                               {part.nickname}
                             </span>
@@ -848,7 +1101,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                               />
                             </div>
                             <span
-                              style={{ fontSize: "12px", textAlign: "center" }}
+                              style={{
+                                fontSize: "12px",
+                                textAlign: "center",
+                                width: "63px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                              }}
                             >
                               {part.nickname}
                             </span>
@@ -860,6 +1120,30 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 )}
                 {/* 여기 일단 임시로 null (방장 아닐 때) */}
               </div>
+
+              <Modal
+                isOpen={kickOutModalIsOpen}
+                onRequestClose={closeKickOutModal}
+                style={customStyles}
+                contentLabel="KickOutModal"
+              >
+                <ModalContent>
+                  <ModalTitle className="my-2 text-center">
+                    정말 <span>{kickOutedUserNickname}</span>
+                    님을 <br />
+                    추방하시겠습니까?
+                  </ModalTitle>
+                  <div>한 번 추방하면 다시 들어올 수 없습니다.</div>
+                  <div className="mt-2">
+                    <FileCencelBtn type="button" onClick={closeKickOutModal}>
+                      취소
+                    </FileCencelBtn>
+                    <FileSubmitBtn onClick={() => kickOutUser(kickOutedUserNo)}>
+                      추방
+                    </FileSubmitBtn>
+                  </div>
+                </ModalContent>
+              </Modal>
 
               <>
                 <div className="flex w-56 my-2 mt-5">
@@ -990,6 +1274,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <HightLight />
                 {/* 공유하기 버튼 */}
                 <Shareimg
+                  onClick={kakaoShare}
                   className="absolute"
                   src="../../assets/icons/share.png"
                   alt="share"
@@ -1070,6 +1355,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
     : ""
   const navigate = useNavigate()
   const isCardAble = capsuleData.myInfo.cardAble
+  const [isFileAble, setIsFileAble] = useState(capsuleData.myInfo.fileAble)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
 
@@ -1077,6 +1363,9 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+
+  console.log(capsuleData.myInfo.fileAble)
+  console.log(isFileAble)
 
   const getFileSize = async () => {
     try {
@@ -1130,6 +1419,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           data: formData,
         })
         console.log(response.data)
+        setIsFileAble(false)
         closeModal()
       } catch (error) {
         console.log(error)
@@ -1145,6 +1435,10 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   function closeModal() {
     setIsOpen(false)
   }
+
+  useEffect(() => {
+    setIsFileAble(capsuleData.myInfo.fileAble)
+  }, [capsuleData])
 
   return (
     <>
@@ -1195,7 +1489,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
                 <span className="font-bold">
                   {capsuleData.criteriaInfo.localBig}{" "}
                   {capsuleData.criteriaInfo.localMedium}
-                </span>
+                </span>{" "}
                 에서 열 수 있어요
               </div>
             </>
@@ -1250,7 +1544,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           {capsuleData.capsuleType === "CLASSIC" ? null : (
             <>
               <div className="flex w-56 my-2 mt-5">
-                {capsuleData.myInfo.fileAble ? (
+                {isFileAble ? (
                   <>
                     <FileIcon
                       src="../../assets/icons/file.png"

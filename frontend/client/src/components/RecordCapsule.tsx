@@ -17,7 +17,7 @@ const Box = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: ${(props) => props.theme.colorCommon};
   font-family: "Pretendard";
   justify-content: center;
 `
@@ -33,15 +33,16 @@ const Content = styled.div`
   font-size: 1.25rem;
   font-weight: 300;
   span {
+    opacity: 0.47;
     font-size: 14px;
-    color: rgb(243, 245, 251, 0.47);
+    color: ${(props) => props.theme.colorCommon};
     margin-left: 15px;
   }
 `
 
 const InputBox = styled.input`
   background-color: rgb(255, 255, 255, 0);
-  border-bottom: 2px solid rgb(255, 255, 255, 0.83);
+  border-bottom: 2px solid ${(props) => props.theme.colorCommon};
   height: 50px;
   outline: none;
   font-weight: 200;
@@ -49,7 +50,6 @@ const InputBox = styled.input`
 
 const SelectBox = styled.select`
   background-color: rgb(255, 255, 255, 0);
-  border-bottom: 2px solid rgb(255, 255, 255, 0.83);
   height: 50px;
   outline: none;
   font-weight: 200;
@@ -100,11 +100,11 @@ const RadioBtn = styled.label`
 const SubmitBtn = styled.button`
   width: 130px;
   height: 49px;
-  background-color: #f6eef9; // lilac 100
-  color: #431f4c; // lilac 950
+  background-color: ${(props) => props.theme.color100};
+  color: ${(props) => props.theme.color900};
   border-radius: 30px;
   font-size: 24px;
-  box-shadow: 0px 4px 4px #534177;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
 `
 
 const CancelBtn = styled(SubmitBtn)`
@@ -116,6 +116,10 @@ const BtnWrap = tw.div`
   my-16
   flex
   justify-evenly
+`
+
+const DatePickerWrap = styled.div`
+  border-bottom: 2px solid ${(props) => props.theme.colorCommon};
 `
 
 const RecordCapsule = function () {
@@ -250,46 +254,52 @@ const RecordCapsule = function () {
   function FormSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    axios({
-      method: "POST",
-      url: serverUrl + "timecapsule/create",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
-      },
-      data: {
-        title: title,
-        type: "RECORD",
-        description: description,
-        goalCard: 0,
-        openDate: selectedDate,
-        criteria: {
-          type: "OPEN",
-          localBig: selectedLocationBig,
-          localMedium: selectedLocationMedium || locationMedium[0],
-          weatherStatus: weatherValue,
-          startTime: timeValue[0],
-          endTime: timeValue[1],
-          timeKr: timeValue[2],
+    if (!title) {
+      alert("타임캡슐 이름을 입력해주세요.")
+    } else if (!description) {
+      alert("한줄설명을 입력해주세요.")
+    } else {
+      axios({
+        method: "POST",
+        url: serverUrl + "timecapsule/create",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
         },
-        cardInputDay: null,
-        penalty: null,
-      },
-    })
-      .then((res) => {
-        if (res.data.code === 200) {
-          console.log(res.data)
-          navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
-        } else if (res.data.code === -4004) {
-          alert(
-            "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
-          )
-          navigate("/main")
-        }
+        data: {
+          title: title,
+          type: "RECORD",
+          description: description,
+          goalCard: 0,
+          openDate: selectedDate,
+          criteria: {
+            type: "OPEN",
+            localBig: selectedLocationBig,
+            localMedium: selectedLocationMedium || locationMedium[0],
+            weatherStatus: weatherValue,
+            startTime: timeValue[0],
+            endTime: timeValue[1],
+            timeKr: timeValue[2],
+          },
+          cardInputDay: null,
+          penalty: null,
+        },
       })
-      .catch((err) => {
-        console.log(err)
-      })
+        .then((res) => {
+          if (res.data.code === 200) {
+            console.log(res.data)
+            navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
+          } else if (res.data.code === -4004) {
+            alert(
+              "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
+            )
+            navigate("/main")
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
   }
 
   return (
@@ -325,16 +335,18 @@ const RecordCapsule = function () {
           <ContentWrap>
             <Content>캡슐 공개일</Content>
           </ContentWrap>
-          <DatePicker
-            className="datePicker w-80"
-            formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
-            dateFormat="yyyy-MM-dd"
-            locale={ko}
-            minDate={new Date(twoDayAheadDateString)}
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            onKeyDown={handleDatePickerKeyDown}
-          />
+          <DatePickerWrap>
+            <DatePicker
+              className="datePicker w-80"
+              formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
+              dateFormat="yyyy-MM-dd"
+              locale={ko}
+              minDate={new Date(twoDayAheadDateString)}
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              onKeyDown={handleDatePickerKeyDown}
+            />
+          </DatePickerWrap>
           <ContentWrap>
             <Content>
               캡슐 공개시간
@@ -401,31 +413,35 @@ const RecordCapsule = function () {
             </Content>
           </ContentWrap>
           <div className="flex justify-between w-80">
-            <SelectBox
-              className="w-36"
-              name="locationBig"
-              id="locationBig"
-              onChange={handleLocationBigChange}
-            >
-              {locationBig.map((location, index) => (
-                <option key={index} value={location}>
-                  {location}
-                </option>
-              ))}
-            </SelectBox>
+            <DatePickerWrap>
+              <SelectBox
+                className="w-36"
+                name="locationBig"
+                id="locationBig"
+                onChange={handleLocationBigChange}
+              >
+                {locationBig.map((location, index) => (
+                  <option key={index} value={location}>
+                    {location}
+                  </option>
+                ))}
+              </SelectBox>
+            </DatePickerWrap>
 
-            <SelectBox
-              className="w-36"
-              name="locationMedium"
-              id="locationMedium"
-              onChange={handleLocationMediumChange}
-            >
-              {locationMedium.map((location, index) => (
-                <option key={index} value={location}>
-                  {location}
-                </option>
-              ))}
-            </SelectBox>
+            <DatePickerWrap>
+              <SelectBox
+                className="w-36"
+                name="locationMedium"
+                id="locationMedium"
+                onChange={handleLocationMediumChange}
+              >
+                {locationMedium.map((location, index) => (
+                  <option key={index} value={location}>
+                    {location}
+                  </option>
+                ))}
+              </SelectBox>
+            </DatePickerWrap>
           </div>
           <ContentWrap>
             <Content>

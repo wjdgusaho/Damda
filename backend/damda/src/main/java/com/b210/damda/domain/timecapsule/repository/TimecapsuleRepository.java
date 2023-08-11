@@ -21,7 +21,7 @@ public interface TimecapsuleRepository extends JpaRepository<Timecapsule, Long> 
 
     @Transactional
     @Modifying
-    @Query("UPDATE TimecapsuleMapping tc SET tc.cardAble = :cardAble where tc.timecapsule IN (SELECT t.timecapsuleNo FROM Timecapsule t WHERE t.type != 'CLASSIC')")
-    void cardAble(@Param("cardAble") boolean cardAble);
+    @Query("UPDATE TimecapsuleMapping tc SET tc.cardAble = :cardAble, tc.fileAble = :fileAble where tc.timecapsule IN (SELECT t.timecapsuleNo FROM Timecapsule t WHERE t.type != 'CLASSIC')")
+    void cardAble(@Param("cardAble") boolean cardAble, @Param("fileAble") boolean fileAble);
 
 }

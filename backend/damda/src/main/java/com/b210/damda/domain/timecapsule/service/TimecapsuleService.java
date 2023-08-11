@@ -42,4 +42,12 @@ public interface TimecapsuleService {
     Map<String, Object> timecapsuleFileSize(Long timecapsuleNo);
 
     Map<String, Object> timecapsuleFileUpload(MultipartFile file, Long timecapsuleNo);
+
+    TimecapsuleSimpleDTO timecapsuleSimpleInfo(Long timecapsuleNo);
+
+    List<TimecapsuleOpenCardDTO> timecapsuleCardList(Long timecapsuleNo);
+
+    TimecapsuleOpenDetailDTO timecapsuleOpenDetail(Long timecapsuleNo);
+
+    Map<String, Object> timecapsuleOpenRank(Long timecapsuleNo);
 }

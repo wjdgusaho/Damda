@@ -1,26 +1,64 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { FriendType } from "../components/Friend"
-import { CapsuleType } from "../components/MainPage"
+import { ToastOptions } from "react-toastify"
+
+export const toastOption: ToastOptions = {
+  position: "top-right",
+  autoClose: false,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: false,
+  draggable: true,
+  progress: undefined,
+  theme: "light",
+}
+
+export interface alarmFriendType {
+  fromUser: number
+  fromName: string
+  fromProfileImage: string
+  content: string
+  date: string
+}
+
+export interface alarmCapsuleType {
+  timecapsuleNo: number
+  type: string
+  sDate: string
+  eDate: string
+  name: string
+  capsuleIconNo: string
+  curCard: number
+  goalCard: number
+  date: string
+}
 
 interface alarmData {
-  friends: FriendType[]
-  timecapsule: CapsuleType[]
+  friends: alarmFriendType[]
+  timecapsules: alarmCapsuleType[]
 }
 
 const initialState: alarmData = {
   friends: [],
-  timecapsule: [],
+  timecapsules: [],
 }
 
 export const alarmSlice = createSlice({
   name: "alarm",
   initialState,
   reducers: {
-    SET_FRIENDS: (state, action: PayloadAction<[FriendType]>) => {
-      state.friends = action.payload
+    ADD_FRIENDS: (state, action: PayloadAction<alarmFriendType>) => {
+      state.friends = state.friends.concat(action.payload)
     },
-    SET_TIMECAPSULES: (state, action: PayloadAction<[CapsuleType]>) => {
-      state.timecapsule = action.payload
+    ADD_TIMECAPSULES: (state, action: PayloadAction<alarmCapsuleType>) => {
+      state.timecapsules = state.timecapsules.concat(action.payload)
+    },
+    DELETE_FRIENDS: (state, action: PayloadAction<number>) => {
+      state.friends = state.friends.filter((f) => f.fromUser !== action.payload)
+    },
+    DELETE_TIMECAPSULES: (state, action: PayloadAction<number>) => {
+      state.timecapsules = state.timecapsules.filter(
+        (t) => t.timecapsuleNo !== action.payload
+      )
     },
     DELETE_ALARM_ALL: (state) => {
       state = initialState
@@ -28,6 +66,12 @@ export const alarmSlice = createSlice({
   },
 })
 
-export const { SET_FRIENDS, DELETE_ALARM_ALL } = alarmSlice.actions
+export const {
+  ADD_FRIENDS,
+  ADD_TIMECAPSULES,
+  DELETE_FRIENDS,
+  DELETE_TIMECAPSULES,
+  DELETE_ALARM_ALL,
+} = alarmSlice.actions
 
 export default alarmSlice.reducer
