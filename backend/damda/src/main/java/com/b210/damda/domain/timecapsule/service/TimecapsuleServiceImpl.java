@@ -950,6 +950,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         //타임캡슐 (삭제 검증 ok)
         TimecapsuleSimpleDTO simpleDTO = timecapsule.toTimecapsuleSimpleDTO();
 
+        List<TimecapsuleMapping> mappingList = timecapsuleMappingRepository.findNotSavedButDeleted(timecapsule.getTimecapsuleNo());
+        if(mappingList.size() > 1) simpleDTO.setAlone(false);
+        else simpleDTO.setAlone(true);
+
         return simpleDTO;
     }
 
@@ -1022,13 +1026,15 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         List<TimecapsuleOpenRankDTO> openRankDTOList = new ArrayList<>();
         for(TimecapsuleMapping openRank : openRankList){
-           Long cardCnt = timecapsuleCardRepository.countByTimecapsuleTimecapsuleNoAndUserUserNo(timecapsuleNo, userNo);
-
+           Long cardCnt = timecapsuleCardRepository.countByTimecapsuleTimecapsuleNoAndUserUserNo(timecapsuleNo, openRank.getUser().getUserNo());
            TimecapsuleOpenRankDTO rank = openRank.toTimecapsuleOpenRankDTO();
            rank.setCardCnt(Math.toIntExact(cardCnt));
 
             openRankDTOList.add(rank);
         }
+
+        //정렬
+        Collections.sort(openRankDTOList, (o1, o2) -> Integer.compare(o2.getCardCnt(), o1.getCardCnt()));
 
         Map<String,Object> result = new HashMap<>();
         result.put("userRank", openRankDTOList);

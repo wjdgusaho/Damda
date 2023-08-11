@@ -9,6 +9,7 @@ import com.b210.damda.domain.friend.service.FriendService;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.response.DataResponse;
 import com.b210.damda.util.serverSentEvent.service.FriendEventService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/friend")
 public class FriendController {
@@ -34,6 +36,8 @@ public class FriendController {
     public DataResponse<Map<String, Object>> friendRequest(@RequestBody UserDTO userDTO){
         try{
             friendService.friendRequest(userDTO.getUserNo());
+
+            log.warn("friendEventService 진입 시도 : ");
             friendEventService.friendEventService(userDTO.getUserNo(), FriendEventEnum.REQUEST);
             return new DataResponse<>(200, "친구 신청이 완료되었습니다.");
         }catch (CommonException e){
@@ -113,6 +117,7 @@ public class FriendController {
     public DataResponse<Map<String, Object>> friendAccept(@RequestBody FriendNoRequestDTO friendNoRequestDTO){
         try{
             friendService.friendReqeustAccept(friendNoRequestDTO.getUserNo());
+
             friendEventService.friendEventService(friendNoRequestDTO.getUserNo(), FriendEventEnum.ACCEPT);
             return new DataResponse<>(200, "친구 신청 수락");
         }catch (CommonException e){
