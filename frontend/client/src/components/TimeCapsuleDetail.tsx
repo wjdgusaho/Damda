@@ -1356,6 +1356,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
           )}
           {/* 임시로 일단 이렇게 */}
         </Box>
+        <div className="h-9"></div>
       </Background>
     </div>
   )
@@ -1716,6 +1717,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           </BackBtn>
         </>
       </Box>
+      <div className="h-9"></div>
     </>
   )
 }

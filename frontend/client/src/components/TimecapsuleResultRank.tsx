@@ -29,6 +29,37 @@ const RankBox = styled.div`
 
 const RankText = styled.div`
   font-size: 12px;
+  text-align: center;
+  width: 67px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`
+
+const GraphText = styled(RankText)`
+  width: 51px;
+`
+
+const GraphBox = styled.div`
+  width: 252px;
+  height: 280px;
+  overflow: scroll;
+`
+
+const GraphBar = styled.div`
+  position: relative;
+  height: 18px;
+  background-color: ${(props) => props.theme.color100};
+  border-radius: 10px;
+  margin-top: 17px;
+  margin-left: -18px;
+  box-shadow: 0px 4px 4px rgb(0, 0, 0, 0.25);
+  span {
+    position: absolute;
+    right: -33px;
+    font-size: 12px;
+    color: ${(props) => props.theme.color500};
+  }
 `
 
 const TimecapsuleResultRank = function () {
@@ -38,6 +69,8 @@ const TimecapsuleResultRank = function () {
     allCardCnt: 0,
     userRank: [{ userNo: 0, nickname: "", profileImage: "", cardCnt: 0 }],
   })
+  const bestUserCnt = rankData.userRank[0].cardCnt
+  const [isClick, setIsClick] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,84 +96,114 @@ const TimecapsuleResultRank = function () {
   console.log(rankData.userRank.length)
 
   return (
-    <RankBox>
-      {rankData.userRank.map((user, idx) => (
-        <div key={idx}>
-          {idx === 0 ? (
-            <div className="flex flex-col items-center relative mt-5 mx-2">
-              <img
-                style={{
-                  backgroundColor: "#fff",
-                  borderRadius: "50%",
-                  width: "52px",
-                  height: "52px",
-                  boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
-                  margin: "8px",
-                  objectFit: "cover",
-                }}
-                src={user.profileImage}
-                alt="profilepic"
-              />
-              <img
-                src="../../assets/icons/crown.png"
-                alt="crown"
-                width="27px"
-                height="22px"
-                style={{
-                  position: "absolute",
-                  top: "-9px",
-                  left: "20.5px",
-                }}
-              />
-              <RankText>{user.nickname}</RankText>
-            </div>
-          ) : idx === rankData.userRank.length - 1 ? (
-            <div className="flex flex-col items-center relative mt-5 mx-2">
-              <img
-                style={{
-                  backgroundColor: "#fff",
-                  borderRadius: "50%",
-                  width: "52px",
-                  height: "52px",
-                  boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
-                  margin: "8px",
-                  objectFit: "cover",
-                }}
-                src={user.profileImage}
-                alt="profilepic"
-              />
-              <img
-                src="../../assets/icons/loser.png"
-                alt="crown"
-                width="20px"
-                height="14px"
-                style={{
-                  position: "absolute",
-                  top: "2px",
-                  right: "5px",
-                }}
-              />
-              <RankText>{user.nickname}</RankText>
-            </div>
-          ) : null}
-          <div className="flex flex-col">
-            <img
-              style={{
-                backgroundColor: "#fff",
-                borderRadius: "50%",
-                width: "52px",
-                height: "52px",
-                boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
-                margin: "8px",
-                objectFit: "cover",
-              }}
-              src={user.profileImage}
-              alt="profilepic"
-            />
+    <>
+      <RankBox>
+        {rankData.userRank.map((user, idx) => (
+          <div key={idx}>
+            {idx === 0 ? (
+              <div className="flex flex-col items-center relative mt-5 mx-2">
+                <img
+                  style={{
+                    backgroundColor: "#fff",
+                    borderRadius: "50%",
+                    width: "52px",
+                    height: "52px",
+                    boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                    margin: "8px",
+                    objectFit: "cover",
+                  }}
+                  src={user.profileImage}
+                  alt="profilepic"
+                />
+                <img
+                  src="../../assets/icons/crown.png"
+                  alt="crown"
+                  width="27px"
+                  height="22px"
+                  style={{
+                    position: "absolute",
+                    top: "-9px",
+                    left: "20.5px",
+                  }}
+                />
+                <RankText>{user.nickname}</RankText>
+              </div>
+            ) : idx === rankData.userRank.length - 1 ? (
+              <div className="flex flex-col items-center relative mt-5 mx-2">
+                <img
+                  style={{
+                    backgroundColor: "#fff",
+                    borderRadius: "50%",
+                    width: "52px",
+                    height: "52px",
+                    boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                    margin: "8px",
+                    objectFit: "cover",
+                  }}
+                  src={user.profileImage}
+                  alt="profilepic"
+                />
+                <img
+                  src="../../assets/icons/loser.png"
+                  alt="crown"
+                  width="20px"
+                  height="14px"
+                  style={{
+                    position: "absolute",
+                    top: "2px",
+                    right: "5px",
+                  }}
+                />
+                <GraphText>{user.nickname}</GraphText>
+              </div>
+            ) : null}
           </div>
-        </div>
-      ))}
-    </RankBox>
+        ))}
+      </RankBox>
+      <GraphBox>
+        {rankData.userRank.map((user, idx) => (
+          <div
+            key={idx}
+            className="flex"
+            onClick={() => {
+              setIsClick(!isClick)
+            }}
+          >
+            <div className="z-10">
+              <img
+                style={{
+                  backgroundColor: "#fff",
+                  borderRadius: "50%",
+                  width: "35px",
+                  height: "35px",
+                  boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                  margin: "8px",
+                  objectFit: "cover",
+                }}
+                src={user.profileImage}
+                alt="profilepic"
+              />
+              <GraphText>{user.nickname}</GraphText>
+            </div>
+            <GraphBar
+              style={{
+                width: `calc(184px * ${user.cardCnt / bestUserCnt})`,
+              }}
+            >
+              {isClick ? (
+                <span style={{ letterSpacing: "-0.8px" }}>
+                  {user.cardCnt} 개
+                </span>
+              ) : (
+                <span>
+                  {Math.round((user.cardCnt / rankData.allCardCnt) * 100)}%
+                </span>
+              )}
+            </GraphBar>
+          </div>
+        ))}
+      </GraphBox>
+    </>
   )
 }
 
