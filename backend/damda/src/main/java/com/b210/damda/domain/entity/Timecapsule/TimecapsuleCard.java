@@ -1,10 +1,7 @@
 package com.b210.damda.domain.entity.Timecapsule;
 
 import com.b210.damda.domain.entity.User.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -14,6 +11,7 @@ import java.util.Date;
 @Setter @Getter
 @Builder
 @AllArgsConstructor
+@ToString
 public class TimecapsuleCard {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
