@@ -145,6 +145,7 @@ public class Timecapsule {
                 .timecapsuleNo(this.timecapsuleNo)
                 .registDate(this.registDate)
                 .openDate(this.openDate)
+                .capsuleType(this.type)
                 .title(this.title)
                 .description(this.description)
                 .goalCard(this.goalCard)
