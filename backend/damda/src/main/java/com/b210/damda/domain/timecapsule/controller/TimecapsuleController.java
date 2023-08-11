@@ -295,7 +295,7 @@ public class TimecapsuleController {
     @GetMapping("cardlist")
     public DataResponse<Map<String, Object>> timecapsuleCardList(@RequestParam("timecapsuleNo") Long timecapsuleNo){
 
-        List<TimecapsuleCardDTO> cardList = timecapsuleService.timecapsuleCardList(timecapsuleNo);
+        List<TimecapsuleOpenCardDTO> cardList = timecapsuleService.timecapsuleCardList(timecapsuleNo);
 
         Map<String, Object> result = new HashMap<>();
         result.put("cardList", cardList);
