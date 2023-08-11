@@ -46,24 +46,18 @@ const TextStyle = styled.p`
   font-family: "pretendard";
   font-weight: 500;
   font-size: 20px;
-  color: ${(props) => props.theme.colorCommon};
+  color: black;
   opacity: 80%;
 `
 const BackIcon = styled.div`
-  background-image: url(${(props) =>
-    props.theme.colorCommon === "black"
-      ? "..//assets/icons/arrow_lD.png"
-      : "..//assets/icons/arrow_l.png"});
+  background-image: url("..//assets/icons/arrow_lD.png");
   background-repeat: no-repeat;
   background-size: contain;
   width: 15px;
   height: 25px;
 `
 const HomeIcon = styled.div`
-  background-image: url(${(props) =>
-    props.theme.colorCommon === "black"
-      ? "..//assets/icons/homeD.png"
-      : "..//assets/icons/home.png"});
+  background-image: url("..//assets/icons/homeD.png");
   background-repeat: no-repeat;
   background-size: contain;
   width: 25px;
