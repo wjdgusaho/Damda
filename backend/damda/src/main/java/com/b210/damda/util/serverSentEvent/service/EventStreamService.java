@@ -47,7 +47,11 @@ public class EventStreamService {
     public Flux<ServerSentEvent<JsonNode>> connectStream() {
         long userNo = addOnEventService.getUserNo();
         log.info("connectStream, userNo : {}", userNo);
-        endAndRemoveStream(userNo);
+
+
+        log.info("여기 들어가서");
+//        endAndRemoveStream(userNo);
+        log.info("나올수가 없다.");
 
         //이후 재연결 로직 발생
         //접속 시간 등록
