@@ -114,18 +114,18 @@ const Menu = function () {
         </MenuBtn>
         <MenuBtn
           onClick={() => {
-            navigate("/user")
+            if (UserData.accountType === "KAKAO") {
+              navigate("/user-info")
+            } else {
+              navigate("/user")
+            }
           }}
         >
           회원정보 수정
         </MenuBtn>
         <LogoutBtn
           onClick={() => {
-            if (UserData.accountType === "KAKAO") {
-              navigate("/user-info")
-            } else {
-              navigate("/logout")
-            }
+            navigate("/logout")
           }}
         >
           로그아웃
