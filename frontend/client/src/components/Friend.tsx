@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { SubHeader } from "./inc/SubHeader"
 import { styled } from "styled-components"
-import { NavLink, Outlet, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 import axios from "axios"
 import { serverUrl } from "../urls"
 import { useDispatch, useSelector } from "react-redux"
@@ -9,6 +9,14 @@ import { RootState } from "../store/Store"
 import { DELETE_FRIENDS } from "../store/Alarm"
 
 const Friend = function () {
+  const themeState = useSelector((state: RootState) => state.theme.colorCommon)
+  const [comp, setComp] = useState("list")
+  const [activeComponent, setActiveComponent] = useState("list")
+
+  const handleNavClick = (compName: string) => {
+    setActiveComponent(compName)
+  }
+
   return (
     <div>
       <SubHeader></SubHeader>
@@ -18,15 +26,36 @@ const Friend = function () {
         </div>
         <div className="flex">
           <Link to="/friend/search" className="w-6 ml-auto mr-14">
-            <img src="/assets/icons/friendAdd.png" alt="add" />
+            <img
+              className={themeState === "black" ? "invert" : ""}
+              src="/assets/icons/friendAdd.png"
+              alt="add"
+            />
           </Link>
         </div>
       </div>
       <div className="flex justify-evenly mt-6 mb-8">
-        <NavLink2 to="/friend/list">친구 목록</NavLink2>
-        <NavLink2 to="/friend/request">받은 친구 요청</NavLink2>
+        <Nav
+          onClick={() => {
+            setComp("list")
+            handleNavClick("list")
+          }}
+          isActive={activeComponent === "list"}
+        >
+          친구 목록
+        </Nav>
+        <Nav
+          onClick={() => {
+            setComp("request")
+            handleNavClick("request")
+          }}
+          isActive={activeComponent === "request"}
+        >
+          받은 친구 요청
+        </Nav>
       </div>
-      <Outlet />
+      {comp === "list" && <List />}
+      {comp === "request" && <Request />}
     </div>
   )
 }
@@ -78,15 +107,20 @@ export const List = function () {
     <div>
       {friendList.length === 0 && favoriteFriendList.length === 0 && (
         <div className="text-center mt-20">
-          <TextStyle className="text-victoria-400">
+          <TextStyle
+            style={{ opacity: "50%", fontSize: "20px", fontWeight: "200" }}
+          >
             친구를 찾으러 떠나볼까요?
           </TextStyle>
-          <img
-            className="w-72 m-auto mt-12"
-            src="/assets/universe/Astronaut-4.png"
-            alt="Astronaut-4"
-          />
-          <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
+          <div className="relative">
+            <img
+              className="m-auto mt-20"
+              style={{ width: "15rem" }}
+              src="/assets/universe/Astronaut-4.png"
+              alt="Astronaut-4"
+            />
+            <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
+          </div>
         </div>
       )}
       {favoriteFriendList.length !== 0 && (
@@ -179,6 +213,7 @@ const FriendCard = function ({
   changeAlign: () => void
 }) {
   const token = useSelector((state: RootState) => state.auth.accessToken)
+  const themeState = useSelector((state: RootState) => state.theme.colorCommon)
 
   const favoriteRequest = (event: React.MouseEvent<HTMLButtonElement>) => {
     axios({
@@ -265,27 +300,46 @@ const FriendCard = function ({
   return (
     <div className="flex w-10/12 items-center m-auto p-2">
       <img
-        className="w-16 rounded-full h-16"
+        style={{
+          backgroundColor: "#fff",
+          borderRadius: "50%",
+          width: "52px",
+          height: "52px",
+        }}
         src={friend.profileImage}
-        alt="프로필사진"
+        alt="profilepic"
       />
       <TextStyle className="ml-4 text-white">
         {friend.nickname}
-        <span className="text-gray-400">#{friend.userNo}</span>
+        <span className="ml-1" style={{ opacity: "50%", fontWeight: "300" }}>
+          #{friend.userNo}
+        </span>
         {/* 여기 수정 */}
       </TextStyle>
       <div className="flex ml-auto mr-3">
         {friend.favorite ? (
           <button className="w-5 mr-4" onClick={favoriteCancel}>
-            <img src="/assets/icons/star.png" alt="즐겨찾는친구" />
+            <img
+              className={themeState === "black" ? "invert" : ""}
+              src="/assets/icons/star.png"
+              alt="즐겨찾는친구"
+            />
           </button>
         ) : (
           <button className="w-5 mr-4 opacity-10" onClick={favoriteRequest}>
-            <img src="/assets/icons/star.png" alt="즐겨찾기안됨" />
+            <img
+              className={themeState === "black" ? "invert" : ""}
+              src="/assets/icons/star.png"
+              alt="즐겨찾기안됨"
+            />
           </button>
         )}
         <button className="w-5" onClick={friendDelete}>
-          <img src="/assets/icons/button_x.png" alt="삭제" />
+          <img
+            className={themeState === "black" ? "invert opacity-60" : ""}
+            src="/assets/icons/button_x.png"
+            alt="삭제"
+          />
         </button>
       </div>
     </div>
@@ -383,6 +437,10 @@ const TextStyle = styled.div`
   color: ${(props) => props.theme.colorCommon};
 `
 const CapsuleShadow = styled.div`
+  z-index: -1;
+  position: absolute;
+  bottom: -25px;
+  left: 110px;
   width: 205px;
   height: 80px;
   border-radius: 50%;
@@ -390,7 +448,7 @@ const CapsuleShadow = styled.div`
   filter: blur(5px);
 `
 
-const NavLink2 = styled(NavLink)`
+const Nav = styled.div<{ isActive: boolean }>`
   position: relative;
   text-decoration: none;
   font-family: "pretendard";
@@ -398,21 +456,18 @@ const NavLink2 = styled(NavLink)`
   color: ${(props) => props.theme.colorCommon};
   transition: color 0.2s;
   display: inline-flex;
-  align-items: center; /* Align the text and underline vertically */
+  align-items: center;
   width: 120px;
   justify-content: center;
-  &.active {
-    font-weight: 400;
-    color: ${(props) => props.theme.colorCommon};
 
-    &::after {
-      content: "";
-      position: absolute;
-      bottom: -10px; /* Adjust the value to control the underline's position */
-      width: 100%;
-      height: 1px;
-      background-color: ${(props) => props.theme.colorCommon};
-    }
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    width: 100%;
+    height: 1px;
+    background-color: ${(props) => props.theme.colorCommon};
+    display: ${(props) => (props.isActive ? "block" : "none")};
   }
 `
 
