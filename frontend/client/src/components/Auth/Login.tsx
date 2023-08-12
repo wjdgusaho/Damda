@@ -167,7 +167,7 @@ const Login = function () {
           fontSize: "18px",
         }}
       >
-        우리의 추억을 타임캡슐에 담아요어쩌구
+        당신의 스쳐가는 시간을 <b>담다</b>
       </p>
       <div style={{ marginTop: "-20px" }}>
         <img
