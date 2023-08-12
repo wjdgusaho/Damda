@@ -100,9 +100,9 @@ public class EventStreamService {
         endAndRemoveStream(userNo);
         log.info("removeStream 완료");
 
-        //로그아웃 알림
-        ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("logout-event", new ServerSentEventDTO(null, null, null, "로그아웃 진행", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
-        sendEvent(userNo, logoutEvent);
+//        //로그아웃 알림
+//        ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("logout-event", new ServerSentEventDTO(null, null, null, "로그아웃 진행", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
+//        sendEvent(userNo, logoutEvent);
     }
 
     //미답신 시 종료 로직 : 현재 비정상적 종료를 시행, 스케줄러에서 사용

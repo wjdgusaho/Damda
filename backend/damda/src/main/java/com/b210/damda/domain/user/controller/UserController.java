@@ -167,7 +167,7 @@ public class UserController {
     @PostMapping("logout")
     public DataResponse<Map<String, Object>> logout(@RequestHeader(value="Authorization") String token){
         try{
-            log.warn("로그아웃 진입!!!!!!");
+            log.warn("로그아웃 진입!!!!!! : {}", userService.getUserNo());
             eventStreamService.disconnectStreamLogout(userService.getUserNo());
             log.warn("로그아웃 진입!!!!!!, 동작 끝!!");
             userService.logout(token);
