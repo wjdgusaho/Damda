@@ -225,10 +225,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         // 위치 저장된 곳이 없다면 -> 새로 생성
                         if(userLocation == null){
                             userLocation = new UserLocation();
-                            userLocation.setUser(user);
-                            userLocation.setLocalBig(timecapsuleCriteria.getLocalBig());
-                            userLocation.setLocalMedium(timecapsuleCriteria.getLocalMedium());
-                            userLocation.setWeatherTime(Timestamp.valueOf(LocalDateTime.now()));
+                            userLocation.CreateUserLocation(
+                                    user, timecapsuleCriteria.getLocalBig(), timecapsuleCriteria.getLocalMedium(),
+                                    Timestamp.valueOf(LocalDateTime.now())
+                            );
                             //날씨 조회 하면서 저장
                             userLocation = renewWeather(weatherLocationDto, userLocation);
                         }
@@ -331,14 +331,11 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
          Timecapsule createTimecapsule = timecapsuleCreateDTO.toEntity();
 
          //타임캡슐 추가 기본값 세팅
-         createTimecapsule.setRegistDate(
-                 Timestamp.valueOf(LocalDateTime.now().withSecond(0).withNano(0))
-         );
-         createTimecapsule.setMaxFileSize(MAX_FILESIZE);
-         createTimecapsule.setMaxParticipant(MAX_PARTICIOPANT);
-         createTimecapsule.setInviteCode(createKey());
-         createTimecapsule.setNowParticipant(NOW_PARTICIOPANT);
-         createTimecapsule.setCapsuleIconNo(new Random().nextInt(10)+1);
+        createTimecapsule.timecapsuleDefaultSetting(
+                Timestamp.valueOf(LocalDateTime.now().withSecond(0).withNano(0)),
+                MAX_FILESIZE, MAX_PARTICIOPANT, createKey(), NOW_PARTICIOPANT,
+                new Random().nextInt(10)+1
+                );
 
          //타임캡슐 저장 후 No값 받아오기
          Timecapsule saveTimecapsule = timecapsuleRepository.save(createTimecapsule);
@@ -359,9 +356,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         String dayKr = Arrays.asList("월", "화", "수", "목", "금", "토", "일").get(index);
 
                         CirteriaDay cirteriaDay = new CirteriaDay();
-                        cirteriaDay.setTimecapsuleCriteria(saveTimecapsule.getTimecapsuleCriteria());
-                        cirteriaDay.setDayEn(cardDay);
-                        cirteriaDay.setDayKor(dayKr);
+                        cirteriaDay.createCirteriaDay(saveTimecapsule.getTimecapsuleCriteria(),
+                                cardDay, dayKr
+                                );
                         CirteriaDay saveCirteriaDay = cirteriaDayRepository.save(cirteriaDay);
                         // 요일 저장 에러 발생
                         if(saveCirteriaDay.getDayNo() == null) {
@@ -374,10 +371,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
          //타임캡슐 유저 맵핑 (생성)
          TimecapsuleMapping timecapsuleMapping = new TimecapsuleMapping();
-         timecapsuleMapping.setUser(userRepository.findByUserNo(userNo).orElseThrow(
-                 () -> new CommonException(CustomExceptionStatus.NOT_USER)));
-         timecapsuleMapping.setTimecapsule(saveTimecapsule);
-         timecapsuleMapping.setHost(true);
+         timecapsuleMapping.createTimecapsuleMapping(user, saveTimecapsule, true);
          TimecapsuleMapping saveMapping = timecapsuleMappingRepository.save(timecapsuleMapping);
 
          // 저장 에러
@@ -507,15 +501,13 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
 
         //카드 작성했다고 세팅
-        myMapping.setCardAble(false);
+        myMapping.updateCardAble(false);
         timecapsuleMappingRepository.save(myMapping);
 
         //카드 세팅
         TimecapsuleCard card = new TimecapsuleCard();
-        card.setTimecapsule(timecapsule);
-        card.setUser(user);
-        card.setImagePath(fileUri);
-        card.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
+        card.createCard(timecapsule, user, fileUri,
+                Timestamp.valueOf(LocalDateTime.now()));
 
         TimecapsuleCard saveCard = timecapsuleCardRepository.save(card);
 
@@ -832,7 +824,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         userRepository.save(user);
 
         // 타임캡슐 현재 인원 +1
-        timecapsule.setNowParticipant(timecapsule.getNowParticipant() + 1);
+        timecapsule.updateNowParticipant(timecapsule.getNowParticipant() + 1);
         timecapsuleRepository.save(timecapsule);
     }
 
@@ -929,20 +921,15 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //파일값 저장
         TimecapsuleFile timecapsuleFile = new TimecapsuleFile();
-        timecapsuleFile.setFilePath(fileUrl);
-        timecapsuleFile.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));
-        timecapsuleFile.setTimecapsule(timecapsule);
-        timecapsuleFile.setUser(user);
-        timecapsuleFile.setFileSize(file.getSize());
-        timecapsuleFile.setFileName(file.getName());
+        timecapsuleFile.createTimecapsuleFile(fileUrl, timecapsule, user, file);
         timecapsuleFileRepository.save(timecapsuleFile);
 
         //파일 저장했다고 세팅
-        myMapping.setFileAble(false);
+        myMapping.updateFileAble(false);
         timecapsuleMappingRepository.save(myMapping);
 
-        //파일 용량값 즈가
-        timecapsule.setNowFileSize(timecapsule.getNowFileSize() + file.getSize());
+        //파일 용량값 증가
+        timecapsule.updateNowFileSize(timecapsule.getNowFileSize() + file.getSize());
         timecapsuleRepository.save(timecapsule);
 
         return null;
@@ -1078,7 +1065,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 ti.setStatus("REJECTED");
             }
             timecapsuleInviteRepository.saveAll(timecapsuleInvites);
-            timecapsule.setRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
+            timecapsule.updateRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
 
             // 타임 캡슐 참가자들의 매핑 테이블 삭제시간 추가
             List<TimecapsuleMapping> tmList = timecapsuleMappingRepository.findByIdNo(timecapsule.getTimecapsuleNo());
@@ -1086,7 +1073,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             for(TimecapsuleMapping tm : tmList){
                 User findUser = userRepository.findById(tm.getUser().getUserNo()).get();
                 findUser.setNowCapsuleCount(findUser.getNowCapsuleCount() - 1);
-                tm.setDeleteDate(Timestamp.from(Instant.now()));
+                tm.updateDeleteDate(Timestamp.from(Instant.now()));
                 userRepository.save(findUser);
             }
 
@@ -1103,11 +1090,11 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             userRepository.save(user);
         }
 
-        //참가자 감소
-        timecapsule.setNowParticipant(timecapsule.getNowParticipant() - 1);
+        //참가자 감소(타임캡슐의 참가자 감소)
+        timecapsule.updateNowParticipant(timecapsule.getNowParticipant() - 1);
         timecapsuleRepository.save(timecapsule);
 
-        timecapsuleMapping.setDeleteDate(Timestamp.valueOf(LocalDateTime.now()));
+        timecapsuleMapping.updateDeleteDate(Timestamp.valueOf(LocalDateTime.now()));
         timecapsuleMappingRepository.save(timecapsuleMapping);
     }
     
@@ -1153,10 +1140,11 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         timecapsuleInviteRepository.save(timecapsuleInvite);
 
         //참가자 감소
-        timecapsule.setNowParticipant(timecapsule.getNowParticipant() - 1);
+        timecapsule.updateNowParticipant(timecapsule.getNowParticipant() - 1);
         timecapsuleRepository.save(timecapsule);
 
-        kickUserMapping.setDeleteDate(Timestamp.valueOf(LocalDateTime.now()));
+        //강퇴한 사람의 맵핑 삭제값 추가
+        kickUserMapping.updateDeleteDate(Timestamp.valueOf(LocalDateTime.now()));
         timecapsuleMappingRepository.save(kickUserMapping);
 
     }
@@ -1203,12 +1191,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         for(TimecapsuleMapping tm : tmList){
             User findUser = userRepository.findById(tm.getUser().getUserNo()).get();
             findUser.setNowCapsuleCount(findUser.getNowCapsuleCount() - 1);
-            tm.setDeleteDate(Timestamp.from(Instant.now()));
+            tm.updateDeleteDate(Timestamp.from(Instant.now()));
             userRepository.save(findUser);
             timecapsuleMappingRepository.save(tm);
         }
 
-        timecapsule.setRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
+        timecapsule.updateRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
         timecapsuleRepository.save(timecapsule);
 
     }
@@ -1221,9 +1209,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND);
         }
         //시간값 세팅
-        userLocation.setWeatherTime(Timestamp.valueOf(LocalDateTime.now()));
+        userLocation.UpdateWeatherTime(Timestamp.valueOf(LocalDateTime.now()));
         //날씨 세팅
-        userLocation.setWeather(weather);
+        userLocation.UpdateWeather(weather);
         UserLocation saveUserLocation = userLocationRepository.save(userLocation);
 
         return saveUserLocation;

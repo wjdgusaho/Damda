@@ -14,8 +14,6 @@ import java.sql.Timestamp;
 
 @Entity
 @Getter
-@Setter
-@ToString
 public class TimecapsuleMapping {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -78,5 +76,22 @@ public class TimecapsuleMapping {
                 .build();
     }
 
+    public void createTimecapsuleMapping(User user, Timecapsule saveTimecapsule, boolean isHost){
+        this.user = user;
+        this.timecapsule = saveTimecapsule;
+        this.isHost = isHost;
+    }
+
+    public void updateCardAble(boolean cardAble){
+        this.cardAble = cardAble;
+    }
+
+    public void updateFileAble(boolean fileAble){
+        this.fileAble = fileAble;
+    }
+
+    public void updateDeleteDate(Timestamp deleteDate){
+        this.deleteDate = deleteDate;
+    }
 
 }
