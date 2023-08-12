@@ -10,30 +10,22 @@ import { GetNewTokens } from "./RefreshTokenApi"
 import { styled } from "styled-components"
 import { SubHeader } from "../inc/SubHeader"
 
-const Box = tw.div`
-  flex
-  justify-center
-  mt-10
-  mx-auto
-  flex-col
-  text-center
-  w-96
+const Box = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-family: "Pretendard";
+  color: ${(props) => props.theme.colorCommon};
+  align-items: center;
 `
 
 const InputText = styled.input`
-  margin-top: 5px;
-  display: flex;
-  margin: auto;
-  width: 320px;
-  background-color: transparent;
+  background-color: rgb(255, 255, 255, 0);
+  border-bottom: 2px solid ${(props) => props.theme.colorCommon};
+  height: 50px;
   outline: none;
-  border-bottom: 1px solid ${(props) => props.theme.colorCommon};
-  color: ${(props) => props.theme.colorCommon};
+  font-weight: 200;
 `
 
-const TextStyle = styled.p`
-  color: ${(props) => props.theme.colorCommon};
-`
 const AmphText = styled.span`
   color: ${(props) => props.theme.colorEtc};
 `
@@ -41,16 +33,16 @@ const AmphText = styled.span`
 const Button = styled.button`
   border-radius: 30px;
   font-family: "pretendard";
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 400;
   box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
-  color: ${(props) => props.theme.color100};
-  background-color: ${(props) => props.theme.color900};
+  color: ${(props) => props.theme.color900};
+  background-color: ${(props) => props.theme.color100};
   &:hover {
     transition: 0.2s;
     transform: scale(0.95);
     color: ${(props) => props.theme.color100};
-    background-color: ${(props) => props.theme.color700};
+    background-color: ${(props) => props.theme.color600};
   }
 `
 
@@ -59,8 +51,9 @@ const InfoImage = styled.div`
   background-image: url(${(props) => props.theme.InfoImg_sm});
   background-repeat: no-repeat;
   background-size: cover;
-  width: 200px;
-  height: 200px;
+  width: 145px;
+  height: 145px;
+  margin-top: 40px;
   @keyframes floatingAnimation {
     0% {
       transform: translateY(0); /* 시작 위치 (위치 이동 없음) */
@@ -73,6 +66,24 @@ const InfoImage = styled.div`
     }
   }
   animation: floatingAnimation 2s ease-in-out infinite;
+`
+
+const ContentWrap = tw.div`
+    flex
+    justify-start
+    w-full
+`
+
+const Content = styled.div`
+  margin-top: 2.25rem;
+  font-size: 1.25rem;
+  font-weight: 300;
+  span {
+    opacity: 0.47;
+    font-size: 14px;
+    color: ${(props) => props.theme.colorCommon};
+    margin-left: 15px;
+  }
 `
 
 export const CheckPassword = function () {
@@ -129,26 +140,28 @@ export const CheckPassword = function () {
   }
 
   return (
-    <div>
-      <SubHeader></SubHeader>
-      <Box>
-        <InfoImage style={{ marginLeft: "auto", marginRight: "auto" }} />
-        <div style={{ marginLeft: "auto", marginRight: "auto" }}>
-          <TextStyle>
-            회원님의 개인정보를 안전하게 보호하기 위해
-            <br />
-            <AmphText>2차 인증 후 변경이 가능</AmphText>
-            합니다.
-          </TextStyle>
+    <>
+      <SubHeader />
+      <Box className="w-80 m-auto">
+        <InfoImage />
+        <div>회원님의 개인정보를 안전하게 보호하기 위해</div>
+        <div>
+          <AmphText>2차 인증 후 변경이 가능</AmphText>합니다.
         </div>
-        <form className="mt-10 text-left h-20" onSubmit={handlePwSubmit}>
-          <TextStyle className="ml-7">비밀번호</TextStyle>
-          <InputText type="password" onChange={handlePwChange} />
+        <form onSubmit={handlePwSubmit}>
+          <ContentWrap className="mt-3">
+            <Content>비밀번호</Content>
+          </ContentWrap>
+          <InputText
+            className="w-80"
+            type="password"
+            onChange={handlePwChange}
+          />
           <Button className="fixed bottom-12 left-0 right-0 w-64 h-16 flex items-center justify-center m-auto">
             확인
           </Button>
         </form>
       </Box>
-    </div>
+    </>
   )
 }

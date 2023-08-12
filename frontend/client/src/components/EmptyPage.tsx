@@ -1,9 +1,6 @@
 import React from "react"
-import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { RootState } from "../store/Store"
 import styled from "styled-components"
-import { SubHeader } from "./inc/SubHeader"
 
 export const EmptyPage = function () {
   const navigate = useNavigate()
@@ -12,26 +9,25 @@ export const EmptyPage = function () {
     navigate(-1) // 뒤로가기
   }
   return (
-    <div className=" bg-white h-screen overflow-hidden">
-    <div className="pt-12">
-      <div className="w-10/12 m-auto flex justify-between">
-        <BackIcon onClick={goBack} />
-        <div
-          className="flex items-center opacity-70"
-          onClick={() => {
-            navigate("/main")
-          }}
-        >
-          <HomeIcon className="mr-2" />
-          <TextStyle>홈으로</TextStyle>
+    <div className=" bg-white h-screen">
+      <HeaderWrap className="pt-12">
+        <div className="w-10/12 m-auto flex justify-between">
+          <BackIcon onClick={goBack} />
+          <div
+            className="flex items-center opacity-70"
+            onClick={() => {
+              navigate("/main")
+            }}
+          >
+            <HomeIcon className="mr-2" />
+            <TextStyle>홈으로</TextStyle>
+          </div>
         </div>
+      </HeaderWrap>
+      <div className="">
+        <BackgroundImg />
       </div>
     </div>
-    <div className="">
-      <BackgroundImg />
-    </div>
-  </div>
-
   )
 }
 const BackgroundImg = styled.div`
