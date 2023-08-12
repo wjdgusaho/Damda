@@ -7,14 +7,6 @@ import { SubHeader } from "./inc/SubHeader"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 
-const calculateProgressPercentage = (startDate: string, endDate: string) => {
-  const currentDate = new Date()
-  const dateString = currentDate.toISOString().slice(0, 10)
-  const total = calculateDateDifference(startDate, endDate)
-  const ratio = calculateDateDifference(startDate, dateString)
-  return (ratio / total) * 100
-}
-
 const Box = styled.div`
   display: flex;
   flex-direction: column;

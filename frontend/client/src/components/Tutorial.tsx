@@ -4,7 +4,6 @@ import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 import { styled } from "styled-components"
 import "../index.css"
-import tw from "tailwind-styled-components"
 import { useNavigate } from "react-router-dom"
 
 const Container = styled.div`

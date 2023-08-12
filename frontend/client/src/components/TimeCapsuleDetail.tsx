@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react"
 import "../index.css"
-import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
 import { useNavigate, useParams } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
