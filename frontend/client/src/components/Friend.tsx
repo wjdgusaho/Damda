@@ -174,15 +174,20 @@ export const Request = function () {
     <div>
       {requestList.length === 0 && (
         <div className="text-center mt-20">
-          <TextStyle className="text-victoria-400">
+          <TextStyle
+            style={{ opacity: "50%", fontSize: "20px", fontWeight: "200" }}
+          >
             친구요청이 없어요... 아직은요!
           </TextStyle>
-          <img
-            className="w-72 m-auto mt-12"
-            src="/assets/universe/Astronaut-4.png"
-            alt="Astronaut-4"
-          />
-          <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
+          <div className="relative">
+            <img
+              className="m-auto mt-20"
+              style={{ width: "15rem" }}
+              src="/assets/universe/Astronaut-4.png"
+              alt="Astronaut-4"
+            />
+            <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
+          </div>
         </div>
       )}
       {requestList.length !== 0 && (
@@ -309,7 +314,7 @@ const FriendCard = function ({
         src={friend.profileImage}
         alt="profilepic"
       />
-      <TextStyle className="ml-4 text-white">
+      <TextStyle className="ml-4">
         {friend.nickname}
         <span className="ml-1" style={{ opacity: "50%", fontWeight: "300" }}>
           #{friend.userNo}
@@ -356,6 +361,8 @@ const RequestCard = function ({
 }) {
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const dispatch = useDispatch()
+  const themeState = useSelector((state: RootState) => state.theme.colorCommon)
+
   const requestAccept = (event: React.MouseEvent<HTMLButtonElement>) => {
     axios({
       method: "PATCH",
@@ -411,20 +418,35 @@ const RequestCard = function ({
   return (
     <div className="flex w-10/12 items-center m-auto p-2">
       <img
-        className="w-16 rounded-full h-16"
+        style={{
+          backgroundColor: "#fff",
+          borderRadius: "50%",
+          width: "52px",
+          height: "52px",
+        }}
         src={friend.profileImage}
-        alt="프로필사진"
+        alt="profilepic"
       />
-      <TextStyle className="ml-4 text-white">
+      <TextStyle className="ml-4">
         {friend.nickname}
-        <span className="text-gray-400">#{friend.userNo}</span>
+        <span className="ml-1" style={{ opacity: "50%", fontWeight: "300" }}>
+          #{friend.userNo}
+        </span>
       </TextStyle>
       <div className="flex ml-auto mr-3">
         <button className="w-5 mr-4" onClick={requestAccept}>
-          <img src="/assets/icons/button_check.png" alt="수락" />
+          <img
+            className={themeState === "black" ? "invert opacity-60" : ""}
+            src="/assets/icons/button_check.png"
+            alt="수락"
+          />
         </button>
         <button className="w-5" onClick={requestReject}>
-          <img src="/assets/icons/button_x.png" alt="거절" />
+          <img
+            className={themeState === "black" ? "invert opacity-60" : ""}
+            src="/assets/icons/button_x.png"
+            alt="거절"
+          />
         </button>
       </div>
     </div>
