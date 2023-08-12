@@ -26,7 +26,7 @@ export const EmptyPage = function () {
             <TextStyle>홈으로</TextStyle>
           </div>
         </div>
-      </div>
+      </HeaderWrap>
       <div className="">
         <BackgroundImg />
       </div>
@@ -62,4 +62,12 @@ const HomeIcon = styled.div`
   background-size: contain;
   width: 25px;
   height: 25px;
+`
+
+const HeaderWrap = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 `
