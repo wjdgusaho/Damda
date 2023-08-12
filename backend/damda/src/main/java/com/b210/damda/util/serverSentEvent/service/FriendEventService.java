@@ -36,7 +36,7 @@ public class FriendEventService {
         String eventName = "friend-event";
 
         //fromNo를 통해 해당 유저의 이름과 이미지를 받아온다.
-        UserNameAndImageDTO fromInfo = friendRepository.getUserNameAndImage(fromNo);
+        UserNameAndImageDTO fromInfo = friendRepository.getUserNameAndImage(userNo);
         log.info("TEST : {} {} ", fromInfo.getUserName(), fromInfo.getUserProfileImage());
         switch (type) {
             case ACCEPT:

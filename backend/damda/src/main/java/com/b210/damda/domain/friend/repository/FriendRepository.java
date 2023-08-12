@@ -46,12 +46,8 @@ public interface FriendRepository extends JpaRepository<UserFriend, Long> {
     List<Long> findUserNoByFriendNoAndStatus(@Param("friendNo") Long friendNo, @Param("status") String status);
 
     //해당 유저의 이름과 이미지 가져오기
-    @Query("SELECT new com.b210.damda.domain.dto.serverSentEvent.friend.UserNameAndImageDTO(uf.user.nickname, uf.user.profileImage) From UserFriend uf Where uf.user.userNo = :userNo")
+    @Query("SELECT new com.b210.damda.domain.dto.serverSentEvent.friend.UserNameAndImageDTO(u.nickname, u.profileImage) From User u Where u.userNo = :userNo")
     UserNameAndImageDTO getUserNameAndImage(@Param("userNo") Long userNo);
-
-//    //해당 유저의 이름과 이미지 가져오기
-//    @Query("SELECT new com.b210.damda.domain.dto.serverSentEvent.friend.UserNameAndImageDTO(u.nickname, u.profileImage) From User u Where u.userNo = :userNo")
-//    UserNameAndImageDTO getUserNameAndImage(@Param("userNo") Long userNo);
 
 
     //해당 유저로 요청한 사람들의 정보 가져오기
