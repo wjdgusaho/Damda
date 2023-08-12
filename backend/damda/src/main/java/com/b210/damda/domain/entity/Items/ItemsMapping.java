@@ -1,15 +1,15 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.Items;
 
-import com.b210.damda.domain.dto.ItemsMappingDTO;
+import com.b210.damda.domain.dto.Items.ItemsMappingDTO;
 import com.b210.damda.domain.dto.Timecapsule.MyItemListDTO;
 import com.b210.damda.domain.entity.User.User;
-import lombok.Setter;
+import lombok.Getter;
 import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
-@Setter
+@Getter
 @ToString
 public class ItemsMapping {
 
