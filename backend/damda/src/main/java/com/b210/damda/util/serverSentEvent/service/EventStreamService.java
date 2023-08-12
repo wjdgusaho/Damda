@@ -94,11 +94,12 @@ public class EventStreamService {
     }
 
     //로그아웃시 종료 로직
-    public void disconnectStream() {
+    public void disconnectStreamLogout() {
         long userNo = addOnEventService.getUserNo();
-        log.info("disconnectStream(), 로그아웃 유저 {}", userNo);
+        log.info("disconnectStream(), 로그아웃");
         //저장된 스트림 종료 및 싱크 제거, 응답 기록 제거
         endAndRemoveStream(userNo);
+        log.info("removeStream 완료");
 
         //로그아웃 알림
         ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("logout-event", new ServerSentEventDTO(null, null, null, "로그아웃 진행", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
