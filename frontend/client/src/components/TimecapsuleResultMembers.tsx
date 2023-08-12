@@ -1,67 +1,44 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
 import styled from "styled-components"
-const partInfo = [
-  {
-    userNo: 29,
-    nickname: "나쵸",
-    profileImage:
-      "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/34587ea6-e3e3-47f2-8464-1dfd025f7c35.jpg",
-  },
-  {
-    userNo: 35,
-    nickname: "차영범",
-    profileImage:
-      "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/profile.jpg",
-  },
-  {
-    userNo: 73,
-    nickname: "이거시간왜이래",
-    profileImage:
-      "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/profile.jpg",
-  },
-  {
-    userNo: 32,
-    nickname: "달토끼맛쿠키",
-    profileImage:
-      "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/4c41d06b-30e9-485a-a7f5-fe66e089c975.png",
-  },
-  {
-    userNo: 29,
-    nickname: "나쵸",
-    profileImage:
-      "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/34587ea6-e3e3-47f2-8464-1dfd025f7c35.jpg",
-  },
-  {
-    userNo: 35,
-    nickname: "차영범",
-    profileImage:
-      "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/profile.jpg",
-  },
-  {
-    userNo: 73,
-    nickname: "이거시간왜이래",
-    profileImage:
-      "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/profile.jpg",
-  },
-  {
-    userNo: 73,
-    nickname: "이거시간왜이래",
-    profileImage:
-      "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/profile.jpg",
-  },
-  {
-    userNo: 73,
-    nickname: "이거시간왜이래",
-    profileImage:
-      "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/profile.jpg",
-  },
-  {
-    userNo: 32,
-    nickname: "달토끼맛쿠키",
-    profileImage:
-      "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/4c41d06b-30e9-485a-a7f5-fe66e089c975.png",
-  },
-]
+import { RootState } from "../store/Store"
+import axios from "axios"
+import { serverUrl } from "../urls"
+import { useParams } from "react-router-dom"
+
+interface DataType {
+  timecapsuleNo: number
+  capsuleType: string
+  registDate: string
+  openDate: string
+  title: string
+  description: string
+  goalCard: number
+  criteriaInfo: {
+    criteriaId: number
+    criteriaType: string
+    weatherStatus: string
+    startTime: string
+    endTime: string
+    localBig: string
+    localMedium: string
+    timeKr: string
+    cirteriaDays: {
+      dayKr: string
+      dayEn: string
+    }[]
+  }
+  partInfo: {
+    userNo: number
+    nickname: string
+    profileImage: string
+  }[]
+  penalty: {
+    penaltyNo: number
+    penalty: boolean
+    penaltyDescription: string
+  }
+}
 
 const criteriaInfo = {
   criteriaId: 126,
@@ -76,31 +53,61 @@ const criteriaInfo = {
 }
 
 const TimecapsuleResultMembers = function () {
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const [capsuleInfo, setCapsuleInfo] = useState<DataType | null>(null)
+  const { capsuleId } = useParams()
+
+  useEffect(() => {
+    console.log("token", token)
+    const fetchData = async () => {
+      try {
+        const timecapsuleNo = capsuleId
+        const response = await axios.get(
+          serverUrl + `timecapsule/open/detail?timecapsuleNo=${timecapsuleNo}`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
+        console.log(
+          "멤버!~!~!~~!!~!~!~~!!~~!!!!!",
+          response.data.data.timecapsuleOpenDetail
+        )
+        setCapsuleInfo(response.data.data.timecapsuleOpenDetail)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchData()
+  }, [])
+
   return (
     <div className="mt-4">
       <div className="text-sm text-center w-10/12 m-auto">
-        타임캡슐 상세내용이 여기에 들어갈거에용!@@!@!@!@!@! 타임캡슐 상세내용이
-        여기에 들어갈거에용!@@!@!@!@!@!
+        {capsuleInfo?.description}
       </div>
       <div className="mt-2 text-sm text-center w-10/12 m-auto">
-        {criteriaInfo.weatherStatus || criteriaInfo.localBig ? (
+        {capsuleInfo?.criteriaInfo.weatherStatus ||
+        capsuleInfo?.criteriaInfo.localBig ? (
           <>
             {criteriaInfo.weatherStatus ? (
               <div>
                 <span className="font-bold">
-                  {criteriaInfo.weatherStatus === "RAIN"
+                  {capsuleInfo?.criteriaInfo.weatherStatus === "RAIN"
                     ? "비"
-                    : criteriaInfo.weatherStatus === "SNOW"
+                    : capsuleInfo?.criteriaInfo.weatherStatus === "SNOW"
                     ? "눈"
                     : null}
                 </span>{" "}
                 오는 날
               </div>
             ) : null}
-            {criteriaInfo.localBig ? (
+            {capsuleInfo?.criteriaInfo.localBig ? (
               <>
                 <span className="font-bold">
-                  {criteriaInfo.localBig} {criteriaInfo.localMedium}{" "}
+                  {capsuleInfo?.criteriaInfo.localBig}{" "}
+                  {capsuleInfo?.criteriaInfo.localMedium}{" "}
                   <span className="font-normal">에서</span>
                 </span>{" "}
               </>
@@ -110,7 +117,7 @@ const TimecapsuleResultMembers = function () {
         ) : null}
       </div>
       <div className="flex justify-center flex-wrap w-80 mt-4 ">
-        {partInfo.map((part, idx) => (
+        {capsuleInfo?.partInfo.map((part, idx) => (
           <div key={part.userNo} className="flex flex-col">
             {idx === 0 ? (
               <>
