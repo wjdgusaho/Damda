@@ -110,7 +110,6 @@ public class UserService {
         // 코인 획득 로그 저장
         UserCoinGetLog userCoinGetLog = new UserCoinGetLog(savedUser, savedUser.getCoin(), "REGIST");
         userCoinGetLogRepository.save(userCoinGetLog);
-
     }
 
     // 로그인
