@@ -9,6 +9,7 @@ import com.b210.damda.domain.entity.ItemDetails;
 import com.b210.damda.domain.entity.ItemsMapping;
 import com.b210.damda.domain.entity.Timecapsule.*;
 import com.b210.damda.domain.entity.User.User;
+import com.b210.damda.domain.entity.User.UserCoinGetLog;
 import com.b210.damda.domain.entity.User.UserFriend;
 import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.friend.repository.FriendRepository;
@@ -16,6 +17,7 @@ import com.b210.damda.domain.shop.repository.ItemDetailsRepository;
 import com.b210.damda.domain.shop.repository.ItemsMappingRepository;
 import com.b210.damda.domain.shop.service.ShopService;
 import com.b210.damda.domain.timecapsule.repository.*;
+import com.b210.damda.domain.user.repository.UserCoinGetLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
@@ -60,6 +62,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final ItemDetailsRepository itemDetailsRepository;
     private final UserLocationRepository userLocationRepository;
     private final TimecapsuleFileRepository timecapsuleFileRepository;
+    private final UserCoinGetLogRepository userCoinGetLogRepository;
 
     //날씨 서비스 접근
     private final WeatherLocationService weatherLocationService;
@@ -70,6 +73,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final int MAX_PARTICIOPANT = 10;
     private final Long MAX_FILESIZE = (long) 50 * (1024 * 1024);
     private final int NOW_PARTICIOPANT = 1;
+    private final int CARD_COIN_GET = 50;
     /*
         시큐리티에있는 유저NO 불러오기
      */
@@ -519,6 +523,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if (saveCard.getTimecapsuleCardNo() == null) {
             throw new CommonException(CustomExceptionStatus.NOT_CARD_SAVE);
         }
+
+        // 코인 획득
+        user.setCoin(user.getCoin() + CARD_COIN_GET);
+        userRepository.save(user);
+
+        // 코인 획득 로그 추가
+        UserCoinGetLog userCoinGetLog = new UserCoinGetLog(user, CARD_COIN_GET, "CARD");
+        userCoinGetLogRepository.save(userCoinGetLog);
 
     }
     
