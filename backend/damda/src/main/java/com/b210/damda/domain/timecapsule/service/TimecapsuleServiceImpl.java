@@ -724,8 +724,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         if(timecapsuleInviteDate.isEmpty()){
             TimecapsuleInvite timecapsuleInvite1 = new TimecapsuleInvite();
-            timecapsuleInvite1.createTimecapsuleInvite(timecapsule, friendUser);
-            timecapsuleInvite1.setStatus("NOTREAD");
+            timecapsuleInvite1.friendTimecapsuleInvite(timecapsule, friendUser);
             timecapsuleInviteRepository.save(timecapsuleInvite1);
         }else {
             TimecapsuleInvite timecapsuleInvite = timecapsuleInviteDate.get();
@@ -861,7 +860,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.NOT_RECORD_INVITE);
         }
 
-        timecapsuleInvite.setStatus("REJECTED");
+        timecapsuleInvite.updateStatus("REJECTED");
         timecapsuleInviteRepository.save(timecapsuleInvite);
     }
 
@@ -1062,7 +1061,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
             List<TimecapsuleInvite> timecapsuleInvites = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsule(timecapsule);
             for(TimecapsuleInvite ti : timecapsuleInvites){
-                ti.setStatus("REJECTED");
+                ti.updateStatus("REJECTED");
             }
             timecapsuleInviteRepository.saveAll(timecapsuleInvites);
             timecapsule.updateRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
@@ -1083,7 +1082,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         }else{
             TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, user.getUserNo()).get();
-            timecapsuleInvite.setStatus("REJECTED");
+            timecapsuleInvite.updateStatus("REJECTED");
             timecapsuleInviteRepository.save(timecapsuleInvite);
 
             user.setNowCapsuleCount(user.getNowCapsuleCount() - 1);
@@ -1136,7 +1135,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
         TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, kickUserNo).get();
 
-        timecapsuleInvite.setStatus("REJECTED");
+        timecapsuleInvite.updateStatus("REJECTED");
         timecapsuleInviteRepository.save(timecapsuleInvite);
 
         //참가자 감소
@@ -1181,7 +1180,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
         List<TimecapsuleInvite> timecapsuleInvites = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsule(timecapsule);
         for(TimecapsuleInvite ti : timecapsuleInvites){
-            ti.setStatus("REJECTED");
+            ti.updateStatus("REJECTED");
         }
         timecapsuleInviteRepository.saveAll(timecapsuleInvites);
 
