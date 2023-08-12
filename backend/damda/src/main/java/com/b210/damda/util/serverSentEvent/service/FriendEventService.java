@@ -64,6 +64,8 @@ public class FriendEventService {
         String eventName = "friend-event";
         String context = "님으로부터 친구 요청이 도착했습니다. ";
 
+        log.warn("친구 요청 List Size : {}", requests.size());
+
         for (GetRequestToMeDTO request : requests) {
             log.info("친구 요청 리스트 순회 : {} {} {}", request.getFromName(), request.getFromNo(), request.getFromProfileImage());
             ServerSentEvent<JsonNode> event =
