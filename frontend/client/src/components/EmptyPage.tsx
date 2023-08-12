@@ -13,24 +13,25 @@ export const EmptyPage = function () {
   }
   return (
     <div className=" bg-white h-screen overflow-hidden">
-      <div className="pt-12">
-        <div className="w-10/12 m-auto flex justify-between">
-          <BackIcon onClick={goBack} />
-          <div
-            className="flex items-center opacity-70"
-            onClick={() => {
-              navigate("/main")
-            }}
-          >
-            <HomeIcon className="mr-2" />
-            <TextStyle>홈으로</TextStyle>
-          </div>
+    <div className="pt-12">
+      <div className="w-10/12 m-auto flex justify-between">
+        <BackIcon onClick={goBack} />
+        <div
+          className="flex items-center opacity-70"
+          onClick={() => {
+            navigate("/main")
+          }}
+        >
+          <HomeIcon className="mr-2" />
+          <TextStyle>홈으로</TextStyle>
         </div>
-      </HeaderWrap>
-      <div className="">
-        <BackgroundImg />
       </div>
     </div>
+    <div className="">
+      <BackgroundImg />
+    </div>
+  </div>
+
   )
 }
 const BackgroundImg = styled.div`
