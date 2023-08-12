@@ -10,10 +10,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
-@Setter @Getter
-@Builder
-@AllArgsConstructor
-@ToString
+@Getter
 public class TimecapsuleCard {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,5 +36,12 @@ public class TimecapsuleCard {
                 .imagePath(this.imagePath)
                 .userNo(this.user.getUserNo())
                 .build();
+    }
+
+    public void createCard(Timecapsule timecapsule, User user, String fileUri, Timestamp createTime){
+        this.timecapsule = timecapsule;
+        this.user = user;
+        this.imagePath = fileUri;
+        this.createTime = createTime;
     }
 }

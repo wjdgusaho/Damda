@@ -393,7 +393,7 @@ public class ShopServiceImpl implements ShopService{
         userRepository.save(user);
 
         //타임캡슐 용량 증가
-        timecapsule.setMaxFileSize(timecapsule.getMaxFileSize() + UP_FILE_SIZE);
+        timecapsule.updateMaxFileSize(timecapsule.getMaxFileSize() + UP_FILE_SIZE);
         timecapsuleRepository.save(timecapsule);
 
 
