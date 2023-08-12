@@ -15,7 +15,7 @@ public enum CustomExceptionStatus {
     //존재 관련
     THEMA_NOT_FOUND(-6000, "해당 테마가 존재하지 않습니다."),
     ITEM_NOT_FOUND(-6001, "해당 아이템이 존재하지 않습니다."),
-        NOT_TIMECAPSULE(-6002, "타임캠슐이 존재하지 않습니다."),
+    NOT_TIMECAPSULE(-6002, "타임캠슐이 존재하지 않습니다."),
     NOT_WORK_TIMECAPSULE(-6003, "현재 진행중인 타임캡슐이 없습니다."),
     NOT_SAVE_TIMECAPSULE(-6004, "저장된 타임캡슐이 없습니다."),
     NOT_CARD(-6005, "작성된 카드가 없습니다."),
@@ -26,6 +26,8 @@ public enum CustomExceptionStatus {
     KICK_NOT_USER(-6010, "강퇴하려는 유저가 없는 유저입니다."),
     NOT_REQUESTED_FRIEND(-6011, "잘못된 친구 요청입니다."),
     DONT_HAVE_THEME(-6012, "해당 테마를 가지고있지 않습니다."),
+    NOT_FOUND_FILE(-6013, "파일이 존재하지 않습니다."),
+    NOT_MATCH_TIMECAPSULE_CARD(-6014, "해당 타임캡슐의 카드가 아닙니다."),
 
 
     //상점 관련
