@@ -1,12 +1,10 @@
 package com.b210.damda.domain.timecapsule.service;
 
-import com.b210.damda.domain.dto.ItemsMappingDTO;
-import com.b210.damda.domain.dto.ItemsShopDTO;
 import com.b210.damda.domain.dto.Timecapsule.*;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.dto.weather.WeatherLocationNameDTO;
-import com.b210.damda.domain.entity.ItemDetails;
-import com.b210.damda.domain.entity.ItemsMapping;
+import com.b210.damda.domain.entity.Items.ItemDetails;
+import com.b210.damda.domain.entity.Items.ItemsMapping;
 import com.b210.damda.domain.entity.Timecapsule.*;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.User.UserCoinGetLog;
@@ -30,12 +28,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.commons.codec.binary.Base64;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.sql.SQLOutput;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;

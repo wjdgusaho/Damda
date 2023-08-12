@@ -1,6 +1,7 @@
 package com.b210.damda.domain.shop.service;
 
-import com.b210.damda.domain.dto.*;
+import com.b210.damda.domain.dto.Items.ItemsMappingDTO;
+import com.b210.damda.domain.dto.Items.ItemsShopDTO;
 import com.b210.damda.domain.dto.Timecapsule.TimecapsuleShopDTO;
 import com.b210.damda.domain.dto.theme.ThemeMappingDTO;
 import com.b210.damda.domain.dto.theme.ThemeShopDTO;
