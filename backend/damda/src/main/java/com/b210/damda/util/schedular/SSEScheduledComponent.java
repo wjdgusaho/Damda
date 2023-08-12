@@ -27,7 +27,7 @@ public class SSEScheduledComponent {
 
 
 
-    @Scheduled(fixedRate = 10000) // 테스터
+    @Scheduled(fixedRate = 5000) // 테스터
     public void scheduledTask() {
         log.info("스케줄링된 작업 실행: {}", System.currentTimeMillis());
         /*

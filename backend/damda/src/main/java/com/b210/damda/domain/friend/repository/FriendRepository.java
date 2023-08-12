@@ -49,6 +49,7 @@ public interface FriendRepository extends JpaRepository<UserFriend, Long> {
     @Query("SELECT new com.b210.damda.domain.dto.serverSentEvent.friend.UserNameAndImageDTO(u.nickname, u.profileImage) From User u Where u.userNo = :userNo")
     UserNameAndImageDTO getUserNameAndImage(@Param("userNo") Long userNo);
 
+
     //해당 유저로 요청한 사람들의 정보 가져오기
     @Query("SELECT new com.b210.damda.domain.dto.serverSentEvent.friend.GetRequestToMeDTO(uf.user.nickname, uf.user.userNo, uf.requestDate, uf.user.profileImage) FROM UserFriend uf WHERE uf.friend.userNo = :friendNo and uf.status = 'REQUESTED'")
     List<GetRequestToMeDTO> getRequestToMe(@Param("friendNo") Long friendNo);

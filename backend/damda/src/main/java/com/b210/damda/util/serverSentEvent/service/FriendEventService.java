@@ -31,12 +31,14 @@ public class FriendEventService {
         log.warn("친구 관련 로직 작동(friendEventService)");
 
         Long userNo = addOnEventService.getUserNo();
+
         String context = "default";
         String eventName = "friend-event";
 
+        log.info("friendRepository.getUserNameAndImage .. 이 유저의 정보를 가져옵니다 : {}", userNo);
         //fromNo를 통해 해당 유저의 이름과 이미지를 받아온다.
-        UserNameAndImageDTO fromInfo = friendRepository.getUserNameAndImage(fromNo);
-
+        UserNameAndImageDTO fromInfo = friendRepository.getUserNameAndImage(userNo);
+        log.info("TEST : {} {} ", fromInfo.getUserName(), fromInfo.getUserProfileImage());
         switch (type) {
             case ACCEPT:
                 context = "님이 친구 요청을 승낙했습니다!";
