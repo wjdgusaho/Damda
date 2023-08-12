@@ -94,9 +94,8 @@ public class EventStreamService {
     }
 
     //로그아웃시 종료 로직
-    public void disconnectStreamLogout() {
-        long userNo = addOnEventService.getUserNo();
-        log.info("disconnectStream(), 로그아웃");
+    public void disconnectStreamLogout(long userNo) {
+        log.info("disconnectStream(), 로그아웃 : {}", userNo);
         //저장된 스트림 종료 및 싱크 제거, 응답 기록 제거
         endAndRemoveStream(userNo);
         log.info("removeStream 완료");
