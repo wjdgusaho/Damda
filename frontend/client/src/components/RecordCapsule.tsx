@@ -311,14 +311,14 @@ const RecordCapsule = function () {
           <ContentWrap>
             <Content>
               이름
-              <span>최대 10자</span>
+              <span>최대 15자</span>
             </Content>
           </ContentWrap>
           <InputBox
             onChange={inputTitle}
             className="w-80"
             type="text"
-            maxLength={10}
+            maxLength={15}
           />
           <ContentWrap>
             <Content>

@@ -896,7 +896,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
               {capsuleData.criteriaInfo.weatherStatus ||
               capsuleData.criteriaInfo.localBig ? (
-                <>
+                <div className="mt-3 text-center">
                   {capsuleData.criteriaInfo.weatherStatus ? (
                     <div>
                       <span className="font-bold">
@@ -904,22 +904,22 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                           ? "비"
                           : capsuleData.criteriaInfo.weatherStatus === "SNOW"
                           ? "눈"
-                          : null}
-                      </span>{" "}
-                      오는 날
+                          : null}{" "}
+                        <span className="font-normal">오는 날</span>
+                      </span>
                     </div>
                   ) : null}
                   {capsuleData.criteriaInfo.localBig ? (
-                    <>
+                    <div>
                       <span className="font-bold">
                         {capsuleData.criteriaInfo.localBig}{" "}
                         {capsuleData.criteriaInfo.localMedium}{" "}
                         <span className="font-normal">에서</span>
                       </span>{" "}
-                    </>
+                    </div>
                   ) : null}
-                  열 수 있어요
-                </>
+                  열 수 있어요.
+                </div>
               ) : null}
 
               {capsuleData.penalty ? (
@@ -1493,20 +1493,32 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
           {capsuleData.criteriaInfo.weatherStatus ||
           capsuleData.criteriaInfo.localBig ? (
-            <>
-              <div className="text-center mt-3">
-                <span className="font-bold">
-                  {capsuleData.criteriaInfo.weatherStatus}
-                </span>{" "}
-                오는 날 <br />
-                <span className="font-bold">
-                  {capsuleData.criteriaInfo.localBig}{" "}
-                  {capsuleData.criteriaInfo.localMedium}
-                </span>{" "}
-                에서 열 수 있어요
-              </div>
-            </>
+            <div className="mt-3 text-center">
+              {capsuleData.criteriaInfo.weatherStatus ? (
+                <div>
+                  <span className="font-bold">
+                    {capsuleData.criteriaInfo.weatherStatus === "RAIN"
+                      ? "비"
+                      : capsuleData.criteriaInfo.weatherStatus === "SNOW"
+                      ? "눈"
+                      : null}{" "}
+                    <span className="font-normal">오는 날</span>
+                  </span>
+                </div>
+              ) : null}
+              {capsuleData.criteriaInfo.localBig ? (
+                <div>
+                  <span className="font-bold">
+                    {capsuleData.criteriaInfo.localBig}{" "}
+                    {capsuleData.criteriaInfo.localMedium}{" "}
+                    <span className="font-normal">에서</span>
+                  </span>{" "}
+                </div>
+              ) : null}
+              열 수 있어요.
+            </div>
           ) : null}
+
           {capsuleData.capsuleType !== "GOAL" ? (
             <div className="my-3">
               <span className="font-bold">
