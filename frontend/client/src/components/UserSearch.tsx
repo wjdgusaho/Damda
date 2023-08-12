@@ -74,7 +74,7 @@ const UserSearch = function () {
     <>
       <SubHeader />
       <Box>
-        <Title>회원 검색</Title>
+        <Title className="mt-10 text-xl">회원 검색</Title>
         <div className="relative">
           <SearchInput
             className="focus:outline-none"
@@ -87,7 +87,7 @@ const UserSearch = function () {
             <SearchImg src="/assets/icons/search.png" alt="search" />
           </button>
           <div
-            className="mt-2"
+            className="mt-3"
             style={{ fontSize: "14px", opacity: "60%", fontWeight: "300" }}
           >
             검색결과
@@ -104,7 +104,7 @@ const UserSearch = function () {
                   style={{ width: "15rem" }}
                   className="mt-20"
                 />
-                <CapsuleShadow></CapsuleShadow>
+                <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
               </div>
             </>
           ) : (
@@ -219,9 +219,7 @@ const Box = styled.div`
 `
 
 const Title = styled.div`
-  margin-top: 45px;
-  font-size: 20px;
-  font-weight: 500;
+  font-weight: 400;
 `
 
 const SearchInput = styled.input`
@@ -243,10 +241,11 @@ const SearchImg = styled.img`
 `
 
 const NoResult = styled.div`
+  font-weight: 200;
   margin-top: 50px;
   text-align: center;
   font-size: 20px;
-  color: ${(props) => props.theme.color400};
+  opacity: 60%;
 `
 
 interface ButtonProps {
@@ -268,7 +267,7 @@ const GrayButton = styled(Button)`
 const CapsuleShadow = styled.div`
   z-index: -1;
   position: absolute;
-  bottom: -35px;
+  bottom: -25px;
   left: 38.75px;
   width: 155px;
   height: 60px;

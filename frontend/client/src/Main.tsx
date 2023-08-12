@@ -194,6 +194,7 @@ function Main() {
                 <Route path="/signup/" element={<SignUp />}></Route>
                 <Route path="/dummykakao/" element={<DummyKakao />}></Route>
                 <Route path="/*" element={<EmptyPage />}></Route>
+                <Route path="/findPassword/" element={<FindPassword />}></Route>
               </Routes>
             )}
             {token && (
@@ -208,16 +209,12 @@ function Main() {
                   element={<TimecapsulePage />}
                 ></Route>
                 <Route path="/card/:capsuleId" element={<Card />}></Route>
-                <Route path="/friend/" element={<Friend />}>
-                  <Route path="list" element={<List />}></Route>
-                  <Route path="request" element={<Request />}></Route>
-                </Route>
+                <Route path="/friend/" element={<Friend />}></Route>
                 <Route path="/friend/search" element={<UserSearch />}></Route>
                 <Route path="/login/" element={<Login />}></Route>
                 <Route path="/signup/" element={<SignUp />}></Route>
                 <Route path="/logout/" element={<Logout />}></Route>
                 <Route path="/main/" element={<MainPage />}></Route>
-                <Route path="/findPassword/" element={<FindPassword />}></Route>
                 <Route path="/tutorial/" element={<Tutorial />}></Route>
                 <Route path="/dummykakao/" element={<DummyKakao />}></Route>
                 <Route path="/menu/" element={<Menu />}></Route>
