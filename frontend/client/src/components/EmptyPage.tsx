@@ -12,7 +12,7 @@ export const EmptyPage = function () {
     navigate(-1) // 뒤로가기
   }
   return (
-    <div className=" bg-white h-screen">
+    <div className=" bg-white h-screen overflow-hidden">
       <div className="pt-12">
         <div className="w-10/12 m-auto flex justify-between">
           <BackIcon onClick={goBack} />
