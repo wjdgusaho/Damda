@@ -10,9 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Builder
 @ToString
 public class Timecapsule {
 
@@ -33,14 +31,12 @@ public class Timecapsule {
 
     private Long maxFileSize;
 
-    @Builder.Default
     @Column(nullable = false, columnDefinition = "bigint default 0")
     private Long nowFileSize = 0L;
 
     private int maxParticipant;
 
     @Column(columnDefinition = "integer default 1")
-    @Builder.Default
     private int nowParticipant = 1;
 
     @Column(name="invite_code")
@@ -48,7 +44,6 @@ public class Timecapsule {
 
     private int capsuleIconNo;
 
-    @Builder.Default
     @Column(nullable = false, columnDefinition = "integer default 0")
     private int goalCard = 0;
 
@@ -189,4 +184,18 @@ public class Timecapsule {
         this.maxFileSize = maxFileSize;
     }
 
+    @Builder
+    public Timecapsule(String title, String type, Timestamp openDate,
+                                  String description, Integer goalCard,
+                                  TimecapsuleCriteria timecapsuleCriteria,TimecapsulePenalty timecapsulePenalty
+                                  ){
+        this.title = title;
+        this.type = type;
+        this.openDate = openDate;
+        this.description = description;
+        this.goalCard = goalCard;
+        this.timecapsuleCriteria = timecapsuleCriteria;
+        this.timecapsulePenalty = timecapsulePenalty;
+
+    }
 }
