@@ -116,13 +116,8 @@ public class FileStoreService {
             }
 
             // 열리지 않은 타임캡슐
-            if (timecapsuleMapping.getSaveDate() == null) {
-                throw new CommonException(CustomExceptionStatus.NOT_OPEN_TIMECAPSULE);
-            }
-
-            // 저장되지 않은 타임캡슐
-            if (!timecapsuleMapping.isSave()) {
-                throw new CommonException(CustomExceptionStatus.NOT_SAVED_TIMECAPSULE);
+            if(timecapsuleMapping.getSaveDate() == null || !timecapsuleMapping.isSave()){
+               throw new CommonException(CustomExceptionStatus.NOT_OPEN_TIMECAPSULE);
             }
 
             // 타임캡슐에 파일이 없으면
@@ -229,13 +224,8 @@ public class FileStoreService {
         }
 
         // 열리지 않은 타임캡슐
-        if(timecapsuleMapping.getSaveDate() == null){
+        if(timecapsuleMapping.getSaveDate() == null || !timecapsuleMapping.isSave()){
             throw new CommonException(CustomExceptionStatus.NOT_OPEN_TIMECAPSULE);
-        }
-
-        // 저장되지 않은 타임캡슐
-        if(!timecapsuleMapping.isSave()){
-            throw new CommonException(CustomExceptionStatus.NOT_SAVED_TIMECAPSULE);
         }
 
         // 카드가 없음
