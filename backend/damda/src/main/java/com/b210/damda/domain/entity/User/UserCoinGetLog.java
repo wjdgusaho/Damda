@@ -1,8 +1,6 @@
 package com.b210.damda.domain.entity.User;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -12,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @ToString
+@NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class UserCoinGetLog {
 
@@ -28,9 +27,6 @@ public class UserCoinGetLog {
     @Column(nullable = false)
     private String type;
 
-    public UserCoinGetLog() {
-    }
-
     public UserCoinGetLog(Long userCoinLogNo, User user, LocalDateTime getDate, int getCoin, String type) {
         UserCoinLogNo = userCoinLogNo;
         this.user = user;
@@ -39,6 +35,7 @@ public class UserCoinGetLog {
         this.type = type;
     }
 
+    @Builder
     public UserCoinGetLog(User user, int getCoin, String type) {
         this.user = user;
         this.getCoin = getCoin;
