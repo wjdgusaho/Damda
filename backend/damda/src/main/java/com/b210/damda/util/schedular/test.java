@@ -18,11 +18,11 @@ public class test {
     final EventStreamService eventStreamService;
     final AddOnEventService addOnEventService;
     final TimeCapsuleSEERepository timeCapsuleSEERepository;
-    @Scheduled(fixedRate = 3000) // 테스터
-    public void test() {
-        log.info("테스터 스케줄러 동작");
-//        friendEventService.checkAllFriendEvent();
-        System.out.println(timeCapsuleSEERepository.getUserNoByInviteCode("MDMRIACIX0"));
-    }
+//    @Scheduled(fixedRate = 3000) // 테스터
+//    public void test() {
+//        log.info("테스터 스케줄러 동작");
+////        friendEventService.checkAllFriendEvent();
+//        System.out.println(timeCapsuleSEERepository.getUserNoByInviteCode("MDMRIACIX0"));
+//    }
 
 }
