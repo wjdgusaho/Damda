@@ -1,6 +1,7 @@
 package com.b210.damda.util.serverSentEvent.service;
 
 import com.b210.damda.domain.dto.serverSentEvent.ServerSentEventDTO;
+import com.b210.damda.domain.dto.serverSentEvent.TimeCapsuleSSEDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,16 @@ public class AddOnEventService {
 
     //Event Builder(DTO)
     public ServerSentEvent<JsonNode> buildServerSentEvent(String eventName, ServerSentEventDTO data) {
+        JsonNode jsonData = objectMapper.valueToTree(data); //json 타입으로 변환
+        return ServerSentEvent.<JsonNode>builder()
+                .id(data.toString())
+                .event(eventName)
+                .data(jsonData)
+                .build();
+    }
+
+    //Event Builder(DTO) - Timecapsule
+    public ServerSentEvent<JsonNode> buildServerSentEvent(String eventName, TimeCapsuleSSEDTO data) {
         JsonNode jsonData = objectMapper.valueToTree(data); //json 타입으로 변환
         return ServerSentEvent.<JsonNode>builder()
                 .id(data.toString())
