@@ -155,6 +155,8 @@ public class TimecapsuleController {
     public DataResponse<Map<String, Object>> timecapsuleInviteAccept(@RequestBody TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO){
         try{
             timecapsuleService.timecapsuleInviteAccept(timecapsuleInviteAcceptDTO);
+            log.info("!!!!!!!!!!TimecapsuleEventAccept 진입!!!!!!!");
+            log.info("!!!!!!!!!!TimecapsuleEventAccept 진입, 타임캡슐 번호 : {}!!!!!!!", timecapsuleInviteAcceptDTO.getTimecapsuleNo());
             timeCapsuleEventService.TimecapsuleEventAccept(timecapsuleInviteAcceptDTO.getTimecapsuleNo());
             return new DataResponse<>(200, "타임캡슐에 참여 성공하였습니다.");
         }catch (CommonException e){
