@@ -1,24 +1,21 @@
 import React, { useEffect } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-
-// DeviceOrientationEvent 인터페이스에 requestPermission 메서드를 추가한 선언
-declare global {
-  interface DeviceOrientationEvent {
-    requestPermission?: () => Promise<PermissionState>
-  }
-}
+import { useNavigate } from "react-router-dom"
 
 export const TimecapsuleOpen = function () {
   const navigate = useNavigate()
-  const { capsuleId } = useParams()
 
   let lastAlpha: number | null = null
   let lastBeta: number | null = null
   let lastGamma: number | null = null
   let shakeCnt = 30
 
+  const isSafariOver13 =
+    window.DeviceOrientationEvent !== undefined &&
+    //@ts-ignore
+    typeof window.DeviceOrientationEvent.requestPermission === "function"
+
   useEffect(() => {
-    function handleOrientation(event: DeviceOrientationEvent) {
+    function handleOrientation(event: { alpha: any; beta: any; gamma: any }) {
       const { alpha, beta, gamma } = event
 
       if (lastAlpha === null || lastBeta === null || lastGamma === null) {
@@ -54,18 +51,22 @@ export const TimecapsuleOpen = function () {
   }, [navigate])
 
   const requestPermissionSafari = () => {
-    ;(window.DeviceOrientationEvent as any)
-      .requestPermission()
-      .then((state: PermissionState) => {
-        if (state === "granted") {
-          window.addEventListener("deviceorientation", () => {})
-        } else if (state === "denied") {
-          // Safari 브라우저를 종료하고 다시 접속하도록 유도하는 UX 화면 필요
-        }
-      })
-      .catch((e: Error) => {
-        console.error(e)
-      })
+    if (isSafariOver13) {
+      //@ts-ignore
+      window.DeviceOrientationEvent.requestPermission()
+        .then((state: string) => {
+          if (state === "granted") {
+            window.addEventListener("deviceorientation", () => {})
+          } else if (state === "denied") {
+            // Safari 브라우저를 종료하고 다시 접속하도록 유도하는 UX 화면 필요
+          }
+        })
+        .catch((e: any) => {
+          console.error(e)
+        })
+    } else {
+      window.addEventListener("deviceorientation", () => {})
+    }
   }
 
   requestPermissionSafari()
