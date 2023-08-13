@@ -25,7 +25,7 @@ public interface TimeCapsuleSEERepository extends JpaRepository<Timecapsule, Lon
             "Where u.userNo = (SELECT tm.user.userNo FROM TimecapsuleMapping tm WHERE tm.timecapsule.timecapsuleNo = :timecapsuleNo AND tm.isHost = true )")
     Long getUserNoByTimeCapsuleNo(@Param("timecapsuleNo") Long timecapsuleNo);
 
-    @Query("SELECT tm.user.userNo FROM TimecapsuleMapping tm WHERE tm.timecapsule.timecapsuleNo = (SELECT t.timecapsuleNo FROM Timecapsule t WHERE t.inviteCode =:inviteCode)")
+    @Query("SELECT tm.user.userNo FROM TimecapsuleMapping tm WHERE tm.timecapsule.timecapsuleNo = (SELECT t.timecapsuleNo FROM Timecapsule t WHERE t.inviteCode =:inviteCode AND tm.isHost = true)")
     Long getUserNoByInviteCode(@Param("inviteCode") String inviteCode);
-    
+
 }
