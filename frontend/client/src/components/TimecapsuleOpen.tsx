@@ -1,8 +1,9 @@
 import React, { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 export const TimecapsuleOpen = function () {
   const navigate = useNavigate()
+  const { capsuleId } = useParams()
 
   let lastAlpha: number | null = null
   let lastBeta: number | null = null
@@ -38,7 +39,7 @@ export const TimecapsuleOpen = function () {
         shakeCnt--
         if (shakeCnt <= 0) {
           // 여기에 다음 열린 후에 페이지로 들어가도록 만들어주세요.
-          navigate("/main")
+          navigate(`/result/${capsuleId}`)
         }
       }
     }
@@ -46,6 +47,10 @@ export const TimecapsuleOpen = function () {
     lastBeta = beta
     lastGamma = gamma
   }
+
+  console.log(lastAlpha)
+  console.log(lastBeta)
+  console.log(lastGamma)
 
   return (
     <div className="text-center">

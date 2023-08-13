@@ -160,7 +160,7 @@ export const MainPage = function () {
                           capsulenum={"capsule" + c.capsuleIconNo}
                           className="h-52 m-auto mt-10"
                           onClick={() => {
-                            navigate(`/timecapsule/detail/${c.timecapsuleNo}`)
+                            navigate(`/timecapsule/open/${c.timecapsuleNo}`)
                           }}
                         />
                       </div>
