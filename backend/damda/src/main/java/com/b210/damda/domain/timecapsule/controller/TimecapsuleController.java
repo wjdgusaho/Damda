@@ -1,12 +1,14 @@
 package com.b210.damda.domain.timecapsule.controller;
 
 import com.b210.damda.domain.dto.Timecapsule.*;
+import com.b210.damda.domain.dto.serverSentEvent.timecapsule.TimeCapsuleEventEnum;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.timecapsule.service.TimecapsuleService;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.response.CommonResponse;
 import com.b210.damda.util.response.DataResponse;
+import com.b210.damda.util.serverSentEvent.service.TimeCapsuleEventService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ import java.util.Map;
 public class TimecapsuleController {
 
     private final TimecapsuleService timecapsuleService;
+    private final TimeCapsuleEventService timeCapsuleEventService;
 
     /*
         진행중인 타임캡슐 리스트 (메인 및 보관함)
@@ -137,6 +140,7 @@ public class TimecapsuleController {
     public DataResponse<Map<String, Object>> timecapsuleInviteUser(@RequestBody TimecapsuleInviteUserDTO timecapsuleInviteUserDTO){
         try{
             timecapsuleService.timecapsuleInviteUser(timecapsuleInviteUserDTO);
+            timeCapsuleEventService.TimecapsuleEventService(timecapsuleInviteUserDTO, TimeCapsuleEventEnum.REQUEST);
             DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 초대 성공");
             return response;
         }catch (CommonException e){
