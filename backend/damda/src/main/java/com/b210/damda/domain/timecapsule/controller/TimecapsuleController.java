@@ -198,7 +198,6 @@ public class TimecapsuleController {
     @PostMapping("regist/card")
     public CommonResponse registCard( @RequestPart("timecapsuleNo") Long timecapsuleNo,
                                       @RequestParam("cardImage") MultipartFile cardImage){
-
         //log.info(cardImage.toString());
         timecapsuleService.registCard(cardImage, timecapsuleNo);
         CommonResponse response = new CommonResponse(200, "카드 저장 완료");
@@ -295,7 +294,7 @@ public class TimecapsuleController {
     @GetMapping("cardlist")
     public DataResponse<Map<String, Object>> timecapsuleCardList(@RequestParam("timecapsuleNo") Long timecapsuleNo){
 
-        List<TimecapsuleCardDTO> cardList = timecapsuleService.timecapsuleCardList(timecapsuleNo);
+        List<TimecapsuleOpenCardDTO> cardList = timecapsuleService.timecapsuleCardList(timecapsuleNo);
 
         Map<String, Object> result = new HashMap<>();
         result.put("cardList", cardList);
@@ -304,6 +303,36 @@ public class TimecapsuleController {
         response.setData(result);
         return response;
     }
+
+    /*
+        타임캡슐 오픈 디테일
+     */
+    @GetMapping("open/detail")
+    public DataResponse<Map<String, Object>> timecapsuleOpenDetail(@RequestParam("timecapsuleNo") Long timecapsuleNo){
+
+        TimecapsuleOpenDetailDTO openDetail = timecapsuleService.timecapsuleOpenDetail(timecapsuleNo);
+
+        Map<String,Object> result = new HashMap<>();
+        result.put("timecapsuleOpenDetail", openDetail);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "오픈 디테일 조회 성공");
+        response.setData(result);
+        return response;
+    }
+
+    /*
+       오픈 랭킹
+     */
+    @GetMapping("open/rank")
+    public DataResponse<Map<String, Object>> timecpasuleOpenRank(@RequestParam("timecapsuleNo") Long timecapsuleNo){
+
+        Map<String, Object> openRank = timecapsuleService.timecapsuleOpenRank(timecapsuleNo);
+
+        DataResponse<Map<String, Object>> response = new DataResponse<>(200, "오픈 디테일 조회 성공");
+        response.setData(openRank);
+        return response;
+    }
+
 
 }
 
