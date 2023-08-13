@@ -233,11 +233,11 @@ function Main() {
                   element={<TimeCapsuleDetail />}
                 ></Route>
                 <Route
-                  path="/timecapsule/open"
+                  path="/timecapsule/open/:capsuleId/"
                   element={<TimecapsuleOpen />}
                 ></Route>
                 <Route
-                  path="/timecapsule/open/:capsuleId"
+                  path="/timecapsule/result/:capsuleId/"
                   element={<TimecapsuleResult />}
                 ></Route>
               </Routes>
