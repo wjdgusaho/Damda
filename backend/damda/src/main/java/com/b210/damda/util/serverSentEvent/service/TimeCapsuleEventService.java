@@ -48,17 +48,17 @@ public class TimeCapsuleEventService {
         eventStreamService.sendEvent(fromNo, event);
     }
     
-    public void TimecapsuleEventAccept(Long timeCapsuleNo) {
+    public void TimecapsuleEventAccept(String inviteCode) {
         log.warn("타임캡슐 승낙 이벤트");
 
-        //타임캡슐 no 뒤져서 방장 찾아옴
-        Long fromNo = timeCapsuleSEERepository.getUserNoByTimeCapsuleNo(timeCapsuleNo);
+        Long fromNo = timeCapsuleSEERepository.getUserNoByInviteCode(inviteCode); //inviteCode를 통해 방장 찾아옴
+        log.warn("fromNo : {}", fromNo);
         Long userNo = addOnEventService.getUserNo();
 
         log.warn("FROMNO : {}", fromNo);
         String context = "님이 타임캡슐에 참여했습니다!";
         String eventName = "friend-event"; //일단 FE 확인용으로 임시로 friend-event로
-        String inviteCode = timeCapsuleSEERepository.getInviteCode(timeCapsuleNo);
+
 
         //fromNo를 통해 해당 유저의 이름과 이미지를 받아온다.
         UserNameAndImageDTO fromInfo = timeCapsuleSEERepository.getUserNameAndImage(userNo);
