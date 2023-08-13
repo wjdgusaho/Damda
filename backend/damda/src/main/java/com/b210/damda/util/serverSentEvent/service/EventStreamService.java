@@ -49,9 +49,9 @@ public class EventStreamService {
         log.info("connectStream, userNo : {}", userNo);
 
 
-//        log.info("여기 들어가서");
-////        endAndRemoveStream(userNo);
-//        log.info("나올수가 없다.");
+        //재로그인시 해당 스트림 제거
+        endAndRemoveStream(userNo);
+
 
         //이후 재연결 로직 발생
         //접속 시간 등록
@@ -66,7 +66,7 @@ public class EventStreamService {
 
         // 연결을 계속하기 위해 일정 시간마다 Event를 전송함. 해당 Flux는 기존 FluxSink와 별도의 로직이다.
         Flux<ServerSentEvent<JsonNode>> maintainConnectFlux =
-                Flux.interval(Duration.ofSeconds(20))
+                Flux.interval(Duration.ofSeconds(30))
                         .takeUntilOther(processor)  // processor가 신호를 보내면(로그아웃) 중지
                         .map(new Function<Long, ServerSentEvent<JsonNode>>() {
                             @Override
