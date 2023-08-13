@@ -564,7 +564,7 @@ export const SignUp = function () {
   )
 }
 
-const MakeCapsuleButton = styled.div`
+const MakeCapsuleButton = styled.button`
   border-radius: 30px;
   font-family: "pretendard";
   font-size: 20px;
