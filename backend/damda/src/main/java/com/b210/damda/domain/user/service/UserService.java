@@ -7,10 +7,7 @@ import com.b210.damda.domain.dto.User.UserUpdateDTO;
 import com.b210.damda.domain.entity.*;
 import com.b210.damda.domain.entity.Items.Items;
 import com.b210.damda.domain.entity.Items.ItemsMapping;
-import com.b210.damda.domain.entity.User.User;
-import com.b210.damda.domain.entity.User.UserCoinGetLog;
-import com.b210.damda.domain.entity.User.UserFriend;
-import com.b210.damda.domain.entity.User.UserLog;
+import com.b210.damda.domain.entity.User.*;
 import com.b210.damda.domain.entity.theme.Theme;
 import com.b210.damda.domain.entity.theme.ThemeMapping;
 import com.b210.damda.domain.file.service.S3UploadService;
@@ -20,6 +17,7 @@ import com.b210.damda.domain.shop.repository.ItemsRepository;
 import com.b210.damda.domain.shop.repository.ThemeMappingRepository;
 import com.b210.damda.domain.shop.repository.ThemeRepository;
 import com.b210.damda.domain.user.repository.UserCoinGetLogRepository;
+import com.b210.damda.domain.user.repository.UserEventRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
@@ -61,8 +59,10 @@ public class UserService {
     private final ThemeMappingRepository themeMappingRepository;
     private final ThemeRepository themeRepository;
     private final UserCoinGetLogRepository userCoinGetLogRepository;
+    private final UserEventRepository userEventRepository;
 
     private static Long acExpiredMs = 1000 * 60 * 30L * (48 * 30); // 액세스 토큰의 만료 시간(30분) * 48 * 30 = 30일
+    private final int dailyCheckCoin = 500;
 
     /*
         유저정보 불러오기
@@ -111,6 +111,11 @@ public class UserService {
         // 코인 획득 로그 저장
         UserCoinGetLog userCoinGetLog = new UserCoinGetLog(savedUser, savedUser.getCoin(), "REGIST");
         userCoinGetLogRepository.save(userCoinGetLog);
+
+        // 유저 Event 데이터 생성 후 저장
+        UserEvent userEvent = UserEvent.builder()
+                .user(savedUser).build();
+        userEventRepository.save(userEvent);
     }
 
     // 로그인
@@ -159,6 +164,29 @@ public class UserService {
             refreshTokenRepository.save(refreshTokenUser); // 리프레시 토큰 저장.
         }
 
+        // 로그인 log 기록
+        UserLog userLog = new UserLog();
+        userLog.setUser(user);
+        userLogRepository.save(userLog);
+
+
+        UserEvent userEvent = userEventRepository.findByUser(user);
+        // 아직 데일리 출석 전이면
+        if(!userEvent.getIsCheck()){
+            // 출석으로 변경
+            userEvent.updateIsCheck();
+            // 코인 개수 변경
+            user.updatePlusCoin(dailyCheckCoin);
+
+            // 코인 얻은 로그 생성
+            UserCoinGetLog userCoinGetLog = UserCoinGetLog.builder()
+                    .user(user)
+                    .getCoin(dailyCheckCoin)
+                    .type("CHECK").build();
+
+            userCoinGetLogRepository.save(userCoinGetLog);
+        }
+
         UserLoginSuccessDTO response = UserLoginSuccessDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -170,12 +198,6 @@ public class UserService {
                 .coin(user.getCoin())
                 .expiredMs(acExpiredMs)
                 .build();
-
-
-        // 로그인 log 기록
-        UserLog userLog = new UserLog();
-        userLog.setUser(user);
-        userLogRepository.save(userLog);
 
         return response;
     }
