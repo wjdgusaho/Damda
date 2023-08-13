@@ -18,4 +18,11 @@ public interface TimeCapsuleSEERepository extends JpaRepository<Timecapsule, Lon
 
     @Query("SELECT t.inviteCode FROM Timecapsule t WHERE t.timecapsuleNo = :timecapsuleNo")
     String getInviteCode(@Param("timecapsuleNo") Long timeCapsuleNo);
+
+    //timeCapsuleno를 통해 방장의 정보를 찾아오고 이름과 no를 찾아오기
+    @Query("SELECT u.userNo " +
+            "From User u, Timecapsule t " +
+            "Where u.userNo = (SELECT tm.user.userNo FROM TimecapsuleMapping tm WHERE tm.timecapsule.timecapsuleNo = :timecapsuleNo AND tm.isHost = true )")
+    Long getUserNoByTimeCapsuleNo(@Param("timecapsuleNo") Long timecapsuleNo);
+
 }
