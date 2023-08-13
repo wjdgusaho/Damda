@@ -140,7 +140,7 @@ public class TimecapsuleController {
     public DataResponse<Map<String, Object>> timecapsuleInviteUser(@RequestBody TimecapsuleInviteUserDTO timecapsuleInviteUserDTO){
         try{
             timecapsuleService.timecapsuleInviteUser(timecapsuleInviteUserDTO);
-            timeCapsuleEventService.TimecapsuleEventService(timecapsuleInviteUserDTO, TimeCapsuleEventEnum.REQUEST);
+            timeCapsuleEventService.TimecapsuleEventRequest(timecapsuleInviteUserDTO);
             DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 초대 성공");
             return response;
         }catch (CommonException e){
@@ -155,7 +155,7 @@ public class TimecapsuleController {
     public DataResponse<Map<String, Object>> timecapsuleInviteAccept(@RequestBody TimecapsuleInviteAcceptDTO timecapsuleInviteAcceptDTO){
         try{
             timecapsuleService.timecapsuleInviteAccept(timecapsuleInviteAcceptDTO);
-
+            timeCapsuleEventService.TimecapsuleEventAccept(timecapsuleInviteAcceptDTO.getTimecapsuleNo());
             return new DataResponse<>(200, "타임캡슐에 참여 성공하였습니다.");
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());

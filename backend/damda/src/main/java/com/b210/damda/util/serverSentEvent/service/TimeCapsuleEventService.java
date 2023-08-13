@@ -27,36 +27,44 @@ public class TimeCapsuleEventService {
     private final AddOnEventService addOnEventService;   //공통 로직에서 사용되는 이벤트 메서드
     private final TimeCapsuleSEERepository timeCapsuleSEERepository;
 
-    public void TimecapsuleEventService(TimecapsuleInviteUserDTO timecapsuleInviteUserDTO, TimeCapsuleEventEnum type) {
+    public void TimecapsuleEventRequest(TimecapsuleInviteUserDTO timecapsuleInviteUserDTO) {
         log.warn("타임캡슐 초대 이벤트");
 
         Long fromNo = timecapsuleInviteUserDTO.getFriendNo();
         Long userNo = addOnEventService.getUserNo();
         Long timeCapsuleNo = timecapsuleInviteUserDTO.getTimecapsuleNo();;
 
-        String context = "default";
+        String context = "님으로부터 타임캡슐 초대가 도착했습니다, 초대 코드 : ";
         String eventName = "friend-event"; //일단 FE 확인용으로 임시로 friend-event로
-        String inviteCode = timeCapsuleSEERepository.getInviteCode(timeCapsuleNo);   //초대코드
+        String inviteCode = timeCapsuleSEERepository.getInviteCode(timeCapsuleNo);
 
-
-
-        log.info("friendRepository.getUserNameAndImage .. 이 유저의 정보를 가져옵니다 : {}", userNo);
+        log.info("friendRepository.getUserNameAndImage .. 보내는 유저의 정보를 가져옵니다 : {}", userNo);
         //fromNo를 통해 해당 유저의 이름과 이미지를 받아온다.
         UserNameAndImageDTO fromInfo = timeCapsuleSEERepository.getUserNameAndImage(userNo);
-        //초대 코드 받아오기
-
 
         log.info("TEST : {} {} {} {} {} {}", userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, addOnEventService.getNowTime(LocalDateTime.now().plusHours(9)), inviteCode);
-        switch (type) {
-            case ACCEPT:
-                context = "님이 타임캡슐 요청을 승낙했습니다!";
-                break;
-            case REQUEST:
-                context = "님으로부터 타임캡슐 초대가 도착했습니다, 초대 코드 : ";
-                break;
-        }
 
-        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new TimeCapsuleSSEDTO(userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, addOnEventService.getNowTime(LocalDateTime.now().plusHours(9)), inviteCode));
+        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new TimeCapsuleSSEDTO(userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, inviteCode, addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
+        eventStreamService.sendEvent(fromNo, event);
+    }
+    
+    public void TimecapsuleEventAccept(Long timeCapsuleNo) {
+        log.warn("타임캡슐 승낙 이벤트");
+
+        //타임캡슐 no 뒤져서 방장 찾아옴
+        Long fromNo = timeCapsuleSEERepository.getUserNoByTimeCapsuleNo(timeCapsuleNo);
+        Long userNo = addOnEventService.getUserNo();
+
+        log.warn("FROMNO : {}", fromNo);
+        String context = "님이 타임캡슐에 참여했습니다!";
+        String eventName = "friend-event"; //일단 FE 확인용으로 임시로 friend-event로
+        String inviteCode = timeCapsuleSEERepository.getInviteCode(timeCapsuleNo);
+
+        //fromNo를 통해 해당 유저의 이름과 이미지를 받아온다.
+        UserNameAndImageDTO fromInfo = timeCapsuleSEERepository.getUserNameAndImage(userNo);
+
+        log.info("TEST : {} {} {} {} {} {}", userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, addOnEventService.getNowTime(LocalDateTime.now().plusHours(9)), inviteCode);
+        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new TimeCapsuleSSEDTO(userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, inviteCode, addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
         eventStreamService.sendEvent(fromNo, event);
     }
 }
