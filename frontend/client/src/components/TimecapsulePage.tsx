@@ -92,7 +92,7 @@ const TimecapsulePage = function () {
                 {capsule.state ? (
                   <OpenableCard
                     onClick={() => {
-                      navigate(`/timecapsule/detail/${capsule.timecapsuleNo}`)
+                      navigate(`/timecapsule/open/${capsule.timecapsuleNo}`)
                     }}
                   >
                     <CapsuleImg capsuleNum={capsule.capsuleIconNo} />

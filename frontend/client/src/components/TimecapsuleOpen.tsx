@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 // DeviceOrientationEvent 인터페이스에 requestPermission 메서드를 추가한 선언
 declare global {
@@ -10,6 +10,7 @@ declare global {
 
 export const TimecapsuleOpen = function () {
   const navigate = useNavigate()
+  const { capsuleId } = useParams()
 
   let lastAlpha: number | null = null
   let lastBeta: number | null = null
