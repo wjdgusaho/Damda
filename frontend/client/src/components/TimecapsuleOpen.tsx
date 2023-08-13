@@ -19,7 +19,7 @@ export const TimecapsuleOpen = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [capsuleInfo, setCapsuleInfo] = useState<CapsuleInfoType | null>(null)
-  const [shakeCnt, setShakeCnt] = useState(0)
+  const [shakeCnt, setShakeCnt] = useState(1)
 
   let lastAlpha: number | null = null
   let lastBeta: number | null = null
@@ -97,8 +97,13 @@ export const TimecapsuleOpen = function () {
   console.log(lastGamma)
 
   return (
-    <div className="text-center">
+    <div>
       {/* 여기에 타임캡슐 이미지 만들고 흔들리는 모션 만들어 주세요. */}
+      <InfoText className="absolute mt-28 ml-6 font-pretendard font-semibold text-xl">
+        원이 차오를 때 까지
+        <br />
+        타임캡슐을 흔들거나 터치해주세요!
+      </InfoText>
       <FloatingImage
         capsulenum={capsuleInfo?.capsuleIconNo ?? "capsule1"}
         onClick={() => {
@@ -133,4 +138,12 @@ const FloatingImage = styled.div<{ capsulenum: string }>`
   width: 250px;
   height: 250px;
   z-index: 1;
+  &:active {
+    transform: scale(0.9);
+    transition: 0.2s;
+  }
+`
+
+const InfoText = styled.div`
+  color: ${(props) => props.theme.colorCommon};
 `
