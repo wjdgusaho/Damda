@@ -5,7 +5,6 @@ import StickerContainer from "./StickerContainer"
 import { useNavigate, useParams } from "react-router-dom"
 import Modal from "react-modal"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 
@@ -128,11 +127,14 @@ const Card = function () {
     console.log("token", token)
     const fetchData = async () => {
       try {
-        const response = await axios.get(serverUrl + "timecapsule/deco/list", {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
+        const response = await axios.get(
+          process.env.REACT_APP_SERVER_URL + "timecapsule/deco/list",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
         console.log(response)
         setStickerList(response.data.data.decoList)
         setSticker(3)
@@ -179,7 +181,7 @@ const Card = function () {
       }
 
       const response = await axios.post(
-        serverUrl + "timecapsule/regist/card",
+        process.env.REACT_APP_SERVER_URL + "timecapsule/regist/card",
         formData,
         {
           headers: {

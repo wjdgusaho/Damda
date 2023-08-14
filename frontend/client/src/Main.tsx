@@ -35,7 +35,6 @@ import TimeCapsuleDetail from "./components/TimeCapsuleDetail"
 import { GetNewTokens } from "./components/Auth/RefreshTokenApi"
 import { getCookieToken } from "./store/Cookie"
 import { SET_TOKEN } from "./store/Auth"
-import { serverUrl } from "./urls"
 import { TimecapsuleOpen } from "./components/TimecapsuleOpen"
 import TimecapsuleResult from "./components/TimecapsuleResult"
 import {
@@ -120,11 +119,14 @@ function Main() {
   const initializeEventSource = () => {
     // 만약 sse를 시작하지 않았거나, 현재 sse가 중단된 상태라면 새롭게 실행함.
     if (eventSource === null || eventSource.readyState === EventSource.CLOSED) {
-      const newEventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
+      const newEventSource = new EventSourcePolyfill(
+        process.env.REACT_APP_SERVER_URL + "sse/login",
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
       // 에러가 났을 때 발생하는 이벤트 함수
       newEventSource.onerror = (event) => {
         console.log("Error event : ", event)
@@ -150,11 +152,11 @@ function Main() {
       })
       newEventSource.addEventListener("check-connection", (event: any) => {
         // 새롭게 서버로 보낼 이벤트소스
-        // serverUrl + (내가 보낼 url 주소)
+        // process.env.REACT_APP_SERVER_URL + (내가 보낼 url 주소)
         // headers에는 토큰 값. 헤더 이외의 값 추가하려면 , 뒤에 넣을 것.
         if (otherEventSource === null) {
           const otherESource = new EventSourcePolyfill(
-            serverUrl + "sse/check",
+            process.env.REACT_APP_SERVER_URL + "sse/check",
             {
               headers: {
                 Authorization: "Bearer " + token,

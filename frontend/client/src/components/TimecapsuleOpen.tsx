@@ -5,7 +5,6 @@ import { styled } from "styled-components"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
-import { serverUrl } from "../urls"
 
 interface CapsuleInfoType {
   timecapsuleNo: number
@@ -31,7 +30,8 @@ export const TimecapsuleOpen = function () {
       try {
         const timecapsuleNo = capsuleId
         const response = await axios.get(
-          serverUrl + `timecapsule/simpleinfo?timecapsuleNo=${timecapsuleNo}`,
+          process.env.REACT_APP_SERVER_URL +
+            `timecapsule/simpleinfo?timecapsuleNo=${timecapsuleNo}`,
           {
             headers: {
               Authorization: "Bearer " + token,

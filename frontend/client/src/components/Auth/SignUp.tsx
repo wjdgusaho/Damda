@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router"
 import { styled } from "styled-components"
 import axios from "axios"
-import { serverUrl } from "../../urls"
 import { Link } from "react-router-dom"
 import tw from "tailwind-styled-components"
 import Modal from "react-modal"
@@ -246,7 +245,7 @@ export const SignUp = function () {
     } else {
       axios({
         method: "POST",
-        url: serverUrl + "user/check-email",
+        url: process.env.REACT_APP_SERVER_URL + "user/check-email",
         headers: {
           "Content-Type": "application/json",
         },
@@ -280,7 +279,7 @@ export const SignUp = function () {
       setuserEmailMatch(2)
       axios({
         method: "POST",
-        url: serverUrl + "user/send-email",
+        url: process.env.REACT_APP_SERVER_URL + "user/send-email",
         data: { email: userdata.email },
       })
         .then(async (response) => {
@@ -342,7 +341,7 @@ export const SignUp = function () {
     } else {
       axios({
         method: "POST",
-        url: serverUrl + "user/regist",
+        url: process.env.REACT_APP_SERVER_URL + "user/regist",
         headers: {
           "Content-Type": "multipart/form-data",
         },

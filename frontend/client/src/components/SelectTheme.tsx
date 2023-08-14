@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
 import axios from "axios"
-import { serverUrl } from "../urls"
 
 const Box = styled.div`
   display: flex;
@@ -47,11 +46,14 @@ const SelectTheme = function () {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(serverUrl + "shop/list", {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
+        const response = await axios.get(
+          process.env.REACT_APP_SERVER_URL + "shop/list",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
         setThemeList(response.data.data.themeList)
       } catch (error) {
         console.error(error)
@@ -63,7 +65,7 @@ const SelectTheme = function () {
   const handleChangeTheme = (themeNo: number) => {
     axios({
       method: "PATCH",
-      url: serverUrl + "theme/set-my-theme",
+      url: process.env.REACT_APP_SERVER_URL + "theme/set-my-theme",
       headers: {
         Authorization: "Bearer " + token,
       },
