@@ -337,8 +337,16 @@ public class TimecapsuleController {
         response.setData(openRank);
         return response;
     }
-
-
+    /*
+        타임캡슐 오픈 로직
+     */
+    @PatchMapping("open/save")
+    public CommonResponse timecapsuleOpenSave(@RequestBody Map<String, Object> data){
+        Long timecapsuleNo = Long.parseLong((String) data.get("timecapsuleNo"));
+        timecapsuleService.timecapsuleOpenSave(timecapsuleNo);
+        CommonResponse response = new CommonResponse(200, "타임캡슐 저장 완료");
+        return response;
+    }
 
 
 

@@ -94,4 +94,8 @@ public class TimecapsuleMapping {
         this.deleteDate = deleteDate;
     }
 
+    public void updateIsSave(boolean isSave) { this.isSave = isSave; }
+
+    public void updateSaveDate (Timestamp saveDate) { this.saveDate = saveDate; }
+
 }

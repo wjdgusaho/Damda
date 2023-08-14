@@ -48,4 +48,6 @@ public interface TimecapsuleService {
     TimecapsuleOpenDetailDTO timecapsuleOpenDetail(Long timecapsuleNo);
 
     Map<String, Object> timecapsuleOpenRank(Long timecapsuleNo);
+
+    void timecapsuleOpenSave(Long timecapsuleNo);
 }
