@@ -129,16 +129,22 @@ const AlarmTimecapsuleComponent = function ({
   const dispatch = useDispatch()
 
   const handleMove = () => {
-    dispatch(DELETE_TIMECAPSULES(timecapsule.timecapsuleNo))
-    navigate("/timecapsule/detail/" + timecapsule.timecapsuleNo)
+    dispatch(DELETE_TIMECAPSULES(timecapsule.fromUser))
+    navigate("/participate/")
   }
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
       <div>
-        <AlertImg src={"assets/" + timecapsule.capsuleIconNo} alt="defalut" />
+        <AlertImg
+          src={"assets/" + timecapsule.fromProfileImage}
+          alt="defalut"
+        />
       </div>
       <div className="ml-2" style={{ width: "150px" }}>
-        <p>{timecapsule.name}</p>
+        <p>
+          {timecapsule.content}
+          <span>{timecapsule.code}</span>
+        </p>
       </div>
       <div>
         <ModalBtn onClick={handleMove}>타임캡슐 확인하기</ModalBtn>
@@ -197,7 +203,7 @@ export const MainHeader = function () {
             <div>
               {alarmTimecapsuleData.map((timecapsule: alarmCapsuleType) => (
                 <AlarmTimecapsuleComponent
-                  key={timecapsule.timecapsuleNo}
+                  key={timecapsule.fromUser}
                   timecapsule={timecapsule}
                 />
               ))}
