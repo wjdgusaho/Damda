@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -23,7 +25,8 @@ public class test {
     @Scheduled(fixedRate = 3000) // 테스터
     public void test() {
         log.info("테스터 스케줄러 동작");
-        userRepository.updateIsCheck();
+        LocalDateTime currentTime = LocalDateTime.now();
+        log.info("현재 시간: " + currentTime);
         //전체 DB 순회하여
     }
 
