@@ -16,6 +16,7 @@ interface CapsuleInfoType {
   title: string
   type: string
   capsuleIconNo: string
+  alone: boolean
 }
 
 const TimecapsuleResult = function () {
@@ -88,22 +89,25 @@ const TimecapsuleResult = function () {
             >
               카드
             </Nav>
-            <Nav
-              onClick={() => {
-                setComp("rank")
-                handleNavClick("rank")
-              }}
-              isActive={activeComponent === "rank"}
-            >
-              순위
-            </Nav>
+            {/* 여러명 이상이고 목표 타임캡슐인 경우 순위 탭 보이게 하기 */}
+            {!capsuleInfo?.alone && capsuleInfo?.type === "GOAL" && (
+              <Nav
+                onClick={() => {
+                  setComp("rank")
+                  handleNavClick("rank")
+                }}
+                isActive={activeComponent === "rank"}
+              >
+                순위
+              </Nav>
+            )}
           </div>
           {comp === "members" && <TimecapsuleResultMembers />}
           {comp === "images" && <TimecapsuleResultImages />}
           {comp === "rank" && <TimecapsuleResultRank />}
           <BackBtn
             onClick={() => {
-              navigate(-1)
+              navigate("/savetimecapsule")
             }}
             className="my-5"
           >
