@@ -104,9 +104,9 @@ export const List = function () {
   }
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
       {friendList.length === 0 && favoriteFriendList.length === 0 && (
-        <div className="text-center mt-20">
+        <div className="text-center mt-12">
           <TextStyle
             style={{ opacity: "50%", fontSize: "20px", fontWeight: "200" }}
           >
@@ -114,7 +114,7 @@ export const List = function () {
           </TextStyle>
           <div className="relative">
             <img
-              className="m-auto mt-20"
+              className="mt-20"
               style={{ width: "15rem" }}
               src="/assets/universe/Astronaut-4.png"
               alt="Astronaut-4"
@@ -171,9 +171,9 @@ export const Request = function () {
       .catch((error) => console.error(error))
   }, [])
   return (
-    <div>
+    <div className="flex flex-col items-center">
       {requestList.length === 0 && (
-        <div className="text-center mt-20">
+        <div className="text-center mt-12">
           <TextStyle
             style={{ opacity: "50%", fontSize: "20px", fontWeight: "200" }}
           >
@@ -181,7 +181,7 @@ export const Request = function () {
           </TextStyle>
           <div className="relative">
             <img
-              className="m-auto mt-20"
+              className="mt-20"
               style={{ width: "15rem" }}
               src="/assets/universe/Astronaut-4.png"
               alt="Astronaut-4"
@@ -462,9 +462,9 @@ const CapsuleShadow = styled.div`
   z-index: -1;
   position: absolute;
   bottom: -25px;
-  left: 110px;
-  width: 205px;
-  height: 80px;
+  left: 38.75px;
+  width: 155px;
+  height: 60px;
   border-radius: 50%;
   background: ${(props) => props.theme.colorShadow};
   filter: blur(5px);

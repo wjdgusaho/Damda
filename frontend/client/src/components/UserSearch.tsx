@@ -242,7 +242,7 @@ const SearchImg = styled.img`
 
 const NoResult = styled.div`
   font-weight: 200;
-  margin-top: 50px;
+  margin-top: 55px;
   text-align: center;
   font-size: 20px;
   opacity: 60%;
