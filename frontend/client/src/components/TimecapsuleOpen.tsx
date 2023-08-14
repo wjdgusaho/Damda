@@ -92,9 +92,7 @@ export const TimecapsuleOpen = function () {
     lastGamma = gamma
   }
 
-  console.log(lastAlpha)
-  console.log(lastBeta)
-  console.log(lastGamma)
+  console.log(capsuleInfo)
 
   return (
     <div>
