@@ -1,11 +1,9 @@
 import React, { useState } from "react"
 import "../index.css"
-import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
 import { useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 
@@ -70,9 +68,9 @@ const HeaderWrap = styled.div`
   right: 0;
 `
 
-const Participate = function () {
+const Participate = function ({ code = "" }: { code: string }) {
   const token = useSelector((state: RootState) => state.auth.accessToken)
-  const [inviteCode, setInviteCode] = useState("")
+  const [inviteCode, setInviteCode] = useState(code)
   const navigate = useNavigate()
 
   function inputCode(e: React.FormEvent<HTMLInputElement>) {
@@ -84,7 +82,7 @@ const Participate = function () {
 
     axios({
       method: "POST",
-      url: serverUrl + "timecapsule/join",
+      url: process.env.REACT_APP_SERVER_URL + "timecapsule/join",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,

@@ -3,11 +3,15 @@ import { useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 import tw from "tailwind-styled-components"
 import Modal from "react-modal"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
-import axios from "axios"
-import { serverUrl } from "../../urls"
-import { alarmCapsuleType, alarmFriendType } from "../../store/Alarm"
+// import axios from "axios"
+// import { serverUrl } from "../../urls"
+import {
+  DELETE_TIMECAPSULES,
+  alarmCapsuleType,
+  alarmFriendType,
+} from "../../store/Alarm"
 
 const TextStyle = styled.p`
   font-family: "pretendard";
@@ -95,7 +99,7 @@ const AlarmFriendComponent = function ({
   const navigate = useNavigate()
 
   const handleMove = () => {
-    navigate("/friend/list")
+    navigate("/friend")
   }
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
@@ -121,9 +125,30 @@ const AlarmTimecapsuleComponent = function ({
 }: {
   timecapsule: alarmCapsuleType
 }) {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  const handleMove = () => {
+    dispatch(DELETE_TIMECAPSULES(timecapsule.fromUser))
+    navigate("/participate/")
+  }
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
-      <div></div>
+      <div>
+        <AlertImg
+          src={"assets/" + timecapsule.fromProfileImage}
+          alt="defalut"
+        />
+      </div>
+      <div className="ml-2" style={{ width: "150px" }}>
+        <p>
+          {timecapsule.content}
+          <span>{timecapsule.code}</span>
+        </p>
+      </div>
+      <div>
+        <ModalBtn onClick={handleMove}>타임캡슐 확인하기</ModalBtn>
+      </div>
     </ModalCard>
   )
 }
@@ -178,7 +203,7 @@ export const MainHeader = function () {
             <div>
               {alarmTimecapsuleData.map((timecapsule: alarmCapsuleType) => (
                 <AlarmTimecapsuleComponent
-                  key={timecapsule.timecapsuleNo}
+                  key={timecapsule.fromUser}
                   timecapsule={timecapsule}
                 />
               ))}

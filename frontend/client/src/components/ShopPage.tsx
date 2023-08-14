@@ -1,13 +1,10 @@
-import React, { useState, useRef, useEffect, createContext } from "react"
+import React, { useState, useEffect, createContext } from "react"
 import { SubHeader } from "./inc/SubHeader"
-import { styled, css } from "styled-components"
+import { styled } from "styled-components"
 import Modal from "react-modal"
-import axios, { Axios } from "axios"
-import { serverUrl, reqUrl } from "../urls"
+import axios from "axios"
 import { RootState } from "../store/Store"
 import { useDispatch, useSelector } from "react-redux"
-import { async } from "q"
-import { Navigate } from "react-router"
 import { SET_COIN } from "../store/Auth"
 
 interface themeType {
@@ -51,11 +48,14 @@ export const ShopPage = function () {
     console.log("token", token)
     const fetchData = async () => {
       try {
-        const response = await axios.get(serverUrl + "shop/list", {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
+        const response = await axios.get(
+          process.env.REACT_APP_SERVER_URL + "shop/list",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
         setThemeList(response.data.data.themeList)
         setCapsuleItemList(response.data.data.capsuleItemList)
         setDecoItemList(response.data.data.decoItemList)
@@ -296,7 +296,7 @@ export const Card: React.FC<CardProps> = ({
         itemNo: newNo,
       }
       const response = await axios.post(
-        serverUrl + "shop/purchase/sticker",
+        process.env.REACT_APP_SERVER_URL + "shop/purchase/sticker",
         body,
         {
           headers: {
@@ -320,7 +320,7 @@ export const Card: React.FC<CardProps> = ({
         themeNo: newNo,
       }
       const response = await axios.post(
-        serverUrl + "shop/purchase/theme",
+        process.env.REACT_APP_SERVER_URL + "shop/purchase/theme",
         body,
         {
           headers: {
@@ -345,7 +345,7 @@ export const Card: React.FC<CardProps> = ({
         itemNo: "1",
       }
       const response = await axios.post(
-        serverUrl + "shop/purchase/timecapsule/size",
+        process.env.REACT_APP_SERVER_URL + "shop/purchase/timecapsule/size",
         body,
         {
           headers: {
@@ -370,7 +370,7 @@ export const Card: React.FC<CardProps> = ({
         itemNo: "2",
       }
       const response = await axios.post(
-        serverUrl + "shop/purchase/timecapsule/limit",
+        process.env.REACT_APP_SERVER_URL + "shop/purchase/timecapsule/limit",
         body,
         {
           headers: {
@@ -534,7 +534,7 @@ const ModalCapsuleInner = function () {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          serverUrl + "shop/purchase/timecapsule/list",
+          process.env.REACT_APP_SERVER_URL + "shop/purchase/timecapsule/list",
           {
             headers: {
               Authorization: "Bearer " + token,

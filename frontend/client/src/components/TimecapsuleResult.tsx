@@ -1,15 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useState } from "react"
 import "../index.css"
-import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
 import { useNavigate, useParams } from "react-router"
-import { SubHeader } from "./inc/SubHeader"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
-import Modal from "react-modal"
 import TimecapsuleResultMembers from "./TimecapsuleResultMembers"
 import TimecapsuleResultImages from "./TimecapsuleResultImages"
 import TimecapsuleResultRank from "./TimecapsuleResultRank"
@@ -19,6 +15,7 @@ interface CapsuleInfoType {
   title: string
   type: string
   capsuleIconNo: string
+  alone: boolean
 }
 
 const TimecapsuleResult = function () {
@@ -39,7 +36,8 @@ const TimecapsuleResult = function () {
       try {
         const timecapsuleNo = capsuleId
         const response = await axios.get(
-          serverUrl + `timecapsule/simpleinfo?timecapsuleNo=${timecapsuleNo}`,
+          process.env.REACT_APP_SERVER_URL +
+            `timecapsule/simpleinfo?timecapsuleNo=${timecapsuleNo}`,
           {
             headers: {
               Authorization: "Bearer " + token,
@@ -91,22 +89,25 @@ const TimecapsuleResult = function () {
             >
               카드
             </Nav>
-            <Nav
-              onClick={() => {
-                setComp("rank")
-                handleNavClick("rank")
-              }}
-              isActive={activeComponent === "rank"}
-            >
-              순위
-            </Nav>
+            {/* 여러명 이상이고 목표 타임캡슐인 경우 순위 탭 보이게 하기 */}
+            {!capsuleInfo?.alone && capsuleInfo?.type === "GOAL" && (
+              <Nav
+                onClick={() => {
+                  setComp("rank")
+                  handleNavClick("rank")
+                }}
+                isActive={activeComponent === "rank"}
+              >
+                순위
+              </Nav>
+            )}
           </div>
           {comp === "members" && <TimecapsuleResultMembers />}
           {comp === "images" && <TimecapsuleResultImages />}
           {comp === "rank" && <TimecapsuleResultRank />}
           <BackBtn
             onClick={() => {
-              navigate(-1)
+              navigate("/savetimecapsule")
             }}
             className="my-5"
           >

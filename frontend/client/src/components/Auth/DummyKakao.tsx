@@ -1,6 +1,5 @@
 import axios from "axios"
 import React, { useEffect } from "react"
-import { serverUrl } from "../../urls"
 import { setRefreshToken } from "../../store/Cookie"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
@@ -20,7 +19,7 @@ export const DummyKakao = () => {
     if (code) {
       axios({
         method: "POST",
-        url: serverUrl + "api/kakao/login",
+        url: process.env.REACT_APP_SERVER_URL + "api/kakao/login",
         headers: {
           "Content-Type": "application/json",
         },

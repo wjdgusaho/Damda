@@ -3,7 +3,6 @@ import { useSelector } from "react-redux"
 import styled from "styled-components"
 import { RootState } from "../store/Store"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useParams } from "react-router-dom"
 
 interface DataType {
@@ -63,7 +62,8 @@ const TimecapsuleResultMembers = function () {
       try {
         const timecapsuleNo = capsuleId
         const response = await axios.get(
-          serverUrl + `timecapsule/open/detail?timecapsuleNo=${timecapsuleNo}`,
+          process.env.REACT_APP_SERVER_URL +
+            `timecapsule/open/detail?timecapsuleNo=${timecapsuleNo}`,
           {
             headers: {
               Authorization: "Bearer " + token,

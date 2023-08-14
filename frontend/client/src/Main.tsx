@@ -13,7 +13,6 @@ import ShopPage from "./components/ShopPage"
 import TimecapsulePage from "./components/TimecapsulePage"
 import Card from "./components/Card"
 import Friend from "./components/Friend"
-import { List, Request } from "./components/Friend"
 import Login from "./components/Auth/Login"
 import { SignUp } from "./components/Auth/SignUp"
 import { Logout } from "./components/Auth/Logout"
@@ -36,10 +35,15 @@ import TimeCapsuleDetail from "./components/TimeCapsuleDetail"
 import { GetNewTokens } from "./components/Auth/RefreshTokenApi"
 import { getCookieToken } from "./store/Cookie"
 import { SET_TOKEN } from "./store/Auth"
-import { serverUrl } from "./urls"
 import { TimecapsuleOpen } from "./components/TimecapsuleOpen"
 import TimecapsuleResult from "./components/TimecapsuleResult"
-import { ADD_FRIENDS, alarmFriendType, toastOption } from "./store/Alarm"
+import {
+  ADD_FRIENDS,
+  ADD_TIMECAPSULES,
+  alarmCapsuleType,
+  alarmFriendType,
+  toastOption,
+} from "./store/Alarm"
 import { EmptyPage } from "./components/EmptyPage"
 
 function Main() {
@@ -115,11 +119,14 @@ function Main() {
   const initializeEventSource = () => {
     // 만약 sse를 시작하지 않았거나, 현재 sse가 중단된 상태라면 새롭게 실행함.
     if (eventSource === null || eventSource.readyState === EventSource.CLOSED) {
-      const newEventSource = new EventSourcePolyfill(serverUrl + "sse/login", {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
+      const newEventSource = new EventSourcePolyfill(
+        process.env.REACT_APP_SERVER_URL + "sse/login",
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
       // 에러가 났을 때 발생하는 이벤트 함수
       newEventSource.onerror = (event) => {
         console.log("Error event : ", event)
@@ -128,7 +135,6 @@ function Main() {
       // addEventListener : 특정 이벤트 string 값을 서버에서 받으면 콜백함수를 실행한다.
       // 콜백함수 : (event) => {}  <-- 이렇게 쓰는게 하나의 콜백함수.
       newEventSource.addEventListener("friend-event", (event: any) => {
-        // console.log("Friend : ", event)
         const data: alarmFriendType = JSON.parse(event["data"])
         toast.info(
           `${data.fromName}#${data.fromUser}\n${data.content}\n${data.date}`,
@@ -136,13 +142,21 @@ function Main() {
         )
         dispatch(ADD_FRIENDS(data))
       })
+      newEventSource.addEventListener("timecapsule-event", (event: any) => {
+        const data: alarmCapsuleType = JSON.parse(event["data"])
+        toast.info(
+          `${data.fromName}#${data.fromUser}\n${data.content}\n${data.date}`,
+          toastOption
+        )
+        dispatch(ADD_TIMECAPSULES(data))
+      })
       newEventSource.addEventListener("check-connection", (event: any) => {
         // 새롭게 서버로 보낼 이벤트소스
-        // serverUrl + (내가 보낼 url 주소)
+        // process.env.REACT_APP_SERVER_URL + (내가 보낼 url 주소)
         // headers에는 토큰 값. 헤더 이외의 값 추가하려면 , 뒤에 넣을 것.
         if (otherEventSource === null) {
           const otherESource = new EventSourcePolyfill(
-            serverUrl + "sse/check",
+            process.env.REACT_APP_SERVER_URL + "sse/check",
             {
               headers: {
                 Authorization: "Bearer " + token,
@@ -194,6 +208,7 @@ function Main() {
                 <Route path="/signup/" element={<SignUp />}></Route>
                 <Route path="/dummykakao/" element={<DummyKakao />}></Route>
                 <Route path="/*" element={<EmptyPage />}></Route>
+                <Route path="/findPassword/" element={<FindPassword />}></Route>
               </Routes>
             )}
             {token && (
@@ -208,16 +223,12 @@ function Main() {
                   element={<TimecapsulePage />}
                 ></Route>
                 <Route path="/card/:capsuleId" element={<Card />}></Route>
-                <Route path="/friend/" element={<Friend />}>
-                  <Route path="list" element={<List />}></Route>
-                  <Route path="request" element={<Request />}></Route>
-                </Route>
+                <Route path="/friend/" element={<Friend />}></Route>
                 <Route path="/friend/search" element={<UserSearch />}></Route>
                 <Route path="/login/" element={<Login />}></Route>
                 <Route path="/signup/" element={<SignUp />}></Route>
                 <Route path="/logout/" element={<Logout />}></Route>
                 <Route path="/main/" element={<MainPage />}></Route>
-                <Route path="/findPassword/" element={<FindPassword />}></Route>
                 <Route path="/tutorial/" element={<Tutorial />}></Route>
                 <Route path="/dummykakao/" element={<DummyKakao />}></Route>
                 <Route path="/menu/" element={<Menu />}></Route>
@@ -225,7 +236,10 @@ function Main() {
                   path="/savetimecapsule/"
                   element={<SavedTimecapsule />}
                 ></Route>
-                <Route path="/participate/" element={<Participate />}></Route>
+                <Route
+                  path="/participate/"
+                  element={<Participate code={""} />}
+                ></Route>
                 <Route path="/selecttype/" element={<SelectType />}></Route>
                 <Route path="/classic/" element={<ClassicCapsule />}></Route>
                 <Route path="/record/" element={<RecordCapsule />}></Route>
@@ -236,11 +250,11 @@ function Main() {
                   element={<TimeCapsuleDetail />}
                 ></Route>
                 <Route
-                  path="/timecapsule/open"
+                  path="/timecapsule/open/:capsuleId/"
                   element={<TimecapsuleOpen />}
                 ></Route>
                 <Route
-                  path="/timecapsule/open/:capsuleId"
+                  path="/timecapsule/result/:capsuleId/"
                   element={<TimecapsuleResult />}
                 ></Route>
               </Routes>

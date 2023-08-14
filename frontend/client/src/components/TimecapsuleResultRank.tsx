@@ -1,11 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useState } from "react"
 import "../index.css"
-import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
-import { useNavigate, useParams } from "react-router"
-import { SubHeader } from "./inc/SubHeader"
+import { useParams } from "react-router"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 
@@ -77,7 +74,9 @@ const TimecapsuleResultRank = function () {
       try {
         const response = await axios({
           method: "GET",
-          url: serverUrl + `timecapsule/open/rank?timecapsuleNo=${capsuleId}`,
+          url:
+            process.env.REACT_APP_SERVER_URL +
+            `timecapsule/open/rank?timecapsuleNo=${capsuleId}`,
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,

@@ -1,5 +1,4 @@
-npimport axios, { AxiosRequestConfig } from "axios"
-import { serverUrl } from "../../urls"
+import axios, { AxiosRequestConfig } from "axios"
 import { useDispatch } from "react-redux"
 import { SET_TOKEN } from "../../store/Auth"
 
@@ -11,7 +10,7 @@ const RefreshTokenApi = async function (refreshToken: string) {
   }
   try {
     const response = await axios.post(
-      serverUrl + "user/refresh-token",
+      process.env.REACT_APP_SERVER_URL + "user/refresh-token",
       {},
       config
     )

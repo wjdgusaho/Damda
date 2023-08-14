@@ -7,7 +7,6 @@ import { SubHeader } from "./inc/SubHeader"
 import "react-datepicker/dist/react-datepicker.css"
 import "./datePicker.css"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 
@@ -257,7 +256,7 @@ const GoalCapsule = function () {
     } else {
       axios({
         method: "POST",
-        url: serverUrl + "timecapsule/create",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/create",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -310,14 +309,14 @@ const GoalCapsule = function () {
           <ContentWrap>
             <Content>
               이름
-              <span>최대 10자</span>
+              <span>최대 15자</span>
             </Content>
           </ContentWrap>
           <InputBox
             onChange={inputTitle}
             className="w-80"
             type="text"
-            maxLength={10}
+            maxLength={15}
           />
           <ContentWrap>
             <Content>

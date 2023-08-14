@@ -3,7 +3,6 @@ import { useNavigate } from "react-router"
 import { useDispatch } from "react-redux"
 import { styled } from "styled-components"
 import axios from "axios"
-import { serverUrl, reqUrl } from "../../urls"
 import { SET_TOKEN, SET_USER } from "../../store/Auth"
 import { setRefreshToken } from "../../store/Cookie"
 import "../../index.css"
@@ -122,7 +121,7 @@ const Login = function () {
 
     axios({
       method: "POST",
-      url: serverUrl + "user/login/",
+      url: process.env.REACT_APP_SERVER_URL + "user/login/",
       data: {
         email: email,
         userPw: password,
@@ -241,7 +240,7 @@ const Login = function () {
         <p style={{ color: "red" }} className="relative -left-4">
           {userdataText}
         </p>
-        <KakaoLink as="a" href={reqUrl}>
+        <KakaoLink as="a" href={process.env.REACT_APP_KAKAO_URL}>
           <img
             src="kakao_login_medium_narrow1.png"
             alt="카카오톡 로그인"
