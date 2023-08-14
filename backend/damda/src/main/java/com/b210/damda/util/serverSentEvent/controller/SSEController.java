@@ -43,9 +43,10 @@ public class SSEController {
 
     //로그아웃 엔드포인트 세분화
     @GetMapping(value = "/sse/logout")
-    public void logout() {
+    public Flux<ServerSentEvent<JsonNode>> logout() {
         log.info("sse/logout");
         eventStreamService.disconnectStreamLogout();
+        return Flux.empty();
     }
 
 }
