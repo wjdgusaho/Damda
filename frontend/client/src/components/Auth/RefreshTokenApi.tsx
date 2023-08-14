@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import axios, { AxiosRequestConfig } from "axios"
+=======
+npimport axios, { AxiosRequestConfig } from "axios"
+import { serverUrl } from "../../urls"
+>>>>>>> develop
 import { useDispatch } from "react-redux"
 import { SET_TOKEN } from "../../store/Auth"
 

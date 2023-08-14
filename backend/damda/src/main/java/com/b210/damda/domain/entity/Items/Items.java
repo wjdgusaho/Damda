@@ -1,16 +1,13 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.Items;
 
-import com.b210.damda.domain.dto.ItemsShopDTO;
-import com.b210.damda.domain.dto.Timecapsule.MyItemListDTO;
+import com.b210.damda.domain.dto.Items.ItemsShopDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
-@Setter
 @Getter
 @NoArgsConstructor
 @ToString

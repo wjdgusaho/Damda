@@ -10,7 +10,6 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @ToString
 public class Theme {
@@ -37,4 +36,5 @@ public class Theme {
                 .type("THEME")
                 .build();
     }
+
 }
