@@ -79,6 +79,8 @@
             this.deleteDate = LocalDateTime.now();
         }
 
+        public void deleteDeleteDate(){ this.deleteDate = null; }
+
         public UserDTO toUserDTO(){
             return UserDTO.builder()
                     .userNo(this.userNo)
