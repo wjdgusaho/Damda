@@ -82,32 +82,39 @@ const TimecapsuleResultMembers = function () {
     fetchData()
   }, [])
 
-  function fileDownload() {
-    alert("잠시만 기다려주세요!")
+  function fileDownload(): void {
     const fetchData = async () => {
       try {
         const timecapsuleNo = capsuleId
-        const response2 = await axios.get(
+        const response = await axios.get(
           process.env.REACT_APP_SERVER_URL +
             `s3/download/zip/timecapsule/${timecapsuleNo}/file`,
           {
+            responseType: "blob", // 중요: 응답 유형을 'blob'으로 설정
             headers: {
               Authorization: "Bearer " + token,
             },
           }
         )
-        console.log("0000000000000000000000000", response2.data)
 
-        // if (response2.data.code === 200) {
-        //   console.log("파일 다운로드 정상 작동")
-        // } else {
-        //   alert(response2.data.message)
-        //   console.log("파일 다운로드 안됨!!!!!!!!!!!!!")
-        // }
+        if (response.status === 200) {
+          const downloadUrl = window.URL.createObjectURL(
+            new Blob([response.data])
+          )
+          const link = document.createElement("a")
+          link.href = downloadUrl
+          link.setAttribute("download", "file.zip") // 파일 이름 지정. 원하는 이름으로 변경 가능
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+        } else {
+          console.log("파일 다운로드 안됨!!!!!!!!!!!!!")
+        }
       } catch (error) {
         console.error(error)
       }
     }
+
     fetchData()
   }
 
