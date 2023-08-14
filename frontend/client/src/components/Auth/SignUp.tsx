@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router"
 import { styled } from "styled-components"
 import axios from "axios"
-import { serverUrl } from "../../urls"
 import { Link } from "react-router-dom"
 import tw from "tailwind-styled-components"
 import Modal from "react-modal"
@@ -31,6 +30,16 @@ const isAllowFiles = (file: File) => {
   return false
 }
 
+const EmailButton = styled.button`
+  padding: 4px;
+  font-size: 13px;
+  border-radius: 9999px; /* rounded-full */
+  width: 80px;
+  position: relative;
+  top: 9.5rem;
+  left: 13rem;
+`
+
 const Form = styled.form`
   display: flex;
   flex-wrap: wrap;
@@ -43,13 +52,15 @@ const ModalForm = styled(Form)`
   flex-direction: column;
 `
 
-const InputCSS = tw.input`
-    w-full
-    bg-transparent
-    border-b-2
-    border-b-white-500
-    my-2
-    focus:outline-none
+const InputCSS = styled.input`
+  width: 100%;
+  background-color: transparent;
+  border-bottom: 1px solid #ffffff;
+  margin-top: 2px;
+  outline: none;
+  &:focus {
+    outline: none;
+  }
 `
 const successCode = Math.floor(Math.random() * 10000)
 
@@ -61,7 +72,7 @@ const customStyles = {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "65%",
+    width: "300px",
     borderRadius: "20px",
   },
   overlay: {
@@ -234,7 +245,7 @@ export const SignUp = function () {
     } else {
       axios({
         method: "POST",
-        url: serverUrl + "user/check-email",
+        url: process.env.REACT_APP_SERVER_URL + "user/check-email",
         headers: {
           "Content-Type": "application/json",
         },
@@ -268,7 +279,7 @@ export const SignUp = function () {
       setuserEmailMatch(2)
       axios({
         method: "POST",
-        url: serverUrl + "user/send-email",
+        url: process.env.REACT_APP_SERVER_URL + "user/send-email",
         data: { email: userdata.email },
       })
         .then(async (response) => {
@@ -330,7 +341,7 @@ export const SignUp = function () {
     } else {
       axios({
         method: "POST",
-        url: serverUrl + "user/regist",
+        url: process.env.REACT_APP_SERVER_URL + "user/regist",
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -347,8 +358,12 @@ export const SignUp = function () {
   }
 
   return (
-    <div className="grid grid-cols-1 w-72 mx-auto mt-5 text-white">
-      <Link to={"/login"} style={{ fontSize: "30px", color: "white" }}>
+    <div className="grid grid-cols-1 w-72 mx-auto mt-5 text-white font-pretendard font-thin">
+      <Link
+        className="mt-10"
+        to={"/login"}
+        style={{ fontSize: "30px", color: "white" }}
+      >
         <svg
           className="w-6 h-6 text-black-800 dark:text-white"
           aria-hidden="true"
@@ -366,36 +381,31 @@ export const SignUp = function () {
         </svg>
       </Link>
       {userEmailMatch === 4 ? (
-        <div className="p-2 px-4 text-sm text-green-500 w-24 relative top-40 left-52">
-          인증완료
-        </div>
+        <EmailButton className=" bg-emerald-300">인증완료</EmailButton>
       ) : userEmailMatch === 3 ? (
-        <button
-          className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-28 relative top-40 left-44"
+        <EmailButton
+          className=" bg-white bg-opacity-20"
           onClick={() => {
             setGetCode(true)
           }}
         >
           이메일인증
-        </button>
+        </EmailButton>
       ) : userEmailMatch === 2 ? (
         <div className="p-2 px-4 text-sm w-48 relative top-40 left-40">
           인증번호 전송중...
         </div>
       ) : userEmailMatch === 1 ? (
-        <button
-          className="p-2 px-4 text-sm rounded-full shadow-md bg-red-500 w-24 relative top-40 left-48"
-          onClick={checkEmailOverlap}
-        >
+        <EmailButton className=" bg-lilac-700 " onClick={checkEmailOverlap}>
           사용불가
-        </button>
+        </EmailButton>
       ) : userEmailMatch === 0 ? (
-        <button
-          className="p-2 px-4 text-sm rounded-full shadow-md bg-gray-500 w-24 relative top-40 left-48"
+        <EmailButton
+          className=" bg-white bg-opacity-20"
           onClick={checkEmailOverlap}
         >
           중복확인
-        </button>
+        </EmailButton>
       ) : (
         <div></div>
       )}
@@ -406,21 +416,34 @@ export const SignUp = function () {
         shouldCloseOnOverlayClick={false}
         style={customStyles}
       >
-        <ModalForm onSubmit={handleSubmitCode}>
-          <p className="grid grid-cols-2 justify-between">
-            인증번호를 입력하세요.
-            <span id="countdown" className="text-end">
+        <ModalForm
+          onSubmit={handleSubmitCode}
+          className="font-pretendard text-center"
+        >
+          <div className="flex flex-col">
+            <p className="">인증번호를 입력하세요.</p>
+            <span className="text-lilac-500 text-sm" id="countdown">
               남은시간 10:00
             </span>
-          </p>
+          </div>
           <input
-            className="bg-transparent focus:outline-none border-b-2 ml-2"
+            className="mt-4 bg-transparent focus:outline-none border-b-2 ml-2 text-center"
             type="text"
             onChange={handleCodeChange}
           />
-          <div className="flex justify-between mt-5 mx-5">
-            <ModalButton onClick={() => handleClose()}>닫기</ModalButton>
-            <ModalButton onSubmit={() => handleSubmitCode}>확인</ModalButton>
+          <div className="flex flex-row justify-between mt-5 mx-8">
+            <ModalButton
+              className="bg-black bg-opacity-10"
+              onClick={() => handleClose()}
+            >
+              닫기
+            </ModalButton>
+            <ModalButton
+              className="bg-lilac-300"
+              onSubmit={() => handleSubmitCode}
+            >
+              확인
+            </ModalButton>
           </div>
         </ModalForm>
       </Modal>
@@ -464,11 +487,11 @@ export const SignUp = function () {
           value={userdata.email}
           onChange={handleChange}
         />
-        <p className="text-red-500 w-full">{userEmailMessage}</p>
+        <p className="text-red-300 w-full text-xs">{userEmailMessage}</p>
 
-        <p>
+        <p className="mt-8">
           닉네임
-          <span style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}>
+          <span className="text-xs ml-3 opacity-60">
             영문, 한글, 숫자 2~15자 가능합니다.
           </span>
         </p>
@@ -479,19 +502,21 @@ export const SignUp = function () {
           onChange={handleChange}
         />
         {userNicknameCondition === 2 ? (
-          <p className="text-red-500 w-full">
+          <p className="text-red-300 w-full text-xs">
             닉네임은 영문, 한글, 숫자로 2-15자이어야 합니다.
           </p>
         ) : userNicknameCondition === 1 ? (
-          <p className="text-green-500 w-full">유효한 닉네임</p>
+          <p className="text-emerald-300 w-full text-xs">
+            유효한 닉네임 입니다.
+          </p>
         ) : (
           <></>
         )}
 
-        <p>비밀번호</p>
-        <span style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}>
-          5~25자, 영문, 숫자, 특수문자(!@#$%^*+=-) 가능. 특수문자는 필수는
-          아닙니다.
+        <p className="mt-8">비밀번호</p>
+        <span className="text-xs opacity-60">
+          5~25자, 영문, 숫자, 특수문자(!@#$%^*+=-)가 가능합니다. <br />
+          특수문자는 필수는 아닙니다.
         </span>
         <InputCSS
           name="userPw"
@@ -500,16 +525,18 @@ export const SignUp = function () {
           onChange={handleChange}
         />
         {userPwCondition === 2 ? (
-          <p className="text-red-500 w-full">
+          <p className="text-red-300 w-full text-xs">
             비밀번호는 특수, 영문, 숫자 조합으로 5-25자이어야 합니다.
           </p>
         ) : userPwCondition === 1 ? (
-          <p className="text-green-500 w-full">유효한 비밀번호</p>
+          <p className="text-emerald-300 w-full text-xs">
+            유효한 비밀번호 입니다.
+          </p>
         ) : (
           <></>
         )}
 
-        <p>비밀번호 확인</p>
+        <p className="mt-8">비밀번호 확인</p>
         <InputCSS
           name="userPwCheck"
           type="password"
@@ -517,20 +544,36 @@ export const SignUp = function () {
           onChange={handleChange}
         />
         {userPwMatch === 1 ? (
-          <p className="text-red-500">비밀번호 불일치</p>
+          <p className="text-red-300 w-full text-xs">
+            비밀번호가 일치하지 않습니다.
+          </p>
         ) : userPwMatch === 2 ? (
-          <p className="text-green-500">비밀번호 일치</p>
+          <p className="text-emerald-300 w-full text-xs">
+            비밀번호가 일치합니다.
+          </p>
         ) : (
           <p></p>
         )}
 
-        <button
-          className="p-2 px-4 text-sm rounded-full shadow-md w-48 mt-10 mx-auto"
-          style={{ backgroundColor: "#EFE0F4", color: "black" }}
-        >
-          확인
-        </button>
+        <MakeCapsuleButton className="mt-24 w-60 h-14 m-auto bottom-0 flex items-center justify-center">
+          회원가입
+        </MakeCapsuleButton>
       </Form>
     </div>
   )
 }
+
+const MakeCapsuleButton = styled.button`
+  border-radius: 30px;
+  font-size: 20px;
+  font-weight: 400;
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: ${(props) => props.theme.color900};
+  background-color: ${(props) => props.theme.color100};
+  &:hover {
+    transition: 0.2s;
+    transform: scale(0.95);
+    color: ${(props) => props.theme.color100};
+    background-color: ${(props) => props.theme.color700};
+  }
+`

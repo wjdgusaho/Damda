@@ -1,17 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react"
 import "../index.css"
-import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
 import { useNavigate, useParams } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
 import axios from "axios"
-import { serverUrl } from "../urls"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
 import Modal from "react-modal"
+import { DELETE_DETAIL, SET_DETAIL } from "../store/Timecapsule"
 
-interface DataType {
+export interface DataType {
   timecapsuleNo: number
   capsuleType: string
   registDate: string
@@ -319,55 +318,10 @@ const Shareimg = styled.img`
 const TimeCapsuleDetail = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
-  const [capsuleData, setCapsuleData] = useState<DataType>({
-    timecapsuleNo: 0,
-    capsuleType: "",
-    registDate: "",
-    openDate: "",
-    title: "",
-    description: "",
-    capsuleIcon: "",
-    goalCard: 0,
-    nowCard: 0,
-    inviteCode: "",
-    maxParticipant: 0,
-    nowParticipant: 0,
-    penalty: {
-      penaltyNo: 0,
-      penalty: false,
-      penaltyDescription: "",
-    },
-
-    criteriaInfo: {
-      criteriaId: 0,
-      criteriaType: "",
-      weatherStatus: "",
-      startTime: "",
-      endTime: "",
-      localBig: "",
-      localMedium: "",
-      timeKr: "",
-      cirteriaDays: [
-        {
-          dayKr: "",
-          dayEn: "",
-        },
-      ],
-    },
-    myInfo: {
-      userNo: 0,
-      cardAble: false,
-      fileAble: false,
-      host: false,
-    },
-    partInfo: [
-      {
-        userNo: 0,
-        nickname: "",
-        profileImage: "",
-      },
-    ],
-  })
+  const capsuleData = useSelector(
+    (state: RootState) => state.timecapsule.timecapsuleDetail
+  )
+  const dispatch = useDispatch()
 
   //카카오 javaScript 생성
   useEffect(() => {
@@ -387,19 +341,24 @@ const TimeCapsuleDetail = function () {
       try {
         const response = await axios({
           method: "GET",
-          url: serverUrl + `timecapsule/detail?timecapsuleNo=${capsuleId}`,
+          url:
+            process.env.REACT_APP_SERVER_URL +
+            `timecapsule/detail?timecapsuleNo=${capsuleId}`,
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,
           },
         })
-        setCapsuleData(response.data.data.timecapsule)
+        dispatch(SET_DETAIL(response.data.data.timecapsule))
       } catch (error) {
         console.log("Error fetching data:", error)
       }
     }
 
     fetchData()
+    return () => {
+      dispatch(DELETE_DETAIL())
+    }
   }, [capsuleId, token])
 
   console.log(capsuleData)
@@ -471,7 +430,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "PATCH",
-        url: serverUrl + "timecapsule/kick",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/kick",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -495,7 +454,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "PATCH",
-        url: serverUrl + "timecapsule/invite",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/invite",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -527,7 +486,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "PATCH",
-        url: serverUrl + "timecapsule/delete",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/delete",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -560,7 +519,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "PATCH",
-        url: serverUrl + "timecapsule/exit",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/exit",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -589,7 +548,9 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "GET",
-        url: serverUrl + `timecapsule/size?timecapsuleNo=${capsuleId}`,
+        url:
+          process.env.REACT_APP_SERVER_URL +
+          `timecapsule/size?timecapsuleNo=${capsuleId}`,
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -629,7 +590,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
         const response = await axios({
           method: "POST",
-          url: serverUrl + "timecapsule/regist/file",
+          url: process.env.REACT_APP_SERVER_URL + "timecapsule/regist/file",
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + token,
@@ -649,7 +610,9 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "GET",
-        url: serverUrl + `timecapsule/invite?timecapsuleNo=${capsuleId}`,
+        url:
+          process.env.REACT_APP_SERVER_URL +
+          `timecapsule/invite?timecapsuleNo=${capsuleId}`,
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -734,7 +697,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
       // 중복 initialization 방지
       if (!kakao.isInitialized()) {
-        kakao.init("e25afc7dead08f60a151179a01026248")
+        kakao.init(process.env.REACT_APP_KAKAO_KEY)
       }
 
       const imageUrls = [
@@ -896,7 +859,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
               {capsuleData.criteriaInfo.weatherStatus ||
               capsuleData.criteriaInfo.localBig ? (
-                <>
+                <div className="mt-3 text-center">
                   {capsuleData.criteriaInfo.weatherStatus ? (
                     <div>
                       <span className="font-bold">
@@ -904,22 +867,22 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                           ? "비"
                           : capsuleData.criteriaInfo.weatherStatus === "SNOW"
                           ? "눈"
-                          : null}
-                      </span>{" "}
-                      오는 날
+                          : null}{" "}
+                        <span className="font-normal">오는 날</span>
+                      </span>
                     </div>
                   ) : null}
                   {capsuleData.criteriaInfo.localBig ? (
-                    <>
+                    <div>
                       <span className="font-bold">
                         {capsuleData.criteriaInfo.localBig}{" "}
                         {capsuleData.criteriaInfo.localMedium}{" "}
                         <span className="font-normal">에서</span>
                       </span>{" "}
-                    </>
+                    </div>
                   ) : null}
-                  열 수 있어요
-                </>
+                  열 수 있어요.
+                </div>
               ) : null}
 
               {capsuleData.penalty ? (
@@ -1384,7 +1347,9 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "GET",
-        url: serverUrl + `timecapsule/size?timecapsuleNo=${capsuleId}`,
+        url:
+          process.env.REACT_APP_SERVER_URL +
+          `timecapsule/size?timecapsuleNo=${capsuleId}`,
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -1424,7 +1389,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
         const response = await axios({
           method: "POST",
-          url: serverUrl + "timecapsule/regist/file",
+          url: process.env.REACT_APP_SERVER_URL + "timecapsule/regist/file",
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + token,
@@ -1472,7 +1437,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
             {capsuleData.title}
           </Title>
           <div className="text-2xl font-bold relative mb-1">
-            <div>{capsuleData.title}</div>
+            <div className="invisible">{capsuleData.title}</div>
             <HightLight />
           </div>
           <div style={{ fontSize: "14px", textAlign: "center" }}>
@@ -1493,20 +1458,32 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
           {capsuleData.criteriaInfo.weatherStatus ||
           capsuleData.criteriaInfo.localBig ? (
-            <>
-              <div className="text-center mt-3">
-                <span className="font-bold">
-                  {capsuleData.criteriaInfo.weatherStatus}
-                </span>{" "}
-                오는 날 <br />
-                <span className="font-bold">
-                  {capsuleData.criteriaInfo.localBig}{" "}
-                  {capsuleData.criteriaInfo.localMedium}
-                </span>{" "}
-                에서 열 수 있어요
-              </div>
-            </>
+            <div className="mt-3 text-center">
+              {capsuleData.criteriaInfo.weatherStatus ? (
+                <div>
+                  <span className="font-bold">
+                    {capsuleData.criteriaInfo.weatherStatus === "RAIN"
+                      ? "비"
+                      : capsuleData.criteriaInfo.weatherStatus === "SNOW"
+                      ? "눈"
+                      : null}{" "}
+                    <span className="font-normal">오는 날</span>
+                  </span>
+                </div>
+              ) : null}
+              {capsuleData.criteriaInfo.localBig ? (
+                <div>
+                  <span className="font-bold">
+                    {capsuleData.criteriaInfo.localBig}{" "}
+                    {capsuleData.criteriaInfo.localMedium}{" "}
+                    <span className="font-normal">에서</span>
+                  </span>{" "}
+                </div>
+              ) : null}
+              열 수 있어요.
+            </div>
           ) : null}
+
           {capsuleData.capsuleType !== "GOAL" ? (
             <div className="my-3">
               <span className="font-bold">

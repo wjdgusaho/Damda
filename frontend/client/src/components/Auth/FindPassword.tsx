@@ -1,7 +1,6 @@
 import axios from "axios"
 import React, { useState, useEffect, useRef } from "react"
 import tw from "tailwind-styled-components"
-import { serverUrl } from "../../urls"
 import { useNavigate } from "react-router"
 import { Link } from "react-router-dom"
 
@@ -76,7 +75,7 @@ export const FindPassword = function () {
     setSendCode(true)
     axios({
       method: "POST",
-      url: serverUrl + "user/change-password/email",
+      url: process.env.REACT_APP_SERVER_URL + "user/change-password/email",
       headers: {
         "Content-Type": "application/json",
       },
@@ -129,7 +128,7 @@ export const FindPassword = function () {
     event.preventDefault()
     axios({
       method: "POST",
-      url: serverUrl + "user/change-password/code",
+      url: process.env.REACT_APP_SERVER_URL + "user/change-password/code",
       headers: {
         "Content-Type": "application/json",
       },
@@ -160,7 +159,7 @@ export const FindPassword = function () {
     } else {
       axios({
         method: "PATCH",
-        url: serverUrl + "user/change-password/new",
+        url: process.env.REACT_APP_SERVER_URL + "user/change-password/new",
         headers: {
           "Content-Type": "application/json",
         },

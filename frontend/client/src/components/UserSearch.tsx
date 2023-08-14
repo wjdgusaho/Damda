@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import { SubHeader } from "./inc/SubHeader"
 import styled from "styled-components"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 
@@ -53,7 +52,7 @@ const UserSearch = function () {
     } else {
       axios({
         method: "GET",
-        url: serverUrl + "user/search",
+        url: process.env.REACT_APP_SERVER_URL + "user/search",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -74,7 +73,7 @@ const UserSearch = function () {
     <>
       <SubHeader />
       <Box>
-        <Title>회원 검색</Title>
+        <Title className="mt-10 text-xl">회원 검색</Title>
         <div className="relative">
           <SearchInput
             className="focus:outline-none"
@@ -87,7 +86,7 @@ const UserSearch = function () {
             <SearchImg src="/assets/icons/search.png" alt="search" />
           </button>
           <div
-            className="mt-2"
+            className="mt-3"
             style={{ fontSize: "14px", opacity: "60%", fontWeight: "300" }}
           >
             검색결과
@@ -98,13 +97,8 @@ const UserSearch = function () {
             <>
               <NoResult>검색하려는 친구가 없어요</NoResult>
               <div className="relative">
-                <img
-                  src="/assets/universe/Astronaut-1.png"
-                  alt="목록없음"
-                  style={{ width: "15rem" }}
-                  className="mt-20"
-                />
-                <CapsuleShadow></CapsuleShadow>
+                <EmptyImage className="mt-20" />
+                <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
               </div>
             </>
           ) : (
@@ -141,7 +135,7 @@ const UserItem = function ({
   const handleRequest = function (event: React.MouseEvent<HTMLButtonElement>) {
     axios({
       method: "PATCH",
-      url: serverUrl + "friend/request",
+      url: process.env.REACT_APP_SERVER_URL + "friend/request",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
@@ -219,9 +213,7 @@ const Box = styled.div`
 `
 
 const Title = styled.div`
-  margin-top: 45px;
-  font-size: 20px;
-  font-weight: 500;
+  font-weight: 400;
 `
 
 const SearchInput = styled.input`
@@ -243,10 +235,11 @@ const SearchImg = styled.img`
 `
 
 const NoResult = styled.div`
-  margin-top: 50px;
+  font-weight: 200;
+  margin-top: 55px;
   text-align: center;
   font-size: 20px;
-  color: ${(props) => props.theme.color400};
+  opacity: 60%;
 `
 
 interface ButtonProps {
@@ -268,13 +261,22 @@ const GrayButton = styled(Button)`
 const CapsuleShadow = styled.div`
   z-index: -1;
   position: absolute;
-  bottom: -35px;
+  bottom: -25px;
   left: 38.75px;
   width: 155px;
   height: 60px;
   border-radius: 50%;
   background: ${(props) => props.theme.colorShadow};
   filter: blur(5px);
+`
+
+const EmptyImage = styled.div`
+  position: relative;
+  background-image: url(/${(props) => props.theme.emptyImg_2});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 15rem;
+  height: 240px;
 `
 
 type UserInfo = {

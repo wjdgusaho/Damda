@@ -99,7 +99,7 @@ const Menu = function () {
         </div>
         <MenuBtn
           onClick={() => {
-            navigate("/friend/list")
+            navigate("/friend")
           }}
           style={{ marginTop: "35px" }}
         >

@@ -5,7 +5,6 @@ import StickerContainer from "./StickerContainer"
 import { useNavigate, useParams } from "react-router-dom"
 import Modal from "react-modal"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 
@@ -128,11 +127,14 @@ const Card = function () {
     console.log("token", token)
     const fetchData = async () => {
       try {
-        const response = await axios.get(serverUrl + "timecapsule/deco/list", {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
+        const response = await axios.get(
+          process.env.REACT_APP_SERVER_URL + "timecapsule/deco/list",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
         console.log(response)
         setStickerList(response.data.data.decoList)
         setSticker(3)
@@ -179,7 +181,7 @@ const Card = function () {
       }
 
       const response = await axios.post(
-        serverUrl + "timecapsule/regist/card",
+        process.env.REACT_APP_SERVER_URL + "timecapsule/regist/card",
         formData,
         {
           headers: {
@@ -193,10 +195,6 @@ const Card = function () {
       if (response.data.code === 200) {
         alert("정상적으로 저장되었습니다.")
         navigate(-1)
-      } else if (response.data.code === 200) {
-        alert("오늘은 이미 카드작성을 완료하였습니다.")
-      } else {
-        alert("카드 저장에 실패했습니다.")
       }
     } catch (error) {
       console.error(error)
@@ -212,6 +210,7 @@ const Card = function () {
     html2canvas(target, {
       useCORS: true,
       scale: 2,
+      proxy: process.env.REACT_APP_SERVER_URL + "/html2canvas/proxy.json",
     }).then((canvas) => {
       canvas.toBlob((blob) => {
         if (blob) {
