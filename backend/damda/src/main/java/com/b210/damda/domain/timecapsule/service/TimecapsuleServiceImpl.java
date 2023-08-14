@@ -356,7 +356,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
          }
 
          //유저의 현재 타임캡슐 갯수 증가
-         user.setNowCapsuleCount(user.getNowCapsuleCount() + 1);
+         user.updatePlusTimecapsuleCount();
          userRepository.save(user);
 
         return saveTimecapsule.getTimecapsuleNo();
@@ -447,6 +447,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         카드 작성하기
      */
     @Override
+    @Transactional
     public void registCard(MultipartFile cardImage, Long timecapsuleNo) {
         //유저
         Long userNo = getUserNo();
@@ -492,7 +493,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
 
         // 코인 획득
-        user.setCoin(user.getCoin() + CARD_COIN_GET);
+        user.updatePlusCoin(CARD_COIN_GET);
         userRepository.save(user);
 
         // 코인 획득 로그 추가
@@ -536,7 +537,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }else if(timecapsuleInviteOp.isPresent() && timecapsuleInviteOp.get().getStatus().equals("ACCEPTED")){
             throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
         }
-        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteOp.get();
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
@@ -554,7 +554,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         timecapsuleRepository.save(timecapsule);
 
         // 유저의 타임캡슐 + 1
-        user.setNowCapsuleCount(user.getNowCapsuleCount() + 1);
+        user.updatePlusTimecapsuleCount();
         userRepository.save(user);
         
         // 타임캡슐 매핑 만들어서 저장
@@ -565,6 +565,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         TimecapsuleDetailDTO timecapsuleDetail = timecapsule.toTimecapsuleDetailDTO();
         if(timecapsuleDetail.getCapsuleType().equals("GOAL")){
             timecapsuleDetail.setNowCard(timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo()));
+        }
+
+        TimecapsuleInvite timecapsuleInvite = null;
+
+        if(timecapsuleInviteOp.isPresent()){
+            timecapsuleInvite = timecapsuleInviteOp.get();
         }
 
         // 타임캡슐 초대목록에 해당 유저 ACCEPTED로 생성
@@ -611,7 +617,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         // 타임캡슐 꺼냄
         Optional<Timecapsule> byIdTimecapsule = timecapsuleRepository.findById(timecapsuleNo);
-
         // 타임캡슐이 없을 경우
         if(byIdTimecapsule.isEmpty()){
             throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
@@ -619,12 +624,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         // 현재 유저의 타임캡슐매핑을 가져옴.
         TimecapsuleMapping byUserUserNoOne = timecapsuleMappingRepository.findByUserUserNoOne(timecapsuleNo, userNo);
-
         // 현재 유저가 방장이 아니면
         if(!byUserUserNoOne.isHost()){
             throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE_HOST);
         }
-
 
         Timecapsule timecapsule = byIdTimecapsule.get();
 
@@ -639,6 +642,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if (timecapsule.getNowParticipant() >= MAX_PARTICIOPANT) {
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
         }
+        System.out.println(123);
 
         // 수락상태고, 탈퇴안한 친구의 목록을 가져옴.
         String status = "ACCEPTED";
@@ -649,7 +653,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         // 타임캡슐 매핑리스트 꺼내옴.
         List<TimecapsuleMapping> timecapsuleMappings = timecapsuleMappingRepository.findByIdNo(timecapsuleNo);
-
+        System.out.println(123);
         Map<Long, TimecapsuleInvite> inviteMap = timecapsuleInviteList.stream()
                 .collect(Collectors.toMap(TimecapsuleInvite::getGuestUserNo, Function.identity()));
 
@@ -805,7 +809,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         timecapsuleMappingRepository.save(timecapsuleMapping1);
 
         // 유저의 현재 타임캡슐 +1
-        user.setNowCapsuleCount(user.getNowCapsuleCount() + 1);
+        user.updatePlusTimecapsuleCount();
         userRepository.save(user);
 
         // 타임캡슐 현재 인원 +1
@@ -1078,7 +1082,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             // 타임캡슐 참가자들의 현재 개수 감소
             for(TimecapsuleMapping tm : tmList){
                 User findUser = userRepository.findById(tm.getUser().getUserNo()).get();
-                findUser.setNowCapsuleCount(findUser.getNowCapsuleCount() - 1);
+                findUser.updateMinusTimecapsuleCount();
                 tm.updateDeleteDate(Timestamp.from(Instant.now()));
                 userRepository.save(findUser);
             }
@@ -1092,7 +1096,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             timecapsuleInvite.updateStatus("REJECTED");
             timecapsuleInviteRepository.save(timecapsuleInvite);
 
-            user.setNowCapsuleCount(user.getNowCapsuleCount() - 1);
+            user.updateMinusTimecapsuleCount();
             userRepository.save(user);
         }
 
@@ -1136,7 +1140,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         );
 
         //유저 타임캡슐 값 감소
-        kickUser.setNowCapsuleCount(user.getNowCapsuleCount() - 1);
+        kickUser.updateMinusTimecapsuleCount();
         userRepository.save(kickUser);
 
         // 타임캡슐 초대 데이터 찾아서 REJECTED로 변경
@@ -1196,7 +1200,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         // 타임캡슐 참가자들의 현재 개수 감소
         for(TimecapsuleMapping tm : tmList){
             User findUser = userRepository.findById(tm.getUser().getUserNo()).get();
-            findUser.setNowCapsuleCount(findUser.getNowCapsuleCount() - 1);
+            findUser.updateMinusTimecapsuleCount();
             tm.updateDeleteDate(Timestamp.from(Instant.now()));
             userRepository.save(findUser);
             timecapsuleMappingRepository.save(tm);
