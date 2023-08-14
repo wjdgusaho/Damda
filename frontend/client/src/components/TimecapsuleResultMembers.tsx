@@ -82,24 +82,28 @@ const TimecapsuleResultMembers = function () {
     fetchData()
   }, [])
 
-  function fileDownload(): void {
+  function fileDownload() {
+    alert("잠시만 기다려주세요!")
     const fetchData = async () => {
       try {
         const timecapsuleNo = capsuleId
-        const response = await axios.get(
+        const response2 = await axios.get(
           process.env.REACT_APP_SERVER_URL +
-            `/s3/download/zip/timecapsule/${timecapsuleNo}/file`,
+            `s3/download/zip/timecapsule/${timecapsuleNo}/file`,
           {
             headers: {
               Authorization: "Bearer " + token,
             },
           }
         )
-        if (response.data.code === 200) {
-          console.log("파일 다운로드 정상 작동")
-        } else {
-          console.log("파일 다운로드 안됨!!!!!!!!!!!!!")
-        }
+        console.log("0000000000000000000000000", response2.data)
+
+        // if (response2.data.code === 200) {
+        //   console.log("파일 다운로드 정상 작동")
+        // } else {
+        //   alert(response2.data.message)
+        //   console.log("파일 다운로드 안됨!!!!!!!!!!!!!")
+        // }
       } catch (error) {
         console.error(error)
       }
