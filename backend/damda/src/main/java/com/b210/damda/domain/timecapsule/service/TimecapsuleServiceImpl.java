@@ -536,7 +536,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }else if(timecapsuleInviteOp.isPresent() && timecapsuleInviteOp.get().getStatus().equals("ACCEPTED")){
             throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
         }
-        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteOp.get();
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
@@ -565,6 +564,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         TimecapsuleDetailDTO timecapsuleDetail = timecapsule.toTimecapsuleDetailDTO();
         if(timecapsuleDetail.getCapsuleType().equals("GOAL")){
             timecapsuleDetail.setNowCard(timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo()));
+        }
+
+        TimecapsuleInvite timecapsuleInvite = null;
+
+        if(timecapsuleInviteOp.isPresent()){
+            timecapsuleInvite = timecapsuleInviteOp.get();
         }
 
         // 타임캡슐 초대목록에 해당 유저 ACCEPTED로 생성
