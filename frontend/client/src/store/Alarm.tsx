@@ -21,14 +21,11 @@ export interface alarmFriendType {
 }
 
 export interface alarmCapsuleType {
-  timecapsuleNo: number
-  type: string
-  sDate: string
-  eDate: string
-  name: string
-  capsuleIconNo: string
-  curCard: number
-  goalCard: number
+  fromUser: number
+  fromName: string
+  fromProfileImage: string
+  content: string
+  code: string
   date: string
 }
 
@@ -57,7 +54,7 @@ export const alarmSlice = createSlice({
     },
     DELETE_TIMECAPSULES: (state, action: PayloadAction<number>) => {
       state.timecapsules = state.timecapsules.filter(
-        (t) => t.timecapsuleNo !== action.payload
+        (t) => t.fromUser !== action.payload
       )
     },
     DELETE_ALARM_ALL: (state) => {

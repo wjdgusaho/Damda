@@ -13,7 +13,6 @@ import ShopPage from "./components/ShopPage"
 import TimecapsulePage from "./components/TimecapsulePage"
 import Card from "./components/Card"
 import Friend from "./components/Friend"
-import { List, Request } from "./components/Friend"
 import Login from "./components/Auth/Login"
 import { SignUp } from "./components/Auth/SignUp"
 import { Logout } from "./components/Auth/Logout"
@@ -39,7 +38,13 @@ import { SET_TOKEN } from "./store/Auth"
 import { serverUrl } from "./urls"
 import { TimecapsuleOpen } from "./components/TimecapsuleOpen"
 import TimecapsuleResult from "./components/TimecapsuleResult"
-import { ADD_FRIENDS, alarmFriendType, toastOption } from "./store/Alarm"
+import {
+  ADD_FRIENDS,
+  ADD_TIMECAPSULES,
+  alarmCapsuleType,
+  alarmFriendType,
+  toastOption,
+} from "./store/Alarm"
 import { EmptyPage } from "./components/EmptyPage"
 
 function Main() {
@@ -128,13 +133,20 @@ function Main() {
       // addEventListener : 특정 이벤트 string 값을 서버에서 받으면 콜백함수를 실행한다.
       // 콜백함수 : (event) => {}  <-- 이렇게 쓰는게 하나의 콜백함수.
       newEventSource.addEventListener("friend-event", (event: any) => {
-        // console.log("Friend : ", event)
         const data: alarmFriendType = JSON.parse(event["data"])
         toast.info(
           `${data.fromName}#${data.fromUser}\n${data.content}\n${data.date}`,
           toastOption
         )
         dispatch(ADD_FRIENDS(data))
+      })
+      newEventSource.addEventListener("timecapsule-event", (event: any) => {
+        const data: alarmCapsuleType = JSON.parse(event["data"])
+        toast.info(
+          `${data.fromName}#${data.fromUser}\n${data.content}\n${data.date}`,
+          toastOption
+        )
+        dispatch(ADD_TIMECAPSULES(data))
       })
       newEventSource.addEventListener("check-connection", (event: any) => {
         // 새롭게 서버로 보낼 이벤트소스
@@ -222,7 +234,10 @@ function Main() {
                   path="/savetimecapsule/"
                   element={<SavedTimecapsule />}
                 ></Route>
-                <Route path="/participate/" element={<Participate />}></Route>
+                <Route
+                  path="/participate/"
+                  element={<Participate code={""} />}
+                ></Route>
                 <Route path="/selecttype/" element={<SelectType />}></Route>
                 <Route path="/classic/" element={<ClassicCapsule />}></Route>
                 <Route path="/record/" element={<RecordCapsule />}></Route>
