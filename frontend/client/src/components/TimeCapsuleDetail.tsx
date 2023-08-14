@@ -849,8 +849,8 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
               {capsuleData.criteriaInfo.cirteriaDays ? (
                 <div className="text-center mt-3">
                   매주{" "}
-                  {capsuleData.criteriaInfo.cirteriaDays?.map((day) => (
-                    <span key={day.dayEn} className="font-bold">
+                  {capsuleData.criteriaInfo.cirteriaDays?.map((day, idx) => (
+                    <span key={idx} className="font-bold">
                       {day.dayKr}{" "}
                     </span>
                   ))}{" "}
@@ -1448,8 +1448,8 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           {capsuleData.criteriaInfo.cirteriaDays ? (
             <div className="text-center mt-3">
               매주{" "}
-              {capsuleData.criteriaInfo.cirteriaDays?.map((day) => (
-                <span key={day.dayEn} className="font-bold">
+              {capsuleData.criteriaInfo.cirteriaDays?.map((day, idx) => (
+                <span key={idx} className="font-bold">
                   {day.dayKr}{" "}
                 </span>
               ))}{" "}

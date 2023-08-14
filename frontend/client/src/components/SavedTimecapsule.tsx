@@ -127,12 +127,12 @@ const SavedTimecapsule = function () {
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [capsuleList, setCapsuleList] = useState<CapsuleDataType[]>([])
   const navigate = useNavigate()
+  const [deleteNo, setDeleteNo] = useState(123456789)
 
   const [modalIsOpen, setIsOpen] = React.useState(false)
 
   function openModal() {
     setIsOpen(true)
-    console.log(11111111111)
   }
 
   function closeModal() {
@@ -141,6 +141,7 @@ const SavedTimecapsule = function () {
 
   const handleDeleteClick = (event: React.MouseEvent, capsuleNo: number) => {
     event.stopPropagation() // 이벤트 버블링 막음
+    setDeleteNo(capsuleNo)
     openModal()
   }
 
@@ -159,17 +160,19 @@ const SavedTimecapsule = function () {
     try {
       const response = await axios({
         method: "PATCH",
-        url: process.env.REACT_APP_SERVER_URL + "timecapsule/store/delete",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/exit",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
         },
         data: {
-          id: capsuleNo + "",
+          timecapsuleNo: capsuleNo + "",
         },
       })
       if (response.data.code === 200) {
         console.log(response.data)
+        window.location.reload()
+        // 새로고침 추가하기
       } else if (response.data.code === 404) {
         alert("타임캡슐이 존재하지 않습니다.")
       } else if (response.data.code === 401) {
@@ -226,31 +229,6 @@ const SavedTimecapsule = function () {
                     alt="bin"
                     style={{ width: "20px", height: "20.5px" }}
                   />
-                  <Modal
-                    isOpen={modalIsOpen}
-                    onRequestClose={closeModal}
-                    style={customStyles}
-                    contentLabel="DeleteModal"
-                  >
-                    <ModalContent>
-                      <ModalTitle className="my-2">
-                        정말 삭제하시겠어요?
-                      </ModalTitle>
-                      <div>삭제하면 타임캡슐이 사라져요.</div>
-                      <div className="mt-2">
-                        <FileCencelBtn type="button" onClick={handleCloseModal}>
-                          취소
-                        </FileCencelBtn>
-                        <FileSubmitBtn
-                          onClick={(e) =>
-                            handleDeleteConfirm(e, capsule.timecapsuleNo)
-                          }
-                        >
-                          삭제
-                        </FileSubmitBtn>
-                      </div>
-                    </ModalContent>
-                  </Modal>
                 </CapsuleState>
 
                 <DateDiv
@@ -266,6 +244,25 @@ const SavedTimecapsule = function () {
             </Card>
           </div>
         ))}
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="DeleteModal"
+        >
+          <ModalContent>
+            <ModalTitle className="my-2">정말 삭제하시겠어요?</ModalTitle>
+            <div>삭제하면 타임캡슐이 사라져요.</div>
+            <div className="mt-2">
+              <FileCencelBtn type="button" onClick={handleCloseModal}>
+                취소
+              </FileCencelBtn>
+              <FileSubmitBtn onClick={(e) => handleDeleteConfirm(e, deleteNo)}>
+                삭제
+              </FileSubmitBtn>
+            </div>
+          </ModalContent>
+        </Modal>
       </Box>
     </>
   )
