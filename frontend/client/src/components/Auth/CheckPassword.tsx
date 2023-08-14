@@ -144,9 +144,12 @@ export const CheckPassword = function () {
       <SubHeader />
       <Box className="w-80 m-auto">
         <InfoImage />
-        <div>회원님의 개인정보를 안전하게 보호하기 위해</div>
-        <div>
-          <AmphText>2차 인증 후 변경이 가능</AmphText>합니다.
+        <div className="font-light">
+          회원님의 개인정보를 안전하게 보호하기 위해
+        </div>
+        <div className="font-light">
+          <AmphText className="font-normal">2차 인증 후 변경이 가능</AmphText>
+          합니다.
         </div>
         <form onSubmit={handlePwSubmit}>
           <ContentWrap className="mt-3">
