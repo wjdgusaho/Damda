@@ -12,7 +12,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Setter
 @Getter
 @ToString
 @EntityListeners(AuditingEntityListener.class)
@@ -59,10 +58,25 @@ public class TimecapsuleInvite {
         return this;
     }
 
+    public TimecapsuleInvite friendTimecapsuleInvite(Timecapsule timecapsule, User user){
+        this.timecapsule = timecapsule;
+        this.guestUserNo = user.getUserNo();
+        this.timecapsuleCriteria = timecapsule.getTimecapsuleCriteria();
+        this.timecapsulePenalty = timecapsule.getTimecapsulePenalty();
+        this.status = "NOTREAD";
+        this.requestDate = LocalDateTime.now();
+
+        return this;
+    }
+
     public TimecapsuleInvite acceptTimecapsuleInvite(TimecapsuleInvite timecapsuleInvite){
         this.status = "ACCEPTED";
         this.requestDate = LocalDateTime.now();
 
         return this;
+    }
+
+    public void updateStatus(String status){
+        this.status = status;
     }
 }

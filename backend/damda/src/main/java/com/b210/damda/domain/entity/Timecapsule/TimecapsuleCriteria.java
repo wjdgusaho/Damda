@@ -10,9 +10,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Setter  @Getter
-@Builder
-@AllArgsConstructor
+@Getter
 public class TimecapsuleCriteria {
 
     @Id
@@ -35,6 +33,18 @@ public class TimecapsuleCriteria {
 
     public TimecapsuleCriteria() {
 
+    }
+
+    @Builder
+    public TimecapsuleCriteria(String type, String weatherStatus, Integer startTime,
+                               Integer endTime, String localBig, String localMedium, String timeKr){
+        this.type = type;
+        this.weatherStatus = weatherStatus;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.localBig = localBig;
+        this.localMedium = localMedium;
+        this.timeKr = timeKr;
     }
 
     public TimecapsuleCriteriaDTO toTimecapsuleCriteriaDTO(){
