@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Base64;
 
 @Controller
 @RequestMapping(value="/html2canvas")
@@ -19,7 +20,7 @@ public class html2canvasController {
 
     @RequestMapping(value="/proxy.json", method= RequestMethod.GET)
     @ResponseBody
-    public byte[] html2canvasProxy(HttpServletRequest req) {
+    public String html2canvasProxy(HttpServletRequest req) {
         byte[] data = null;
         try {
             URL url = new URL(URLDecoder.decode(req.getParameter("url"),
@@ -31,6 +32,7 @@ public class html2canvasController {
 
             if(connection.getResponseCode() == 200) {
                 data = IOUtils.toByteArray(connection.getInputStream());
+                return "data:image/png;base64," + Base64.getEncoder().encodeToString(data);
             } else {
                 System.out.println("responseCode : "
                         + connection.getResponseCode());
@@ -40,6 +42,6 @@ public class html2canvasController {
         } catch(Exception e) {
             System.out.println(e);
         }
-        return data;
+        return null;
     }
 }
