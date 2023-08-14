@@ -210,7 +210,7 @@ const Card = function () {
     html2canvas(target, {
       useCORS: true,
       scale: 2,
-      //////////
+      proxy: process.env.REACT_APP_SERVER_URL + "/html2canvas/proxy.json",
     }).then((canvas) => {
       canvas.toBlob((blob) => {
         if (blob) {
