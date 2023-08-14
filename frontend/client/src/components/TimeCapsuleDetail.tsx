@@ -391,6 +391,7 @@ interface FileDataType {
   nowFilesize: number
 }
 
+// 미등록 타임캡슐
 export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const endDateString = capsuleData.openDate
     ? capsuleData.openDate.toString().slice(0, 10)
