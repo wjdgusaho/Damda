@@ -40,6 +40,8 @@ import TimecapsuleResult from "./components/TimecapsuleResult"
 import {
   ADD_FRIENDS,
   ADD_TIMECAPSULES,
+  DELETE_SSE,
+  SET_SSE,
   alarmCapsuleType,
   alarmFriendType,
   toastOption,
@@ -77,10 +79,8 @@ function Main() {
   })
 
   const [isOnline, setIsOnline] = useState(navigator.onLine)
-  const [eventSource, setEventSource] = useState<EventSource | null>(null)
-  const [otherEventSource, setOtherEventSource] = useState<EventSource | null>(
-    null
-  )
+  // const [eventSource, setEventSource] = useState<EventSource | null>(null)
+  const eventSource = useSelector((state: RootState) => state.alarm.eventSource)
 
   const handleOnline = () => {
     setIsOnline(true)
@@ -154,23 +154,20 @@ function Main() {
         // 새롭게 서버로 보낼 이벤트소스
         // process.env.REACT_APP_SERVER_URL + (내가 보낼 url 주소)
         // headers에는 토큰 값. 헤더 이외의 값 추가하려면 , 뒤에 넣을 것.
-        if (otherEventSource === null) {
-          const otherESource = new EventSourcePolyfill(
-            process.env.REACT_APP_SERVER_URL + "sse/check",
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-              },
-            }
-          )
-          otherESource.onmessage = (event) => {
-            console.log("check message : ", event)
+        const otherESource = new EventSourcePolyfill(
+          process.env.REACT_APP_SERVER_URL + "sse/check",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
           }
-          otherESource.onerror = (event) => {
-            console.log("check error : ", event)
-            otherESource.close()
-          }
-          setOtherEventSource(otherESource)
+        )
+        otherESource.onmessage = (event) => {
+          console.log("check message : ", event)
+        }
+        otherESource.onerror = (event) => {
+          console.log("check error : ", event)
+          otherESource.close()
         }
       })
       // 장기간 미응답으로 연결을 해제하고 다시 연결함.
@@ -181,8 +178,8 @@ function Main() {
         }, 10000)
       })
 
-      // 신경쓰지 않아도 됨.
-      setEventSource(newEventSource)
+      // 설정한 이벤트소스 재설정.
+      dispatch(SET_SSE(newEventSource))
     }
   }
 
@@ -191,7 +188,7 @@ function Main() {
     if (eventSource !== null) {
       // sse 종료 함수.
       eventSource.close()
-      setEventSource(null)
+      dispatch(DELETE_SSE())
     }
   }
 

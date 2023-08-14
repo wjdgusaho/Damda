@@ -32,11 +32,13 @@ export interface alarmCapsuleType {
 interface alarmData {
   friends: alarmFriendType[]
   timecapsules: alarmCapsuleType[]
+  eventSource: EventSource | null
 }
 
 const initialState: alarmData = {
   friends: [],
   timecapsules: [],
+  eventSource: null,
 }
 
 export const alarmSlice = createSlice({
@@ -49,6 +51,9 @@ export const alarmSlice = createSlice({
     ADD_TIMECAPSULES: (state, action: PayloadAction<alarmCapsuleType>) => {
       state.timecapsules = state.timecapsules.concat(action.payload)
     },
+    SET_SSE: (state, action: PayloadAction<EventSource>) => {
+      state.eventSource = action.payload
+    },
     DELETE_FRIENDS: (state, action: PayloadAction<number>) => {
       state.friends = state.friends.filter((f) => f.fromUser !== action.payload)
     },
@@ -56,6 +61,9 @@ export const alarmSlice = createSlice({
       state.timecapsules = state.timecapsules.filter(
         (t) => t.fromUser !== action.payload
       )
+    },
+    DELETE_SSE: (state) => {
+      state.eventSource = null
     },
     DELETE_ALARM_ALL: (state) => {
       state = initialState
@@ -66,8 +74,10 @@ export const alarmSlice = createSlice({
 export const {
   ADD_FRIENDS,
   ADD_TIMECAPSULES,
+  SET_SSE,
   DELETE_FRIENDS,
   DELETE_TIMECAPSULES,
+  DELETE_SSE,
   DELETE_ALARM_ALL,
 } = alarmSlice.actions
 
