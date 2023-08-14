@@ -1028,6 +1028,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
         TimecapsuleMapping timecapsuleMapping = getTimecapsuleMapping(user.getUserNo(), timecapsule.getTimecapsuleNo());
 
+        if(timecapsuleMapping.isSave() == true){
+            throw new CommonException(CustomExceptionStatus.ALREADY_SAVE_TIMECAPSULE);
+        }
         //보관함으로 저장
         timecapsuleMapping.updateIsSave(true);
         timecapsuleMapping.updateSaveDate(Timestamp.valueOf(LocalDateTime.now()));

@@ -87,6 +87,7 @@ public enum CustomExceptionStatus {
     NOT_USER_TIMECAPSULE(-3018, "해당 유저의 타임캡슐이 아닙니다."),
     NOT_SAVED_TIMECAPSULE(-3019, "저장되지 않은 타임캡슐입니다."),
     NOT_OPEN_TIMECAPSULE(-3020, "아직 열지 않은 타임캡슐입니다."),
+    ALREADY_SAVE_TIMECAPSULE(-3021, "이미 저장된 타임캡슐입니다"),
 
     // 확장자 문제
     EXTENSION_ERROR_IMAGE(-8000, "사진 확장자만 등록 가능합니다."),
