@@ -193,10 +193,6 @@ const Card = function () {
       if (response.data.code === 200) {
         alert("정상적으로 저장되었습니다.")
         navigate(-1)
-      } else if (response.data.code === 200) {
-        alert("오늘은 이미 카드작성을 완료하였습니다.")
-      } else {
-        alert("카드 저장에 실패했습니다.")
       }
     } catch (error) {
       console.error(error)
