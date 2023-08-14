@@ -134,7 +134,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             user = optionalUser.get();
             log.info("로그인 성공"+ user);
             KakaoLog kakaolog = kakaoLogRepository.findByUserUserNo(user.getUserNo());
-            kakaolog.updateKakaoLog(userRequest.getAccessToken().getTokenValue());
+            if(kakaolog == null){
+                kakaolog.createKakaoLog(userRequest.getAccessToken().getTokenValue(), user);
+            }else {
+                kakaolog.updateKakaoLog(userRequest.getAccessToken().getTokenValue());
+            }
             kakaoLogRepository.save(kakaolog);
         }
         
