@@ -530,12 +530,13 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
 
         // 타임캡슐 초대 기록을 찾음
-        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, userNo).get();
-        if(timecapsuleInvite != null && timecapsuleInvite.getStatus().equals("REJECTED")){
+        Optional<TimecapsuleInvite> timecapsuleInviteOp = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, userNo);
+        if(timecapsuleInviteOp.isPresent() && timecapsuleInviteOp.get().getStatus().equals("REJECTED")){
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
-        }else if(timecapsuleInvite != null && timecapsuleInvite.getStatus().equals("ACCEPTED")){
+        }else if(timecapsuleInviteOp.isPresent() && timecapsuleInviteOp.get().getStatus().equals("ACCEPTED")){
             throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
         }
+        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteOp.get();
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
