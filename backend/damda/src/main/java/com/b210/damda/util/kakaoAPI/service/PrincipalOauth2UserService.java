@@ -3,6 +3,7 @@ package com.b210.damda.util.kakaoAPI.service;
 
 import com.b210.damda.domain.entity.Items.Items;
 import com.b210.damda.domain.entity.Items.ItemsMapping;
+import com.b210.damda.domain.entity.User.KakaoLog;
 import com.b210.damda.domain.entity.User.UserLog;
 
 import com.b210.damda.domain.entity.theme.Theme;
@@ -14,6 +15,7 @@ import com.b210.damda.domain.shop.repository.ThemeRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.domain.user.service.UserService;
+import com.b210.damda.util.kakaoAPI.repository.KakaoLogRepository;
 import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,8 @@ import java.util.Optional;
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+
+    private final KakaoLogRepository kakaoLogRepository;
     private final BCryptPasswordEncoder encoder;
     private final UserService userService;
     private final UserLogRepository userLogRepository;
@@ -43,10 +47,13 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     private final ThemeMappingRepository themeMappingRepository;
     private final ThemeRepository themeRepository;
 
+
+
     @Autowired
     public PrincipalOauth2UserService(UserRepository userRepository, BCryptPasswordEncoder encoder, UserService userService, UserLogRepository userLogRepository, RefreshTokenRepository refreshTokenRepository,
                                       ItemsMappingRepository itemsMappingRepository, ItemsRepository itemsRepository, ThemeMappingRepository themeMappingRepository,
-                                      ThemeRepository themeRepository) {
+                                      ThemeRepository themeRepository, KakaoLogRepository kakaoLogRepository
+    ) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.userService = userService;
@@ -56,6 +63,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         this.itemsRepository = itemsRepository;
         this.themeMappingRepository = themeMappingRepository;
         this.themeRepository = themeRepository;
+        this.kakaoLogRepository = kakaoLogRepository;
     }
 
     @Override
@@ -117,12 +125,18 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
             ThemeMapping themeMapping = new ThemeMapping(user, theme);
             themeMappingRepository.save(themeMapping);
+            KakaoLog kakaoLog = new KakaoLog();
+            kakaoLog.createKakaoLog(userRequest.getAccessToken().getTokenValue(), user);
+            kakaoLogRepository.save(kakaoLog);
+
         }
         else{
             user = optionalUser.get();
             log.info("로그인 성공"+ user);
+            KakaoLog kakaolog = kakaoLogRepository.findByUserUserNo(user.getUserNo());
+            kakaolog.updateKakaoLog(userRequest.getAccessToken().getTokenValue());
         }
-
+        
         // 카카오 유저 로그인 로그 저장
         UserLog userLog = new UserLog();
         userLog.setUser(user);
