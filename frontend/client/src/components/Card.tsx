@@ -63,6 +63,7 @@ const Card = function () {
   const day = String(currentDate.getDate()).padStart(2, "0")
   const navigate = useNavigate()
   const timecapsuleNo = useParams()
+  const profileImg = useRef<HTMLImageElement | null>(null)
 
   const goBack = () => {
     navigate(-1) // 뒤로가기
@@ -143,6 +144,23 @@ const Card = function () {
       }
     }
     fetchData()
+
+    const imageURL = encodeURIComponent(UserData.profileImage) // 인코딩된 이미지 URL
+    const proxyURL = `${process.env.REACT_APP_SERVER_URL}html2canvas/proxy.json?url=${imageURL}`
+
+    axios({
+      method: "GET",
+      url: proxyURL,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => {
+        if (profileImg.current) {
+          profileImg.current.src = response.data
+        }
+      })
+      .catch((error) => console.error(error))
   }, [])
 
   useEffect(() => {
@@ -210,7 +228,6 @@ const Card = function () {
     html2canvas(target, {
       useCORS: true,
       scale: 2,
-      proxy: process.env.REACT_APP_SERVER_URL + "/html2canvas/proxy.json",
     }).then((canvas) => {
       canvas.toBlob((blob) => {
         if (blob) {
@@ -336,7 +353,7 @@ const Card = function () {
                 objectFit: "cover",
                 marginRight: "8px",
               }}
-              src={UserData.profileImage}
+              ref={profileImg}
               alt="프로필사진"
             />
             <span className="mt-1 font-light text-neutral-500">
