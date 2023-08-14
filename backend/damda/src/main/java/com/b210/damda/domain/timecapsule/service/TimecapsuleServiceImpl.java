@@ -529,6 +529,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
         }
 
+        // 타임캡슐 초대 기록을 찾음
+        TimecapsuleInvite timecapsuleInvite = timecapsuleInviteRepository.getTimecapsuleInviteByTimecapsuleAndGuestUserNo(timecapsule, userNo).get();
+        if(timecapsuleInvite != null && timecapsuleInvite.getStatus().equals("REJECTED")){
+            throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
+        }else if(timecapsuleInvite != null && timecapsuleInvite.getStatus().equals("ACCEPTED")){
+            throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
+        }
+
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
         // 타임캡슐이 생성된 지 24시간이 지나서 참여 불가
@@ -559,7 +567,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
 
         // 타임캡슐 초대목록에 해당 유저 ACCEPTED로 생성
-        TimecapsuleInvite timecapsuleInvite = new TimecapsuleInvite();
+        if(timecapsuleInvite == null) {
+            timecapsuleInvite = new TimecapsuleInvite();
+        }
         timecapsuleInvite.createTimecapsuleInvite(timecapsule, user);
         timecapsuleInviteRepository.save(timecapsuleInvite);
 
