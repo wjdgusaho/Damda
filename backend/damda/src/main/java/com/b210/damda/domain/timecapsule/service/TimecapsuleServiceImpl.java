@@ -69,6 +69,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final Long MAX_FILESIZE = (long) 50 * (1024 * 1024);
     private final int NOW_PARTICIOPANT = 1;
     private final int CARD_COIN_GET = 50;
+
+    //한국 시간 설정
+    private static final ZoneId SEOUL_ZONE_ID = ZoneId.of("Asia/Seoul");
+
     /*
         시큐리티에있는 유저NO 불러오기
      */
@@ -122,34 +126,27 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
 
     /*
-        타임캡슐 리스트 받아오기
+        진행중인 타임캡슐 리스트 받아오기
      */
-    @Override
-    public Map<String,List<TimecapsuleMapping>> getTimecapsuleList(Long userNo){
-        List<TimecapsuleMapping> timecapsules = timecapsuleMappingRepository.findByUserUserNo(userNo);
-
-        //타임캡슐이 있는지?
-        if(timecapsules.size() < 1){
-            throw new CommonException(CustomExceptionStatus.NOT_TIMECAPSULE);
+    public List<TimecapsuleMapping> getWorkTimecapsuleList(Long userNo){
+        List<TimecapsuleMapping> workTimecapsule = timecapsuleMappingRepository.findWorkTimecapsules(userNo);
+        //진행중인 타임캡슐이 없다면
+        if(workTimecapsule.size() < 1){
+            throw new CommonException(CustomExceptionStatus.NOT_WORK_TIMECAPSULE);
         }
-        //진행중인 타임캡슐
-        List<TimecapsuleMapping> workTimecapsules = new ArrayList<>();
-        //저장된 타임캡슐
-        List<TimecapsuleMapping> saveTimecapsules = new ArrayList<>();
+        return workTimecapsule;
+    }
 
-        for(TimecapsuleMapping timecapsule : timecapsules){
-            //캡슐이 와전히 삭되었거나, 캡슐저장을 삭제한경우 넘어가라
-            if(timecapsule.getTimecapsule().getRemoveDate() != null ||
-                timecapsule.getDeleteDate() != null) continue;
-            if( timecapsule.isSave() == false) workTimecapsules.add(timecapsule);
-            else saveTimecapsules.add(timecapsule);
+    /*
+        저장된 타임캡슐 리스트 받아오기
+     */
+    public List<TimecapsuleMapping> getSaveTimecapsuleList(Long userNo){
+        List<TimecapsuleMapping> saveTimecapsule = timecapsuleMappingRepository.findSaveTimecapsules(userNo);
+        //저장된 타임캡슐이 없는경우
+        if(saveTimecapsule.size() < 1){
+            throw new CommonException(CustomExceptionStatus.NOT_SAVE_TIMECAPSULE);
         }
-
-        Map<String,List<TimecapsuleMapping>> allTimecapsuleList = new HashMap<>();
-        allTimecapsuleList.put("workTimecapsules", workTimecapsules);
-        allTimecapsuleList.put("saveTimecapsules", saveTimecapsules);
-
-        return allTimecapsuleList;
+        return saveTimecapsule;
     }
 
     /*
@@ -159,15 +156,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     public List<MainTimecapsuleListDTO> workTimecapsule(WeatherLocationDTO weatherLocationDto) {
         Long userNo = getUserNo();
         User user = getUser(userNo);
-
-        Map<String,List<TimecapsuleMapping>> allTimecapsuleList = getTimecapsuleList(userNo);
-
-        List<TimecapsuleMapping> workTimecapsules = allTimecapsuleList.get("workTimecapsules");
-
-        //진행중인 타임캡슐이 없다면
-        if(workTimecapsules.size() < 1){
-            throw new CommonException(CustomExceptionStatus.NOT_WORK_TIMECAPSULE);
-        }
+        List<TimecapsuleMapping> workTimecapsules = getWorkTimecapsuleList(userNo);
 
         List<MainTimecapsuleListDTO> timecapsuleList = new ArrayList<>();
         for(TimecapsuleMapping timecapsule : workTimecapsules){
@@ -234,8 +223,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                                 //날씨 갱신이 필요한가 - 현재 시간과 userLocationTime의 시간값의 차이를 계산
                                 LocalDateTime userLocationTime = userLocation.getWeatherTime().toLocalDateTime();
                                 long hourDifference = LocalDateTime.now().getHour() - userLocationTime.getHour();
-                                // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상이거나 , 날씨 정보값이 null인경우
-                                log.info(weatherLocationDto.toString());
+                                // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상이거나 , 날씨 정보값이 null인경
                                 if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1
                                         || userLocation.getWeather() == null || userLocation.getWeather().trim().equals("")) {
                                     //날씨 갱신
@@ -254,11 +242,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                     }
                 }
                 //시간 조건 확인 (한국)
-                ZoneId seoulZoneId = ZoneId.of("Asia/Seoul");
-                ZonedDateTime seoulTime = LocalDateTime.now().atZone(seoulZoneId);
+                ZonedDateTime seoulTime = LocalDateTime.now().atZone(SEOUL_ZONE_ID);
                 //캡슐 오픈 날짜
                 ZonedDateTime openDate = timecapsule.getTimecapsule().getOpenDate()
-                        .toLocalDateTime().atZone(seoulZoneId);
+                        .toLocalDateTime().atZone(SEOUL_ZONE_ID);
                 //날짜가 지났다면 (날짜만 비교 LocalDate)
                 if(seoulTime.isAfter(openDate)){
                     //시간을 설정했고 그 설정한시간보다 전이라면
@@ -285,13 +272,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         Long userNo = getUserNo();
 
-        Map<String,List<TimecapsuleMapping>> allTimecapsuleList = getTimecapsuleList(userNo);
-        List<TimecapsuleMapping> saveTimecapsules = allTimecapsuleList.get("saveTimecapsules");
-
-        //저장된 타임캡슐이 없는경우
-        if(saveTimecapsules.size() < 1){
-            throw new CommonException(CustomExceptionStatus.NOT_SAVE_TIMECAPSULE);
-        }
+        List<TimecapsuleMapping> saveTimecapsules = getSaveTimecapsuleList(userNo);
 
         /*
             저장된 타임캡슐 DTO 변화 및 타입이 GOAL 이면 OPENDATE 받아온다
@@ -481,7 +462,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
 
         String fileUri = "";
-        log.info(cardImage.toString());
 
         //S3에 저장
         if (cardImage.isEmpty() && cardImage.getSize() == 0) {
@@ -900,7 +880,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.ALREADY_FILE_UPLOAD);
         }
 
-        log.info("fileSzie : {}" , file.getSize());
+        //log.info("fileSzie : {}" , file.getSize());
         //파일사이즈가 MaxFileSize보다 클경우 에러발생
         if( file.getSize() + timecapsule.getNowFileSize() > timecapsule.getMaxFileSize()){
             throw new CommonException(CustomExceptionStatus.FILE_LIMIT_NOT_UPLOAD);
