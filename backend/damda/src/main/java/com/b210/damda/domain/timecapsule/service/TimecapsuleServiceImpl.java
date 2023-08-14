@@ -1016,6 +1016,24 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         return  result;
     }
 
+    /*
+        타이캡슐 보관함 저장 로직
+     */
+    @Override
+    @Transactional
+    public void timecapsuleOpenSave(Long timecapsuleNo) {
+
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
+        Timecapsule timecapsule = getTimecapsule(timecapsuleNo);
+        TimecapsuleMapping timecapsuleMapping = getTimecapsuleMapping(user.getUserNo(), timecapsule.getTimecapsuleNo());
+
+        //보관함으로 저장
+        timecapsuleMapping.updateIsSave(true);
+        timecapsuleMapping.updateSaveDate(Timestamp.valueOf(LocalDateTime.now()));
+
+    }
+
 
     /*
         타임캡슐 나가기
