@@ -9,7 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Setter @Getter
+@Getter
 public class CirteriaDay {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +29,11 @@ public class CirteriaDay {
                 .dayEn(this.dayEn)
                 .build();
 
+    }
+
+    public void createCirteriaDay(TimecapsuleCriteria timecapsuleCriteria, String dayKor, String dayEn){
+        this.timecapsuleCriteria = timecapsuleCriteria;
+        this.dayKor = dayKor;
+        this.dayEn = dayEn;
     }
 }

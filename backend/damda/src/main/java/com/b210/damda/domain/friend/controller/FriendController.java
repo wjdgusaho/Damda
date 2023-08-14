@@ -37,7 +37,6 @@ public class FriendController {
         try{
             friendService.friendRequest(userDTO.getUserNo());
 
-            log.warn("friendEventService 진입 시도 : ");
             friendEventService.friendEventService(userDTO.getUserNo(), FriendEventEnum.REQUEST);
             return new DataResponse<>(200, "친구 신청이 완료되었습니다.");
         }catch (CommonException e){

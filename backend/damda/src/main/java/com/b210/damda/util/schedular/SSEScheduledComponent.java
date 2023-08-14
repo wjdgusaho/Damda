@@ -27,7 +27,7 @@ public class SSEScheduledComponent {
 
 
 
-    @Scheduled(fixedRate = 10000) // 테스터
+    @Scheduled(fixedRate = 5000) // 테스터
     public void scheduledTask() {
         log.info("스케줄링된 작업 실행: {}", System.currentTimeMillis());
         /*
@@ -46,9 +46,9 @@ public class SSEScheduledComponent {
             log.warn("TEST : 기록있는 유저 : {}, 마지막 시간 : {}", userNo, userLastResponse);
             log.warn("시간 차이 : {}", duration);
 
-            //일단 테스트용으로 1분 해놨음
-            if(duration.toMinutes() >= 1) {
-                log.warn("{} 님이 부재중 1분 이상입니다. 시간 : {} ", userNo, duration.toMinutes());
+            //일단 테스트용으로 2분 해놨음
+            if(duration.toMinutes() >= 2) {
+                log.warn("{} 님이 부재중 2분 이상입니다. 시간 : {} ", userNo, duration.toMinutes());
                 eventStreamService.disconnectStream(userNo); //장기 미접속으로 인한 삭제 로직 진행
             }
 

@@ -1,8 +1,8 @@
 package com.b210.damda.util.kakaoAPI.service;
 
 
-import com.b210.damda.domain.entity.Items;
-import com.b210.damda.domain.entity.ItemsMapping;
+import com.b210.damda.domain.entity.Items.Items;
+import com.b210.damda.domain.entity.Items.ItemsMapping;
 import com.b210.damda.domain.entity.User.UserLog;
 
 import com.b210.damda.domain.entity.theme.Theme;
