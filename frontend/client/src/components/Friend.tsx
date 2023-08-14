@@ -113,12 +113,7 @@ export const List = function () {
             친구를 찾으러 떠나볼까요?
           </TextStyle>
           <div className="relative">
-            <img
-              className="mt-20"
-              style={{ width: "15rem" }}
-              src="/assets/universe/Astronaut-4.png"
-              alt="Astronaut-4"
-            />
+            <EmptyImage className="mt-20" />
             <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
           </div>
         </div>
@@ -180,12 +175,7 @@ export const Request = function () {
             친구요청이 없어요... 아직은요!
           </TextStyle>
           <div className="relative">
-            <img
-              className="mt-20"
-              style={{ width: "15rem" }}
-              src="/assets/universe/Astronaut-4.png"
-              alt="Astronaut-4"
-            />
+            <EmptyImage className="mt-20" />
             <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
           </div>
         </div>
@@ -491,6 +481,15 @@ const Nav = styled.div<{ isActive: boolean }>`
     background-color: ${(props) => props.theme.colorCommon};
     display: ${(props) => (props.isActive ? "block" : "none")};
   }
+`
+
+const EmptyImage = styled.div`
+  position: relative;
+  background-image: url(${(props) => props.theme.emptyImg_3});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 15rem;
+  height: 240px;
 `
 
 export type FriendType = {
