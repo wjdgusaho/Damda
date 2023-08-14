@@ -212,6 +212,7 @@ const Card = function () {
     html2canvas(target, {
       useCORS: true,
       scale: 2,
+      //////////
     }).then((canvas) => {
       canvas.toBlob((blob) => {
         if (blob) {
