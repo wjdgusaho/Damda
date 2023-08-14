@@ -34,6 +34,7 @@ public class EmailServiceImpl implements EmailService {
         this.signupEmailLogRepository = signupEmailLogRepository;
     }
 
+
     private MimeMessage createMessageChange(String to, String authCode)throws Exception{
         System.out.println("보내는 대상 : " + to);
         System.out.println("인증 번호 : " + authCode);

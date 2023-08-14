@@ -34,21 +34,22 @@ public class test {
 //    public void test() {
 //        log.info("테스터 스케줄러 동작");
 //;
-//        // 서버 시스템 시간 가져오기
+//        // 서버 시스템 시간 가져오기, 임시로 -7일해서 만료 시간 체크하였음.
 //        LocalDateTime serverTime = LocalDateTime.now().plusHours(9).minusDays(7);
 //
 //        List<Timecapsule> timecapsules = timeCapsuleSchedularRepository.getExpiredTimeCapsule(Timestamp.valueOf(serverTime));
 //        for(Timecapsule t : timecapsules) {
-//            System.out.println(t.getTitle() + " " + t.getDescription());
-//            timeCapsuleSchedularRepository.
+//            List<Long> timeCapsuleUserNo = timeCapsuleSchedularRepository.getUserNoByTimeCapsuleNo(t.getTimecapsuleNo());
+//            //해당 타임캡슐의 유저 no 뽑아왔음
+//
+//
+//            for (int i = 0; i < timeCapsuleUserNo.size(); i++) {
+//                System.out.print(timeCapsuleUserNo.get(i) + " "); //뽑아낸 유저no
+//            }
 //        }
 //    }
 
-//    //서울시간 00시마다 timecapsule_mapping 테이블에 card_able 컬럼들이 모두 (true 또는 1)로 수정되게 변경
-//    @Scheduled(cron = "0 00 00 * * *", zone = "Asia/Seoul") // 매일 00시 00분 00초
-//    public void scheduledEvent() {
-//        timecapsuleRepository.cardAble(true, true);
-//    }
+
 
 
 
