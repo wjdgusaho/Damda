@@ -82,6 +82,31 @@ const TimecapsuleResultMembers = function () {
     fetchData()
   }, [])
 
+  function fileDownload(): void {
+    const fetchData = async () => {
+      try {
+        const timecapsuleNo = capsuleId
+        const response = await axios.get(
+          process.env.REACT_APP_SERVER_URL +
+            `/s3/download/zip/timecapsule/${timecapsuleNo}/file`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
+        if (response.data.code === 200) {
+          console.log("파일 다운로드 정상 작동")
+        } else {
+          console.log("파일 다운로드 안됨!!!!!!!!!!!!!")
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchData()
+  }
+
   return (
     <div className="mt-4">
       <div className="text-sm text-center w-10/12 m-auto">
@@ -183,7 +208,7 @@ const TimecapsuleResultMembers = function () {
           </div>
         ))}
       </div>
-      <div className="flex justify-center my-8">
+      <div className="flex justify-center my-8" onClick={fileDownload}>
         <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
         <span>첨부파일 내려받기</span>
       </div>

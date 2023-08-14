@@ -39,6 +39,34 @@ export const TimecapsuleOpen = function () {
           }
         )
         setCapsuleInfo(response.data.data.timecapsuleSimpleInfo)
+        // 타임캡슐의 정보를 받은 후에 해당 타임캡슐을 열람한 타임캡슐로 처리함
+        try {
+          const fetchData2 = async () => {
+            try {
+              const response = await axios.patch(
+                process.env.REACT_APP_SERVER_URL + `timecapsule/open/save`,
+                {
+                  timecapsuleNo: capsuleId,
+                },
+                {
+                  headers: {
+                    Authorization: "Bearer " + token,
+                  },
+                }
+              )
+              if (response.data.code === 200) {
+                console.log("타임캡슐 열람 성공", response.data.message)
+              } else {
+                console.log(response.data.message)
+              }
+            } catch (error) {
+              console.error(error)
+            }
+          }
+          fetchData2()
+        } catch (error) {
+          console.error(error)
+        }
       } catch (error) {
         console.error(error)
       }
