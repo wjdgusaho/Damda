@@ -35,7 +35,7 @@ public class TimeCapsuleEventService {
         Long timeCapsuleNo = timecapsuleInviteUserDTO.getTimecapsuleNo();;
 
         String context = "님으로부터 타임캡슐 초대가 도착했습니다, 초대 코드 : ";
-        String eventName = "friend-event"; //일단 FE 확인용으로 임시로 friend-event로
+        String eventName = "timecapsule-event"; //일단 FE 확인용으로 임시로 friend-event로
         String inviteCode = timeCapsuleSEERepository.getInviteCode(timeCapsuleNo);
 
         log.info("friendRepository.getUserNameAndImage .. 보내는 유저의 정보를 가져옵니다 : {}", userNo);
@@ -57,7 +57,7 @@ public class TimeCapsuleEventService {
 
         log.warn("FROMNO : {}", fromNo);
         String context = "님이 타임캡슐에 참여했습니다!";
-        String eventName = "friend-event"; //일단 FE 확인용으로 임시로 friend-event로
+        String eventName = "timecapsule-event"; //일단 FE 확인용으로 임시로 friend-event로
 
 
         //fromNo를 통해 해당 유저의 이름과 이미지를 받아온다.
