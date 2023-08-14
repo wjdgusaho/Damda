@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 import tw from "tailwind-styled-components"
-import { serverUrl } from "../../urls"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useSelector } from "react-redux"
@@ -105,7 +104,7 @@ export const CheckPassword = function () {
     if (userPw) {
       axios({
         method: "POST",
-        url: serverUrl + "user/info",
+        url: process.env.REACT_APP_SERVER_URL + "user/info",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,

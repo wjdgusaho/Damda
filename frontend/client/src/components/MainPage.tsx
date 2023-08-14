@@ -8,11 +8,9 @@ import "slick-carousel/slick/slick-theme.css"
 import { useRef, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { RootState } from "../store/Store"
-import { serverUrl } from "../urls"
 import { useDispatch, useSelector } from "react-redux"
 import { SET_TIMECAPSULE } from "../store/Timecapsule"
 import { getLocation } from "./getLocation"
-import { resolve } from "path"
 
 /*
 1. 모든 타임캡슐의 조건 만족 여부와 밑의 3가지 경우로 나뉨.
@@ -76,7 +74,7 @@ export const MainPage = function () {
           console.log("--------------------", body)
 
           const response = await axios.post(
-            serverUrl + "timecapsule/view",
+            process.env.REACT_APP_SERVER_URL + "timecapsule/view",
             body,
             {
               headers: {

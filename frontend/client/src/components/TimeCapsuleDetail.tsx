@@ -4,7 +4,6 @@ import { styled } from "styled-components"
 import { useNavigate, useParams } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
@@ -342,7 +341,9 @@ const TimeCapsuleDetail = function () {
       try {
         const response = await axios({
           method: "GET",
-          url: serverUrl + `timecapsule/detail?timecapsuleNo=${capsuleId}`,
+          url:
+            process.env.REACT_APP_SERVER_URL +
+            `timecapsule/detail?timecapsuleNo=${capsuleId}`,
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,
@@ -429,7 +430,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "PATCH",
-        url: serverUrl + "timecapsule/kick",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/kick",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -453,7 +454,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "PATCH",
-        url: serverUrl + "timecapsule/invite",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/invite",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -485,7 +486,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "PATCH",
-        url: serverUrl + "timecapsule/delete",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/delete",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -518,7 +519,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "PATCH",
-        url: serverUrl + "timecapsule/exit",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/exit",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -547,7 +548,9 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "GET",
-        url: serverUrl + `timecapsule/size?timecapsuleNo=${capsuleId}`,
+        url:
+          process.env.REACT_APP_SERVER_URL +
+          `timecapsule/size?timecapsuleNo=${capsuleId}`,
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -587,7 +590,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
         const response = await axios({
           method: "POST",
-          url: serverUrl + "timecapsule/regist/file",
+          url: process.env.REACT_APP_SERVER_URL + "timecapsule/regist/file",
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + token,
@@ -607,7 +610,9 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "GET",
-        url: serverUrl + `timecapsule/invite?timecapsuleNo=${capsuleId}`,
+        url:
+          process.env.REACT_APP_SERVER_URL +
+          `timecapsule/invite?timecapsuleNo=${capsuleId}`,
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -692,7 +697,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
       // 중복 initialization 방지
       if (!kakao.isInitialized()) {
-        kakao.init("e25afc7dead08f60a151179a01026248")
+        kakao.init(process.env.REACT_APP_KAKAO_KEY)
       }
 
       const imageUrls = [
@@ -1342,7 +1347,9 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
     try {
       const response = await axios({
         method: "GET",
-        url: serverUrl + `timecapsule/size?timecapsuleNo=${capsuleId}`,
+        url:
+          process.env.REACT_APP_SERVER_URL +
+          `timecapsule/size?timecapsuleNo=${capsuleId}`,
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -1382,7 +1389,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
         const response = await axios({
           method: "POST",
-          url: serverUrl + "timecapsule/regist/file",
+          url: process.env.REACT_APP_SERVER_URL + "timecapsule/regist/file",
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + token,

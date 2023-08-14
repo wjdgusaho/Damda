@@ -3,7 +3,6 @@ import "../index.css"
 import { styled } from "styled-components"
 import { useNavigate, useParams } from "react-router"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
@@ -37,7 +36,8 @@ const TimecapsuleResult = function () {
       try {
         const timecapsuleNo = capsuleId
         const response = await axios.get(
-          serverUrl + `timecapsule/simpleinfo?timecapsuleNo=${timecapsuleNo}`,
+          process.env.REACT_APP_SERVER_URL +
+            `timecapsule/simpleinfo?timecapsuleNo=${timecapsuleNo}`,
           {
             headers: {
               Authorization: "Bearer " + token,

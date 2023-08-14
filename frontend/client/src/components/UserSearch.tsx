@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import { SubHeader } from "./inc/SubHeader"
 import styled from "styled-components"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 
@@ -53,7 +52,7 @@ const UserSearch = function () {
     } else {
       axios({
         method: "GET",
-        url: serverUrl + "user/search",
+        url: process.env.REACT_APP_SERVER_URL + "user/search",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -136,7 +135,7 @@ const UserItem = function ({
   const handleRequest = function (event: React.MouseEvent<HTMLButtonElement>) {
     axios({
       method: "PATCH",
-      url: serverUrl + "friend/request",
+      url: process.env.REACT_APP_SERVER_URL + "friend/request",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,

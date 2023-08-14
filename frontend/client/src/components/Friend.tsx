@@ -3,7 +3,6 @@ import { SubHeader } from "./inc/SubHeader"
 import { styled } from "styled-components"
 import { Link } from "react-router-dom"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import { DELETE_FRIENDS } from "../store/Alarm"
@@ -67,7 +66,7 @@ export const List = function () {
   useEffect(() => {
     axios({
       method: "GET",
-      url: serverUrl + "friend/list",
+      url: process.env.REACT_APP_SERVER_URL + "friend/list",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
@@ -154,7 +153,7 @@ export const Request = function () {
   useEffect(() => {
     axios({
       method: "GET",
-      url: serverUrl + "friend/request",
+      url: process.env.REACT_APP_SERVER_URL + "friend/request",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
@@ -213,7 +212,7 @@ const FriendCard = function ({
   const favoriteRequest = (event: React.MouseEvent<HTMLButtonElement>) => {
     axios({
       method: "PATCH",
-      url: serverUrl + "friend/favorite-add",
+      url: process.env.REACT_APP_SERVER_URL + "friend/favorite-add",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
@@ -242,7 +241,7 @@ const FriendCard = function ({
   const favoriteCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
     axios({
       method: "PATCH",
-      url: serverUrl + "friend/favorite-del",
+      url: process.env.REACT_APP_SERVER_URL + "friend/favorite-del",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
@@ -271,7 +270,7 @@ const FriendCard = function ({
   const friendDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
     axios({
       method: "PATCH",
-      url: serverUrl + "friend/delete",
+      url: process.env.REACT_APP_SERVER_URL + "friend/delete",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
@@ -356,7 +355,7 @@ const RequestCard = function ({
   const requestAccept = (event: React.MouseEvent<HTMLButtonElement>) => {
     axios({
       method: "PATCH",
-      url: serverUrl + "friend/request-accept",
+      url: process.env.REACT_APP_SERVER_URL + "friend/request-accept",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
@@ -382,7 +381,7 @@ const RequestCard = function ({
   const requestReject = (event: React.MouseEvent<HTMLButtonElement>) => {
     axios({
       method: "PATCH",
-      url: serverUrl + "friend/request-reject",
+      url: process.env.REACT_APP_SERVER_URL + "friend/request-reject",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,

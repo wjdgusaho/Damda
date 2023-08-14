@@ -9,7 +9,6 @@ import "react-datepicker/dist/react-datepicker.css"
 import "./datePicker.css"
 import { ko } from "date-fns/esm/locale"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 
@@ -198,7 +197,9 @@ const RecordCapsule = function () {
       try {
         const response = await axios({
           method: "GET",
-          url: serverUrl + `location/medium?bigLocation=${selectedLocationBig}`,
+          url:
+            process.env.REACT_APP_SERVER_URL +
+            `location/medium?bigLocation=${selectedLocationBig}`,
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,
@@ -216,7 +217,7 @@ const RecordCapsule = function () {
       try {
         const response = await axios({
           method: "GET",
-          url: serverUrl + "location/big",
+          url: process.env.REACT_APP_SERVER_URL + "location/big",
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + token,
@@ -261,7 +262,7 @@ const RecordCapsule = function () {
     } else {
       axios({
         method: "POST",
-        url: serverUrl + "timecapsule/create",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/create",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,

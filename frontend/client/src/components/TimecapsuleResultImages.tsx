@@ -4,7 +4,6 @@ import Modal from "react-modal"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import axios from "axios"
-import { serverUrl } from "../urls"
 import { useParams } from "react-router-dom"
 
 interface cardType {
@@ -35,7 +34,8 @@ const TimecapsuleResultImages = function () {
       try {
         const timecapsuleNo = capsuleId
         const response = await axios.get(
-          serverUrl + `timecapsule/cardlist?timecapsuleNo=${timecapsuleNo}`,
+          process.env.REACT_APP_SERVER_URL +
+            `timecapsule/cardlist?timecapsuleNo=${timecapsuleNo}`,
           {
             headers: {
               Authorization: "Bearer " + token,

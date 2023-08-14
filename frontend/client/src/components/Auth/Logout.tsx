@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { getCookieToken, removeCookieToken } from "../../store/Cookie"
 import { DELETE_TOKEN, DELETE_USER } from "../../store/Auth"
-import { serverUrl } from "../../urls"
 import { SET_THEME } from "../../store/Theme"
 import { DELETE_TIMECAPSULE } from "../../store/Timecapsule"
 import { EventSourcePolyfill } from "event-source-polyfill"
@@ -16,17 +15,20 @@ export const Logout = function () {
   const token = useSelector((state: RootState) => state.auth.accessToken)
 
   useEffect(() => {
-    const logoutEvent = new EventSourcePolyfill(serverUrl + "sse/logout", {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    })
+    const logoutEvent = new EventSourcePolyfill(
+      process.env.REACT_APP_SERVER_URL + "sse/logout",
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    )
     logoutEvent.onerror = (event) => {
       logoutEvent.close()
     }
     axios({
       method: "POST",
-      url: serverUrl + "user/logout",
+      url: process.env.REACT_APP_SERVER_URL + "user/logout",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + getCookieToken(),

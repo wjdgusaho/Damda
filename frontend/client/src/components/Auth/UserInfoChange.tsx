@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { serverUrl } from "../../urls"
 import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
@@ -261,7 +260,7 @@ export const UserInfoChange = () => {
     } else {
       axios({
         method: "PATCH",
-        url: serverUrl + "user/info",
+        url: process.env.REACT_APP_SERVER_URL + "user/info",
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: "Bearer " + token,
@@ -289,7 +288,7 @@ export const UserInfoChange = () => {
   function handleUserDelete(event: React.MouseEvent<HTMLButtonElement>) {
     axios({
       method: "PATCH",
-      url: serverUrl + "user/delete",
+      url: process.env.REACT_APP_SERVER_URL + "user/delete",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token,
