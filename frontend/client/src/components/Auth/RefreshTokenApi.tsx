@@ -1,4 +1,4 @@
-npimport axios, { AxiosRequestConfig } from "axios"
+import axios, { AxiosRequestConfig } from "axios"
 import { serverUrl } from "../../urls"
 import { useDispatch } from "react-redux"
 import { SET_TOKEN } from "../../store/Auth"

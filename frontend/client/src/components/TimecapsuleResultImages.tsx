@@ -1,24 +1,60 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { styled } from "styled-components"
 import Modal from "react-modal"
-import { useSelector } from "react-redux"
-import { RootState } from "../store/Store"
-import axios from "axios"
-import { serverUrl } from "../urls"
-import { useParams } from "react-router-dom"
-
-interface cardType {
-  userNo: string
-  imagePath: string
-}
+const imgList = [
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+  {
+    url: "https://damda.s3.ap-northeast-2.amazonaws.com/timecapsule/152/card/0b2bb6a0-c6b8-4045-abd3-29c4bda33c1f.jpg",
+  },
+]
 
 const TimecapsuleResultImages = function () {
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedImageUrl, setSelectedImageUrl] = useState("")
-  const token = useSelector((state: RootState) => state.auth.accessToken)
-  const [cardList, setCardList] = useState<cardType[] | null>(null)
-  const { capsuleId } = useParams()
-
   const handleImageClick = (imgUrl: string) => {
     setSelectedImageUrl(imgUrl)
     setModalOpen(true)
@@ -29,43 +65,13 @@ const TimecapsuleResultImages = function () {
     setModalOpen(false)
   }
 
-  useEffect(() => {
-    console.log("token", token)
-    const fetchData = async () => {
-      try {
-        const timecapsuleNo = capsuleId
-        const response = await axios.get(
-          serverUrl + `timecapsule/cardlist?timecapsuleNo=${timecapsuleNo}`,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          }
-        )
-        console.log(
-          "카드카듴다ㅡㅋ닼듴다ㅡㅋ다ㅡㅋ다ㅡ",
-          response.data.data.cardList
-        )
-        setCardList(response.data.data.cardList)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-    fetchData()
-  }, [])
-
   return (
     <ImgConainer>
-      {cardList &&
-        cardList?.length !== 0 &&
-        cardList.map((img) => (
-          <Image
-            key={img.imagePath}
-            onClick={() => handleImageClick(img.imagePath)}
-          >
-            <img src={img.imagePath} alt="" />
-          </Image>
-        ))}
+      {imgList.map((img) => (
+        <Image key={img.url} onClick={() => handleImageClick(img.url)}>
+          <img src={img.url} alt="" />
+        </Image>
+      ))}
       <Modal
         isOpen={modalOpen}
         onRequestClose={handleClose}
@@ -85,10 +91,10 @@ const ImgConainer = styled.div`
   height: 400px;
   overflow: scroll;
   width: 19rem;
-  margin-left: 3.7px;
+  margin-left: 2px;
 `
 const Image = styled.div`
-  margin: 0.5px;
+  margin: 1px;
   width: 99px;
 `
 

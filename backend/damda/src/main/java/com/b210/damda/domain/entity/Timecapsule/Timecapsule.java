@@ -9,8 +9,10 @@ import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 
 @Entity
-@Getter
+@Getter @Setter
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@Builder
 @ToString
 public class Timecapsule {
 
@@ -31,12 +33,14 @@ public class Timecapsule {
 
     private Long maxFileSize;
 
+    @Builder.Default
     @Column(nullable = false, columnDefinition = "bigint default 0")
     private Long nowFileSize = 0L;
 
     private int maxParticipant;
 
     @Column(columnDefinition = "integer default 1")
+    @Builder.Default
     private int nowParticipant = 1;
 
     @Column(name="invite_code")
@@ -44,6 +48,7 @@ public class Timecapsule {
 
     private int capsuleIconNo;
 
+    @Builder.Default
     @Column(nullable = false, columnDefinition = "integer default 0")
     private int goalCard = 0;
 
@@ -150,52 +155,4 @@ public class Timecapsule {
                 .build();
     }
 
-    public void timecapsuleDefaultSetting(Timestamp registDate, Long maxFileSize, int maxParticipant,
-                                          String inviteCode, int nowParticipant, int capsuleIconNo){
-        this.registDate = registDate;
-        this.maxFileSize = maxFileSize;
-        this.maxParticipant = maxParticipant;
-        this.inviteCode = inviteCode;
-        this.nowParticipant = nowParticipant;
-        this.capsuleIconNo = capsuleIconNo;
-    }
-
-    public void updateNowParticipant(int nowParticipant){
-        this.nowParticipant = nowParticipant;
-    }
-
-    public void updateNowFileSize(Long nowFileSize){
-        this.nowFileSize = nowFileSize;
-    }
-
-    public void updateRemoveDate(Timestamp removeDate){
-        this.removeDate = removeDate;
-    }
-
-    public void addTimecapsuleCriteria(TimecapsuleCriteria timecapsuleCriteria){
-        this.timecapsuleCriteria = timecapsuleCriteria;
-    }
-
-    public void addTimecapsulePenalty(TimecapsulePenalty timecapsulePenalty){
-        this.timecapsulePenalty = timecapsulePenalty;
-    }
-
-    public void updateMaxFileSize(Long maxFileSize){
-        this.maxFileSize = maxFileSize;
-    }
-
-    @Builder
-    public Timecapsule(String title, String type, Timestamp openDate,
-                                  String description, Integer goalCard,
-                                  TimecapsuleCriteria timecapsuleCriteria,TimecapsulePenalty timecapsulePenalty
-                                  ){
-        this.title = title;
-        this.type = type;
-        this.openDate = openDate;
-        this.description = description;
-        this.goalCard = goalCard;
-        this.timecapsuleCriteria = timecapsuleCriteria;
-        this.timecapsulePenalty = timecapsulePenalty;
-
-    }
 }

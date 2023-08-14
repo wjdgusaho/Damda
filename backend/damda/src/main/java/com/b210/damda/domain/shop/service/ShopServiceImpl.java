@@ -1,11 +1,9 @@
 package com.b210.damda.domain.shop.service;
 
-import com.b210.damda.domain.dto.Items.ItemsMappingDTO;
-import com.b210.damda.domain.dto.Items.ItemsShopDTO;
+import com.b210.damda.domain.dto.*;
 import com.b210.damda.domain.dto.theme.ThemeMappingDTO;
 import com.b210.damda.domain.dto.theme.ThemeShopDTO;
-import com.b210.damda.domain.entity.Items.Items;
-import com.b210.damda.domain.entity.Items.ItemsMapping;
+import com.b210.damda.domain.entity.*;
 import com.b210.damda.domain.entity.User.User;
 import com.b210.damda.domain.entity.theme.Theme;
 import com.b210.damda.domain.entity.theme.ThemeMapping;
@@ -208,7 +206,9 @@ public class ShopServiceImpl implements ShopService{
         userRepository.save(user);
 
         // 유저 - 구매한아이템 매핑
-        ThemeMapping buyTheme = new ThemeMapping(user, theme);
+        ThemeMapping buyTheme = new ThemeMapping();
+        buyTheme.setTheme(theme);
+        buyTheme.setUser(user);
         themeMappingRepository.save(buyTheme);
         
         // 전체 리스트 반환 (보유중 미보유중)
@@ -254,7 +254,9 @@ public class ShopServiceImpl implements ShopService{
         userRepository.save(user);
 
         // 유저 구매한 아이템 매핑
-        ItemsMapping itemMapping = new ItemsMapping(user, items);
+        ItemsMapping itemMapping = new ItemsMapping();
+        itemMapping.setItems(items);
+        itemMapping.setUser(user);
         itemsMappingRepository.save(itemMapping);
 
         //전체 아이템 리스트 반환
@@ -391,9 +393,12 @@ public class ShopServiceImpl implements ShopService{
         userRepository.save(user);
 
         //타임캡슐 용량 증가
-        timecapsule.updateMaxFileSize(timecapsule.getMaxFileSize() + UP_FILE_SIZE);
+        timecapsule.setMaxFileSize(timecapsule.getMaxFileSize() + UP_FILE_SIZE);
         timecapsuleRepository.save(timecapsule);
 
+
+
     }
+
 
 }

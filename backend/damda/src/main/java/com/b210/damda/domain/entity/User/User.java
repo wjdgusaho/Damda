@@ -93,9 +93,5 @@
                     .build();
         }
 
-        public void updatePlusCoin(int coin){
-            this.coin = this.coin + coin;
-        }
-
 
     }

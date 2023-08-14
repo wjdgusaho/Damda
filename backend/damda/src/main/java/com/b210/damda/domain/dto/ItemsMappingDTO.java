@@ -1,4 +1,4 @@
-package com.b210.damda.domain.dto.Items;
+package com.b210.damda.domain.dto;
 
 import lombok.Builder;
 import lombok.Data;

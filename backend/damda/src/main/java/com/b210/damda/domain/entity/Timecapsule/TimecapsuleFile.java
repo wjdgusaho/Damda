@@ -6,14 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
+@Setter
 @Getter
+@Builder
+@AllArgsConstructor
 public class TimecapsuleFile {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,14 +38,6 @@ public class TimecapsuleFile {
 
 
     public  TimecapsuleFile(){
-    }
 
-    public void createTimecapsuleFile(String fileUrl, Timecapsule timecapsule, User user, MultipartFile file) {
-        this.filePath = fileUrl;
-        this.createTime = Timestamp.valueOf(LocalDateTime.now());
-        this.timecapsule = timecapsule;
-        this.user = user;
-        this.fileSize = file.getSize();
-        this.fileName = file.getName();
     }
 }

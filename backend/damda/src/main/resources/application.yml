@@ -20,8 +20,7 @@ spring:
       max-file-size: 1000MB
       max-request-size: 1000MB
 
-  jackson:
-    time-zone=Asia/Seoul:
+
 
   jpa:
     open-in-view: false

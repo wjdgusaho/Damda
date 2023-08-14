@@ -5,6 +5,7 @@ import axios from "axios"
 import { serverUrl } from "../urls"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
+import tw from "tailwind-styled-components"
 
 const UserSearch = function () {
   const [searchList, setSearchList] = useState<UserInfo[]>([])
@@ -71,44 +72,53 @@ const UserSearch = function () {
   }
 
   return (
-    <>
-      <SubHeader />
-      <Box>
-        <Title>회원 검색</Title>
-        <div className="relative">
-          <SearchInput
-            className="focus:outline-none"
-            type="text"
-            placeholder="닉네임 입력"
-            onChange={handleSearch}
-            onKeyDown={handlekeydown}
-          />
-          <button onClick={handleClick}>
-            <SearchImg src="/assets/icons/search.png" alt="search" />
-          </button>
-          <div
-            className="mt-2"
-            style={{ fontSize: "14px", opacity: "60%", fontWeight: "300" }}
-          >
-            검색결과
+    <div>
+      <SubHeader></SubHeader>
+      <div>
+        <div className="text-center mt-10">
+          <TextStyle className="text-xl">회원 검색</TextStyle>
+        </div>
+        <div className="flex justify-center">
+          <div className="bg-white bg-opacity-70 rounded-2xl w-96 h-12 mt-8 flex justify-between items-center">
+            <img
+              src="/assets/icons/search.png"
+              alt="search"
+              style={{ width: "30px", height: "30px", marginLeft: "5px" }}
+            />
+            <SearchInput
+              className="focus:outline-none"
+              type="text"
+              placeholder="닉네임"
+              onChange={handleSearch}
+              onKeyDown={handlekeydown}
+            />
+            <button
+              className="mr-3 rounded-full bg-lilac-300 w-12 h-8"
+              onClick={handleClick}
+            >
+              검색
+            </button>
           </div>
         </div>
-        <div>
+        <div className="opacity-60 text-white text-center pr-80 mt-4">
+          검색결과
+        </div>
+        <div className="flex justify-start w-96 mx-auto mt-5">
           {searchList.length === 0 ? (
-            <>
-              <NoResult>검색하려는 친구가 없어요</NoResult>
-              <div className="relative">
-                <img
-                  src="/assets/universe/Astronaut-1.png"
-                  alt="목록없음"
-                  style={{ width: "15rem" }}
-                  className="mt-20"
-                />
-                <CapsuleShadow></CapsuleShadow>
-              </div>
-            </>
+            <div className="flex justify-center flex-wrap">
+              <p className="text-victoria-400 text-center w-96 my-10">
+                검색하려는 친구가 없어요
+              </p>
+              <img
+                src="/assets/universe/Astronaut-1.png"
+                alt="목록없음"
+                style={{ width: "15rem" }}
+                className="mt-5"
+              />
+              <CapsuleShadow className="mx-auto"></CapsuleShadow>
+            </div>
           ) : (
-            <>
+            <div>
               {searchList.map((user: UserInfo, index: number) => (
                 <UserItem
                   key={index}
@@ -117,11 +127,11 @@ const UserSearch = function () {
                   setSearchList={setSearchList}
                 />
               ))}
-            </>
+            </div>
           )}
         </div>
-      </Box>
-    </>
+      </div>
+    </div>
   )
 }
 
@@ -167,109 +177,69 @@ const UserItem = function ({
   }
   return (
     <div
-      className="flex items-center justify-between mt-4"
-      style={{ width: "313px" }}
+      className="grid items-center w-96 mt-2"
+      style={{ gridTemplateColumns: "75px auto 85px" }}
     >
-      <div className="flex items-center">
-        <img
-          style={{
-            backgroundColor: "#fff",
-            borderRadius: "50%",
-            width: "52px",
-            height: "52px",
-          }}
-          src={User.profileImage}
-          alt="profilepic"
-        />
-        <span className="ml-3">{User.nickname}</span>
-        <span className="ml-1" style={{ opacity: "50%", fontWeight: "300" }}>
-          #{User.userNo}
-        </span>
-      </div>
+      <img
+        className="rounded-full"
+        style={{ width: "75px", height: "75px" }}
+        src={User.profileImage}
+        alt="profile"
+      />
+      <p className="text-white ml-2">
+        {User.nickname}
+        <span className="text-gray-400">#{User.userNo}</span>
+      </p>
       {(User.status === "" || User.status === "REJECTED") && (
         <Button $state={true} onClick={handleRequest}>
           추가
         </Button>
       )}
       {User.status === "RECEIVED" && (
-        <GrayButton $state={false} disabled={true}>
+        <Button $state={false} disabled={true}>
           요청받음
-        </GrayButton>
+        </Button>
       )}
       {User.status === "REQUESTED" && (
-        <GrayButton $state={false} disabled={true}>
+        <Button $state={false} disabled={true}>
           요청됨
-        </GrayButton>
+        </Button>
       )}
       {User.status === "ACCEPTED" && (
-        <GrayButton $state={false} disabled={true}>
+        <Button $state={false} disabled={true}>
           친구
-        </GrayButton>
+        </Button>
       )}
     </div>
   )
 }
 
-const Box = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-family: "Pretendard";
+const TextStyle = styled.div`
+  font-family: "pretendard";
+  font-weight: 400;
   color: ${(props) => props.theme.colorCommon};
-  align-items: center;
-`
-
-const Title = styled.div`
-  margin-top: 45px;
-  font-size: 20px;
-  font-weight: 500;
 `
 
 const SearchInput = styled.input`
-  background-color: rgb(255, 255, 255, 0.7);
-  height: 44px;
-  width: 313px;
-  border-radius: 15px;
-  color: ${(props) => props.theme.color900};
-  padding-left: 20px;
-  margin-top: 20px;
-`
-
-const SearchImg = styled.img`
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  top: 30px;
-  right: 10px;
-`
-
-const NoResult = styled.div`
-  margin-top: 50px;
-  text-align: center;
-  font-size: 20px;
-  color: ${(props) => props.theme.color400};
+  background-color: transparent;
+  width: 16rem;
+  height: inherit;
+  color: #3b396f;
+  &::placeholder {
+    color: #3b396f;
+    opacity: 0.6;
+  }
 `
 
 interface ButtonProps {
   $state: boolean
 }
 
-const Button = styled.button<ButtonProps>`
-  width: 67.2px;
-  height: 28px;
-  border-radius: 30px;
-  background-color: ${(props) => props.theme.color200};
-  color: ${(props) => props.theme.color900};
-`
-
-const GrayButton = styled(Button)`
-  background-color: #cfcfcf;
+const Button = tw.button<ButtonProps>`rounded-full ml-2 h-8
+${(props) => (props.$state ? "bg-lilac-300" : "bg-gray-400")}
 `
 
 const CapsuleShadow = styled.div`
-  z-index: -1;
-  position: absolute;
-  bottom: -35px;
-  left: 38.75px;
   width: 155px;
   height: 60px;
   border-radius: 50%;
