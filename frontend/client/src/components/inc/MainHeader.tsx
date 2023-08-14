@@ -99,7 +99,7 @@ const AlarmFriendComponent = function ({
   const navigate = useNavigate()
 
   const handleMove = () => {
-    navigate("/friend/list")
+    navigate("/friend")
   }
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>

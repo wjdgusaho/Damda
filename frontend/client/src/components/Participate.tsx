@@ -69,9 +69,9 @@ const HeaderWrap = styled.div`
   right: 0;
 `
 
-const Participate = function () {
+const Participate = function ({ code = "" }: { code: string }) {
   const token = useSelector((state: RootState) => state.auth.accessToken)
-  const [inviteCode, setInviteCode] = useState("")
+  const [inviteCode, setInviteCode] = useState(code)
   const navigate = useNavigate()
 
   function inputCode(e: React.FormEvent<HTMLInputElement>) {
