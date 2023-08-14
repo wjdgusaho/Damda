@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import tw from "tailwind-styled-components"
+import { useNavigate } from "react-router-dom"
 import { serverUrl } from "../../urls"
 import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
@@ -11,6 +10,7 @@ import { DELETE_TIMECAPSULE } from "../../store/Timecapsule"
 import { SET_THEME } from "../../store/Theme"
 import { removeCookieToken } from "../../store/Cookie"
 import styled from "styled-components"
+import { SubHeader } from "../inc/SubHeader"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -35,22 +35,90 @@ const isAllowFiles = (file: File) => {
   return false
 }
 
-const Form = tw.form`
-  flex
-  mx-auto
-  flex-wrap
+const Box = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-family: "Pretendard";
+  color: ${(props) => props.theme.colorCommon};
+  align-items: center;
 `
 
-const InputCSS = tw.input`
-    w-full
-    bg-transparent
-    border-b-2
-    border-b-white-500
-    my-2
-    focus:outline-none
+const Content = styled.div`
+  font-size: 1.25rem;
+  font-weight: 300;
+  span {
+    opacity: 0.47;
+    font-size: 14px;
+    color: ${(props) => props.theme.colorCommon};
+    margin-left: 15px;
+  }
 `
 
-const ModalStyle = {
+const InputText = styled.input`
+  background-color: rgb(255, 255, 255, 0);
+  border-bottom: 2px solid ${(props) => props.theme.colorCommon};
+  height: 50px;
+  outline: none;
+  font-weight: 200;
+`
+
+const MakeCapsuleButton = styled.button`
+  border-radius: 30px;
+  font-family: "pretendard";
+  font-size: 20px;
+  font-weight: 400;
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: ${(props) => props.theme.color900};
+  background-color: ${(props) => props.theme.color100};
+  &:hover {
+    transition: 0.2s;
+    transform: scale(0.95);
+    color: ${(props) => props.theme.color100};
+    background-color: ${(props) => props.theme.color700};
+  }
+`
+
+const UnregisterBtn = styled.div`
+  font-size: 16px;
+  text-decoration: underline;
+  opacity: 60%;
+`
+
+const ModalContent = styled.div`
+  color: ${(props) => props.theme.color900};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+`
+
+const ModalTitle = styled.div`
+  font-size: 20px;
+  font-weight: 700;
+
+  span {
+    color: ${(props) => props.theme.color500};
+  }
+`
+
+const FileCencelBtn = styled.button`
+  width: 76px;
+  height: 25px;
+  border-radius: 30px;
+  background-color: rgb(255, 255, 255, 0.05);
+  color: ${(props) => props.theme.color900};
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  font-size: 16px;
+  font-weight: 500;
+  margin: 10px 13px;
+`
+
+const FileSubmitBtn = styled(FileCencelBtn)`
+  background-color: ${(props) => props.theme.color500};
+`
+
+const customStyles = {
   content: {
     top: "50%",
     left: "50%",
@@ -58,25 +126,15 @@ const ModalStyle = {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "50%",
+    width: "80%",
     borderRadius: "20px",
+    fontFamily: "Pretendard",
   },
   overlay: {
-    backgroundColor: "rgba(0,0,0,0.7333)",
+    zIndex: 2,
+    backgroundColor: "rgba(0, 0, 0, 0.733)",
   },
 }
-
-const ModalButton = styled.button<{ color: string }>`
-  font-family: "pretendard";
-  font-weight: 400;
-  font-size: 18px;
-  width: 80px;
-  height: 26px;
-  border-radius: 30px;
-  text-align: center;
-  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
-  color: ${(props) => props.color};
-`
 
 export const UserInfoChange = () => {
   const navigate = useNavigate()
@@ -100,10 +158,6 @@ export const UserInfoChange = () => {
   let token = useSelector((state: RootState) => state.auth.accessToken)
   const [modalOpen, setModalOpen] = useState(false)
   const dispatch = useDispatch()
-
-  const handleCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChangePassword(event.currentTarget.checked)
-  }
 
   useEffect(() => {
     if (userdata.nickname) {
@@ -256,40 +310,10 @@ export const UserInfoChange = () => {
   }
 
   return (
-    <div style={{ color: "#CFD4EE" }}>
-      <div className="flex flex-initial justify-between w-96 mx-auto mt-10">
-        <Link
-          to={"/menu"}
-          style={{ fontSize: "30px", color: "white", marginLeft: "30px" }}
-        >
-          <svg
-            className="w-6 h-6 text-black-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 8 14"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
-            />
-          </svg>
-        </Link>
-        <Link to={"/main"} className="grid grid-cols-2 text-center">
-          <img
-            style={{ marginLeft: "13px" }}
-            src="/assets/icons/home.png"
-            alt="home"
-            width={25}
-          />
-          <p>홈으로</p>
-        </Link>
-      </div>
-      <Form className="grid grid-cols-1 w-72 mx-auto" onSubmit={handleSubmit}>
-        <div className="w-full justify-center">
+    <>
+      <SubHeader />
+      <Box className="m-auto">
+        <form className="w-80 mt-10" onSubmit={handleSubmit}>
           <img
             className="mx-auto"
             style={{
@@ -309,129 +333,130 @@ export const UserInfoChange = () => {
             style={{ position: "relative", top: "-30px", left: "30px" }}
             onClick={imgChange}
           />
-        </div>
-        <input
-          id="profileImage"
-          name="profileImage"
-          type="file"
-          className="hidden"
-          onChange={handleImageChange}
-          ref={imageRef}
-        />
-
-        <p>
-          닉네임
-          <span style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}>
-            영문 2~15자
-          </span>
-        </p>
-        <InputCSS
-          name="nickname"
-          type="text"
-          value={userdata.nickname}
-          onChange={handleChange}
-        />
-        {userNicknameCondition === 2 ? (
-          <p className="text-red-500 w-full">
-            닉네임은 영문, 한글, 숫자로 2-15자이어야 합니다.
-          </p>
-        ) : userNicknameCondition === 1 ? (
-          <p className="text-green-500 w-full">유효한 닉네임</p>
-        ) : (
-          <></>
-        )}
-        {userdata.accountType === "ORIGIN" && (
-          <>
-            <label htmlFor="CheckPassword">비밀번호 변경하기</label>
-            <input
-              name="CheckPassword"
-              className="justify-self-start"
-              type="checkbox"
-              checked={isChangePassword}
-              onChange={handleCheckBox}
-            />
-          </>
-        )}
-        {isChangePassword && (
+          <input
+            id="profileImage"
+            name="profileImage"
+            type="file"
+            className="hidden"
+            onChange={handleImageChange}
+            ref={imageRef}
+          />
+          <Content>닉네임</Content>
+          <InputText
+            className="w-80"
+            name="nickname"
+            type="text"
+            value={userdata.nickname}
+            onChange={handleChange}
+          />
           <div>
-            <p>
-              비밀번호
-              <span
-                style={{ color: "gray", fontSize: "8px", marginLeft: "3px" }}
-              >
-                5~25자, 영문숫자 필수, 특수문자(!@#$%^*+=-) 가능
-              </span>
-            </p>
-            <InputCSS
-              name="userPw"
-              type="password"
-              value={userdata.userPw}
-              onChange={handleChange}
-            />
-            {userPwCondition === 2 ? (
-              <p className="text-red-500 w-full">
-                비밀번호는 특수, 영문, 숫자 조합으로 5-25자이어야 합니다.
-              </p>
-            ) : userPwCondition === 1 ? (
-              <p className="text-green-500 w-full">유효한 비밀번호</p>
+            {userNicknameCondition === 2 ? (
+              <div className="text-red-300 w-full mt-1">
+                영문, 한글, 숫자로 2-15자이어야 합니다.
+              </div>
+            ) : userNicknameCondition === 1 ? (
+              <div className="text-emerald-300 w-full mt-1">유효한 닉네임</div>
             ) : (
-              <></>
-            )}
-
-            <p>비밀번호 확인</p>
-            <InputCSS
-              name="userPwCheck"
-              type="password"
-              value={userdata.userPwCheck}
-              onChange={handleChange}
-            />
-            {userPwMatch === 1 ? (
-              <p className="text-red-500">비밀번호 불일치</p>
-            ) : userPwMatch === 2 ? (
-              <p className="text-green-500">비밀번호 일치</p>
-            ) : (
-              <p></p>
+              <div className="h-7"></div>
             )}
           </div>
-        )}
-        <button
-          className="p-2 px-4 text-sm rounded-full shadow-md w-48 mt-14 mx-auto"
-          style={{ backgroundColor: "#EFE0F4", color: "black" }}
-        >
-          확인
-        </button>
-      </Form>
-      <p
-        className="relative mt-10 underline underline-offset-1 cursor-pointer text-gray-400 text-center"
-        onClick={ModalOpen}
-      >
-        회원 탈퇴
-      </p>
-      <Modal
-        isOpen={modalOpen}
-        onRequestClose={ModalClose}
-        style={ModalStyle}
-        shouldCloseOnOverlayClick={false}
-      >
-        <div>
-          <p className="text-3xl text-center">정말 회원탈퇴 할거냥?</p>
-          <p className="text-red-500 text-center text-sm">
-            이후에 같은 아이디로는 다시 회원가입 할 수 없습니다!
-          </p>
-          <div className="my-5 mx-10 p-4 flex justify-between">
-            <ModalButton color={"black"} onClick={ModalClose}>
-              취소
-            </ModalButton>
-            <ModalButton
-              color={"white"}
-              className="bg-red-500"
-              onClick={handleUserDelete}
+          {userdata.accountType === "ORIGIN" && (
+            <div
+              className="mt-6 flex items-center"
+              onClick={() => {
+                setIsChangePassword(!isChangePassword)
+              }}
             >
-              탈퇴
-            </ModalButton>
+              {isChangePassword ? (
+                <img
+                  src="../../../assets/icons/checkbox.png"
+                  alt="checkbox"
+                  width="20px"
+                  height="20px"
+                />
+              ) : (
+                <img
+                  src="../../../assets/icons/checkbox_none.png"
+                  alt="checkbox_none"
+                  width="20px"
+                  height="20px"
+                />
+              )}
+              <span className="ml-2" style={{ fontSize: "20px" }}>
+                비밀번호 변경하기
+              </span>
+            </div>
+          )}
+          <div className="mt-6">
+            {isChangePassword && (
+              <div>
+                <Content>새 비밀번호</Content>
+                <InputText
+                  className="w-80"
+                  name="userPw"
+                  type="password"
+                  value={userdata.userPw}
+                  onChange={handleChange}
+                />
+                {userPwCondition === 2 ? (
+                  <p className="text-red-300 w-full mt-1">
+                    특수, 영문, 숫자 조합으로 5-25자이어야 합니다.
+                  </p>
+                ) : userPwCondition === 1 ? (
+                  <p className="text-emerald-300 w-full mt-1">
+                    유효한 비밀번호
+                  </p>
+                ) : (
+                  <div className="h-7"></div>
+                )}
+                <Content className="mt-6">비밀번호 확인</Content>
+                <InputText
+                  className="w-80"
+                  name="userPwCheck"
+                  type="password"
+                  value={userdata.userPwCheck}
+                  onChange={handleChange}
+                />
+                {userPwMatch === 1 ? (
+                  <p className="text-red-300 mt-1">비밀번호 불일치</p>
+                ) : userPwMatch === 2 ? (
+                  <p className="text-emerald-300 mt-1">비밀번호 일치</p>
+                ) : (
+                  <div className="h-7"></div>
+                )}
+              </div>
+            )}
           </div>
-        </div>
-      </Modal>
-    </div>
+          <MakeCapsuleButton className="mt-12 w-60 h-14 m-auto bottom-0 flex items-center justify-center">
+            확인
+          </MakeCapsuleButton>
+        </form>
+        <UnregisterBtn
+          className="font-light text-gray-300 mt-5"
+          onClick={ModalOpen}
+        >
+          회원 탈퇴
+        </UnregisterBtn>
+        <Modal
+          isOpen={modalOpen}
+          onRequestClose={ModalClose}
+          style={customStyles}
+          shouldCloseOnOverlayClick={false}
+        >
+          <ModalContent>
+            <ModalTitle className="my-2">정말 탈퇴하시겠어요?</ModalTitle>
+            <div className="text-center">
+              이후에 같은 아이디로는 <br /> 다시 회원가입 할 수 없습니다.
+            </div>
+            <div className="mt-2">
+              <FileCencelBtn type="button" onClick={ModalClose}>
+                취소
+              </FileCencelBtn>
+              <FileSubmitBtn onClick={handleUserDelete}>탈퇴</FileSubmitBtn>
+            </div>
+          </ModalContent>
+        </Modal>
+      </Box>
+    </>
   )
 }

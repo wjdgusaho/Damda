@@ -1471,7 +1471,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
             {capsuleData.title}
           </Title>
           <div className="text-2xl font-bold relative mb-1">
-            <div>{capsuleData.title}</div>
+            <div className="invisible">{capsuleData.title}</div>
             <HightLight />
           </div>
           <div style={{ fontSize: "14px", textAlign: "center" }}>

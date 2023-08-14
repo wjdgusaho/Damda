@@ -103,13 +103,7 @@ export const MainPage = function () {
     <div className="h-screen overflow-hidden">
       <MainHeader></MainHeader>
       <div className="flex flex-col h-screen justify-center">
-        <div className="-mt-60">
-          <img
-            className="absolute w-8 right-0 mr-10 mt-10"
-            src="assets/icons/questionMark.png"
-            alt="도움말"
-          />
-        </div>
+        <div className="-mt-60"></div>
         <div className="mt-14">
           {capsuleList.length === 0 ? (
             // 타임캡슐이 하나도 없을 때
@@ -154,16 +148,29 @@ export const MainPage = function () {
                         )}
                         {/* 열람조건을 달성하고 등록이 완료되었을때 */}
                         {c.state && c.isRegisted && (
-                          <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-white absolute"></div>
+                          <>
+                            <div className="w-64 h-60 mt-14 left-1/2 -ml-32 rounded-full blur-2xl bg-white absolute">
+                              {" "}
+                            </div>
+                            <FloatingImage
+                              capsulenum={"capsule" + c.capsuleIconNo}
+                              className="h-52 m-auto mt-10"
+                              onClick={() => {
+                                navigate(`/timecapsule/open/${c.timecapsuleNo}`)
+                              }}
+                            />
+                          </>
                         )}
-                        <FloatingImage
-                          capsulenum={"capsule" + c.capsuleIconNo}
-                          className="h-52 m-auto mt-10"
-                          onClick={() => {
-                            navigate(`/timecapsule/open/${c.timecapsuleNo}`)
-                          }}
-                        />
                       </div>
+                    )}
+                    {c.isRegisted && !c.state && (
+                      <FloatingImage
+                        capsulenum={"capsule" + c.capsuleIconNo}
+                        className="h-52 m-auto mt-10"
+                        onClick={() => {
+                          navigate(`/timecapsule/detail/${c.timecapsuleNo}`)
+                        }}
+                      />
                     )}
                     {!c.isRegisted && (
                       // 24시간 내의 타임캡슐인 경우
