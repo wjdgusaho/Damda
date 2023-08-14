@@ -24,7 +24,7 @@ public interface TimeCapsuleSchedularRepository extends JpaRepository<Timecapsul
     @Query("SELECT t FROM Timecapsule t WHERE t.openDate > :serverTime")
     List<Timecapsule> getExpiredTimeCapsule(@Param("serverTime") Timestamp serverTime);
 
-    @Query("SELECT FROM WHERE")
-    List<Long> getUserNoBy();
+//    @Query("SELECT FROM WHERE")
+//    List<Long> getUserNoBy();
 
 }
