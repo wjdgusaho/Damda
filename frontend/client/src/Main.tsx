@@ -198,7 +198,6 @@ function Main() {
             )}
             {token && (
               <Routes>
-                <Route path="/*" element={<EmptyPage />}></Route>
                 <Route path="/" element={<LandingPage />}></Route>
                 <Route path="/user/" element={<CheckPassword />}></Route>
                 <Route path="/user-info/" element={<UserInfoChange />}></Route>

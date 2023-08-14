@@ -12,6 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+@Setter
 @ToString
 public class ThemeMapping {
 
@@ -41,5 +42,4 @@ public class ThemeMapping {
                 .temaNo(theme.getThemeNo())
                 .build();
     }
-
 }

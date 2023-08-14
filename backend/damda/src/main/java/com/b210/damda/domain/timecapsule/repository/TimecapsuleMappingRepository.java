@@ -16,24 +16,6 @@ public interface TimecapsuleMappingRepository extends JpaRepository<TimecapsuleM
 
     List<TimecapsuleMapping> findByUserUserNo(Long userNo);
 
-    @Query("SELECT tm FROM TimecapsuleMapping tm WHERE tm.user.userNo = :userNo AND tm.timecapsule.removeDate IS NULL AND tm.deleteDate IS NULL")
-    List<TimecapsuleMapping> findByActiveUserUserNo(Long userNo);
-
-    @Query("SELECT t FROM TimecapsuleMapping t " +
-            "WHERE t.user.userNo = :userNo " +
-            "AND t.timecapsule.removeDate IS NULL " +
-            "AND t.deleteDate IS NULL " +
-            "AND t.isSave = false")
-    List<TimecapsuleMapping> findWorkTimecapsules(Long userNo);
-
-    @Query("SELECT t FROM TimecapsuleMapping t " +
-            "WHERE t.user.userNo = :userNo " +
-            "AND t.timecapsule.removeDate IS NULL " +
-            "AND t.deleteDate IS NULL " +
-            "AND t.isSave = true")
-    List<TimecapsuleMapping> findSaveTimecapsules(Long userNo);
-
-
     @Query("SELECT tm FROM TimecapsuleMapping tm WHERE tm.user.userNo = :userNo AND tm.timecapsule.timecapsuleNo = :timecapsuleNo")
     TimecapsuleMapping findByUserUserNoOne(@Param("timecapsuleNo") Long timecapsuleNo, @Param("userNo") Long userNo);
 

@@ -5,9 +5,9 @@ import com.b210.damda.domain.dto.User.UserOriginRegistDTO;
 import com.b210.damda.domain.dto.User.UserSearchResultDTO;
 import com.b210.damda.domain.dto.User.UserUpdateDTO;
 import com.b210.damda.domain.entity.*;
-import com.b210.damda.domain.entity.Items.Items;
-import com.b210.damda.domain.entity.Items.ItemsMapping;
-import com.b210.damda.domain.entity.User.*;
+import com.b210.damda.domain.entity.User.User;
+import com.b210.damda.domain.entity.User.UserFriend;
+import com.b210.damda.domain.entity.User.UserLog;
 import com.b210.damda.domain.entity.theme.Theme;
 import com.b210.damda.domain.entity.theme.ThemeMapping;
 import com.b210.damda.domain.file.service.S3UploadService;
@@ -16,8 +16,6 @@ import com.b210.damda.domain.shop.repository.ItemsMappingRepository;
 import com.b210.damda.domain.shop.repository.ItemsRepository;
 import com.b210.damda.domain.shop.repository.ThemeMappingRepository;
 import com.b210.damda.domain.shop.repository.ThemeRepository;
-import com.b210.damda.domain.user.repository.UserCoinGetLogRepository;
-import com.b210.damda.domain.user.repository.UserEventRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
@@ -27,7 +25,7 @@ import com.b210.damda.util.emailAPI.repository.SignupEmailLogRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,28 +39,43 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     @Value("${jwt.secret}")
     private String secretKey;
-    private final UserRepository userRepository;
-    private final UserLogRepository userLogRepository;
+    private UserRepository userRepository;
+    private UserLogRepository userLogRepository;
     private final BCryptPasswordEncoder encoder;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final EmailSendLogRepository emailSendLogRepository;
-    private final FriendRepository friendRepository;
-    private final S3UploadService s3UploadService;
-    private final SignupEmailLogRepository signupEmailLogRepository;
-    private final ItemsMappingRepository itemsMappingRepository;
-    private final ItemsRepository itemsRepository;
-    private final ThemeMappingRepository themeMappingRepository;
-    private final ThemeRepository themeRepository;
-    private final UserCoinGetLogRepository userCoinGetLogRepository;
-    private final UserEventRepository userEventRepository;
+    private RefreshTokenRepository refreshTokenRepository;
+    private EmailSendLogRepository emailSendLogRepository;
+    private FriendRepository friendRepository;
+    private S3UploadService s3UploadService;
+    private SignupEmailLogRepository signupEmailLogRepository;
+    private ItemsMappingRepository itemsMappingRepository;
+    private ItemsRepository itemsRepository;
+    private ThemeMappingRepository themeMappingRepository;
+    private ThemeRepository themeRepository;
 
     private static Long acExpiredMs = 1000 * 60 * 30L * (48 * 30); // 액세스 토큰의 만료 시간(30분) * 48 * 30 = 30일
-    private final int dailyCheckCoin = 500;
+
+    @Autowired
+    public UserService(UserRepository userRepository, UserLogRepository userLogRepository, BCryptPasswordEncoder encoder, RefreshTokenRepository refreshTokenRepository,
+                       EmailSendLogRepository emailSendLogRepository, FriendRepository friendRepository, S3UploadService s3UploadService, SignupEmailLogRepository signupEmailLogRepository,
+                       ItemsMappingRepository itemsMappingRepository, ItemsRepository itemsRepository, ThemeMappingRepository themeMappingRepository,
+                       ThemeRepository themeRepository) {
+        this.userRepository = userRepository;
+        this.userLogRepository = userLogRepository;
+        this.encoder = encoder;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.emailSendLogRepository = emailSendLogRepository;
+        this.friendRepository = friendRepository;
+        this.s3UploadService = s3UploadService;
+        this.signupEmailLogRepository = signupEmailLogRepository;
+        this.itemsMappingRepository = itemsMappingRepository;
+        this.itemsRepository = itemsRepository;
+        this.themeMappingRepository = themeMappingRepository;
+        this.themeRepository = themeRepository;
+    }
 
     /*
         유저정보 불러오기
@@ -78,7 +91,7 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public void regist(UserOriginRegistDTO userOriginRegistDTO, MultipartFile multipartFile) throws IOException {
+    public User regist(UserOriginRegistDTO userOriginRegistDTO, MultipartFile multipartFile) throws IOException {
         String fileUri = "";
 
         if(multipartFile.isEmpty() && multipartFile.getSize() == 0){
@@ -108,14 +121,7 @@ public class UserService {
         ThemeMapping themeMapping = new ThemeMapping(savedUser, theme);
         themeMappingRepository.save(themeMapping);
 
-        // 코인 획득 로그 저장
-        UserCoinGetLog userCoinGetLog = new UserCoinGetLog(savedUser, savedUser.getCoin(), "REGIST");
-        userCoinGetLogRepository.save(userCoinGetLog);
-
-        // 유저 Event 데이터 생성 후 저장
-        UserEvent userEvent = UserEvent.builder()
-                .user(savedUser).build();
-        userEventRepository.save(userEvent);
+        return savedUser;
     }
 
     // 로그인
@@ -164,29 +170,6 @@ public class UserService {
             refreshTokenRepository.save(refreshTokenUser); // 리프레시 토큰 저장.
         }
 
-        // 로그인 log 기록
-        UserLog userLog = new UserLog();
-        userLog.setUser(user);
-        userLogRepository.save(userLog);
-
-
-        UserEvent userEvent = userEventRepository.findByUser(user);
-        // 아직 데일리 출석 전이면
-        if(!userEvent.getIsCheck()){
-            // 출석으로 변경
-            userEvent.updateIsCheck();
-            // 코인 개수 변경
-            user.updatePlusCoin(dailyCheckCoin);
-
-            // 코인 얻은 로그 생성
-            UserCoinGetLog userCoinGetLog = UserCoinGetLog.builder()
-                    .user(user)
-                    .getCoin(dailyCheckCoin)
-                    .type("CHECK").build();
-
-            userCoinGetLogRepository.save(userCoinGetLog);
-        }
-
         UserLoginSuccessDTO response = UserLoginSuccessDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -198,6 +181,12 @@ public class UserService {
                 .coin(user.getCoin())
                 .expiredMs(acExpiredMs)
                 .build();
+
+
+        // 로그인 log 기록
+        UserLog userLog = new UserLog();
+        userLog.setUser(user);
+        userLogRepository.save(userLog);
 
         return response;
     }

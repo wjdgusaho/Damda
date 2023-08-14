@@ -4,12 +4,15 @@ import com.b210.damda.domain.entity.User.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Getter
+@Getter @Setter
+@Builder
+@AllArgsConstructor
 public class UserLocation {
 
     @Id  @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,20 +33,5 @@ public class UserLocation {
     private String weather;
 
     public UserLocation(){
-    }
-
-    public void CreateUserLocation(User user, String localBig, String localMedium, Timestamp weatherTime){
-        this.user = user;
-        this.localBig = localBig;
-        this.localMedium = localMedium;
-        this.weatherTime = weatherTime;
-    }
-
-    public void UpdateWeatherTime(Timestamp weatherTime){
-        this.weatherTime = weatherTime;
-    }
-
-    public void UpdateWeather(String weather){
-        this.weather = weather;
     }
 }

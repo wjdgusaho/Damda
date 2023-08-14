@@ -12,7 +12,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class FriendScheduledComponent {
+    private final TimecapsuleRepository timecapsuleRepository;
 
+    //서울시간 00시마다 timecapsule_mapping 테이블에 card_able 컬럼들이 모두 (true 또는 1)로 수정되게 변경
+    @Scheduled(cron = "0 00 00 * * *", zone = "Asia/Seoul") // 매일 00시 00분 00초
+    public void scheduledEvent() {
+        timecapsuleRepository.cardAble(true, true);
+    }
 
 
 }

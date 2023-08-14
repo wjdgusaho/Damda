@@ -20,7 +20,7 @@ const Container = styled.div`
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background-color: ${(props) => props.theme.color50};
+    background-color: #fbf8fc;
   }
   .slick-dots li.slick-active button:before {
     opacity: 1;
@@ -29,7 +29,7 @@ const Container = styled.div`
     width: 30px;
     height: 12px;
     border-radius: 10px;
-    background-color: ${(props) => props.theme.color500};
+    background-color: #bb7ece;
     position: absolute;
     left: -10px;
   }
@@ -51,22 +51,29 @@ const SkipBtn = styled.button`
   display: flex;
   justify-content: end;
   margin-top: 70px;
-  color: ${(props) => props.theme.colorCommon};
+  color: white;
   font-size: 20px;
 `
 
 const Title = styled.div`
   display: block;
-  color: ${(props) => props.theme.colorCommon};
+  color: #f3f5fb;
   text-align: center;
   font-size: 21px;
   font-weight: 600;
   margin-bottom: 10px;
 `
 
+const Text = tw.div`
+  text-victoria-200
+  text-center
+  font-thin
+  text-sm
+`
+
 const StartBtn = styled.button`
-  background-color: ${(props) => props.theme.color50};
-  color: ${(props) => props.theme.color900};
+  background-color: #f6eef9;
+  color: #441f4c;
   width: 270px;
   height: 66px;
   border-radius: 30px;
@@ -76,7 +83,7 @@ const StartBtn = styled.button`
   transform: translateX(-50%);
   font-size: 24px;
   font-weight: 500;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 4px 4px #534177;
 `
 
 export default function Tutorial() {
@@ -122,6 +129,13 @@ export default function Tutorial() {
               }}
             />
             <Title>타임캡슐에 추억을 담아보세요</Title>
+            <Text>
+              상세 설명 어쩌구 저쩌구
+              <br />
+              가나다라마바사아자차카타파하
+              <br />
+              오예 신난다
+            </Text>
           </div>
           <div>
             <img
@@ -135,6 +149,13 @@ export default function Tutorial() {
               }}
             />
             <Title>묻혀있던 타임캡슐을 흔들어 여세요</Title>
+            <Text>
+              상세 설명 어쩌구 저쩌구
+              <br />
+              가나다라마바사아자차카타파하
+              <br />
+              오예 신난다
+            </Text>
           </div>
           <div>
             <img
@@ -148,6 +169,13 @@ export default function Tutorial() {
               }}
             />
             <Title>친구들과 함께 할 수도 있어요</Title>
+            <Text>
+              상세 설명 어쩌구 저쩌구
+              <br />
+              가나다라마바사아자차카타파하
+              <br />
+              오예 신난다
+            </Text>
           </div>
         </Slider>
       </Container>

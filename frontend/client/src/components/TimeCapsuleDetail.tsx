@@ -722,11 +722,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     }
   }, [oneDayLater])
 
-  //랜덤 숫자 생성
-  const generateRandomNumber = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min
-  }
-
   function kakaoShare() {
     console.log("Kakao : ", window.Kakao)
     if (window.Kakao) {
@@ -737,21 +732,14 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         kakao.init("e25afc7dead08f60a151179a01026248")
       }
 
-      const imageUrls = [
-        "https://damda.s3.ap-northeast-2.amazonaws.com/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C/Frame+45.png",
-        "https://damda.s3.ap-northeast-2.amazonaws.com/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C/Frame+48.png",
-        "https://damda.s3.ap-northeast-2.amazonaws.com/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C/Frame+49.png",
-      ]
-
-      const randomNum = generateRandomNumber(0, 3)
-
       kakao.Link.sendDefault({
         objectType: "feed",
         content: {
           title: "당신의 스쳐가는 시간을 의미있게 담다",
           description:
-            "친구가 담다에서 기다리고있어요\n메인화면에서 캡슐코드를 입력해주세요.",
-          imageUrl: imageUrls[randomNum],
+            "친구가 담다에서 기다리고있어요 \n메인화면에서 캡슐코드를 입력해주세요.",
+          imageUrl:
+            "https://damda.s3.ap-northeast-2.amazonaws.com/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C/Frame+45.png",
           link: {
             mobileWebUrl: "https://damda.online",
             webUrl: "https://damda.online",
@@ -1356,7 +1344,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
           )}
           {/* 임시로 일단 이렇게 */}
         </Box>
-        <div className="h-9"></div>
       </Background>
     </div>
   )
@@ -1530,76 +1517,25 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
             <div className="flex justify-center flex-wrap w-80">
               {capsuleData.partInfo.map((part, idx) => (
                 <div key={part.userNo} className="flex flex-col">
-                  {idx === 0 ? (
-                    <>
-                      <div className="relative">
-                        <img
-                          style={{
-                            backgroundColor: "#fff",
-                            borderRadius: "50%",
-                            width: "44px",
-                            height: "44px",
-                            boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
-                            margin: "8px",
-                          }}
-                          src={part.profileImage}
-                          alt="profilepic"
-                        />
-                        <img
-                          src="../../assets/icons/crown.png"
-                          alt="crown"
-                          width="27px"
-                          height="22px"
-                          style={{
-                            position: "absolute",
-                            top: "-7px",
-                            left: "16px",
-                          }}
-                        />
-                      </div>
-                      <span
+                  <>
+                    <div className="relative">
+                      <img
                         style={{
-                          fontSize: "12px",
-                          textAlign: "center",
-                          width: "63px",
-                          overflow: "hidden",
-                          whiteSpace: "nowrap",
-                          textOverflow: "ellipsis",
+                          backgroundColor: "#fff",
+                          borderRadius: "50%",
+                          width: "44px",
+                          height: "44px",
+                          boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
+                          margin: "8px",
                         }}
-                      >
-                        {part.nickname}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <div className="relative">
-                        <img
-                          style={{
-                            backgroundColor: "#fff",
-                            borderRadius: "50%",
-                            width: "44px",
-                            height: "44px",
-                            boxShadow: "0px 4px 4px rgb(0, 0, 0, 0.25)",
-                            margin: "8px",
-                          }}
-                          src={part.profileImage}
-                          alt="profilepic"
-                        />
-                      </div>
-                      <span
-                        style={{
-                          fontSize: "12px",
-                          textAlign: "center",
-                          width: "63px",
-                          overflow: "hidden",
-                          whiteSpace: "nowrap",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        {part.nickname}
-                      </span>
-                    </>
-                  )}
+                        src={part.profileImage}
+                        alt="profilepic"
+                      />
+                    </div>
+                    <span style={{ fontSize: "12px", textAlign: "center" }}>
+                      {part.nickname}
+                    </span>
+                  </>
                 </div>
               ))}
             </div>
@@ -1717,7 +1653,6 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           </BackBtn>
         </>
       </Box>
-      <div className="h-9"></div>
     </>
   )
 }

@@ -1,14 +1,12 @@
 package com.b210.damda.domain.timecapsule.controller;
 
 import com.b210.damda.domain.dto.Timecapsule.*;
-import com.b210.damda.domain.dto.serverSentEvent.timecapsule.TimeCapsuleEventEnum;
 import com.b210.damda.domain.dto.weather.WeatherLocationDTO;
 import com.b210.damda.domain.file.service.S3UploadService;
 import com.b210.damda.domain.timecapsule.service.TimecapsuleService;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.response.CommonResponse;
 import com.b210.damda.util.response.DataResponse;
-import com.b210.damda.util.serverSentEvent.service.TimeCapsuleEventService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +27,6 @@ import java.util.Map;
 public class TimecapsuleController {
 
     private final TimecapsuleService timecapsuleService;
-    private final TimeCapsuleEventService timeCapsuleEventService;
 
     /*
         진행중인 타임캡슐 리스트 (메인 및 보관함)
@@ -107,7 +104,6 @@ public class TimecapsuleController {
             Map<String, Object> result = new HashMap<>();
             result.put("timecapsule", timecapsule);
 
-            timeCapsuleEventService.TimecapsuleEventAccept(timecapsuleJoinDTO.getInviteCode());
             DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 참여 성공");
             response.setData(result);
 
@@ -141,7 +137,6 @@ public class TimecapsuleController {
     public DataResponse<Map<String, Object>> timecapsuleInviteUser(@RequestBody TimecapsuleInviteUserDTO timecapsuleInviteUserDTO){
         try{
             timecapsuleService.timecapsuleInviteUser(timecapsuleInviteUserDTO);
-            timeCapsuleEventService.TimecapsuleEventRequest(timecapsuleInviteUserDTO);
             DataResponse<Map<String, Object>> response = new DataResponse<>(200, "타임캡슐 초대 성공");
             return response;
         }catch (CommonException e){
@@ -203,6 +198,7 @@ public class TimecapsuleController {
     @PostMapping("regist/card")
     public CommonResponse registCard( @RequestPart("timecapsuleNo") Long timecapsuleNo,
                                       @RequestParam("cardImage") MultipartFile cardImage){
+
         //log.info(cardImage.toString());
         timecapsuleService.registCard(cardImage, timecapsuleNo);
         CommonResponse response = new CommonResponse(200, "카드 저장 완료");
@@ -308,7 +304,7 @@ public class TimecapsuleController {
         response.setData(result);
         return response;
     }
-
+    
     /*
         타임캡슐 오픈 디테일
      */
@@ -337,18 +333,7 @@ public class TimecapsuleController {
         response.setData(openRank);
         return response;
     }
-    /*
-        타임캡슐 오픈 로직
-     */
-    @PatchMapping("open/save")
-    public CommonResponse timecapsuleOpenSave(@RequestBody Map<String, Object> data){
-        Long timecapsuleNo = Long.parseLong((String) data.get("timecapsuleNo"));
-        timecapsuleService.timecapsuleOpenSave(timecapsuleNo);
-        CommonResponse response = new CommonResponse(200, "타임캡슐 저장 완료");
-        return response;
-    }
-
-
+    
 
 }
 
