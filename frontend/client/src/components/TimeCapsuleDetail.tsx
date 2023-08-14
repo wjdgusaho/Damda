@@ -5,12 +5,13 @@ import { useNavigate, useParams } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
 import axios from "axios"
 import { serverUrl } from "../urls"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
 import Modal from "react-modal"
+import { DELETE_DETAIL, SET_DETAIL } from "../store/Timecapsule"
 
-interface DataType {
+export interface DataType {
   timecapsuleNo: number
   capsuleType: string
   registDate: string
@@ -318,55 +319,10 @@ const Shareimg = styled.img`
 const TimeCapsuleDetail = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
-  const [capsuleData, setCapsuleData] = useState<DataType>({
-    timecapsuleNo: 0,
-    capsuleType: "",
-    registDate: "",
-    openDate: "",
-    title: "",
-    description: "",
-    capsuleIcon: "",
-    goalCard: 0,
-    nowCard: 0,
-    inviteCode: "",
-    maxParticipant: 0,
-    nowParticipant: 0,
-    penalty: {
-      penaltyNo: 0,
-      penalty: false,
-      penaltyDescription: "",
-    },
-
-    criteriaInfo: {
-      criteriaId: 0,
-      criteriaType: "",
-      weatherStatus: "",
-      startTime: "",
-      endTime: "",
-      localBig: "",
-      localMedium: "",
-      timeKr: "",
-      cirteriaDays: [
-        {
-          dayKr: "",
-          dayEn: "",
-        },
-      ],
-    },
-    myInfo: {
-      userNo: 0,
-      cardAble: false,
-      fileAble: false,
-      host: false,
-    },
-    partInfo: [
-      {
-        userNo: 0,
-        nickname: "",
-        profileImage: "",
-      },
-    ],
-  })
+  const capsuleData = useSelector(
+    (state: RootState) => state.timecapsule.timecapsuleDetail
+  )
+  const dispatch = useDispatch()
 
   //카카오 javaScript 생성
   useEffect(() => {
@@ -392,13 +348,16 @@ const TimeCapsuleDetail = function () {
             Authorization: "Bearer " + token,
           },
         })
-        setCapsuleData(response.data.data.timecapsule)
+        dispatch(SET_DETAIL(response.data.data.timecapsule))
       } catch (error) {
         console.log("Error fetching data:", error)
       }
     }
 
     fetchData()
+    return () => {
+      dispatch(DELETE_DETAIL())
+    }
   }, [capsuleId, token])
 
   console.log(capsuleData)
