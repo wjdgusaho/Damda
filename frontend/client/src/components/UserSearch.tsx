@@ -98,12 +98,7 @@ const UserSearch = function () {
             <>
               <NoResult>검색하려는 친구가 없어요</NoResult>
               <div className="relative">
-                <img
-                  src="/assets/universe/Astronaut-1.png"
-                  alt="목록없음"
-                  style={{ width: "15rem" }}
-                  className="mt-20"
-                />
+                <EmptyImage className="mt-20" />
                 <CapsuleShadow className="m-auto !h-12 !w-40"></CapsuleShadow>
               </div>
             </>
@@ -274,6 +269,15 @@ const CapsuleShadow = styled.div`
   border-radius: 50%;
   background: ${(props) => props.theme.colorShadow};
   filter: blur(5px);
+`
+
+const EmptyImage = styled.div`
+  position: relative;
+  background-image: url(/${(props) => props.theme.emptyImg_2});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 15rem;
+  height: 240px;
 `
 
 type UserInfo = {
