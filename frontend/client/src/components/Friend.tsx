@@ -292,24 +292,29 @@ const FriendCard = function ({
   }
 
   return (
-    <div className="flex w-10/12 items-center m-auto p-2">
-      <img
-        style={{
-          backgroundColor: "#fff",
-          borderRadius: "50%",
-          width: "52px",
-          height: "52px",
-        }}
-        src={friend.profileImage}
-        alt="profilepic"
-      />
-      <TextStyle className="ml-4">
-        {friend.nickname}
-        <span className="ml-1" style={{ opacity: "50%", fontWeight: "300" }}>
-          #{friend.userNo}
-        </span>
-        {/* 여기 수정 */}
-      </TextStyle>
+    <div
+      className="flex items-center justify-between mt-4"
+      style={{ width: "313px" }}
+    >
+      <div className="flex items-center">
+        <img
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: "50%",
+            width: "52px",
+            height: "52px",
+          }}
+          src={friend.profileImage}
+          alt="profilepic"
+        />
+        <TextStyle className="ml-4">
+          {friend.nickname}
+          <span className="ml-1" style={{ opacity: "50%", fontWeight: "300" }}>
+            #{friend.userNo}
+          </span>
+          {/* 여기 수정 */}
+        </TextStyle>
+      </div>
       <div className="flex ml-auto mr-3">
         {friend.favorite ? (
           <button className="w-5 mr-4" onClick={favoriteCancel}>
@@ -405,23 +410,28 @@ const RequestCard = function ({
   }
 
   return (
-    <div className="flex w-10/12 items-center m-auto p-2">
-      <img
-        style={{
-          backgroundColor: "#fff",
-          borderRadius: "50%",
-          width: "52px",
-          height: "52px",
-        }}
-        src={friend.profileImage}
-        alt="profilepic"
-      />
-      <TextStyle className="ml-4">
-        {friend.nickname}
-        <span className="ml-1" style={{ opacity: "50%", fontWeight: "300" }}>
-          #{friend.userNo}
-        </span>
-      </TextStyle>
+    <div
+      className="flex items-center justify-between mt-4"
+      style={{ width: "313px" }}
+    >
+      <div className="flex items-center">
+        <img
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: "50%",
+            width: "52px",
+            height: "52px",
+          }}
+          src={friend.profileImage}
+          alt="profilepic"
+        />
+        <TextStyle className="ml-4">
+          {friend.nickname}
+          <span className="ml-1" style={{ opacity: "50%", fontWeight: "300" }}>
+            #{friend.userNo}
+          </span>
+        </TextStyle>
+      </div>
       <div className="flex ml-auto mr-3">
         <button className="w-5 mr-4" onClick={requestAccept}>
           <img

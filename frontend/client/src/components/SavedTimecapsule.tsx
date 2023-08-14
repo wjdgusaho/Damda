@@ -1,49 +1,23 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import "../index.css"
 import tw from "tailwind-styled-components"
 import { styled } from "styled-components"
 import { useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
+import axios from "axios"
+import { RootState } from "../store/Store"
+import { useSelector } from "react-redux"
+import Modal from "react-modal"
 
-type CapsuleType = {
-  id: number
+interface CapsuleDataType {
+  timecapsuleNo: number
   type: string
-  sDate: string
-  eDate: string
-  name: string
-  imgsrc: string
-  curCard: number
-  goalCard: number
-  state: string
   title: string
+  startDate: string
+  endDate: string // GOAL일 때는 오픈한 시간
+  capsuleIconNo: number
+  goalCard: number
 }
-
-const capsuleList: CapsuleType[] = [
-  {
-    id: 1,
-    type: "classic",
-    sDate: "2023-01-01",
-    eDate: "2023-06-01",
-    name: "클래식1",
-    imgsrc: "capsule9",
-    curCard: 0,
-    goalCard: 0,
-    state: "openable",
-    title: "싸피 친구들 타임캡슐",
-  },
-  {
-    id: 3,
-    type: "memory",
-    sDate: "2023-01-01",
-    eDate: "2023-02-30",
-    name: "기록1",
-    imgsrc: "capsule7",
-    curCard: 0,
-    goalCard: 0,
-    state: "openable",
-    title: "퇴사하고 싶은 사람들",
-  },
-]
 
 const Box = styled.div`
   display: flex;
@@ -74,7 +48,8 @@ const Card = styled.div`
 
 const CapsuleImg = styled.div<{ capsuleNum: string }>`
   position: relative;
-  background-image: url(${(props) => props.theme[props.capsuleNum]});
+  background-image: url(${(props) =>
+    props.theme["capsule" + props.capsuleNum]});
   background-repeat: no-repeat;
   background-size: cover;
   width: 87px;
@@ -85,6 +60,7 @@ const CapsuleImg = styled.div<{ capsuleNum: string }>`
 const CapsuleState = styled.div`
   font-size: 20px;
   display: flex;
+  justify-content: space-between;
 `
 
 const CapsuleTitle = styled.div`
@@ -95,55 +71,208 @@ const CapsuleTitle = styled.div`
   word-break: break-all;
 `
 
+const customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    borderRadius: "20px",
+    fontFamily: "Pretendard",
+  },
+  overlay: {
+    zIndex: 2,
+    backgroundColor: "rgba(0, 0, 0, 0.733)",
+  },
+}
+
+const ModalContent = styled.div`
+  color: ${(props) => props.theme.color900};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+`
+
+const ModalTitle = styled.div`
+  font-size: 20px;
+  font-weight: 700;
+
+  span {
+    color: ${(props) => props.theme.color500};
+  }
+`
+
+const FileCencelBtn = styled.button`
+  width: 76px;
+  height: 25px;
+  border-radius: 30px;
+  background-color: rgb(255, 255, 255, 0.05);
+  color: ${(props) => props.theme.color900};
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  font-size: 16px;
+  font-weight: 500;
+  margin: 10px 13px;
+`
+
+const FileSubmitBtn = styled(FileCencelBtn)`
+  background-color: ${(props) => props.theme.color500};
+`
+
 const SavedTimecapsule = function () {
+  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const [capsuleList, setCapsuleList] = useState<CapsuleDataType[]>([])
+  const navigate = useNavigate()
+  const [deleteNo, setDeleteNo] = useState(123456789)
+
+  const [modalIsOpen, setIsOpen] = React.useState(false)
+
+  function openModal() {
+    setIsOpen(true)
+  }
+
+  function closeModal() {
+    setIsOpen(false)
+  }
+
+  const handleDeleteClick = (event: React.MouseEvent, capsuleNo: number) => {
+    event.stopPropagation() // 이벤트 버블링 막음
+    setDeleteNo(capsuleNo)
+    openModal()
+  }
+
+  const handleCloseModal = (event: React.MouseEvent) => {
+    event.stopPropagation() // 이벤트 버블링 막음
+    closeModal()
+  }
+
+  const handleDeleteConfirm = (event: React.MouseEvent, capsuleNo: number) => {
+    event.stopPropagation() // 이벤트 버블링 막음
+    savedCapsuleDelete(capsuleNo) // 타임캡슐 삭제
+    closeModal() // 모달 닫기
+  }
+
+  const savedCapsuleDelete = async (capsuleNo: number) => {
+    try {
+      const response = await axios({
+        method: "PATCH",
+        url: process.env.REACT_APP_SERVER_URL + "timecapsule/exit",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        data: {
+          timecapsuleNo: capsuleNo + "",
+        },
+      })
+      if (response.data.code === 200) {
+        console.log(response.data)
+        window.location.reload()
+        // 새로고침 추가하기
+      } else if (response.data.code === 404) {
+        alert("타임캡슐이 존재하지 않습니다.")
+      } else if (response.data.code === 401) {
+        alert("토큰 만료")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios({
+          method: "GET",
+          url: process.env.REACT_APP_SERVER_URL + "timecapsule/store/list",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        })
+        setCapsuleList(response.data.data.timecapsuleList)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
+  }, [])
+
+  console.log(capsuleList)
+
   return (
     <>
       <SubHeader />
       <Box>
         <Title>저장된 타임캡슐</Title>
         {capsuleList.map((capsule) => (
-          <React.Fragment key={capsule.id}>
-            <Card>
-              <CapsuleImg capsuleNum={capsule.imgsrc} />
-              <div style={{ marginLeft: "15px" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <CapsuleState>
-                    {calculateDday(capsule.sDate, capsule.eDate)}
-                    <span className="font-thin opacity-75">간의 기록</span>
-                  </CapsuleState>
+          <div>
+            <Card
+              key={capsule.timecapsuleNo}
+              onClick={() => {
+                navigate(`/timecapsule/result/${capsule.timecapsuleNo}`)
+              }}
+            >
+              <CapsuleImg capsuleNum={capsule.capsuleIconNo.toString()} />
+              <div className="ml-2">
+                <CapsuleState>
+                  <div>
+                    {calculateDday(capsule.startDate, capsule.endDate)}
+                    <span className="font-light opacity-75">간의 기록</span>
+                  </div>
                   <img
+                    onClick={(e) => handleDeleteClick(e, capsule.timecapsuleNo)}
                     src="../../assets/icons/bin.png"
                     alt="bin"
                     style={{ width: "20px", height: "20.5px" }}
                   />
-                </div>
+                </CapsuleState>
+
                 <DateDiv
                   className="text-sm font-thin"
                   style={{ opacity: "56%" }}
                 >
-                  {capsule.sDate.split("-").join(".")} ~{" "}
-                  {capsule.eDate.split("-").join(".")}
+                  {capsule.startDate.slice(0, 10).split("-").join(".")} ~{" "}
+                  {capsule.endDate.slice(0, 10).split("-").join(".")}
                 </DateDiv>
-                <CapsuleTitle className="text-xl font-thin">
-                  {capsule.title}
-                </CapsuleTitle>
+
+                <CapsuleTitle>{capsule.title}</CapsuleTitle>
               </div>
             </Card>
-          </React.Fragment>
+          </div>
         ))}
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="DeleteModal"
+        >
+          <ModalContent>
+            <ModalTitle className="my-2">정말 삭제하시겠어요?</ModalTitle>
+            <div>삭제하면 타임캡슐이 사라져요.</div>
+            <div className="mt-2">
+              <FileCencelBtn type="button" onClick={handleCloseModal}>
+                취소
+              </FileCencelBtn>
+              <FileSubmitBtn onClick={(e) => handleDeleteConfirm(e, deleteNo)}>
+                삭제
+              </FileSubmitBtn>
+            </div>
+          </ModalContent>
+        </Modal>
       </Box>
     </>
   )
 }
 
 const calculateDday = (startDate: string, endDate: string) => {
-  const dday = calculateDateDifference(startDate, endDate)
+  const startDateString = startDate.slice(0, 10)
+  const endDateString = endDate.slice(0, 10)
+
+  const dday = calculateDateDifference(startDateString, endDateString)
   const ddayPrint = dday + "일"
   return ddayPrint
 }
