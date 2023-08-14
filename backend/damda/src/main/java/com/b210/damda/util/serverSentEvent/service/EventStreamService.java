@@ -49,9 +49,9 @@ public class EventStreamService {
         log.info("connectStream, userNo : {}", userNo);
 
 
-//        log.info("여기 들어가서");
-////        endAndRemoveStream(userNo);
-//        log.info("나올수가 없다.");
+        //재로그인시 해당 스트림 제거
+        endAndRemoveStream(userNo);
+
 
         //이후 재연결 로직 발생
         //접속 시간 등록
@@ -66,7 +66,7 @@ public class EventStreamService {
 
         // 연결을 계속하기 위해 일정 시간마다 Event를 전송함. 해당 Flux는 기존 FluxSink와 별도의 로직이다.
         Flux<ServerSentEvent<JsonNode>> maintainConnectFlux =
-                Flux.interval(Duration.ofSeconds(3))
+                Flux.interval(Duration.ofSeconds(30))
                         .takeUntilOther(processor)  // processor가 신호를 보내면(로그아웃) 중지
                         .map(new Function<Long, ServerSentEvent<JsonNode>>() {
                             @Override
@@ -94,15 +94,15 @@ public class EventStreamService {
     }
 
     //로그아웃시 종료 로직
-    public void disconnectStream() {
+    public void disconnectStreamLogout() {
         long userNo = addOnEventService.getUserNo();
-        log.info("disconnectStream(), 로그아웃 유저 {}", userNo);
+        log.info("disconnectStream(), 로그아웃 : {}", userNo);
         //저장된 스트림 종료 및 싱크 제거, 응답 기록 제거
         endAndRemoveStream(userNo);
 
-        //로그아웃 알림
-        ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("logout-event", new ServerSentEventDTO(null, null, null, "로그아웃 진행", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
-        sendEvent(userNo, logoutEvent);
+//        //로그아웃 알림
+//        ServerSentEvent<JsonNode> logoutEvent = addOnEventService.buildServerSentEvent("logout-event", new ServerSentEventDTO(null, null, null, "로그아웃 진행", addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
+//        sendEvent(userNo, logoutEvent);
     }
 
     //미답신 시 종료 로직 : 현재 비정상적 종료를 시행, 스케줄러에서 사용

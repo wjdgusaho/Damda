@@ -272,6 +272,7 @@ const FriendCard = function ({
       <TextStyle className="ml-4 text-white">
         {friend.nickname}
         <span className="text-gray-400">#{friend.userNo}</span>
+        {/* 여기 수정 */}
       </TextStyle>
       <div className="flex ml-auto mr-3">
         {friend.favorite ? (

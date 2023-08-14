@@ -45,7 +45,7 @@ public class TimecapsuleCreateDTO {
 
 
         TimecapsuleCriteria timecapsuleCriteriaEntity = this.criteria.toEntity();
-        timecapsule.setTimecapsuleCriteria(timecapsuleCriteriaEntity);
+        timecapsule.addTimecapsuleCriteria(timecapsuleCriteriaEntity);
 
        TimecapsulePenalty timecapsulePenaltyEntity = null;
         if(this.penalty != null) {
@@ -55,7 +55,7 @@ public class TimecapsuleCreateDTO {
             TimecapsulePenaltyDTO timecapsulePenaltyDTO = new TimecapsulePenaltyDTO();
             timecapsulePenaltyEntity = timecapsulePenaltyDTO.toEntity();
         }
-        timecapsule.setTimecapsulePenalty(timecapsulePenaltyEntity);
+        timecapsule.addTimecapsulePenalty(timecapsulePenaltyEntity);
 
 
         return timecapsule;

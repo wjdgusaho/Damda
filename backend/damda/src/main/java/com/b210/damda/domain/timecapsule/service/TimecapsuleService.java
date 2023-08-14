@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface TimecapsuleService {
-
-    Map<String,List<TimecapsuleMapping>>  getTimecapsuleList(Long userNo);
     List<MainTimecapsuleListDTO> workTimecapsule(WeatherLocationDTO weatherLocationDto);
 
     List<SaveTimecapsuleListDTO> saveTimecapsule();
@@ -50,4 +48,6 @@ public interface TimecapsuleService {
     TimecapsuleOpenDetailDTO timecapsuleOpenDetail(Long timecapsuleNo);
 
     Map<String, Object> timecapsuleOpenRank(Long timecapsuleNo);
+
+    void timecapsuleOpenSave(Long timecapsuleNo);
 }

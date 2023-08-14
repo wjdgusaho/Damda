@@ -12,9 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-@Setter @Getter
-@Builder
-@AllArgsConstructor
+@Getter
 public class TimecapsulePenalty {
 
     @Id  @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +23,12 @@ public class TimecapsulePenalty {
     private String penaltyDescription;
 
     public TimecapsulePenalty() {
+    }
 
+    @Builder
+    public TimecapsulePenalty(Boolean penalty, String penaltyDescription){
+        this.penalty = penalty;
+        this.penaltyDescription = penaltyDescription;
     }
 
     public TimecapsulePenaltyDTO toTimecapsulePenaltyDTO(){

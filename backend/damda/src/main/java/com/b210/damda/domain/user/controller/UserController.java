@@ -10,6 +10,7 @@ import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.b210.damda.util.response.DataResponse;
 import com.b210.damda.util.serverSentEvent.service.EventStreamService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -40,7 +42,7 @@ public class UserController {
     public DataResponse<Map<String, Object>> regist(@RequestPart("user") UserOriginRegistDTO userOriginRegistDTO,
                                     @RequestPart("profileImage") MultipartFile profileImage){
         try {
-            User savedUser = userService.regist(userOriginRegistDTO, profileImage);
+            userService.regist(userOriginRegistDTO, profileImage);
             DataResponse<Map<String, Object>> response = new DataResponse<>(201, "회원가입 완료");
             return response;
         }catch (CommonException e){
@@ -165,7 +167,6 @@ public class UserController {
     @PostMapping("logout")
     public DataResponse<Map<String, Object>> logout(@RequestHeader(value="Authorization") String token){
         try{
-            eventStreamService.disconnectStream();
             userService.logout(token);
             return new DataResponse<>(200, "로그아웃 성공");
         }catch (CommonException e){

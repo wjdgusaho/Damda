@@ -1,16 +1,11 @@
-package com.b210.damda.domain.entity;
+package com.b210.damda.domain.entity.Items;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@Getter @Setter
-@Builder
-@AllArgsConstructor
+@Getter
 public class ItemDetails {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

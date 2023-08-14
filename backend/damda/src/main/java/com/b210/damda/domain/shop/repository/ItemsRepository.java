@@ -1,6 +1,6 @@
 package com.b210.damda.domain.shop.repository;
 
-import com.b210.damda.domain.entity.Items;
+import com.b210.damda.domain.entity.Items.Items;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
