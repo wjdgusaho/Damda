@@ -2,7 +2,7 @@
 
 ## 1. application.yml
 
-### 카카오톡 Security Oauth2 설정
+- 카카오톡 Security Oauth2 설정
 
 ```JAVA
   security:
@@ -31,10 +31,7 @@
 
 ## 2. JwtSuccessHandler / KakaoFallHandler
 
-### response.sendRedirect
-
-- url을 프론트 주소로 주시면 됩니다
-
+- response.sendRedirect
+  url을 프론트 주소로 주시면 됩니다
   ex) "https://localhost:3000/login"
-
   ex) "https://localhost:3000/dummykakao?code=" + userCode
