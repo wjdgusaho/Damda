@@ -56,14 +56,13 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException{
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        log.info("getAttributes : {}", oAuth2User.getAttributes());
+        //log.info("getAttributes : {}", oAuth2User.getAttributes());
 
         OAuth2UserInfo oAuth2UserInfo = null;
 
         String provider = userRequest.getClientRegistration().getRegistrationId();
 
         if(provider.equals("kakao")){
-            log.info("카카오 로그인");
             oAuth2UserInfo  = new KakaoUserInfo((Map) oAuth2User.getAttributes());
         }
 
@@ -76,17 +75,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             profileImage = "https://damda.s3.ap-northeast-2.amazonaws.com/user-profileImage/profile.jpg";
         }
 
-        log.info(email);
-        log.info(loginId);
-        log.info(nickname);
-        log.info(profileImage);
-
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByKakaoEmail(email);
         User user = null;
 
-        log.info(optionalUser.toString());
-
         if(optionalUser.isEmpty()){
+            //카카오 유저 생성
             user = User.builder()
                     .accountType("KAKAO")
                     .email(email)
@@ -94,11 +87,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .nickname(nickname)
                     .profileImage(profileImage)
                     .build();
-
-
-
+            
             user = userRepository.save(user);
-            System.out.println("유저없음"+user);
 
             // 3번 아이템 꺼냄
             Items items = itemsRepository.findByItemNo(3L).get();
@@ -118,16 +108,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
         }
         else{
+            //유저 불러오기
             user = optionalUser.get();
-            log.info("로그인 성공"+ user);
             KakaoLog kakaolog = kakaoLogRepository.findByUserUserNo(user.getUserNo());
             kakaolog.updateKakaoLog(userRequest.getAccessToken().getTokenValue());
             kakaoLogRepository.save(kakaolog);
-            if(user.getDeleteDate() != null){
-                user.deleteDeleteDate();
-                userRepository.save(user);
-            }
-
         }
         
         // 카카오 유저 로그인 로그 저장
