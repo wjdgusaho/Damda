@@ -9,7 +9,6 @@
     import java.time.LocalDateTime;
 
     @Entity
-    @Setter
     @Getter
     @ToString
     @EntityListeners(AuditingEntityListener.class)
@@ -97,6 +96,26 @@
 
         public void updatePlusCoin(int coin){
             this.coin = this.coin + coin;
+        }
+
+        public void updatePlusTimecapsuleCount(){
+            this.nowCapsuleCount += 1;
+        }
+
+        public void updateMinusTimecapsuleCount(){
+            this.nowCapsuleCount -= 1;
+        }
+
+        public void updateUseCoin(int coin){
+            this.coin = coin;
+        }
+
+        public void updateMaxTimecapsuleCount(){
+            this.maxCapsuleCount += 1;
+        }
+
+        public void updateNowTheme(int nowTheme){
+            this.nowTheme = nowTheme;
         }
 
 

@@ -204,7 +204,7 @@ public class ShopServiceImpl implements ShopService{
         });
 
         // 유저 골드 소모
-        user.setCoin(user.getCoin() - theme.getPrice());
+        user.updateUseCoin(user.getCoin() - theme.getPrice());
         userRepository.save(user);
 
         // 유저 - 구매한아이템 매핑
@@ -250,7 +250,7 @@ public class ShopServiceImpl implements ShopService{
         });
 
         // 유저 코인 소모
-        user.setCoin(user.getCoin() - items.getPrice());
+        user.updateUseCoin(user.getCoin() - items.getPrice());
         userRepository.save(user);
 
         // 유저 구매한 아이템 매핑
@@ -297,10 +297,10 @@ public class ShopServiceImpl implements ShopService{
         }
 
         //구매 가능 돈 차감
-        user.setCoin(user.getCoin() - items.getPrice());
+        user.updateUseCoin(user.getCoin() - items.getPrice());
 
         //유저 가질수 있는 타임캡슐 개수 증가
-        user.setMaxCapsuleCount(user.getMaxCapsuleCount() + 1);
+        user.updateMaxTimecapsuleCount();
         userRepository.save(user);
 
         Map<String, Object> result = new HashMap<>();
@@ -387,7 +387,7 @@ public class ShopServiceImpl implements ShopService{
         }
 
         //유저 돈차감
-        user.setCoin(user.getCoin() - items.getPrice());
+        user.updateUseCoin(user.getCoin() - items.getPrice());
         userRepository.save(user);
 
         //타임캡슐 용량 증가
