@@ -49,6 +49,18 @@ public class test {
 //        }
 //    }
 
+//    @Scheduled(fixedRate = 3000) // 테스터
+//    public void test() {
+//        log.info("테스터 스케줄러 동작");
+//        ;
+//        // 서버 시스템 시간 가져오기, 임시로 -7일해서 만료 시간 체크하였음.
+//        LocalDateTime serverTime = LocalDateTime.now().plusHours(9).minusDays(7);
+//
+//        List<Timecapsule> timecapsules = timeCapsuleSEERepository.getExpiredTimecapsuleByUserNoAndNowTimeStamp(123L, Timestamp.valueOf(serverTime));
+//        for(Timecapsule t : timecapsules) {
+//            System.out.println(t.getTitle());
+//        }
+//    }
 
 
 

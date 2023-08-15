@@ -1,7 +1,8 @@
 package com.b210.damda.util.serverSentEvent.service;
 
+import com.b210.damda.domain.dto.serverSentEvent.timecapsule.CheckMyExpiredTimecapsuleDTO;
 import com.b210.damda.domain.dto.serverSentEvent.ServerSentEventDTO;
-import com.b210.damda.domain.dto.serverSentEvent.TimeCapsuleSSEDTO;
+import com.b210.damda.domain.dto.serverSentEvent.timecapsule.TimeCapsuleSSEDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -48,6 +47,16 @@ public class AddOnEventService {
 
     //Event Builder(DTO) - Timecapsule
     public ServerSentEvent<JsonNode> buildServerSentEvent(String eventName, TimeCapsuleSSEDTO data) {
+        JsonNode jsonData = objectMapper.valueToTree(data); //json 타입으로 변환
+        return ServerSentEvent.<JsonNode>builder()
+                .id(data.toString())
+                .event(eventName)
+                .data(jsonData)
+                .build();
+    }
+
+    //Event Builder(DTO) - 나에게 온 알림 체크하는 로직
+    public ServerSentEvent<JsonNode> buildServerSentEvent(String eventName, CheckMyExpiredTimecapsuleDTO data) {
         JsonNode jsonData = objectMapper.valueToTree(data); //json 타입으로 변환
         return ServerSentEvent.<JsonNode>builder()
                 .id(data.toString())
