@@ -47,6 +47,7 @@ import {
   toastOption,
 } from "./store/Alarm"
 import { EmptyPage } from "./components/EmptyPage"
+import { AnimatePresence } from "framer-motion"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
@@ -224,62 +225,72 @@ function Main() {
         <CookiesProvider>
           <BrowserRouter>
             {!token && (
-              <Routes>
-                <Route path="/" element={<LandingPage />}></Route>
-                <Route path="/login/" element={<Login />}></Route>
-                <Route path="/signup/" element={<SignUp />}></Route>
-                <Route path="/dummykakao/" element={<DummyKakao />}></Route>
-                <Route path="/*" element={<EmptyPage />}></Route>
-                <Route path="/findPassword/" element={<FindPassword />}></Route>
-              </Routes>
+              <AnimatePresence>
+                <Routes>
+                  <Route path="/" element={<LandingPage />}></Route>
+                  <Route path="/login/" element={<Login />}></Route>
+                  <Route path="/signup/" element={<SignUp />}></Route>
+                  <Route path="/dummykakao/" element={<DummyKakao />}></Route>
+                  <Route path="/*" element={<EmptyPage />}></Route>
+                  <Route
+                    path="/findPassword/"
+                    element={<FindPassword />}
+                  ></Route>
+                </Routes>
+              </AnimatePresence>
             )}
             {token && (
-              <Routes>
-                <Route path="/*" element={<EmptyPage />}></Route>
-                <Route path="/" element={<LandingPage />}></Route>
-                <Route path="/user/" element={<CheckPassword />}></Route>
-                <Route path="/user-info/" element={<UserInfoChange />}></Route>
-                <Route path="/shop/" element={<ShopPage />}></Route>
-                <Route
-                  path="/timecapsule/"
-                  element={<TimecapsulePage />}
-                ></Route>
-                <Route path="/card/:capsuleId" element={<Card />}></Route>
-                <Route path="/friend/" element={<Friend />}></Route>
-                <Route path="/friend/search" element={<UserSearch />}></Route>
-                <Route path="/login/" element={<Login />}></Route>
-                <Route path="/signup/" element={<SignUp />}></Route>
-                <Route path="/logout/" element={<Logout />}></Route>
-                <Route path="/main/" element={<MainPage />}></Route>
-                <Route path="/tutorial/" element={<Tutorial />}></Route>
-                <Route path="/dummykakao/" element={<DummyKakao />}></Route>
-                <Route path="/menu/" element={<Menu />}></Route>
-                <Route
-                  path="/savetimecapsule/"
-                  element={<SavedTimecapsule />}
-                ></Route>
-                <Route
-                  path="/participate/"
-                  element={<Participate code={""} />}
-                ></Route>
-                <Route path="/selecttype/" element={<SelectType />}></Route>
-                <Route path="/classic/" element={<ClassicCapsule />}></Route>
-                <Route path="/record/" element={<RecordCapsule />}></Route>
-                <Route path="/goal/" element={<GoalCapsule />}></Route>
-                <Route path="/selecttheme/" element={<SelectTheme />}></Route>
-                <Route
-                  path="/timecapsule/detail/:capsuleId/"
-                  element={<TimeCapsuleDetail />}
-                ></Route>
-                <Route
-                  path="/timecapsule/open/:capsuleId/"
-                  element={<TimecapsuleOpen />}
-                ></Route>
-                <Route
-                  path="/timecapsule/result/:capsuleId/"
-                  element={<TimecapsuleResult />}
-                ></Route>
-              </Routes>
+              <AnimatePresence>
+                <Routes>
+                  <Route path="/*" element={<EmptyPage />}></Route>
+                  <Route path="/" element={<LandingPage />}></Route>
+                  <Route path="/user/" element={<CheckPassword />}></Route>
+                  <Route
+                    path="/user-info/"
+                    element={<UserInfoChange />}
+                  ></Route>
+                  <Route path="/shop/" element={<ShopPage />}></Route>
+                  <Route
+                    path="/timecapsule/"
+                    element={<TimecapsulePage />}
+                  ></Route>
+                  <Route path="/card/:capsuleId" element={<Card />}></Route>
+                  <Route path="/friend/" element={<Friend />}></Route>
+                  <Route path="/friend/search" element={<UserSearch />}></Route>
+                  <Route path="/login/" element={<Login />}></Route>
+                  <Route path="/signup/" element={<SignUp />}></Route>
+                  <Route path="/logout/" element={<Logout />}></Route>
+                  <Route path="/main/" element={<MainPage />}></Route>
+                  <Route path="/tutorial/" element={<Tutorial />}></Route>
+                  <Route path="/dummykakao/" element={<DummyKakao />}></Route>
+                  <Route path="/menu/" element={<Menu />}></Route>
+                  <Route
+                    path="/savetimecapsule/"
+                    element={<SavedTimecapsule />}
+                  ></Route>
+                  <Route
+                    path="/participate/"
+                    element={<Participate code={""} />}
+                  ></Route>
+                  <Route path="/selecttype/" element={<SelectType />}></Route>
+                  <Route path="/classic/" element={<ClassicCapsule />}></Route>
+                  <Route path="/record/" element={<RecordCapsule />}></Route>
+                  <Route path="/goal/" element={<GoalCapsule />}></Route>
+                  <Route path="/selecttheme/" element={<SelectTheme />}></Route>
+                  <Route
+                    path="/timecapsule/detail/:capsuleId/"
+                    element={<TimeCapsuleDetail />}
+                  ></Route>
+                  <Route
+                    path="/timecapsule/open/:capsuleId/"
+                    element={<TimecapsuleOpen />}
+                  ></Route>
+                  <Route
+                    path="/timecapsule/result/:capsuleId/"
+                    element={<TimecapsuleResult />}
+                  ></Route>
+                </Routes>
+              </AnimatePresence>
             )}
           </BrowserRouter>
         </CookiesProvider>

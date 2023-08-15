@@ -16,6 +16,7 @@ import TimecapsuleResultMembers from "./TimecapsuleResultMembers"
 import TimecapsuleResultImages from "./TimecapsuleResultImages"
 import TimecapsuleResultRank from "./TimecapsuleResultRank"
 import ReactCanvasConfetti from "react-canvas-confetti"
+import { motion } from "framer-motion"
 
 interface CapsuleInfoType {
   timecapsuleNo: number
@@ -108,7 +109,11 @@ const TimecapsuleResult = function () {
   }, [])
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <ReactCanvasConfetti refConfetti={getInstance} style={canvasStyles} />
       <Box>
         {capsuleInfo && (
@@ -170,7 +175,7 @@ const TimecapsuleResult = function () {
           </BackBtn>
         </>
       </Box>
-    </>
+    </motion.div>
   )
 }
 

@@ -5,6 +5,7 @@ import { useParams } from "react-router"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
+import { motion } from "framer-motion"
 
 interface DataType {
   allCardCnt: number
@@ -95,7 +96,11 @@ const TimecapsuleResultRank = function () {
   console.log(rankData.userRank.length)
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <RankBox>
         {rankData.userRank.map((user, idx) => (
           <div key={idx}>
@@ -202,7 +207,7 @@ const TimecapsuleResultRank = function () {
           </div>
         ))}
       </GraphBox>
-    </>
+    </motion.div>
   )
 }
 

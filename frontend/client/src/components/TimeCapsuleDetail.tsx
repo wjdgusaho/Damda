@@ -10,6 +10,7 @@ import "./datePicker.css"
 import Modal from "react-modal"
 import { DELETE_DETAIL, SET_DETAIL } from "../store/Timecapsule"
 import toast, { Toaster } from "react-hot-toast"
+import { motion } from "framer-motion"
 
 export interface DataType {
   timecapsuleNo: number
@@ -369,7 +370,11 @@ const TimeCapsuleDetail = function () {
   const isRegistered = currentDate < oneDayLater
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <Toaster toastOptions={{ duration: 1000 }} />
       {isRegistered ? (
         // 24시간이 안 지났을 때 (미등록 타임캡슐)
@@ -378,7 +383,7 @@ const TimeCapsuleDetail = function () {
         // 24시간이 지났을 때 (등록 완료된 타임캡슐)
         <Proceeding capsuleData={capsuleData} />
       )}
-    </>
+    </motion.div>
   )
 }
 
