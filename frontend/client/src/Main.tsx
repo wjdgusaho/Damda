@@ -127,6 +127,16 @@ function Main() {
           },
         }
       )
+      newEventSource.onopen = (event) => {
+        console.log(event)
+        const openEventSource = new EventSourcePolyfill(
+          process.env.REACT_APP_SERVER_URL + "sse/login/after",
+          { headers: { Authorization: "Bearer " + token } }
+        )
+        openEventSource.onerror = (event) => {
+          console.log("open event : ", event)
+        }
+      }
       // 에러가 났을 때 발생하는 이벤트 함수
       newEventSource.onerror = (event) => {
         console.log("Error event : ", event)
