@@ -70,6 +70,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
     private final int NOW_PARTICIOPANT = 1;
     private final int CARD_COIN_GET = 50;
 
+    private final String TYPE_GOAL = "GOAL";
+
     //한국 시간 설정
     private static final ZoneId SEOUL_ZONE_ID = ZoneId.of("Asia/Seoul");
 
@@ -175,7 +177,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 오픈조건 검증 로직
              */
             //목표 타임캡슐이라면
-            if(mainTimecapsule.getType().equals("GOAL")){
+            if(mainTimecapsule.getType().equals(TYPE_GOAL)){
                 List<TimecapsuleCard> cards = timecapsuleCardRepository
                         .findByTimecapsuleTimecapsuleNo(mainTimecapsule.getTimecapsuleNo());
                 //저장된 타임캡슐값
@@ -255,9 +257,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 }else openAble = false;
                 //모든 조건이 지나긴후
                 mainTimecapsule.setState(openAble);
-                System.out.println(123);
             }
-            System.out.println(123);
             timecapsuleList.add(mainTimecapsule);
         }
 
@@ -281,7 +281,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         for(TimecapsuleMapping timecapsuleMapping : saveTimecapsules){
             Timecapsule timecapsule = timecapsuleMapping.getTimecapsule();
             SaveTimecapsuleListDTO saveTimecapsule = timecapsule.toSaveTimecapsuleListDTO();
-            if(saveTimecapsule.getType().equals("GOAL")) {
+            if(saveTimecapsule.getType().equals(TYPE_GOAL)) {
                 saveTimecapsule.setEndDate(timecapsuleMapping.getSaveDate());
             }
             saveTimecapsuleList.add(saveTimecapsule);
@@ -321,7 +321,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
              throw new CommonException(CustomExceptionStatus.CREATE_TIMECAPSULE);
          }
 
-         if(timecapsuleCreateDTO.getType().equals("GOAL")){
+         if(timecapsuleCreateDTO.getType().equals(TYPE_GOAL)){
              List<String> dayNames = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
              //카드 작성 요일 등록
              if(timecapsuleCreateDTO.getCardInputDay().size() > 0){
@@ -333,7 +333,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
                         CirteriaDay cirteriaDay = new CirteriaDay();
                         cirteriaDay.createCirteriaDay(saveTimecapsule.getTimecapsuleCriteria(),
-                                cardDay, dayKr
+                                dayKr, cardDay
                                 );
                         CirteriaDay saveCirteriaDay = cirteriaDayRepository.save(cirteriaDay);
                         // 요일 저장 에러 발생
@@ -386,7 +386,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //디테일 타임캡슐 생성
         TimecapsuleDetailDTO timecapsuleDetail = timecapsule.toTimecapsuleDetailDTO();
-        if(timecapsuleDetail.getCapsuleType().equals("GOAL")){
+        if(timecapsuleDetail.getCapsuleType().equals(TYPE_GOAL)){
            timecapsuleDetail.setNowCard(timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsuleNo));
         }
 
@@ -563,7 +563,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //디테일 타임캡슐 생성
         TimecapsuleDetailDTO timecapsuleDetail = timecapsule.toTimecapsuleDetailDTO();
-        if(timecapsuleDetail.getCapsuleType().equals("GOAL")){
+        if(timecapsuleDetail.getCapsuleType().equals(TYPE_GOAL)){
             timecapsuleDetail.setNowCard(timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo()));
         }
 
@@ -642,7 +642,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if (timecapsule.getNowParticipant() >= MAX_PARTICIOPANT) {
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
         }
-        System.out.println(123);
 
         // 수락상태고, 탈퇴안한 친구의 목록을 가져옴.
         String status = "ACCEPTED";
@@ -653,7 +652,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         // 타임캡슐 매핑리스트 꺼내옴.
         List<TimecapsuleMapping> timecapsuleMappings = timecapsuleMappingRepository.findByIdNo(timecapsuleNo);
-        System.out.println(123);
         Map<Long, TimecapsuleInvite> inviteMap = timecapsuleInviteList.stream()
                 .collect(Collectors.toMap(TimecapsuleInvite::getGuestUserNo, Function.identity()));
 
@@ -897,8 +895,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //log.info("fileSzie : {}" , file.getSize());
         //파일사이즈가 MaxFileSize보다 클경우 에러발생
-        System.out.println(file.getSize());
-        System.out.println(timecapsule.getNowFileSize());
+        //System.out.println(file.getSize());
+        //System.out.println(timecapsule.getNowFileSize());
         if( file.getSize() + timecapsule.getNowFileSize() > timecapsule.getMaxFileSize()){
             throw new CommonException(CustomExceptionStatus.FILE_LIMIT_NOT_UPLOAD);
         }
