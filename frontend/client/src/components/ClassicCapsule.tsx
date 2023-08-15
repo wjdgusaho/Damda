@@ -253,7 +253,7 @@ const ClassicCapsule = function () {
           </ContentWrap>
           <div>
             {isHelp ? (
-              <Info src="../../helptimeinfo.png" alt="helpinfo" />
+              <Info src="../../helptimeinfo2.png" alt="helpinfo" />
             ) : null}
           </div>
           <div className="mt-6">
