@@ -39,12 +39,17 @@ import { TimecapsuleOpen } from "./components/TimecapsuleOpen"
 import TimecapsuleResult from "./components/TimecapsuleResult"
 import {
   ADD_FRIENDS,
+  ADD_OPENTIMECAPSULES,
   ADD_TIMECAPSULES,
+  DELETE_SSE,
+  SET_SSE,
   alarmCapsuleType,
   alarmFriendType,
+  alarmOpenCapsuleType,
   toastOption,
 } from "./store/Alarm"
 import { EmptyPage } from "./components/EmptyPage"
+import { AnimatePresence } from "framer-motion"
 
 function Main() {
   const themeState = useSelector((state: RootState) => state.theme)
@@ -77,10 +82,8 @@ function Main() {
   })
 
   const [isOnline, setIsOnline] = useState(navigator.onLine)
-  const [eventSource, setEventSource] = useState<EventSource | null>(null)
-  const [otherEventSource, setOtherEventSource] = useState<EventSource | null>(
-    null
-  )
+  // const [eventSource, setEventSource] = useState<EventSource | null>(null)
+  const eventSource = useSelector((state: RootState) => state.alarm.eventSource)
 
   const handleOnline = () => {
     setIsOnline(true)
@@ -127,6 +130,16 @@ function Main() {
           },
         }
       )
+      newEventSource.onopen = (event) => {
+        console.log(event)
+        const openEventSource = new EventSourcePolyfill(
+          process.env.REACT_APP_SERVER_URL + "sse/login/after",
+          { headers: { Authorization: "Bearer " + token } }
+        )
+        openEventSource.onerror = (event) => {
+          console.log("open event : ", event)
+        }
+      }
       // 에러가 났을 때 발생하는 이벤트 함수
       newEventSource.onerror = (event) => {
         console.log("Error event : ", event)
@@ -150,27 +163,32 @@ function Main() {
         )
         dispatch(ADD_TIMECAPSULES(data))
       })
+      newEventSource.addEventListener(
+        "timecapsule-event-selfcheck",
+        (event: any) => {
+          const data: alarmOpenCapsuleType = JSON.parse(event["data"])
+          toast.info(`${data.content}${data.title}\n${data.date}`, toastOption)
+          dispatch(ADD_OPENTIMECAPSULES(data))
+        }
+      )
       newEventSource.addEventListener("check-connection", (event: any) => {
         // 새롭게 서버로 보낼 이벤트소스
         // process.env.REACT_APP_SERVER_URL + (내가 보낼 url 주소)
         // headers에는 토큰 값. 헤더 이외의 값 추가하려면 , 뒤에 넣을 것.
-        if (otherEventSource === null) {
-          const otherESource = new EventSourcePolyfill(
-            process.env.REACT_APP_SERVER_URL + "sse/check",
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-              },
-            }
-          )
-          otherESource.onmessage = (event) => {
-            console.log("check message : ", event)
+        const otherESource = new EventSourcePolyfill(
+          process.env.REACT_APP_SERVER_URL + "sse/check",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
           }
-          otherESource.onerror = (event) => {
-            console.log("check error : ", event)
-            otherESource.close()
-          }
-          setOtherEventSource(otherESource)
+        )
+        otherESource.onmessage = (event) => {
+          console.log("check message : ", event)
+        }
+        otherESource.onerror = (event) => {
+          console.log("check error : ", event)
+          otherESource.close()
         }
       })
       // 장기간 미응답으로 연결을 해제하고 다시 연결함.
@@ -181,8 +199,8 @@ function Main() {
         }, 10000)
       })
 
-      // 신경쓰지 않아도 됨.
-      setEventSource(newEventSource)
+      // 설정한 이벤트소스 재설정.
+      dispatch(SET_SSE(newEventSource))
     }
   }
 
@@ -191,9 +209,24 @@ function Main() {
     if (eventSource !== null) {
       // sse 종료 함수.
       eventSource.close()
-      setEventSource(null)
+      dispatch(DELETE_SSE())
     }
   }
+
+  useEffect(() => {
+    // 이미지 우클릭 방지를 위한 이벤트 핸들러 함수
+    const preventContextMenu = (event: MouseEvent) => {
+      event.preventDefault()
+    }
+
+    // 이미지 우클릭 이벤트 리스너 추가
+    window.addEventListener("contextmenu", preventContextMenu)
+
+    return () => {
+      // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      window.removeEventListener("contextmenu", preventContextMenu)
+    }
+  }, [token, isOnline])
 
   return (
     <ThemeProvider theme={themeState}>
@@ -202,62 +235,72 @@ function Main() {
         <CookiesProvider>
           <BrowserRouter>
             {!token && (
-              <Routes>
-                <Route path="/" element={<LandingPage />}></Route>
-                <Route path="/login/" element={<Login />}></Route>
-                <Route path="/signup/" element={<SignUp />}></Route>
-                <Route path="/dummykakao/" element={<DummyKakao />}></Route>
-                <Route path="/*" element={<EmptyPage />}></Route>
-                <Route path="/findPassword/" element={<FindPassword />}></Route>
-              </Routes>
+              <AnimatePresence>
+                <Routes>
+                  <Route path="/" element={<LandingPage />}></Route>
+                  <Route path="/login/" element={<Login />}></Route>
+                  <Route path="/signup/" element={<SignUp />}></Route>
+                  <Route path="/dummykakao/" element={<DummyKakao />}></Route>
+                  <Route path="/*" element={<EmptyPage />}></Route>
+                  <Route
+                    path="/findPassword/"
+                    element={<FindPassword />}
+                  ></Route>
+                </Routes>
+              </AnimatePresence>
             )}
             {token && (
-              <Routes>
-                <Route path="/*" element={<EmptyPage />}></Route>
-                <Route path="/" element={<LandingPage />}></Route>
-                <Route path="/user/" element={<CheckPassword />}></Route>
-                <Route path="/user-info/" element={<UserInfoChange />}></Route>
-                <Route path="/shop/" element={<ShopPage />}></Route>
-                <Route
-                  path="/timecapsule/"
-                  element={<TimecapsulePage />}
-                ></Route>
-                <Route path="/card/:capsuleId" element={<Card />}></Route>
-                <Route path="/friend/" element={<Friend />}></Route>
-                <Route path="/friend/search" element={<UserSearch />}></Route>
-                <Route path="/login/" element={<Login />}></Route>
-                <Route path="/signup/" element={<SignUp />}></Route>
-                <Route path="/logout/" element={<Logout />}></Route>
-                <Route path="/main/" element={<MainPage />}></Route>
-                <Route path="/tutorial/" element={<Tutorial />}></Route>
-                <Route path="/dummykakao/" element={<DummyKakao />}></Route>
-                <Route path="/menu/" element={<Menu />}></Route>
-                <Route
-                  path="/savetimecapsule/"
-                  element={<SavedTimecapsule />}
-                ></Route>
-                <Route
-                  path="/participate/"
-                  element={<Participate code={""} />}
-                ></Route>
-                <Route path="/selecttype/" element={<SelectType />}></Route>
-                <Route path="/classic/" element={<ClassicCapsule />}></Route>
-                <Route path="/record/" element={<RecordCapsule />}></Route>
-                <Route path="/goal/" element={<GoalCapsule />}></Route>
-                <Route path="/selecttheme/" element={<SelectTheme />}></Route>
-                <Route
-                  path="/timecapsule/detail/:capsuleId/"
-                  element={<TimeCapsuleDetail />}
-                ></Route>
-                <Route
-                  path="/timecapsule/open/:capsuleId/"
-                  element={<TimecapsuleOpen />}
-                ></Route>
-                <Route
-                  path="/timecapsule/result/:capsuleId/"
-                  element={<TimecapsuleResult />}
-                ></Route>
-              </Routes>
+              <AnimatePresence>
+                <Routes>
+                  <Route path="/*" element={<EmptyPage />}></Route>
+                  <Route path="/" element={<LandingPage />}></Route>
+                  <Route path="/user/" element={<CheckPassword />}></Route>
+                  <Route
+                    path="/user-info/"
+                    element={<UserInfoChange />}
+                  ></Route>
+                  <Route path="/shop/" element={<ShopPage />}></Route>
+                  <Route
+                    path="/timecapsule/"
+                    element={<TimecapsulePage />}
+                  ></Route>
+                  <Route path="/card/:capsuleId" element={<Card />}></Route>
+                  <Route path="/friend/" element={<Friend />}></Route>
+                  <Route path="/friend/search" element={<UserSearch />}></Route>
+                  <Route path="/login/" element={<Login />}></Route>
+                  <Route path="/signup/" element={<SignUp />}></Route>
+                  <Route path="/logout/" element={<Logout />}></Route>
+                  <Route path="/main/" element={<MainPage />}></Route>
+                  <Route path="/tutorial/" element={<Tutorial />}></Route>
+                  <Route path="/dummykakao/" element={<DummyKakao />}></Route>
+                  <Route path="/menu/" element={<Menu />}></Route>
+                  <Route
+                    path="/savetimecapsule/"
+                    element={<SavedTimecapsule />}
+                  ></Route>
+                  <Route
+                    path="/participate/"
+                    element={<Participate code={""} />}
+                  ></Route>
+                  <Route path="/selecttype/" element={<SelectType />}></Route>
+                  <Route path="/classic/" element={<ClassicCapsule />}></Route>
+                  <Route path="/record/" element={<RecordCapsule />}></Route>
+                  <Route path="/goal/" element={<GoalCapsule />}></Route>
+                  <Route path="/selecttheme/" element={<SelectTheme />}></Route>
+                  <Route
+                    path="/timecapsule/detail/:capsuleId/"
+                    element={<TimeCapsuleDetail />}
+                  ></Route>
+                  <Route
+                    path="/timecapsule/open/:capsuleId/"
+                    element={<TimecapsuleOpen />}
+                  ></Route>
+                  <Route
+                    path="/timecapsule/result/:capsuleId/"
+                    element={<TimecapsuleResult />}
+                  ></Route>
+                </Routes>
+              </AnimatePresence>
             )}
           </BrowserRouter>
         </CookiesProvider>

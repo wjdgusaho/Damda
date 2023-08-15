@@ -4,6 +4,8 @@ import styled from "styled-components"
 import { RootState } from "../store/Store"
 import axios from "axios"
 import { useParams } from "react-router-dom"
+import toast, { Toaster } from "react-hot-toast"
+import { motion } from "framer-motion"
 
 interface DataType {
   timecapsuleNo: number
@@ -82,8 +84,53 @@ const TimecapsuleResultMembers = function () {
     fetchData()
   }, [])
 
+  function fileDownload(): void {
+    const fetchData = async () => {
+      try {
+        const timecapsuleNo = capsuleId
+        const response = await axios.get(
+          process.env.REACT_APP_SERVER_URL +
+            `s3/download/zip/timecapsule/${timecapsuleNo}/file`,
+          {
+            responseType: "blob", // 중요: 응답 유형을 'blob'으로 설정
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        )
+
+        console.log("파일~!!~!~!~!!!!", response)
+        if (response.status === 200) {
+          const downloadUrl = window.URL.createObjectURL(
+            new Blob([response.data])
+          )
+          const link = document.createElement("a")
+          link.href = downloadUrl
+          link.setAttribute("download", "file.zip") // 파일 이름 지정. 원하는 이름으로 변경 가능
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+        } else {
+          console.error("파일 다운로드 에러")
+          toast("다운로드할 파일이 없어요!")
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    toast(`다운로드 하는데 시간이 소요됩니다! ${"\n"}조금만 기다려주세요`)
+    fetchData()
+  }
+
   return (
-    <div className="mt-4">
+    <motion.div
+      className="mt-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Toaster toastOptions={{ duration: 1000 }} />
       <div className="text-sm text-center w-10/12 m-auto">
         {capsuleInfo?.description}
       </div>
@@ -91,7 +138,7 @@ const TimecapsuleResultMembers = function () {
         {capsuleInfo?.criteriaInfo.weatherStatus ||
         capsuleInfo?.criteriaInfo.localBig ? (
           <>
-            {criteriaInfo.weatherStatus ? (
+            {capsuleInfo.criteriaInfo.weatherStatus ? (
               <div>
                 <span className="font-bold">
                   {capsuleInfo?.criteriaInfo.weatherStatus === "RAIN"
@@ -146,7 +193,16 @@ const TimecapsuleResultMembers = function () {
                     }}
                   />
                 </div>
-                <span style={{ fontSize: "12px", textAlign: "center" }}>
+                <span
+                  style={{
+                    fontSize: "12px",
+                    textAlign: "center",
+                    width: "63px",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {part.nickname}
                 </span>
               </>
@@ -183,11 +239,11 @@ const TimecapsuleResultMembers = function () {
           </div>
         ))}
       </div>
-      <div className="flex justify-center my-8">
+      <div className="flex justify-center my-8" onClick={fileDownload}>
         <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
         <span>첨부파일 내려받기</span>
       </div>
-    </div>
+    </motion.div>
   )
 }
 const FileIcon = styled.img`

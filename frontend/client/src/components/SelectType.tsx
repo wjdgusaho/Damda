@@ -26,6 +26,12 @@ const TypeBtn = styled.button`
   margin-bottom: 55px;
   box-shadow: 0px 4px 4px rgb(33, 25, 74, 0.4);
   z-index: 1;
+  &:hover {
+    transition: 0.2s;
+    transform: scale(0.95);
+    color: ${(props) => props.theme.color100};
+    background-color: ${(props) => props.theme.color400};
+  }
 `
 
 const HeaderWrap = styled.div`
@@ -172,22 +178,27 @@ function Help({ isHelp, setIsHelp }: HelpProps) {
         <br />
         조건을 달성한 인원만 타임캡슐을 열 수 있어요!
         <br />
-        캡슐이 닫히면 삭제 및 수정이 불가능 합니다
+        <span style={{ color: "#FFF48E" }}>
+          캡슐이 닫히면 삭제 및 수정이 불가능합니다
+        </span>
       </HelpContent>
       <HelpTitle>클래식 타임캡슐</HelpTitle>
       <HelpContent>
-        생성 후 24시간이 지나면 캡슐이 닫혀요
+        생성 후 <span style={{ color: "#FFF48E" }}>24시간</span>이 지나면 캡슐이
+        닫혀요
         <br />
         타임캡슐이 닫히기 전에 추억을 저장해 보아요!
       </HelpContent>
       <HelpTitle>기록 타임캡슐</HelpTitle>
       <HelpContent>
         매일 한장씩 타임캡슐에 카드를 넣어보세요!
-        <br />( 00 시 기준으로 카드 작성이 초기화 됩니다 )
+        <br />( <span style={{ color: "#FFF48E" }}>00시</span> 기준으로 카드
+        작성이 초기화 됩니다 )
       </HelpContent>
       <HelpTitle>목표 타임캡슐</HelpTitle>
       <HelpContent>
-        달성도가 가득 채워져야 열리는 타임캡슐이에요
+        <span style={{ color: "#FFF48E" }}>달성도</span>가 가득 채워져야 열리는
+        타임캡슐이에요
         <br />
         카드 작성 조건을 설정할 수 있어요
         <br />

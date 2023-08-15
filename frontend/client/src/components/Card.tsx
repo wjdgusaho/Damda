@@ -7,6 +7,7 @@ import Modal from "react-modal"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
+import toast, { Toaster } from "react-hot-toast"
 
 export interface StickerType {
   no: number
@@ -63,6 +64,7 @@ const Card = function () {
   const day = String(currentDate.getDate()).padStart(2, "0")
   const navigate = useNavigate()
   const timecapsuleNo = useParams()
+  const profileImg = useRef<HTMLImageElement | null>(null)
 
   const goBack = () => {
     navigate(-1) // 뒤로가기
@@ -102,8 +104,6 @@ const Card = function () {
   )
 
   const onAddCardSticker = (stickerImage: string) => {
-    console.log("스티커클릭", countList)
-
     // 새로운 스티커 정보 생성
     const newSticker = { no: countList.length, url: stickerImage }
 
@@ -114,8 +114,6 @@ const Card = function () {
     setCountList(updatedStickers)
   }
   const onDeleteCardSticker = (no: number) => {
-    console.log("스티커삭제", countList)
-
     // countList에서 no에 해당하는 원소를 제외한 새로운 배열 생성
     const updatedStickers = countList.filter((sticker) => sticker.no !== no)
 
@@ -124,7 +122,6 @@ const Card = function () {
   }
 
   useEffect(() => {
-    console.log("token", token)
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -135,7 +132,6 @@ const Card = function () {
             },
           }
         )
-        console.log(response)
         setStickerList(response.data.data.decoList)
         setSticker(3)
       } catch (error) {
@@ -143,11 +139,27 @@ const Card = function () {
       }
     }
     fetchData()
+
+    const imageURL = encodeURIComponent(UserData.profileImage) // 인코딩된 이미지 URL
+    const proxyURL = `${process.env.REACT_APP_SERVER_URL}html2canvas/proxy.json?url=${imageURL}`
+
+    axios({
+      method: "GET",
+      url: proxyURL,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => {
+        if (profileImg.current) {
+          profileImg.current.src = response.data
+        }
+      })
+      .catch((error) => console.error(error))
   }, [])
 
   useEffect(() => {
     // countList가 변경되면 호출됨
-    console.log(countList)
   }, [countList])
 
   const bgColorList = [
@@ -191,9 +203,8 @@ const Card = function () {
         }
       )
 
-      console.log(response.data.code)
       if (response.data.code === 200) {
-        alert("정상적으로 저장되었습니다.")
+        toast("정상적으로 저장되었습니다.")
         navigate(-1)
       }
     } catch (error) {
@@ -204,13 +215,13 @@ const Card = function () {
   const saveAsImageHandler = () => {
     const target = document.getElementById("saveImgContainer")
     if (!target) {
-      return alert("결과 저장에 실패했습니다.")
+      toast("결과 저장에 실패했습니다.")
+      return
     }
 
     html2canvas(target, {
       useCORS: true,
       scale: 2,
-      proxy: process.env.REACT_APP_SERVER_URL + "/html2canvas/proxy.json",
     }).then((canvas) => {
       canvas.toBlob((blob) => {
         if (blob) {
@@ -260,6 +271,7 @@ const Card = function () {
 
   return (
     <BackGround bgColor={bgcolor} className="overflow-hidden w-full h-full">
+      <Toaster toastOptions={{ duration: 1000 }} />
       <div className="m-auto pt-6 h-14 flex w-72 justify-between">
         <img
           className="w-6 h-6"
@@ -336,7 +348,7 @@ const Card = function () {
                 objectFit: "cover",
                 marginRight: "8px",
               }}
-              src={UserData.profileImage}
+              ref={profileImg}
               alt="프로필사진"
             />
             <span className="mt-1 font-light text-neutral-500">
@@ -423,18 +435,24 @@ const Card = function () {
       </div>
       <div className="mt-2 flex items-center justify-center">
         <FontSelect font={font} name="font" id="" onChange={handleFontChange}>
+          <Option value="" disabled hidden>
+            Choose an option
+          </Option>
           <Option font="pretendard" value="pretendard">
             pretendard
           </Option>
           <Option font="PyeongChangPeaceBold" value="PyeongChangPeaceBold">
-            평창평화체
+            평창평화체Bold
           </Option>
           <Option font="PyeongChangPeace" value="PyeongChangPeace">
-            평창평화체2
+            평창평화체Light
+          </Option>
+          <Option font="DungGeunMo" value="DungGeunMo">
+            둥근모+
           </Option>
         </FontSelect>
       </div>
-      <div className="fixed bottom-0">
+      <div className="mt-3">
         <div className="bg-black bg-opacity-10 flex flex-nowrap overflow-y-auto">
           {stickerList.length !== 0 &&
             stickerList.map((s: StickerType) => (

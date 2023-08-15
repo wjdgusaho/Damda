@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from "react"
 import tw from "tailwind-styled-components"
 import { useNavigate } from "react-router"
 import { Link } from "react-router-dom"
+import toast, { Toaster } from "react-hot-toast"
+import { motion } from "framer-motion"
 
 // 비밀번호 정규식
 const passwordRegex = /^(?=.*[a-zA-Z])[!@#$%^*+=-]?(?=.*[0-9]).{5,25}$/
@@ -35,6 +37,7 @@ export const FindPassword = function () {
   const [password, setPassword] = useState("")
   const [checkPassword, setCheckPassword] = useState("")
   const [userPwMatch, setuserPwMatch] = useState(0)
+  const [userPwCondition, setUserPwCondition] = useState(0)
   const [sendCode, setSendCode] = useState(false)
   const navigate = useNavigate()
   const intervalRef = useRef<NodeJS.Timeout>()
@@ -50,6 +53,18 @@ export const FindPassword = function () {
       }
     }
   }, [password, checkPassword])
+
+  useEffect(() => {
+    if (password) {
+      if (passwordRegex.test(password)) {
+        setUserPwCondition(1)
+      } else {
+        setUserPwCondition(2)
+      }
+    } else {
+      setUserPwCondition(0)
+    }
+  }, [userPwCondition])
 
   useEffect(() => {
     return () => clearInterval(intervalRef.current)
@@ -89,7 +104,7 @@ export const FindPassword = function () {
           seconds = 600
           startCountdown()
         } else {
-          alert(response.data.message)
+          toast(response.data.message)
         }
       })
       .catch((error) => {
@@ -142,7 +157,7 @@ export const FindPassword = function () {
           clearInterval(intervalRef.current)
           setChange(true)
         } else {
-          alert(response.data.message)
+          toast(response.data.message)
         }
         setUserCode("")
       })
@@ -154,7 +169,7 @@ export const FindPassword = function () {
   function handleSubmitPassword(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (password !== checkPassword) {
-      alert("비밀번호가 일치하지 않습니다.")
+      toast("비밀번호가 일치하지 않습니다.")
       setCheckPassword("")
     } else {
       axios({
@@ -169,7 +184,7 @@ export const FindPassword = function () {
         },
       })
         .then((response) => {
-          alert(response.data.message)
+          toast(response.data.message)
           if (response.data.code === 200) {
             navigate("/login")
           }
@@ -179,110 +194,126 @@ export const FindPassword = function () {
   }
 
   return (
-    <Box style={{ color: "#CFD4EE" }}>
-      <div className="w-full flex justify-center">
-        <Link
-          to={"/login"}
-          style={{ fontSize: "30px", color: "white" }}
-          className="w-6 mr-72"
-        >
-          <svg
-            className="w-6 h-6 text-black-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 8 14"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Box>
+        <Toaster toastOptions={{ duration: 1000 }} />
+        <div className="w-full flex justify-center">
+          <Link
+            to={"/login"}
+            style={{ fontSize: "30px", color: "white" }}
+            className="w-6 mr-72"
           >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
-            />
-          </svg>
-        </Link>
-      </div>
-      <img
-        src="assets/universe/Planet-3.png"
-        alt="planet"
-        width={200}
-        style={{ marginLeft: "auto", marginRight: "auto" }}
-      />
-      {!change && (
-        <div style={{ marginLeft: "auto", marginRight: "auto" }}>
-          <p>
-            <span className="text-lilac-500">가입시 등록하신 이메일</span>로{" "}
-            <br /> 비밀번호를 재설정합니다.
-          </p>
-          <Form onSubmit={handleSubmitEmail}>
-            <p>이메일</p>
-            <InputText type="email" onChange={handleEmailChange} />
-            {!getCode && (
-              <button
-                className="p-2 px-4 text-sm mt-20 rounded-full shadow-md w-48 mx-auto"
-                style={{ backgroundColor: "#EFE0F4", color: "black" }}
-              >
-                확인
-              </button>
-            )}
-          </Form>
-          {getCode ? (
-            <div>
-              <Form onSubmit={handleSubmitCode}>
-                <p className="grid grid-cols-2 justify-between">
-                  인증번호
-                  <span id="countdown" className="text-end">
-                    10:00
-                  </span>
-                </p>
-                <InputText type="text" onChange={handleCodeChange} />
+            <svg
+              className="w-6 h-6 text-black-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 8 14"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
+              />
+            </svg>
+          </Link>
+        </div>
+        <img
+          src="assets/universe/Planet-3.png"
+          alt="planet"
+          width={200}
+          style={{ marginLeft: "auto", marginRight: "auto" }}
+        />
+        {!change && (
+          <div style={{ marginLeft: "auto", marginRight: "auto" }}>
+            <p>
+              <span className="text-lilac-500">가입시 등록하신 이메일</span>로{" "}
+              <br /> 비밀번호를 재설정합니다.
+            </p>
+            <Form onSubmit={handleSubmitEmail}>
+              <p>이메일</p>
+              <InputText type="email" onChange={handleEmailChange} />
+              {!getCode && (
                 <button
                   className="p-2 px-4 text-sm mt-20 rounded-full shadow-md w-48 mx-auto"
                   style={{ backgroundColor: "#EFE0F4", color: "black" }}
                 >
                   확인
                 </button>
-              </Form>
-            </div>
-          ) : (
-            sendCode && (
+              )}
+            </Form>
+            {getCode ? (
               <div>
-                <Form>
-                  <p className="text-center">인증번호 전송중...</p>
+                <Form onSubmit={handleSubmitCode}>
+                  <p className="grid grid-cols-2 justify-between">
+                    인증번호
+                    <span id="countdown" className="text-end">
+                      10:00
+                    </span>
+                  </p>
+                  <InputText type="text" onChange={handleCodeChange} />
+                  <button
+                    className="p-2 px-4 text-sm mt-20 rounded-full shadow-md w-48 mx-auto"
+                    style={{ backgroundColor: "#EFE0F4", color: "black" }}
+                  >
+                    확인
+                  </button>
                 </Form>
               </div>
-            )
-          )}
-        </div>
-      )}
-      {change && (
-        <div style={{ marginLeft: "auto", marginRight: "auto" }}>
-          <Form onSubmit={handleSubmitPassword}>
-            <p>새로운 비밀번호 입력</p>
-            <InputText
-              className="mb-5"
-              type="password"
-              onChange={handlePasswordChange}
-            />
-            <p>비밀번호 확인</p>
-            <InputText type="password" onChange={handleCheckPasswordChange} />
-            {userPwMatch === 1 ? (
-              <p className="text-red-500">비밀번호 불일치</p>
-            ) : userPwMatch === 2 ? (
-              <p className="text-green-500">비밀번호 일치</p>
             ) : (
-              <p></p>
+              sendCode && (
+                <div>
+                  <Form>
+                    <p className="text-center">인증번호 전송중...</p>
+                  </Form>
+                </div>
+              )
             )}
-            <button
-              className="p-2 px-4 text-sm mt-20 rounded-full shadow-md w-48 mx-auto"
-              style={{ backgroundColor: "#EFE0F4", color: "black" }}
-            >
-              확인
-            </button>
-          </Form>
-        </div>
-      )}
-    </Box>
+          </div>
+        )}
+        {change && (
+          <div style={{ marginLeft: "auto", marginRight: "auto" }}>
+            <Form onSubmit={handleSubmitPassword}>
+              <p>새로운 비밀번호 입력</p>
+              <InputText
+                className="mb-5"
+                type="password"
+                onChange={handlePasswordChange}
+              />
+              {userPwCondition === 2 ? (
+                <p className="text-red-300 w-full mt-1">
+                  특수, 영문, 숫자 조합으로 5-25자이어야 합니다.
+                </p>
+              ) : userPwCondition === 1 ? (
+                <p className="text-emerald-300 w-full mt-1">유효한 비밀번호</p>
+              ) : (
+                <div className="h-7"></div>
+              )}
+              <p>비밀번호 확인</p>
+              <InputText type="password" onChange={handleCheckPasswordChange} />
+              {userPwMatch === 1 ? (
+                <p className="text-red-500">비밀번호 불일치</p>
+              ) : userPwMatch === 2 ? (
+                <p className="text-green-500">비밀번호 일치</p>
+              ) : (
+                <p></p>
+              )}
+              <button
+                className="p-2 px-4 text-sm mt-20 rounded-full shadow-md w-48 mx-auto"
+                style={{ backgroundColor: "#EFE0F4", color: "black" }}
+              >
+                확인
+              </button>
+            </Form>
+          </div>
+        )}
+      </Box>
+    </motion.div>
   )
 }

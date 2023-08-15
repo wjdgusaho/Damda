@@ -3,9 +3,10 @@ import { useNavigate } from "react-router"
 import { styled } from "styled-components"
 import axios from "axios"
 import { Link } from "react-router-dom"
-import tw from "tailwind-styled-components"
 import Modal from "react-modal"
 import * as EmailValidator from "email-validator"
+import toast, { Toaster } from "react-hot-toast"
+import { motion } from "framer-motion"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -38,6 +39,10 @@ const EmailButton = styled.button`
   position: relative;
   top: 9.5rem;
   left: 13rem;
+  &:hover {
+    transition: 0.2s;
+    transform: scale(0.95);
+  }
 `
 
 const Form = styled.form`
@@ -62,6 +67,17 @@ const InputCSS = styled.input`
     outline: none;
   }
 `
+
+const ImgBtn = styled.img`
+  position: relative;
+  top: -30px;
+  left: 30px;
+  &:hover {
+    transition: 0.2s;
+    transform: scale(0.95);
+  }
+`
+
 const successCode = Math.floor(Math.random() * 10000)
 
 const customStyles = {
@@ -131,12 +147,12 @@ export const SignUp = function () {
     const file = event.target.files?.[0] || null
     if (file) {
       if (!isFileSizeValid(file)) {
-        alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
+        toast(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
         if (imageRef.current) {
           imageRef.current.value = ""
         }
       } else if (!isAllowFiles(file)) {
-        alert("파일 확장자는 .jpg, .jpeg, .png만 가능합니다.")
+        toast("파일 확장자는 .jpg, .jpeg, .png만 가능합니다.")
         if (imageRef.current) {
           imageRef.current.value = ""
         }
@@ -239,9 +255,9 @@ export const SignUp = function () {
   function handleSubmitCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!userCode) {
-      alert("인증번호를 입력해주세요.")
+      toast("인증번호를 입력해주세요.")
     } else if (!EmailValidator.validate(userdata.email)) {
-      alert("올바르지 않은 이메일 형식입니다.")
+      toast("올바르지 않은 이메일 형식입니다.")
     } else {
       axios({
         method: "POST",
@@ -256,7 +272,7 @@ export const SignUp = function () {
       })
         .then((response) => {
           const code = response.data.code
-          alert(response.data.message)
+          toast(response.data.message)
           if (code === 200) {
             setGetCode(false)
             setuserEmailMatch(4)
@@ -291,11 +307,11 @@ export const SignUp = function () {
             startCountdown()
           } else {
             setuserEmailMatch(1)
-            alert(response.data.message)
+            toast(response.data.message)
           }
         })
         .catch((error) => {
-          alert("중복확인에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
+          toast("중복확인에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
         })
     }
   }
@@ -319,25 +335,25 @@ export const SignUp = function () {
     }
 
     if (!userdata.email) {
-      alert("이메일을 입력해주세요.")
+      toast("이메일을 입력해주세요.")
     } else if (userdata.email && userEmailMatch < 2) {
-      alert("이메일 중복확인을 해주세요.")
+      toast("이메일 중복확인을 해주세요.")
     } else if (
       userdata.email &&
       userEmailMatch !== 4 &&
       userCode !== "success" + successCode.toString()
     ) {
-      alert("이메일 인증이 되지 않았습니다.")
+      toast("이메일 인증이 되지 않았습니다.")
     } else if (!userdata.nickname) {
-      alert("닉네임을 입력해주세요.")
+      toast("닉네임을 입력해주세요.")
     } else if (userdata.nickname && userNicknameCondition !== 1) {
-      alert("닉네임이 유효하지 않습니다.")
+      toast("닉네임이 유효하지 않습니다.")
     } else if (!userdata.userPw) {
-      alert("비밀번호를 입력해주세요.")
+      toast("비밀번호를 입력해주세요.")
     } else if (userdata.userPw && userPwCondition !== 1) {
-      alert("비밀번호가 유효하지 않습니다.")
+      toast("비밀번호가 유효하지 않습니다.")
     } else if (userdata.userPw !== userdata.userPwCheck) {
-      alert("비밀번호가 일치하지 않습니다.")
+      toast("비밀번호가 일치하지 않습니다.")
     } else {
       axios({
         method: "POST",
@@ -352,13 +368,19 @@ export const SignUp = function () {
           navigate("/login")
         })
         .catch(() => {
-          alert("회원가입에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
+          toast("회원가입에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
         })
     }
   }
 
   return (
-    <div className="grid grid-cols-1 w-72 mx-auto mt-5 text-white font-pretendard font-thin">
+    <motion.div
+      className="grid grid-cols-1 w-72 mx-auto mt-5 text-white font-pretendard font-thin"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Toaster toastOptions={{ duration: 1000 }} />
       <Link
         className="mt-10"
         to={"/login"}
@@ -460,12 +482,11 @@ export const SignUp = function () {
             src={selectedImage ? selectedImage : "/defalutprofile.png"}
             alt="profile"
           />
-          <img
+          <ImgBtn
             className="mx-auto"
             src="/profilesetting.png"
             alt="a"
             width={30}
-            style={{ position: "relative", top: "-30px", left: "30px" }}
             onClick={imgChange}
           />
         </div>
@@ -487,7 +508,7 @@ export const SignUp = function () {
           value={userdata.email}
           onChange={handleChange}
         />
-        <p className="text-red-300 w-full text-xs">{userEmailMessage}</p>
+        <p className="text-red-300 w-full text-xs mt-1">{userEmailMessage}</p>
 
         <p className="mt-8">
           닉네임
@@ -502,11 +523,11 @@ export const SignUp = function () {
           onChange={handleChange}
         />
         {userNicknameCondition === 2 ? (
-          <p className="text-red-300 w-full text-xs">
+          <p className="text-red-300 w-full text-xs mt-1">
             닉네임은 영문, 한글, 숫자로 2-15자이어야 합니다.
           </p>
         ) : userNicknameCondition === 1 ? (
-          <p className="text-emerald-300 w-full text-xs">
+          <p className="text-emerald-300 w-full text-xs mt-1">
             유효한 닉네임 입니다.
           </p>
         ) : (
@@ -525,11 +546,11 @@ export const SignUp = function () {
           onChange={handleChange}
         />
         {userPwCondition === 2 ? (
-          <p className="text-red-300 w-full text-xs">
+          <p className="text-red-300 w-full text-xs mt-1">
             비밀번호는 특수, 영문, 숫자 조합으로 5-25자이어야 합니다.
           </p>
         ) : userPwCondition === 1 ? (
-          <p className="text-emerald-300 w-full text-xs">
+          <p className="text-emerald-300 w-full text-xs mt-1">
             유효한 비밀번호 입니다.
           </p>
         ) : (
@@ -544,11 +565,11 @@ export const SignUp = function () {
           onChange={handleChange}
         />
         {userPwMatch === 1 ? (
-          <p className="text-red-300 w-full text-xs">
+          <p className="text-red-300 w-full text-xs mt-1">
             비밀번호가 일치하지 않습니다.
           </p>
         ) : userPwMatch === 2 ? (
-          <p className="text-emerald-300 w-full text-xs">
+          <p className="text-emerald-300 w-full text-xs mt-1">
             비밀번호가 일치합니다.
           </p>
         ) : (
@@ -559,7 +580,7 @@ export const SignUp = function () {
           회원가입
         </MakeCapsuleButton>
       </Form>
-    </div>
+    </motion.div>
   )
 }
 
