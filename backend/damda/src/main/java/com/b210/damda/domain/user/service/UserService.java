@@ -127,7 +127,7 @@ public class UserService {
     @Transactional
     public UserLoginSuccessDTO login(String email, String password) {
 
-        Optional<User> findUser = Optional.ofNullable(userRepository.findByEmail(email)
+        Optional<User> findUser = Optional.ofNullable(userRepository.findByOriginEmail(email)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
 
         User user = findUser.get();
@@ -211,7 +211,7 @@ public class UserService {
 
     // 유저 이메일 확인(이메일 존재하는지)
     public User fineByUser(String email) {
-        Optional<User> byEmail = userRepository.findByEmail(email);
+        Optional<User> byEmail = userRepository.findByOriginEmail(email);
         if (byEmail.isEmpty()) {
             return null;
         }
@@ -276,7 +276,7 @@ public class UserService {
         String code = tempCodeDTO.getCode();
         
         // 회원이 없음
-        Optional<User> byEmail = Optional.ofNullable(userRepository.findByEmail(email).
+        Optional<User> byEmail = Optional.ofNullable(userRepository.findByOriginEmail(email).
                 orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
         
         User user = byEmail.get();
@@ -307,7 +307,7 @@ public class UserService {
         String email = userUpdateDTO.getEmail();
         String userPw = userUpdateDTO.getUserPw();
 
-        Optional<User> byEmail = Optional.ofNullable(userRepository.findByEmail(email)
+        Optional<User> byEmail = Optional.ofNullable(userRepository.findByOriginEmail(email)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
 
         User user = byEmail.get();
