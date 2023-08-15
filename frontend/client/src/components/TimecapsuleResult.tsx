@@ -115,7 +115,7 @@ const TimecapsuleResult = function () {
       exit={{ opacity: 0 }}
     >
       <ReactCanvasConfetti refConfetti={getInstance} style={canvasStyles} />
-      <Box>
+      <Box className="mb-6 mx-auto">
         {capsuleInfo && (
           <CapsuleImg capsuleIcon={capsuleInfo.capsuleIconNo}></CapsuleImg>
         )}
@@ -208,7 +208,6 @@ const Box = styled.div`
   position: relative;
   justify-content: start;
   align-items: center;
-  margin: auto;
   width: 20rem;
   background-color: ${(props) => props.theme.color50};
   border-radius: 50px;
