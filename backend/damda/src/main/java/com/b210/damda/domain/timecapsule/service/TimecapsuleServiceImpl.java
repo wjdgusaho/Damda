@@ -897,6 +897,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //log.info("fileSzie : {}" , file.getSize());
         //파일사이즈가 MaxFileSize보다 클경우 에러발생
+        System.out.println(file.getSize());
+        System.out.println(timecapsule.getNowFileSize());
         if( file.getSize() + timecapsule.getNowFileSize() > timecapsule.getMaxFileSize()){
             throw new CommonException(CustomExceptionStatus.FILE_LIMIT_NOT_UPLOAD);
         }
