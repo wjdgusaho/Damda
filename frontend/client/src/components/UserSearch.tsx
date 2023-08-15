@@ -4,6 +4,7 @@ import styled from "styled-components"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
+import toast, { Toaster } from "react-hot-toast"
 
 const UserSearch = function () {
   const [searchList, setSearchList] = useState<UserInfo[]>([])
@@ -46,9 +47,9 @@ const UserSearch = function () {
     }
 
     if (!searchKeyword) {
-      alert("검색어를 입력해주세요.")
+      toast("검색어를 입력해주세요.")
     } else if (type === "invalid") {
-      alert("검색어 형식이 올바르지 않습니다.")
+      toast("검색어 형식이 올바르지 않습니다.")
     } else {
       axios({
         method: "GET",
@@ -71,6 +72,7 @@ const UserSearch = function () {
 
   return (
     <>
+      <Toaster toastOptions={{ duration: 1000 }} />
       <SubHeader />
       <Box>
         <Title className="mt-10 text-xl">회원 검색</Title>
@@ -146,7 +148,7 @@ const UserItem = function ({
     })
       .then((response) => {
         const code = response.data.code
-        alert(response.data.message)
+        toast(response.data.message)
         if (code === 200) {
           const newList = searchList.map((user) => {
             if (user.userNo === User.userNo) {

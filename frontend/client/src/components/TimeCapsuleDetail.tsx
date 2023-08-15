@@ -9,6 +9,7 @@ import { RootState } from "../store/Store"
 import "./datePicker.css"
 import Modal from "react-modal"
 import { DELETE_DETAIL, SET_DETAIL } from "../store/Timecapsule"
+import toast, { Toaster } from "react-hot-toast"
 
 export interface DataType {
   timecapsuleNo: number
@@ -369,6 +370,7 @@ const TimeCapsuleDetail = function () {
 
   return (
     <>
+      <Toaster toastOptions={{ duration: 1000 }} />
       {isRegistered ? (
         // 24시간이 안 지났을 때 (미등록 타임캡슐)
         <Unregistered capsuleData={capsuleData} />
@@ -465,15 +467,15 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       if (response.data.code === 200) {
         getFriendList()
       } else if (response.data.code === -6006) {
-        alert("없는 유저 입니다.")
+        toast("없는 유저 입니다.")
       } else if (response.data.code === -6002) {
-        alert("존재하지 않는 타임캡슐 입니다.")
+        toast("존재하지 않는 타임캡슐 입니다.")
       } else if (response.data.code === -3010) {
-        alert("이미 초대된 회원입니다.")
+        toast("이미 초대된 회원입니다.")
       } else if (response.data.code === -3014) {
-        alert("해당 유저는 이미 참여 중입니다.")
+        toast("해당 유저는 이미 참여 중입니다.")
       } else if (response.data.code === -3015) {
-        alert("이미 강퇴 당했거나 나간 유저입니다.")
+        toast("이미 강퇴 당했거나 나간 유저입니다.")
       }
     } catch (error) {
       console.log(error)
@@ -496,17 +498,17 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       if (response.data.code === 200) {
         navigate("/main")
       } else if (response.data.code === -6006) {
-        alert("존재하지 않는 유저입니다.")
+        toast("존재하지 않는 유저입니다.")
       } else if (response.data.code === -6002) {
-        alert("존재하지 않는 타임캡슐 입니다.")
+        toast("존재하지 않는 타임캡슐 입니다.")
       } else if (response.data.code === -6008) {
-        alert("이미 삭제된 타임캡슐 입니다.")
+        toast("이미 삭제된 타임캡슐 입니다.")
       } else if (response.data.code === -5008) {
-        alert("해당 유저의 타임캡슐이 아닙니다.")
+        toast("해당 유저의 타임캡슐이 아닙니다.")
       } else if (response.data.code === -3007) {
-        alert("해당 타임캡슐의 방장이 아닙니다.")
+        toast("해당 타임캡슐의 방장이 아닙니다.")
       } else if (response.data.code === -3009) {
-        alert("생성 후 24시간 이내에만 삭제할 수 있습니다.")
+        toast("생성 후 24시간 이내에만 삭제할 수 있습니다.")
       }
     } catch (error) {
       console.log(error)
@@ -529,13 +531,13 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       if (response.data.code === 200) {
         navigate("/main")
       } else if (response.data.code === -6006) {
-        alert("존재하지 않는 유저입니다.")
+        toast("존재하지 않는 유저입니다.")
       } else if (response.data.code === -6002) {
-        alert("존재하지 않는 타임캡슐 입니다.")
+        toast("존재하지 않는 타임캡슐 입니다.")
       } else if (response.data.code === -6008) {
-        alert("이미 삭제된 타임캡슐 입니다.")
+        toast("이미 삭제된 타임캡슐 입니다.")
       } else if (response.data.code === -5008) {
-        alert("해당 유저의 타임캡슐이 아닙니다.")
+        toast("해당 유저의 타임캡슐이 아닙니다.")
       }
     } catch (error) {
       console.log(error)
@@ -572,7 +574,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         setSelectedFile(file.name)
         setUploadedFile(file)
       } else {
-        alert("파일 크기가 사용 가능한 공간을 초과합니다.")
+        toast("파일 크기가 사용 가능한 공간을 초과합니다.")
       }
     } else {
       setSelectedFile(null)
@@ -662,7 +664,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       const timeDiffer = oneDayLater.getTime() - currentTime.getTime()
       if (timeDiffer <= 0) {
         clearInterval(interval)
-        alert("타임캡슐 등록완료") // 이거 나중에 바꾸기
+        toast("타임캡슐 등록완료") // 이거 나중에 바꾸기
       } else {
         const hours = Math.floor(timeDiffer / (1000 * 60 * 60))
         const minutes = Math.floor(
@@ -1365,7 +1367,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
         setSelectedFile(file.name)
         setUploadedFile(file)
       } else {
-        alert("파일 크기가 사용 가능한 공간을 초과합니다.")
+        toast("파일 크기가 사용 가능한 공간을 초과합니다.")
       }
     } else {
       setSelectedFile(null)

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import "./datePicker.css"
 import axios from "axios"
+import toast, { Toaster } from "react-hot-toast"
 
 const Box = styled.div`
   display: flex;
@@ -74,7 +75,7 @@ const SelectTheme = function () {
       },
     })
       .then((response) => {
-        alert(response.data.message)
+        toast(response.data.message)
         if (response.data.code === 200) {
           dispatch(SET_THEME(themeNo))
         }
@@ -84,6 +85,7 @@ const SelectTheme = function () {
 
   return (
     <>
+      <Toaster toastOptions={{ duration: 1000 }} />
       <SubHeader />
       <Box className="w-80 m-auto mt-10">
         {themeList.map((t, index) => (

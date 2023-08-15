@@ -6,6 +6,7 @@ import { SubHeader } from "./inc/SubHeader"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
+import toast, { Toaster } from "react-hot-toast"
 
 const Background = styled.div`
   background-image: url(${(props) => props.theme.bgImg});
@@ -97,17 +98,17 @@ const Participate = function ({ code = "" }: { code: string }) {
             `/timecapsule/detail/${res.data.data.timecapsule.timecapsuleNo}`
           )
         } else if (res.data.code === -6002) {
-          alert("타임캠슐이 존재하지 않습니다.")
+          toast("타임캠슐이 존재하지 않습니다.")
         } else if (res.data.code === -3000) {
-          alert("참가 불가능한 타임캡슐입니다.")
+          toast("참가 불가능한 타임캡슐입니다.")
         } else if (res.data.code === -3004) {
-          alert("이미 참여 중인 타임캡슐입니다.")
+          toast("이미 참여 중인 타임캡슐입니다.")
         } else if (res.data.code === -3005) {
-          alert("해당 타임캡슐의 참여인원이 가득 찼습니다.")
+          toast("해당 타임캡슐의 참여인원이 가득 찼습니다.")
         } else if (res.data.code === 500) {
-          alert("에러가 발생했습니다. 잠시 후 다시 시도해주세요.")
+          toast("에러가 발생했습니다. 잠시 후 다시 시도해주세요.")
         } else if (res.data.code === -3011) {
-          alert(
+          toast(
             "보유 가능한 타임캡슐의 개수를 초과했습니다. 상점에서 추가 가능합니다."
           )
         }
@@ -119,6 +120,7 @@ const Participate = function ({ code = "" }: { code: string }) {
 
   return (
     <Background>
+      <Toaster toastOptions={{ duration: 1000 }} />
       <HeaderWrap>
         <SubHeader />
       </HeaderWrap>

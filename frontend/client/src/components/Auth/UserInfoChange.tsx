@@ -10,6 +10,7 @@ import { SET_THEME } from "../../store/Theme"
 import { removeCookieToken } from "../../store/Cookie"
 import styled from "styled-components"
 import { SubHeader } from "../inc/SubHeader"
+import toast, { Toaster } from "react-hot-toast"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -196,12 +197,12 @@ export const UserInfoChange = () => {
     const file = event.target.files?.[0] || null
     if (file) {
       if (!isFileSizeValid(file)) {
-        alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
+        toast(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
         if (imageRef.current) {
           imageRef.current.value = ""
         }
       } else if (!isAllowFiles(file)) {
-        alert("파일 확장자는 .jpg, .jpeg, .png만 가능합니다.")
+        toast("파일 확장자는 .jpg, .jpeg, .png만 가능합니다.")
         if (imageRef.current) {
           imageRef.current.value = ""
         }
@@ -248,15 +249,15 @@ export const UserInfoChange = () => {
     }
 
     if (!userdata.nickname) {
-      alert("닉네임을 입력해주세요.")
+      toast("닉네임을 입력해주세요.")
     } else if (userdata.nickname && userNicknameCondition !== 1) {
-      alert("닉네임이 유효하지 않습니다.")
+      toast("닉네임이 유효하지 않습니다.")
     } else if (isChangePassword && !userdata.userPw) {
-      alert("비밀번호를 입력해주세요.")
+      toast("비밀번호를 입력해주세요.")
     } else if (isChangePassword && userdata.userPw && userPwCondition !== 1) {
-      alert("비밀번호가 유효하지 않습니다.")
+      toast("비밀번호가 유효하지 않습니다.")
     } else if (isChangePassword && userdata.userPw !== userdata.userPwCheck) {
-      alert("비밀번호가 일치하지 않습니다.")
+      toast("비밀번호가 일치하지 않습니다.")
     } else {
       axios({
         method: "PATCH",
@@ -268,7 +269,7 @@ export const UserInfoChange = () => {
         data: data,
       })
         .then((response) => {
-          alert(response.data.message)
+          toast(response.data.message)
           const userInfo = response.data.data
           dispatch(SET_USER(userInfo))
           navigate("/main")
@@ -295,7 +296,7 @@ export const UserInfoChange = () => {
       },
     })
       .then((response) => {
-        alert(response.data.message)
+        toast(response.data.message)
         if (response.data.code === 200) {
           dispatch(DELETE_USER())
           dispatch(DELETE_TOKEN())
@@ -310,6 +311,7 @@ export const UserInfoChange = () => {
 
   return (
     <>
+      <Toaster toastOptions={{ duration: 1000 }} />
       <SubHeader />
       <Box className="m-auto">
         <form className="w-80 mt-10" onSubmit={handleSubmit}>

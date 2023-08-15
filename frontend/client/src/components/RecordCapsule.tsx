@@ -11,6 +11,7 @@ import { ko } from "date-fns/esm/locale"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
+import toast, { Toaster } from "react-hot-toast"
 
 const Box = styled.div`
   display: flex;
@@ -255,9 +256,9 @@ const RecordCapsule = function () {
     e.preventDefault()
 
     if (!title) {
-      alert("타임캡슐 이름을 입력해주세요.")
+      toast("타임캡슐 이름을 입력해주세요.")
     } else if (!description) {
-      alert("한줄설명을 입력해주세요.")
+      toast("한줄설명을 입력해주세요.")
     } else {
       axios({
         method: "POST",
@@ -289,7 +290,7 @@ const RecordCapsule = function () {
           if (res.data.code === 200) {
             navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
           } else if (res.data.code === -4004) {
-            alert(
+            toast(
               "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
             )
             navigate("/main")
@@ -303,6 +304,7 @@ const RecordCapsule = function () {
 
   return (
     <>
+      <Toaster toastOptions={{ duration: 1000 }} />
       <SubHeader />
       <Box className="w-80 m-auto">
         <Title>기록 타임캡슐을 만들어요</Title>

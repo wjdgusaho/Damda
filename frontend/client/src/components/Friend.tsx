@@ -6,6 +6,7 @@ import axios from "axios"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import { DELETE_FRIENDS } from "../store/Alarm"
+import toast, { Toaster } from "react-hot-toast"
 
 const Friend = function () {
   const themeState = useSelector((state: RootState) => state.theme.colorCommon)
@@ -18,6 +19,7 @@ const Friend = function () {
 
   return (
     <div>
+      <Toaster toastOptions={{ duration: 1000 }} />
       <SubHeader></SubHeader>
       <div>
         <div className="text-center mt-10">
@@ -223,7 +225,7 @@ const FriendCard = function ({
     })
       .then((response) => {
         const code = response.data.code
-        alert(response.data.message)
+        toast(response.data.message)
         if (code === 200) {
           let newList = friendList.map((f) => {
             if (f.userNo === friend.userNo) {
@@ -252,7 +254,7 @@ const FriendCard = function ({
     })
       .then((response) => {
         const code = response.data.code
-        alert(response.data.message)
+        toast(response.data.message)
         if (code === 200) {
           let newList = friendList.map((f) => {
             if (f.userNo === friend.userNo) {
@@ -280,7 +282,7 @@ const FriendCard = function ({
       },
     }).then((response) => {
       const code = response.data.code
-      alert(response.data.message)
+      toast(response.data.message)
       if (code === 200 || code === -9005) {
         let newList = friendList.filter((f) => {
           return f.userNo !== friend.userNo
@@ -371,7 +373,7 @@ const RequestCard = function ({
     })
       .then((response) => {
         const code = response.data.code
-        alert(response.data.message)
+        toast(response.data.message)
         if (code === 200) {
           const newList = requestList.filter(
             (request) => request.userNo !== friend.userNo
@@ -397,7 +399,7 @@ const RequestCard = function ({
     })
       .then((response) => {
         const code = response.data.code
-        alert(response.data.message)
+        toast(response.data.message)
         if (code === 200) {
           const newList = requestList.filter(
             (request) => request.userNo !== friend.userNo
