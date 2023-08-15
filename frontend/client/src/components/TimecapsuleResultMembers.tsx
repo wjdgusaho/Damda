@@ -97,6 +97,7 @@ const TimecapsuleResultMembers = function () {
           }
         )
 
+        console.log("파일~!!~!~!~!!!!", response)
         if (response.status === 200) {
           const downloadUrl = window.URL.createObjectURL(
             new Blob([response.data])
@@ -108,13 +109,15 @@ const TimecapsuleResultMembers = function () {
           link.click()
           link.remove()
         } else {
-          console.log("파일 다운로드 안됨!!!!!!!!!!!!!")
+          console.error("파일 다운로드 에러")
+          alert("다운로드할 파일이 없어요!")
         }
       } catch (error) {
         console.error(error)
       }
     }
 
+    alert("다운로드 하는데 10초정도 소요됩니다! 조금만 기다려주세요")
     fetchData()
   }
 

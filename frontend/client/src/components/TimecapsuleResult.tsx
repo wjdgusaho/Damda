@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from "react"
+import React, {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import "../index.css"
 import { styled } from "styled-components"
 import { useNavigate, useParams } from "react-router"
@@ -9,6 +15,7 @@ import "./datePicker.css"
 import TimecapsuleResultMembers from "./TimecapsuleResultMembers"
 import TimecapsuleResultImages from "./TimecapsuleResultImages"
 import TimecapsuleResultRank from "./TimecapsuleResultRank"
+import ReactCanvasConfetti from "react-canvas-confetti"
 
 interface CapsuleInfoType {
   timecapsuleNo: number
@@ -18,6 +25,8 @@ interface CapsuleInfoType {
   alone: boolean
 }
 
+type AnimationFunctionType = (options: any) => void
+
 const TimecapsuleResult = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
@@ -25,6 +34,50 @@ const TimecapsuleResult = function () {
   const [comp, setComp] = useState("members")
   const [activeComponent, setActiveComponent] = useState("members")
   const [capsuleInfo, setCapsuleInfo] = useState<CapsuleInfoType | null>(null)
+
+  const refAnimationInstance = useRef<AnimationFunctionType | null>(null)
+
+  const getInstance = useCallback((instance: null) => {
+    refAnimationInstance.current = instance
+  }, [])
+
+  const makeShot = useCallback((particleRatio: number, opts: any) => {
+    refAnimationInstance.current &&
+      refAnimationInstance.current({
+        ...opts,
+        origin: { y: 0.7 },
+        particleCount: Math.floor(200 * particleRatio),
+      })
+  }, [])
+
+  const fire = useCallback(() => {
+    makeShot(0.25, {
+      spread: 26,
+      startVelocity: 55,
+    })
+
+    makeShot(0.2, {
+      spread: 60,
+    })
+
+    makeShot(0.35, {
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8,
+    })
+
+    makeShot(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2,
+    })
+
+    makeShot(0.1, {
+      spread: 120,
+      startVelocity: 45,
+    })
+  }, [makeShot])
 
   const handleNavClick = (compName: string) => {
     setActiveComponent(compName)
@@ -50,11 +103,13 @@ const TimecapsuleResult = function () {
         console.error(error)
       }
     }
+    fire()
     fetchData()
   }, [])
 
   return (
     <>
+      <ReactCanvasConfetti refConfetti={getInstance} style={canvasStyles} />
       <Box>
         {capsuleInfo && (
           <CapsuleImg capsuleIcon={capsuleInfo.capsuleIconNo}></CapsuleImg>
@@ -190,4 +245,14 @@ const BackBtn = styled.div`
   color: ${(props) => props.theme.color950};
   font-size: 16px;
 `
+
+const canvasStyles: CSSProperties = {
+  position: "absolute",
+  pointerEvents: "none" as "none", // 'none'으로 타입을 강제 변환
+  width: "100%",
+  height: "100%",
+  top: 0,
+  left: 0,
+}
+
 export default TimecapsuleResult
