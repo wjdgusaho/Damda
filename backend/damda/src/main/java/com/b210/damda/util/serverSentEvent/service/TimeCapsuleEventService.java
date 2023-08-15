@@ -66,7 +66,7 @@ public class TimeCapsuleEventService {
         log.info("[login-after]내가 개봉할 수 있는 타임캡슐 확인");
         long userNo = addOnEventService.getUserNo();
         // 서버 시스템 시간 가져오기, 만료된 캡슐 가져오기
-        LocalDateTime serverTime = LocalDateTime.now().plusHours(9);
+        LocalDateTime serverTime = LocalDateTime.now().plusHours(9).minusDays(7);
         List<Timecapsule> getExpiredList = timeCapsuleSEERepository.getExpiredTimecapsuleByUserNoAndNowTimeStamp(userNo, Timestamp.valueOf(serverTime));
 
         String context = "개봉할 수 있는 타임캡슐이 있어요! : ";
