@@ -289,9 +289,8 @@ const GoalCapsule = function () {
             navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
           } else if (res.data.code === -4004) {
             toast(
-              "보유 가능 타임캡슐 수가 최대입니다! 최대 보유 수량를 늘리려면 상점에서 구매하실 수 있습니다." // 일단 이렇게, 나중에 수정할거임
+              `보유 가능 타임캡슐 수가 최대입니다!${"\n"}추가하려면 상점에서 구매해 주세요!`
             )
-            navigate("/main")
           }
         })
         .catch((err) => {
