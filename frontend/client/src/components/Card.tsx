@@ -452,7 +452,7 @@ const Card = function () {
           </Option>
         </FontSelect>
       </div>
-      <div className="fixed bottom-0">
+      <div className="mt-3">
         <div className="bg-black bg-opacity-10 flex flex-nowrap overflow-y-auto">
           {stickerList.length !== 0 &&
             stickerList.map((s: StickerType) => (
