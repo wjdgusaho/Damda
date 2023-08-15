@@ -190,6 +190,8 @@ public class UserService {
                     .type("CHECK").build();
 
             userCoinGetLogRepository.save(userCoinGetLog);
+
+            //코인 획
         }
 
         UserLoginSuccessDTO response = UserLoginSuccessDTO.builder()
