@@ -39,11 +39,13 @@ import { TimecapsuleOpen } from "./components/TimecapsuleOpen"
 import TimecapsuleResult from "./components/TimecapsuleResult"
 import {
   ADD_FRIENDS,
+  ADD_OPENTIMECAPSULES,
   ADD_TIMECAPSULES,
   DELETE_SSE,
   SET_SSE,
   alarmCapsuleType,
   alarmFriendType,
+  alarmOpenCapsuleType,
   toastOption,
 } from "./store/Alarm"
 import { EmptyPage } from "./components/EmptyPage"
@@ -161,6 +163,14 @@ function Main() {
         )
         dispatch(ADD_TIMECAPSULES(data))
       })
+      newEventSource.addEventListener(
+        "timecapsule-event-selfcheck",
+        (event: any) => {
+          const data: alarmOpenCapsuleType = JSON.parse(event["data"])
+          toast.info(`${data.content}${data.title}\n${data.date}`, toastOption)
+          dispatch(ADD_OPENTIMECAPSULES(data))
+        }
+      )
       newEventSource.addEventListener("check-connection", (event: any) => {
         // 새롭게 서버로 보낼 이벤트소스
         // process.env.REACT_APP_SERVER_URL + (내가 보낼 url 주소)
