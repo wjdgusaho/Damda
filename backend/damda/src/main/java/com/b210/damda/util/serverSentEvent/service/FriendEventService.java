@@ -60,15 +60,11 @@ public class FriendEventService {
     public void checkAllFriendEvent() {
         log.info("나에게 온 친구 요청 알림 로직");
         Long userNo = addOnEventService.getUserNo();
-        log.info("userNo TEST : {}", userNo);
-        List<GetRequestToMeDTO> requests = friendSSERepository.getRequestToMe(userNo);
         String eventName = "friend-event";
         String context = "님으로부터 친구 요청이 도착했습니다. ";
 
-        log.warn("친구 요청 List Size : {}", requests.size());
-
+        List<GetRequestToMeDTO> requests = friendSSERepository.getRequestToMe(userNo);
         for (GetRequestToMeDTO request : requests) {
-            log.info("친구 요청 리스트 순회 : {} {} {}", request.getFromName(), request.getFromNo(), request.getFromProfileImage());
             ServerSentEvent<JsonNode> event =
                     addOnEventService.buildServerSentEvent(eventName, new ServerSentEventDTO(request.getFromNo(),
                             request.getFromName(), request.getFromProfileImage(), context, addOnEventService.getNowTime(request.getDate())));

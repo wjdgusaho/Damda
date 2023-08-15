@@ -32,6 +32,7 @@ public class SSEController {
         return eventStreamService.connectStream();
     }
 
+    //로그인 파이프라인 구축 후, 사용자 개인의 지난 알림을 확인한다.
     @GetMapping("sse/login/after")
     public void loginAfterCheck() {
         //1. 확인하지 못했던 친구 상태 알림 로직
@@ -40,7 +41,7 @@ public class SSEController {
         timeCapsuleEventService.checkAllTimeCapsuleService();
     }
 
-
+    //Server - Client Connection Check
     @GetMapping(value = "/sse/check")
     public Flux<ServerSentEvent<JsonNode>> checkConnection() {
         return eventStreamService.checkConnection();
