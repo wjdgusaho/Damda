@@ -170,7 +170,6 @@ const SavedTimecapsule = function () {
         },
       })
       if (response.data.code === 200) {
-        console.log(response.data)
         window.location.reload()
         // 새로고침 추가하기
       } else if (response.data.code === 404) {
@@ -200,8 +199,6 @@ const SavedTimecapsule = function () {
     }
     fetchData()
   }, [])
-
-  console.log(capsuleList)
 
   return (
     <>

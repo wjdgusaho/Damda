@@ -93,7 +93,6 @@ const Participate = function ({ code = "" }: { code: string }) {
     })
       .then((res) => {
         if (res.data.code === 200) {
-          console.log(res.data.data.timecapsule.timecapsuleNo)
           navigate(
             `/timecapsule/detail/${res.data.data.timecapsule.timecapsuleNo}`
           )

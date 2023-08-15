@@ -361,8 +361,6 @@ const TimeCapsuleDetail = function () {
     }
   }, [capsuleId, token])
 
-  console.log(capsuleData)
-
   const currentDate = new Date()
   const oneDayLater = new Date(capsuleData.registDate)
   oneDayLater.setHours(oneDayLater.getHours() + 24).toString()
@@ -444,7 +442,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       if (response.data.code === 200) {
         closeKickOutModal()
         window.location.reload()
-        console.log(response.data)
       } // 나중에 추가할거임
     } catch (error) {
       console.log(error)
@@ -598,7 +595,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
           },
           data: formData,
         })
-        console.log(response.data)
         setIsFileAble(false)
         closeModal()
       } catch (error) {
@@ -620,7 +616,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         },
       })
       setFriendList(response.data)
-      console.log(response.data)
     } catch (error) {
       console.log("Error fetching data:", error)
     }
@@ -692,7 +687,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   }
 
   function kakaoShare() {
-    console.log("Kakao : ", window.Kakao)
     if (window.Kakao) {
       const kakao = window.Kakao
 
@@ -1341,9 +1335,6 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 
-  console.log(capsuleData.myInfo.fileAble)
-  console.log(isFileAble)
-
   const getFileSize = async () => {
     try {
       const response = await axios({
@@ -1397,7 +1388,6 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           },
           data: formData,
         })
-        console.log(response.data)
         setIsFileAble(false)
         closeModal()
       } catch (error) {
