@@ -7,6 +7,7 @@ import { SET_TOKEN, SET_USER } from "../../store/Auth"
 import { setRefreshToken } from "../../store/Cookie"
 import "../../index.css"
 import { SET_THEME } from "../../store/Theme"
+import { motion } from "framer-motion"
 
 const Box = styled.div`
   display: flex;
@@ -149,107 +150,115 @@ const Login = function () {
   }
 
   return (
-    <Box>
-      <span
-        className="text-victoria-200 text-8xl mt-12"
-        style={{ fontFamily: "PyeongChangPeaceBold", position: "relative" }}
-      >
-        담다
-        <Shooting1 src="assets/universe/Shooting.png" alt="Shooting" />
-        <Shooting2 src="assets/universe/Shooting.png" alt="Shooting" />
-        <Shooting3 src="assets/universe/Shooting.png" alt="Shooting" />
-      </span>
-      <p
-        className="text-victoria-400 mt-5"
-        style={{
-          fontFamily: "PyeongChangPeace",
-          fontSize: "18px",
-        }}
-      >
-        당신의 스쳐가는 시간을 <b>담다</b>
-      </p>
-      <div style={{ marginTop: "-20px" }}>
-        <img
-          src="assets/universe/UFO.png"
-          alt="UFO"
-          width="300px"
-          height="169px"
-        />
-        <Person
-          src="assets/universe/Astronaut-1.png"
-          alt="Astronaut"
-          width="130px"
-          height="130px"
-        />
-        <Shadow />
-      </div>
-
-      <div>
-        <div
-          className="text-lilac-300 font-thin relative -top-9 w-48"
-          style={{ marginLeft: "-15px" }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Box>
+        <span
+          className="text-victoria-200 text-8xl mt-12"
+          style={{ fontFamily: "PyeongChangPeaceBold", position: "relative" }}
         >
-          <button
-            onClick={() => {
-              navigate("/findPassword")
-            }}
-          >
-            비밀번호 찾기 |
-          </button>
-          <button
-            onClick={() => {
-              navigate("/signup")
-            }}
-            style={{ marginLeft: "5px" }}
-          >
-            회원가입
-          </button>
-        </div>
-        <Form onSubmit={formSubmit} className="text-lilac-300 font-thin">
-          <div className="grid gird-rows-4">
-            <div
-              className="grid grid-cols-2 text-lg"
-              style={{ width: "300px" }}
-            >
-              <label htmlFor="email-input" style={{ marginLeft: "-15px" }}>
-                이메일
-              </label>
-              <InputText
-                id="email-input"
-                type="text"
-                value={email}
-                onChange={inputEmail}
-              />
-            </div>
-            <div className="grid grid-cols-2 text-lg">
-              <label htmlFor="password-input" style={{ marginLeft: "-15px" }}>
-                비밀번호
-              </label>
-              <InputText
-                id="password-input"
-                type="password"
-                value={password}
-                onChange={inputPassword}
-              />
-            </div>
-            <div className="flex grid-cols-2 justify-end">
-              <LoginBtn>로그인</LoginBtn>
-            </div>
-          </div>
-        </Form>
-        <div className="relative">
-          <p className="-left-4 top-1 text-red-300 absolute">{userdataText}</p>
-        </div>
-        <KakaoLink as="a" href={process.env.REACT_APP_KAKAO_URL}>
+          담다
+          <Shooting1 src="assets/universe/Shooting.png" alt="Shooting" />
+          <Shooting2 src="assets/universe/Shooting.png" alt="Shooting" />
+          <Shooting3 src="assets/universe/Shooting.png" alt="Shooting" />
+        </span>
+        <p
+          className="text-victoria-400 mt-5"
+          style={{
+            fontFamily: "PyeongChangPeace",
+            fontSize: "18px",
+          }}
+        >
+          당신의 스쳐가는 시간을 <b>담다</b>
+        </p>
+        <div style={{ marginTop: "-20px" }}>
           <img
-            src="kakao_login_medium_narrow1.png"
-            alt="카카오톡 로그인"
-            width="200px"
-            height="50px"
+            src="assets/universe/UFO.png"
+            alt="UFO"
+            width="300px"
+            height="169px"
           />
-        </KakaoLink>
-      </div>
-    </Box>
+          <Person
+            src="assets/universe/Astronaut-1.png"
+            alt="Astronaut"
+            width="130px"
+            height="130px"
+          />
+          <Shadow />
+        </div>
+
+        <div>
+          <div
+            className="text-lilac-300 font-thin relative -top-9 w-48"
+            style={{ marginLeft: "-15px" }}
+          >
+            <button
+              onClick={() => {
+                navigate("/findPassword")
+              }}
+            >
+              비밀번호 찾기 |
+            </button>
+            <button
+              onClick={() => {
+                navigate("/signup")
+              }}
+              style={{ marginLeft: "5px" }}
+            >
+              회원가입
+            </button>
+          </div>
+          <Form onSubmit={formSubmit} className="text-lilac-300 font-thin">
+            <div className="grid gird-rows-4">
+              <div
+                className="grid grid-cols-2 text-lg"
+                style={{ width: "300px" }}
+              >
+                <label htmlFor="email-input" style={{ marginLeft: "-15px" }}>
+                  이메일
+                </label>
+                <InputText
+                  id="email-input"
+                  type="text"
+                  value={email}
+                  onChange={inputEmail}
+                />
+              </div>
+              <div className="grid grid-cols-2 text-lg">
+                <label htmlFor="password-input" style={{ marginLeft: "-15px" }}>
+                  비밀번호
+                </label>
+                <InputText
+                  id="password-input"
+                  type="password"
+                  value={password}
+                  onChange={inputPassword}
+                />
+              </div>
+              <div className="flex grid-cols-2 justify-end">
+                <LoginBtn>로그인</LoginBtn>
+              </div>
+            </div>
+          </Form>
+          <div className="relative">
+            <p className="-left-4 top-1 text-red-300 absolute">
+              {userdataText}
+            </p>
+          </div>
+          <KakaoLink as="a" href={process.env.REACT_APP_KAKAO_URL}>
+            <img
+              src="kakao_login_medium_narrow1.png"
+              alt="카카오톡 로그인"
+              width="200px"
+              height="50px"
+            />
+          </KakaoLink>
+        </div>
+      </Box>
+    </motion.div>
   )
 }
 

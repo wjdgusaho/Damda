@@ -45,6 +45,10 @@ const Card = styled.div`
   border-radius: 30px;
   margin-top: 30px;
   align-items: center;
+  &:hover {
+    transition: 0.2s;
+    transform: scale(1.05);
+  }
 `
 
 const CapsuleImg = styled.div<{ capsuleNum: string }>`

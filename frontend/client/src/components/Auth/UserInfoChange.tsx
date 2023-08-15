@@ -11,6 +11,7 @@ import { removeCookieToken } from "../../store/Cookie"
 import styled from "styled-components"
 import { SubHeader } from "../inc/SubHeader"
 import toast, { Toaster } from "react-hot-toast"
+import { motion } from "framer-motion"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -310,7 +311,11 @@ export const UserInfoChange = () => {
   }
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <Toaster toastOptions={{ duration: 1000 }} />
       <SubHeader />
       <Box className="m-auto">
@@ -458,6 +463,6 @@ export const UserInfoChange = () => {
           </ModalContent>
         </Modal>
       </Box>
-    </>
+    </motion.div>
   )
 }
