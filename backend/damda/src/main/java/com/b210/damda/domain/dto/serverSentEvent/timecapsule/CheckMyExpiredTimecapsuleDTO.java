@@ -7,6 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class CheckMyExpiredTimecapsuleDTO {
     String context;
+    Long timecapsuleNo;
     String type;
     String title;
     String date;
