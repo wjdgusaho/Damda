@@ -28,8 +28,6 @@ public class TimeCapsuleEventService {
     private final TimeCapsuleSEERepository timeCapsuleSEERepository;
 
     public void TimecapsuleEventRequest(TimecapsuleInviteUserDTO timecapsuleInviteUserDTO) {
-        log.warn("타임캡슐 초대 이벤트");
-
         Long fromNo = timecapsuleInviteUserDTO.getFriendNo();
         Long userNo = addOnEventService.getUserNo();
         Long timeCapsuleNo = timecapsuleInviteUserDTO.getTimecapsuleNo();;
@@ -46,8 +44,6 @@ public class TimeCapsuleEventService {
     }
     
     public void TimecapsuleEventAccept(String inviteCode) {
-        log.warn("타임캡슐 승낙 이벤트");
-
         Long fromNo = timeCapsuleSEERepository.getUserNoByInviteCode(inviteCode); //inviteCode를 통해 방장 찾아옴
         Long userNo = addOnEventService.getUserNo();
 
@@ -63,10 +59,9 @@ public class TimeCapsuleEventService {
 
 
     public void checkAllTimeCapsuleService() {
-        log.info("[login-after]내가 개봉할 수 있는 타임캡슐 확인");
         long userNo = addOnEventService.getUserNo();
         // 서버 시스템 시간 가져오기, 만료된 캡슐 가져오기
-        LocalDateTime serverTime = LocalDateTime.now().plusHours(9).minusDays(7);
+        LocalDateTime serverTime = LocalDateTime.now().plusHours(9);
         List<Timecapsule> getExpiredList = timeCapsuleSEERepository.getExpiredTimecapsuleByUserNoAndNowTimeStamp(userNo, Timestamp.valueOf(serverTime));
 
         String context = "개봉할 수 있는 타임캡슐이 있어요! : ";

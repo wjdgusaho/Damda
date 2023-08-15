@@ -28,7 +28,6 @@ public class SSEController {
     //최초 접속 시 로그인 이벤트. 이를 통해 스트림 파이프라인 구축 가능
     @GetMapping(value = "/sse/login")
     public Flux<ServerSentEvent<JsonNode>> login() {
-        log.info("로그인 개방");
         return eventStreamService.connectStream();
     }
 
