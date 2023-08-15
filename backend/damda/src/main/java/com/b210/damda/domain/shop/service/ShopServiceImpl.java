@@ -7,6 +7,7 @@ import com.b210.damda.domain.dto.theme.ThemeShopDTO;
 import com.b210.damda.domain.entity.Items.Items;
 import com.b210.damda.domain.entity.Items.ItemsMapping;
 import com.b210.damda.domain.entity.User.User;
+import com.b210.damda.domain.entity.User.UserCoinUseLog;
 import com.b210.damda.domain.entity.theme.Theme;
 import com.b210.damda.domain.entity.theme.ThemeMapping;
 import com.b210.damda.domain.shop.repository.*;
@@ -15,6 +16,7 @@ import com.b210.damda.domain.entity.Timecapsule.Timecapsule;
 import com.b210.damda.domain.entity.Timecapsule.TimecapsuleMapping;
 import com.b210.damda.domain.timecapsule.repository.TimecapsuleMappingRepository;
 import com.b210.damda.domain.timecapsule.repository.TimecapsuleRepository;
+import com.b210.damda.domain.user.repository.UserCoinUseLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
@@ -39,6 +41,7 @@ public class ShopServiceImpl implements ShopService{
     private final UserRepository userRepository;
     private final TimecapsuleRepository timecapsuleRepository;
     private final TimecapsuleMappingRepository timecapsuleMappingRepository;
+    private final UserCoinUseLogRepository userCoinUseLogRepository;
 
     // 타임캡슐 최대로 살수있는 개수
     private final int MAX_CAPSULE_LIMIT = 10;
@@ -218,6 +221,10 @@ public class ShopServiceImpl implements ShopService{
         result.put("themeList", themeList);
         result.put("userInfo", user.toUserDTO());
 
+        // 코인 사용 기록 추가
+        UserCoinUseLog userCoinUseLog = new UserCoinUseLog(user, theme.getThemeNo(), theme.getPrice(), "THEME");
+        userCoinUseLogRepository.save(userCoinUseLog);
+
         return result;
     }
     
@@ -265,6 +272,10 @@ public class ShopServiceImpl implements ShopService{
         result.put("decoItemList", itemList.get("decoItemList"));
         result.put("userInfo", user.toUserDTO());
 
+        // 코인 사용 기록 추가
+        UserCoinUseLog userCoinUseLog = new UserCoinUseLog(user, items.getItemNo(), items.getPrice(), "STICKER");
+        userCoinUseLogRepository.save(userCoinUseLog);
+
         return result;
     }
 
@@ -305,6 +316,10 @@ public class ShopServiceImpl implements ShopService{
 
         Map<String, Object> result = new HashMap<>();
         result.put("userInfo", user.toUserDTO());
+
+        // 코인 사용 기록 추가
+        UserCoinUseLog userCoinUseLog = new UserCoinUseLog(user, items.getItemNo(), items.getPrice(), "TIMECAPSULE_COUNT");
+        userCoinUseLogRepository.save(userCoinUseLog);
 
         return result;
     }
@@ -393,6 +408,10 @@ public class ShopServiceImpl implements ShopService{
         //타임캡슐 용량 증가
         timecapsule.updateMaxFileSize(timecapsule.getMaxFileSize() + UP_FILE_SIZE);
         timecapsuleRepository.save(timecapsule);
+
+        // 코인 사용 기록 추가
+        UserCoinUseLog userCoinUseLog = new UserCoinUseLog(user, items.getItemNo(), items.getPrice(), "TIMECAPSULE_SIZE");
+        userCoinUseLogRepository.save(userCoinUseLog);
 
     }
 
