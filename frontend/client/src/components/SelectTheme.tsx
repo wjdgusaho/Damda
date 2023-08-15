@@ -18,6 +18,10 @@ const Box = styled.div`
   justify-content: center;
   img {
     filter: drop-shadow(0px 4px 4px rgb(0, 0, 0, 0.4));
+    &:hover {
+      transition: 0.2s;
+      transform: scale(1.05);
+    }
   }
 `
 interface themeType {
