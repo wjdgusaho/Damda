@@ -36,4 +36,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE UserEvent ue SET ue.isCheck = 0")
     void updateIsCheck();
+
+    @Query("SELECT u.nickname FROM User u WHERE u.userNo = :userNo")
+    String findUserNicknameByUserNo(@Param("userNo") Long userNo);
 }
