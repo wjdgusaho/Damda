@@ -28,14 +28,19 @@ public class SSEController {
     //최초 접속 시 로그인 이벤트. 이를 통해 스트림 파이프라인 구축 가능
     @GetMapping(value = "/sse/login")
     public Flux<ServerSentEvent<JsonNode>> login() {
-        log.info("로그인 개방");
-        //1. 확인하지 못했던 친구 상태 알림 로직
-        friendEventService.checkAllFriendEvent();
-        //2. 확인하지 못했던 타임 캡슐 알림 로직
-
         return eventStreamService.connectStream();
     }
 
+    //로그인 파이프라인 구축 후, 사용자 개인의 지난 알림을 확인한다.
+    @GetMapping("sse/login/after")
+    public void loginAfterCheck() {
+        //1. 확인하지 못했던 친구 상태 알림 로직
+        friendEventService.checkAllFriendEvent();
+        //2. 확인하지 못했던 타임 캡슐 알림 로직
+        timeCapsuleEventService.checkAllTimeCapsuleService();
+    }
+
+    //Server - Client Connection Check
     @GetMapping(value = "/sse/check")
     public Flux<ServerSentEvent<JsonNode>> checkConnection() {
         return eventStreamService.checkConnection();
@@ -43,9 +48,10 @@ public class SSEController {
 
     //로그아웃 엔드포인트 세분화
     @GetMapping(value = "/sse/logout")
-    public void logout() {
+    public Flux<ServerSentEvent<JsonNode>> logout() {
         log.info("sse/logout");
         eventStreamService.disconnectStreamLogout();
+        return Flux.empty();
     }
 
 }

@@ -26,6 +26,8 @@ import com.b210.damda.util.emailAPI.repository.EmailSendLogRepository;
 import com.b210.damda.util.emailAPI.repository.SignupEmailLogRepository;
 import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
+import com.b210.damda.util.kakaoAPI.repository.KakaoLogRepository;
+import com.b210.damda.util.kakaoAPI.service.KakaoAPIService;
 import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,6 +62,9 @@ public class UserService {
     private final ThemeRepository themeRepository;
     private final UserCoinGetLogRepository userCoinGetLogRepository;
     private final UserEventRepository userEventRepository;
+    private final KakaoLogRepository kakaoLogRepository;
+
+    private final KakaoAPIService kakaoAPIService;
 
     private static Long acExpiredMs = 1000 * 60 * 30L * (48 * 30); // 액세스 토큰의 만료 시간(30분) * 48 * 30 = 30일
     private final int dailyCheckCoin = 500;
@@ -122,7 +127,7 @@ public class UserService {
     @Transactional
     public UserLoginSuccessDTO login(String email, String password) {
 
-        Optional<User> findUser = Optional.ofNullable(userRepository.findByEmail(email)
+        Optional<User> findUser = Optional.ofNullable(userRepository.findByOriginEmail(email)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
 
         User user = findUser.get();
@@ -185,6 +190,8 @@ public class UserService {
                     .type("CHECK").build();
 
             userCoinGetLogRepository.save(userCoinGetLog);
+
+            //코인 획
         }
 
         UserLoginSuccessDTO response = UserLoginSuccessDTO.builder()
@@ -204,7 +211,7 @@ public class UserService {
 
     // 유저 이메일 확인(이메일 존재하는지)
     public User fineByUser(String email) {
-        Optional<User> byEmail = userRepository.findByEmail(email);
+        Optional<User> byEmail = userRepository.findByOriginEmail(email);
         if (byEmail.isEmpty()) {
             return null;
         }
@@ -221,6 +228,17 @@ public class UserService {
         RefreshToken refreshToken = byRefreshToken.get(); // 유저의 리프레시 토큰 꺼냄.
         refreshToken.setRefreshToken("");
         RefreshToken save = refreshTokenRepository.save(refreshToken);
+
+        Long userNo = getUserNo();
+        Optional<User> byId = Optional.ofNullable(userRepository.findById(userNo)
+                .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
+        User user = byId.get();
+        //카카오 로그인이면 로그아웃!!
+        if(user.getAccountType().equals("KAKAO")){
+            KakaoLog kakaoLog = kakaoLogRepository.findByUserUserNo(user.getUserNo());
+            kakaoAPIService.kakaoUnlinkLogout(kakaoLog, "logout");
+        }
+
     }
 
     // 회원가입 인증번호 확인
@@ -258,7 +276,7 @@ public class UserService {
         String code = tempCodeDTO.getCode();
         
         // 회원이 없음
-        Optional<User> byEmail = Optional.ofNullable(userRepository.findByEmail(email).
+        Optional<User> byEmail = Optional.ofNullable(userRepository.findByOriginEmail(email).
                 orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
         
         User user = byEmail.get();
@@ -289,7 +307,7 @@ public class UserService {
         String email = userUpdateDTO.getEmail();
         String userPw = userUpdateDTO.getUserPw();
 
-        Optional<User> byEmail = Optional.ofNullable(userRepository.findByEmail(email)
+        Optional<User> byEmail = Optional.ofNullable(userRepository.findByOriginEmail(email)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
 
         User user = byEmail.get();
@@ -473,5 +491,11 @@ public class UserService {
 
         user.insertDeleteDate();
         userRepository.save(user);
+
+        //카카오 로그인이면 연결끊기!!
+        if(user.getAccountType().equals("KAKAO")){
+            KakaoLog kakaoLog = kakaoLogRepository.findByUserUserNo(userNo);
+            kakaoAPIService.kakaoUnlinkLogout(kakaoLog, "unlink");
+        }
     }
 }

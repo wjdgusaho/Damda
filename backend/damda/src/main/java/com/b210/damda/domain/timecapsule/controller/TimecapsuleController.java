@@ -37,8 +37,10 @@ public class TimecapsuleController {
     @PostMapping("view")
     public DataResponse<Map<String, Object>> workTimecapsuleList(@RequestBody WeatherLocationDTO weatherLocationDto) {
         List<MainTimecapsuleListDTO> workTimecapsuleList = timecapsuleService.workTimecapsule(weatherLocationDto);
+        Map<String, Object> userTimecapsuleInfo = timecapsuleService.userTimecapsuleInfo();
         Map<String, Object> result = new HashMap<>();
         result.put("timecapsuleList", workTimecapsuleList);
+        result.put("userTimecapsuleInfo", userTimecapsuleInfo);
 
         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "진행중 : 타임캡슐 리스트 조회 성공");
         response.setData(result);

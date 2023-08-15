@@ -17,7 +17,8 @@ public interface TimecapsuleRepository extends JpaRepository<Timecapsule, Long> 
     @Override
     Optional<Timecapsule> findById (Long timecapsuleNo);
 
-    Timecapsule findByInviteCode(String inviteCode);
+    @Query("SELECT t FROM Timecapsule t WHERE t.inviteCode = :inviteCode AND t.removeDate = null")
+    Timecapsule findByInviteCode(@Param("inviteCode") String inviteCode);
 
 
 

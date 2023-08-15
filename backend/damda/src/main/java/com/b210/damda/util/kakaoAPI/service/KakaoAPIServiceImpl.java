@@ -1,11 +1,19 @@
 package com.b210.damda.util.kakaoAPI.service;
 
+import com.b210.damda.domain.entity.User.KakaoLog;
+import com.b210.damda.util.exception.CommonException;
+import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -19,6 +27,38 @@ public class KakaoAPIServiceImpl implements KakaoAPIService{
 
     public KakaoAPIServiceImpl(){}
 
+    @Override
+    public String kakaoUnlinkLogout(KakaoLog kaokaoLog, String type){
+
+        //카카오톡 연동 해제 로직
+        RestTemplate restTemplate = new RestTemplate();
+        //Headers 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + kaokaoLog.getAccessToken());
+
+        // HTTP Request 생성
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // 카카오 연동 해제 API 호출
+        //연동해제 : https://kapi.kakao.com/v1/user/unlink
+        //로그아웃 : https://kapi.kakao.com/v1/user/logout
+        String KakaoRevokeEndpoint = "https://kapi.kakao.com/v1/user/" + type;
+        ResponseEntity<String> kakaoResponse = restTemplate.exchange(KakaoRevokeEndpoint, HttpMethod.POST, entity, String.class);
+
+        // 에러 처리 (옵션) - 토큰 에러
+        if (kakaoResponse.getStatusCode().isError()) {
+            // 연동 해제 실패 처리
+           if(type.equals("unlink")) throw new CommonException(CustomExceptionStatus.KAKAO_UNLINK_ERROR);
+            // 그외 는 다 로그아웃이 되어다는것
+        }
+
+        return null;
+    }
+
+    
+    /*
+        미사용
+     */
     @Override
     public String getKakaoAccessToken(String authorize_code){
         String access_Token = "";
@@ -81,6 +121,9 @@ public class KakaoAPIServiceImpl implements KakaoAPIService{
         }
     }
 
+    /*
+       미사용
+    */
     @Override
     public Map<String, Object> getKakaoUserInfo(String access_token){
         String reqUrl = "https://kapi.kakao.com/v2/user/me";

@@ -26,13 +26,12 @@ public class JwtSuccessHandler implements AuthenticationSuccessHandler {
 
         User UserInfo = principalDetails.getUser(); //PrincipalDetails에서 사용자 정보 가져오기
 
-        String assessToken = principalDetails.getAssessToken();
+        //String assessToken = principalDetails.getAssessToken();
 
 
         String userCode = UserInfo.getUserPw();
 
-
-        // 카카오 연동 해제 로직
+        /*
         RestTemplate restTemplate = new RestTemplate();
 
         // Headers 설정
@@ -54,6 +53,7 @@ public class JwtSuccessHandler implements AuthenticationSuccessHandler {
             log.error("카카오톡 연동 해제 에러... : {}", kakaoResponse.getBody());
         }
 
+        */
         response.sendRedirect("https://damda.online/dummykakao?code=" + userCode);
     }
 }

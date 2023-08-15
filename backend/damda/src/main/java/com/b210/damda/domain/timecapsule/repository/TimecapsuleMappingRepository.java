@@ -17,21 +17,21 @@ public interface TimecapsuleMappingRepository extends JpaRepository<TimecapsuleM
     List<TimecapsuleMapping> findByUserUserNo(Long userNo);
 
     @Query("SELECT tm FROM TimecapsuleMapping tm WHERE tm.user.userNo = :userNo AND tm.timecapsule.removeDate IS NULL AND tm.deleteDate IS NULL")
-    List<TimecapsuleMapping> findByActiveUserUserNo(Long userNo);
+    List<TimecapsuleMapping> findByActiveUserUserNo(@Param("userNo") Long userNo);
 
     @Query("SELECT t FROM TimecapsuleMapping t " +
             "WHERE t.user.userNo = :userNo " +
             "AND t.timecapsule.removeDate IS NULL " +
             "AND t.deleteDate IS NULL " +
             "AND t.isSave = false")
-    List<TimecapsuleMapping> findWorkTimecapsules(Long userNo);
+    List<TimecapsuleMapping> findWorkTimecapsules(@Param("userNo")Long userNo);
 
     @Query("SELECT t FROM TimecapsuleMapping t " +
             "WHERE t.user.userNo = :userNo " +
             "AND t.timecapsule.removeDate IS NULL " +
             "AND t.deleteDate IS NULL " +
             "AND t.isSave = true")
-    List<TimecapsuleMapping> findSaveTimecapsules(Long userNo);
+    List<TimecapsuleMapping> findSaveTimecapsules(@Param("userNo") Long userNo);
 
 
     @Query("SELECT tm FROM TimecapsuleMapping tm WHERE tm.user.userNo = :userNo AND tm.timecapsule.timecapsuleNo = :timecapsuleNo")
@@ -45,6 +45,21 @@ public interface TimecapsuleMappingRepository extends JpaRepository<TimecapsuleM
             "AND tm.user.userNo = :userNo " +
             "AND ((tm.isSave = true) OR (tm.isSave = false AND tm.deleteDate IS NULL))")
     Optional<TimecapsuleMapping> findByUserUserNoAndTimecapsuleTimecapsuleNo(@Param("userNo") Long userNo, @Param("timecapsuleNo")Long timecapsuleNo);
+
+
+    @Query("SELECT COUNT(t) FROM TimecapsuleMapping t " +
+            "WHERE t.user.userNo = :userNo " +
+            "AND t.timecapsule.removeDate IS NULL " +
+            "AND t.deleteDate IS NULL " +
+            "AND t.isSave = false")
+    Long countWorkTimecapsules(@Param("userNo") Long userNo);
+
+    @Query("SELECT COUNT(t) FROM TimecapsuleMapping t " +
+            "WHERE t.user.userNo = :userNo " +
+            "AND t.timecapsule.removeDate IS NULL " +
+            "AND t.deleteDate IS NULL " +
+            "AND t.isSave = true")
+    Long countSaveTimecapsules(@Param("userNo") Long userNo);
 
     @Query("SELECT tm FROM TimecapsuleMapping tm " +
             "WHERE tm.timecapsule.timecapsuleNo = :timecapsuleNo " +

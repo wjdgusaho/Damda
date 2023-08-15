@@ -22,10 +22,4 @@ public class TimeCapsuleScheduledComponent {
         timeCapsuleSchedularRepository.cardAble(true, true);
     }
 
-    //타임 캡슐 만료되었을 시 알림, 매일 00시에 실행
-//    @Scheduled(cron = "0 00 00 * * *", zone = "Asia/Seoul") // 매일 00시 00분 00초
-//    public void checkTimeCapsule() {
-//        log.info("[EVENT] : 타임 캡슐 만료 알림");
-//        timecapsuleRepository
-//    }
 }
