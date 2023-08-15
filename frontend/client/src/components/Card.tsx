@@ -433,13 +433,16 @@ const Card = function () {
       <div className="mt-2 flex items-center justify-center">
         <FontSelect font={font} name="font" id="" onChange={handleFontChange}>
           <Option font="pretendard" value="pretendard">
-            pretendard
+            pretendard 폰트
           </Option>
           <Option font="PyeongChangPeaceBold" value="PyeongChangPeaceBold">
-            평창평화체
+            평창평화체Bold 폰트
           </Option>
           <Option font="PyeongChangPeace" value="PyeongChangPeace">
-            평창평화체2
+            평창평화체Light 폰트
+          </Option>
+          <Option font="DungGeunMo" value="DungGeunMo">
+            둥근모 폰트
           </Option>
         </FontSelect>
       </div>
