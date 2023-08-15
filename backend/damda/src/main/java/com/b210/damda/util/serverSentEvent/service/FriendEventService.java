@@ -29,7 +29,6 @@ public class FriendEventService {
     private final FriendSSERepository friendSSERepository;
 
     public void friendEventService(long fromNo, FriendEventEnum type) {
-        log.warn("친구 관련 로직 작동(friendEventService)");
 
         Long userNo = addOnEventService.getUserNo();
 
@@ -58,17 +57,12 @@ public class FriendEventService {
 
     //첫 로그인 시 밀렸던 모든 친구들을 조회하기
     public void checkAllFriendEvent() {
-        log.info("나에게 온 친구 요청 알림 로직");
         Long userNo = addOnEventService.getUserNo();
-        log.info("userNo TEST : {}", userNo);
-        List<GetRequestToMeDTO> requests = friendSSERepository.getRequestToMe(userNo);
         String eventName = "friend-event";
         String context = "님으로부터 친구 요청이 도착했습니다. ";
 
-        log.warn("친구 요청 List Size : {}", requests.size());
-
+        List<GetRequestToMeDTO> requests = friendSSERepository.getRequestToMe(userNo);
         for (GetRequestToMeDTO request : requests) {
-            log.info("친구 요청 리스트 순회 : {} {} {}", request.getFromName(), request.getFromNo(), request.getFromProfileImage());
             ServerSentEvent<JsonNode> event =
                     addOnEventService.buildServerSentEvent(eventName, new ServerSentEventDTO(request.getFromNo(),
                             request.getFromName(), request.getFromProfileImage(), context, addOnEventService.getNowTime(request.getDate())));

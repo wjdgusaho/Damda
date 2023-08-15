@@ -14,7 +14,14 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByEmail(String email);
+    //Optional<User> findByEmail(String email);
+
+    @Query("SELECT u FROM User u WHERE u.email = :email AND u.accountType = 'ORIGIN' AND u.deleteDate IS NULL")
+    Optional<User> findByOriginEmail(String email);
+
+
+    @Query("SELECT u FROM User u WHERE u.email = :email AND u.accountType = 'KAKAO' AND u.deleteDate IS NULL")
+    Optional<User> findByKakaoEmail(String email);
 
     Optional<User> findByUserPw(String userPw);
 
@@ -29,4 +36,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("UPDATE UserEvent ue SET ue.isCheck = 0")
     void updateIsCheck();
+
+    @Query("SELECT u.nickname FROM User u WHERE u.userNo = :userNo")
+    String findUserNicknameByUserNo(@Param("userNo") Long userNo);
 }

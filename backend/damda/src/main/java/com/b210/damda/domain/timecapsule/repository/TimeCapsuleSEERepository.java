@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
@@ -27,5 +28,12 @@ public interface TimeCapsuleSEERepository extends JpaRepository<Timecapsule, Lon
 
     @Query("SELECT tm.user.userNo FROM TimecapsuleMapping tm WHERE tm.timecapsule.timecapsuleNo = (SELECT t.timecapsuleNo FROM Timecapsule t WHERE t.inviteCode =:inviteCode AND tm.isHost = true)")
     Long getUserNoByInviteCode(@Param("inviteCode") String inviteCode);
+
+    //userNo를 통해 개봉할 수 있는 타임캡슐을 찾고, 현재 개봉 가능한 캡슐을 알림
+    @Query("SELECT t " +
+            "FROM Timecapsule t " +
+            "WHERE t.timecapsuleNo IN (SELECT tm.timecapsule.timecapsuleNo FROM TimecapsuleMapping tm WHERE tm.user.userNo = :userNo) " +
+            "AND t.openDate >= :serverTime ")
+    List<Timecapsule> getExpiredTimecapsuleByUserNoAndNowTimeStamp(@Param("userNo") Long userNo,@Param("serverTime") Timestamp serverTime);
 
 }

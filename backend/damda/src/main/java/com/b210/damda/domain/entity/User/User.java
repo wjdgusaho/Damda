@@ -9,7 +9,6 @@
     import java.time.LocalDateTime;
 
     @Entity
-    @Setter
     @Getter
     @ToString
     @EntityListeners(AuditingEntityListener.class)
@@ -79,6 +78,8 @@
             this.deleteDate = LocalDateTime.now();
         }
 
+        public void deleteDeleteDate(){ this.deleteDate = null; }
+
         public UserDTO toUserDTO(){
             return UserDTO.builder()
                     .userNo(this.userNo)
@@ -95,6 +96,26 @@
 
         public void updatePlusCoin(int coin){
             this.coin = this.coin + coin;
+        }
+
+        public void updatePlusTimecapsuleCount(){
+            this.nowCapsuleCount += 1;
+        }
+
+        public void updateMinusTimecapsuleCount(){
+            this.nowCapsuleCount -= 1;
+        }
+
+        public void updateUseCoin(int coin){
+            this.coin = coin;
+        }
+
+        public void updateMaxTimecapsuleCount(){
+            this.maxCapsuleCount += 1;
+        }
+
+        public void updateNowTheme(int nowTheme){
+            this.nowTheme = nowTheme;
         }
 
 
