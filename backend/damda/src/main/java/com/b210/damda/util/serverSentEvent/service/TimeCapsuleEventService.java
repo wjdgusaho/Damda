@@ -70,4 +70,7 @@ public class TimeCapsuleEventService {
 //        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new TimeCapsuleSSEDTO(userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, inviteCode, addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
 //        eventStreamService.sendEvent(userNo, event);
     }
+
+    public void checkAllTimeCapsuleService() {
+    }
 }
