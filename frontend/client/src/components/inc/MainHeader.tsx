@@ -8,9 +8,11 @@ import { RootState } from "../../store/Store"
 // import axios from "axios"
 // import { serverUrl } from "../../urls"
 import {
+  DELETE_OPENTIMECAPSULES,
   DELETE_TIMECAPSULES,
   alarmCapsuleType,
   alarmFriendType,
+  alarmOpenCapsuleType,
 } from "../../store/Alarm"
 
 const TextStyle = styled.p`
@@ -185,6 +187,36 @@ const AlarmTimecapsuleComponent = function ({
   )
 }
 
+const AlarmOpenTimecapsuleComponent = function ({
+  timecapsule,
+}: {
+  timecapsule: alarmOpenCapsuleType
+}) {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  const handleMove = () => {
+    dispatch(DELETE_OPENTIMECAPSULES(timecapsule.timecapsueNo))
+    // navigate('')
+  }
+  return (
+    <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
+      <div>
+        <AlertImg src="assets/universe/universe_popup.png" alt="defalut" />
+      </div>
+      <div className="ml-2" style={{ width: "190px" }}>
+        <p>
+          {timecapsule.content}
+          <span>{timecapsule.title}</span>
+        </p>
+      </div>
+      <div>
+        <ModalBtn onClick={handleMove}>바로가기</ModalBtn>
+      </div>
+    </ModalCard>
+  )
+}
+
 export const MainHeader = function () {
   const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState(false)
@@ -192,7 +224,9 @@ export const MainHeader = function () {
   const alarmTimecapsuleData = useSelector(
     (state: RootState) => state.alarm.timecapsules
   )
-  const token = useSelector((state: RootState) => state.auth.accessToken)
+  const alarmOpenTimecapsuleData = useSelector(
+    (state: RootState) => state.alarm.openCapsules
+  )
 
   const handleClose = () => {
     setModalOpen(false)
@@ -239,6 +273,18 @@ export const MainHeader = function () {
                   timecapsule={timecapsule}
                 />
               ))}
+            </div>
+          )}
+          {alarmOpenTimecapsuleData.length !== 0 && (
+            <div>
+              {alarmOpenTimecapsuleData.map(
+                (timecapsule: alarmOpenCapsuleType) => (
+                  <AlarmOpenTimecapsuleComponent
+                    key={timecapsule.title}
+                    timecapsule={timecapsule}
+                  />
+                )
+              )}
             </div>
           )}
         </div>
