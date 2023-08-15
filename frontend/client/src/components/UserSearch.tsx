@@ -5,6 +5,7 @@ import axios from "axios"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import toast, { Toaster } from "react-hot-toast"
+import { motion } from "framer-motion"
 
 const UserSearch = function () {
   const [searchList, setSearchList] = useState<UserInfo[]>([])
@@ -71,7 +72,11 @@ const UserSearch = function () {
   }
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <Toaster toastOptions={{ duration: 1000 }} />
       <SubHeader />
       <Box>
@@ -117,7 +122,7 @@ const UserSearch = function () {
           )}
         </div>
       </Box>
-    </>
+    </motion.div>
   )
 }
 

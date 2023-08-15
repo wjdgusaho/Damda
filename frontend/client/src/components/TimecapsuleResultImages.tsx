@@ -5,6 +5,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
 import axios from "axios"
 import { useParams } from "react-router-dom"
+import { motion } from "framer-motion"
 
 interface cardType {
   userNo: string
@@ -55,27 +56,33 @@ const TimecapsuleResultImages = function () {
   }, [])
 
   return (
-    <ImgConainer>
-      {cardList &&
-        cardList?.length !== 0 &&
-        cardList.map((img) => (
-          <Image
-            key={img.imagePath}
-            onClick={() => handleImageClick(img.imagePath)}
-          >
-            <img src={img.imagePath} alt="" />
-          </Image>
-        ))}
-      <Modal
-        isOpen={modalOpen}
-        onRequestClose={handleClose}
-        style={customStyles}
-      >
-        <div>
-          <img className="w-96" src={selectedImageUrl} alt="Selected" />
-        </div>
-      </Modal>
-    </ImgConainer>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <ImgConainer>
+        {cardList &&
+          cardList?.length !== 0 &&
+          cardList.map((img) => (
+            <Image
+              key={img.imagePath}
+              onClick={() => handleImageClick(img.imagePath)}
+            >
+              <img src={img.imagePath} alt="" />
+            </Image>
+          ))}
+        <Modal
+          isOpen={modalOpen}
+          onRequestClose={handleClose}
+          style={customStyles}
+        >
+          <div>
+            <img className="w-96" src={selectedImageUrl} alt="Selected" />
+          </div>
+        </Modal>
+      </ImgConainer>
+    </motion.div>
   )
 }
 

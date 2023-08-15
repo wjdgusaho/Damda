@@ -5,6 +5,7 @@ import { RootState } from "../store/Store"
 import axios from "axios"
 import { useParams } from "react-router-dom"
 import toast, { Toaster } from "react-hot-toast"
+import { motion } from "framer-motion"
 
 interface DataType {
   timecapsuleNo: number
@@ -123,7 +124,12 @@ const TimecapsuleResultMembers = function () {
   }
 
   return (
-    <div className="mt-4">
+    <motion.div
+      className="mt-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <Toaster toastOptions={{ duration: 1000 }} />
       <div className="text-sm text-center w-10/12 m-auto">
         {capsuleInfo?.description}
@@ -237,7 +243,7 @@ const TimecapsuleResultMembers = function () {
         <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
         <span>첨부파일 내려받기</span>
       </div>
-    </div>
+    </motion.div>
   )
 }
 const FileIcon = styled.img`
