@@ -37,6 +37,7 @@ export const FindPassword = function () {
   const [password, setPassword] = useState("")
   const [checkPassword, setCheckPassword] = useState("")
   const [userPwMatch, setuserPwMatch] = useState(0)
+  const [userPwCondition, setUserPwCondition] = useState(0)
   const [sendCode, setSendCode] = useState(false)
   const navigate = useNavigate()
   const intervalRef = useRef<NodeJS.Timeout>()
@@ -52,6 +53,18 @@ export const FindPassword = function () {
       }
     }
   }, [password, checkPassword])
+
+  useEffect(() => {
+    if (password) {
+      if (passwordRegex.test(password)) {
+        setUserPwCondition(1)
+      } else {
+        setUserPwCondition(2)
+      }
+    } else {
+      setUserPwCondition(0)
+    }
+  }, [userPwCondition])
 
   useEffect(() => {
     return () => clearInterval(intervalRef.current)
@@ -273,6 +286,15 @@ export const FindPassword = function () {
                 type="password"
                 onChange={handlePasswordChange}
               />
+              {userPwCondition === 2 ? (
+                <p className="text-red-300 w-full mt-1">
+                  특수, 영문, 숫자 조합으로 5-25자이어야 합니다.
+                </p>
+              ) : userPwCondition === 1 ? (
+                <p className="text-emerald-300 w-full mt-1">유효한 비밀번호</p>
+              ) : (
+                <div className="h-7"></div>
+              )}
               <p>비밀번호 확인</p>
               <InputText type="password" onChange={handleCheckPasswordChange} />
               {userPwMatch === 1 ? (
