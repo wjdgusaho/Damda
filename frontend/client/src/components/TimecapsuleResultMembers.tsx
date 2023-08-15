@@ -132,7 +132,7 @@ const TimecapsuleResultMembers = function () {
         {capsuleInfo?.criteriaInfo.weatherStatus ||
         capsuleInfo?.criteriaInfo.localBig ? (
           <>
-            {criteriaInfo.weatherStatus ? (
+            {capsuleInfo.criteriaInfo.weatherStatus ? (
               <div>
                 <span className="font-bold">
                   {capsuleInfo?.criteriaInfo.weatherStatus === "RAIN"
@@ -187,7 +187,16 @@ const TimecapsuleResultMembers = function () {
                     }}
                   />
                 </div>
-                <span style={{ fontSize: "12px", textAlign: "center" }}>
+                <span
+                  style={{
+                    fontSize: "12px",
+                    textAlign: "center",
+                    width: "63px",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {part.nickname}
                 </span>
               </>
