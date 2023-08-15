@@ -3,8 +3,7 @@ package com.b210.damda.util.kakaoAPI.service;
 
 import com.b210.damda.domain.entity.Items.Items;
 import com.b210.damda.domain.entity.Items.ItemsMapping;
-import com.b210.damda.domain.entity.User.KakaoLog;
-import com.b210.damda.domain.entity.User.UserLog;
+import com.b210.damda.domain.entity.User.*;
 
 import com.b210.damda.domain.entity.theme.Theme;
 import com.b210.damda.domain.entity.theme.ThemeMapping;
@@ -12,11 +11,14 @@ import com.b210.damda.domain.shop.repository.ItemsMappingRepository;
 import com.b210.damda.domain.shop.repository.ItemsRepository;
 import com.b210.damda.domain.shop.repository.ThemeMappingRepository;
 import com.b210.damda.domain.shop.repository.ThemeRepository;
+import com.b210.damda.domain.user.repository.UserCoinGetLogRepository;
+import com.b210.damda.domain.user.repository.UserEventRepository;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.domain.user.service.UserService;
 import com.b210.damda.util.kakaoAPI.repository.KakaoLogRepository;
 import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,7 +27,6 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import com.b210.damda.domain.entity.User.User;
 
 
 import java.util.Map;
@@ -33,6 +34,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
@@ -46,25 +48,10 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     private final ItemsRepository itemsRepository;
     private final ThemeMappingRepository themeMappingRepository;
     private final ThemeRepository themeRepository;
+    private final UserEventRepository userEventRepository;
+    private final UserCoinGetLogRepository userCoinGetLogRepository;
 
-
-
-    @Autowired
-    public PrincipalOauth2UserService(UserRepository userRepository, BCryptPasswordEncoder encoder, UserService userService, UserLogRepository userLogRepository, RefreshTokenRepository refreshTokenRepository,
-                                      ItemsMappingRepository itemsMappingRepository, ItemsRepository itemsRepository, ThemeMappingRepository themeMappingRepository,
-                                      ThemeRepository themeRepository, KakaoLogRepository kakaoLogRepository
-    ) {
-        this.userRepository = userRepository;
-        this.encoder = encoder;
-        this.userService = userService;
-        this.userLogRepository = userLogRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.itemsMappingRepository = itemsMappingRepository;
-        this.itemsRepository = itemsRepository;
-        this.themeMappingRepository = themeMappingRepository;
-        this.themeRepository = themeRepository;
-        this.kakaoLogRepository = kakaoLogRepository;
-    }
+    private final int dailyCheckCoin = 500;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException{
@@ -146,7 +133,34 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         // 카카오 유저 로그인 로그 저장
         UserLog userLog = new UserLog();
         userLog.setUser(user);
-        UserLog save = userLogRepository.save(userLog);
+        userLogRepository.save(userLog);
+
+        // 유저 출석체크
+        UserEvent byUser = userEventRepository.findByUser(user);
+        boolean check = false;
+
+        if(byUser == null){
+            byUser = new UserEvent(user);
+            userEventRepository.save(byUser);
+            // 코인 개수 변경
+            user.updatePlusCoin(dailyCheckCoin);
+            check = true;
+        }else if(!byUser.getIsCheck()){
+            byUser.updateIsCheck();
+            // 코인 개수 변경
+            user.updatePlusCoin(dailyCheckCoin);
+            check = true;
+        }
+
+        if(check){
+            // 코인 얻은 로그 생성
+            UserCoinGetLog userCoinGetLog = UserCoinGetLog.builder()
+                    .user(user)
+                    .getCoin(dailyCheckCoin)
+                    .type("CHECK").build();
+
+            userCoinGetLogRepository.save(userCoinGetLog);
+        }
 
         //유저 정보를 필요할때 그때 사용한다.
         return new PrincipalDetails(user, oAuth2User.getAttributes(), userRequest.getAccessToken().getTokenValue());

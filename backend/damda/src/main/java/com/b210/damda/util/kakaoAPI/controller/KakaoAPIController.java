@@ -2,6 +2,7 @@ package com.b210.damda.util.kakaoAPI.controller;
 
 import com.b210.damda.domain.entity.RefreshToken;
 import com.b210.damda.domain.entity.User.User;
+import com.b210.damda.domain.entity.User.UserLog;
 import com.b210.damda.domain.user.repository.UserLogRepository;
 import com.b210.damda.domain.user.repository.UserRepository;
 import com.b210.damda.util.JwtUtil;
@@ -9,6 +10,7 @@ import com.b210.damda.util.exception.CommonException;
 import com.b210.damda.util.exception.CustomExceptionStatus;
 import com.b210.damda.util.refreshtoken.repository.RefreshTokenRepository;
 import com.b210.damda.util.response.DataResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,7 @@ import java.util.Optional;
 @RestController
 //@RequiredArgsConstructor
 @RequestMapping("/api/kakao")
+@RequiredArgsConstructor
 @Slf4j
 public class KakaoAPIController {
 
@@ -36,13 +39,6 @@ public class KakaoAPIController {
     private final UserRepository userRepository;
     private final UserLogRepository userLogRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-
-    @Autowired
-    public KakaoAPIController(UserRepository userRepository, UserLogRepository userLogRepository, RefreshTokenRepository refreshTokenRepository) {
-        this.userRepository = userRepository;
-        this.userLogRepository = userLogRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
-    }
 
     @PostMapping("login")
     public DataResponse<Map<String, Object>> kakaoLogin(@RequestBody Map<String, Object> data) throws IOException {
@@ -92,6 +88,8 @@ public class KakaoAPIController {
 
             refreshTokenRepository.save(refreshTokenUser); // 리프레시 토큰 저장.
         }
+
+
 
         DataResponse<Map<String, Object>> response = new DataResponse<>(200, "카카오 로그인 성공");
         response.setData(result);
