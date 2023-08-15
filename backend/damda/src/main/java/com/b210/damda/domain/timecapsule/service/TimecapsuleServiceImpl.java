@@ -257,9 +257,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 }else openAble = false;
                 //모든 조건이 지나긴후
                 mainTimecapsule.setState(openAble);
-                System.out.println(123);
             }
-            System.out.println(123);
             timecapsuleList.add(mainTimecapsule);
         }
 
@@ -644,7 +642,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if (timecapsule.getNowParticipant() >= MAX_PARTICIOPANT) {
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
         }
-        System.out.println(123);
 
         // 수락상태고, 탈퇴안한 친구의 목록을 가져옴.
         String status = "ACCEPTED";
@@ -655,7 +652,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         // 타임캡슐 매핑리스트 꺼내옴.
         List<TimecapsuleMapping> timecapsuleMappings = timecapsuleMappingRepository.findByIdNo(timecapsuleNo);
-        System.out.println(123);
         Map<Long, TimecapsuleInvite> inviteMap = timecapsuleInviteList.stream()
                 .collect(Collectors.toMap(TimecapsuleInvite::getGuestUserNo, Function.identity()));
 
@@ -899,8 +895,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //log.info("fileSzie : {}" , file.getSize());
         //파일사이즈가 MaxFileSize보다 클경우 에러발생
-        System.out.println(file.getSize());
-        System.out.println(timecapsule.getNowFileSize());
+        //System.out.println(file.getSize());
+        //System.out.println(timecapsule.getNowFileSize());
         if( file.getSize() + timecapsule.getNowFileSize() > timecapsule.getMaxFileSize()){
             throw new CommonException(CustomExceptionStatus.FILE_LIMIT_NOT_UPLOAD);
         }
