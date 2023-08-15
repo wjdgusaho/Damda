@@ -3,11 +3,13 @@ import { ToastOptions } from "react-toastify"
 
 export const toastOption: ToastOptions = {
   position: "top-right",
-  autoClose: false,
+  autoClose: 2000,
   hideProgressBar: false,
   closeOnClick: true,
-  pauseOnHover: false,
+  rtl: false,
+  pauseOnHover: true,
   draggable: true,
+  pauseOnFocusLoss: true,
   progress: undefined,
   theme: "light",
 }

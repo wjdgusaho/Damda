@@ -237,9 +237,9 @@ const Login = function () {
             </div>
           </div>
         </Form>
-        <p style={{ color: "red" }} className="relative -left-4">
-          {userdataText}
-        </p>
+        <div className="relative">
+          <p className="-left-4 top-1 text-red-300 absolute">{userdataText}</p>
+        </div>
         <KakaoLink as="a" href={process.env.REACT_APP_KAKAO_URL}>
           <img
             src="kakao_login_medium_narrow1.png"

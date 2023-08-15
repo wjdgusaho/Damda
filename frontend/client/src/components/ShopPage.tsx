@@ -45,7 +45,6 @@ export const ShopPage = function () {
   const UserData = useSelector((state: RootState) => state.auth.userInfo)
 
   useEffect(() => {
-    console.log("token", token)
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -59,10 +58,6 @@ export const ShopPage = function () {
         setThemeList(response.data.data.themeList)
         setCapsuleItemList(response.data.data.capsuleItemList)
         setDecoItemList(response.data.data.decoItemList)
-        console.log(response)
-        console.log("themeList", response.data.data.themeList)
-        console.log("capsuleItemList", response.data.data.capsuleItemList)
-        console.log("decoItemList", response.data.data.decoItemList)
       } catch (error) {
         console.error(error)
       }
@@ -74,7 +69,6 @@ export const ShopPage = function () {
     setActiveComponent(compName)
   }
 
-  console.log("userData", UserData)
   return (
     <div>
       <SubHeader></SubHeader>
@@ -289,7 +283,6 @@ export const Card: React.FC<CardProps> = ({
     price: number,
     capsuleNo?: number
   ) => {
-    console.log("type : ", type)
     const newNo = "" + no
     if (type === "DECO") {
       const body = {
@@ -304,7 +297,6 @@ export const Card: React.FC<CardProps> = ({
           },
         }
       )
-      console.log(response.data)
       if (response.data.code === 200) {
         alert("스티커 구매가 완료되었습니다.")
         closeModal()
@@ -328,7 +320,6 @@ export const Card: React.FC<CardProps> = ({
           },
         }
       )
-      console.log(response.data)
       if (response.data.code === 200) {
         alert("테마 구매가 완료되었습니다.")
         closeModal()
@@ -353,7 +344,6 @@ export const Card: React.FC<CardProps> = ({
           },
         }
       )
-      console.log(response.data)
       if (response.data.code === 200) {
         alert("용량추가 구매가 완료되었습니다.")
         closeCapacityModal()
@@ -378,7 +368,6 @@ export const Card: React.FC<CardProps> = ({
           },
         }
       )
-      console.log(response.data)
       if (response.data.code === 200) {
         alert("캡슐추가 구매가 완료되었습니다.")
         closeCapacityModal()

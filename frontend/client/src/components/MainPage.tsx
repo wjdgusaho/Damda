@@ -71,8 +71,6 @@ export const MainPage = function () {
             lan: lan,
           }
 
-          console.log("--------------------", body)
-
           const response = await axios.post(
             process.env.REACT_APP_SERVER_URL + "timecapsule/view",
             body,
@@ -85,7 +83,6 @@ export const MainPage = function () {
 
           setCapsuleList(response.data.data.timecapsuleList)
           dispatch(SET_TIMECAPSULE(response.data.data.timecapsuleList))
-          console.log("capsuleList", response.data.data.timecapsuleList)
         } else {
           console.error("Invalid location object:", location)
         }

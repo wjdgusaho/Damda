@@ -181,7 +181,6 @@ const ClassicCapsule = function () {
       })
         .then((res) => {
           if (res.data.code === 200) {
-            console.log(res.data)
             navigate(`/timecapsule/detail/${res.data.data.timecapsuleNo}`)
           } else if (res.data.code === -4004) {
             alert(
@@ -254,7 +253,7 @@ const ClassicCapsule = function () {
           </ContentWrap>
           <div>
             {isHelp ? (
-              <Info src="../../helptimeinfo.png" alt="helpinfo" />
+              <Info src="../../helptimeinfo2.png" alt="helpinfo" />
             ) : null}
           </div>
           <div className="mt-6">

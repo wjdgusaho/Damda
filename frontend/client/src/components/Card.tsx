@@ -103,8 +103,6 @@ const Card = function () {
   )
 
   const onAddCardSticker = (stickerImage: string) => {
-    console.log("스티커클릭", countList)
-
     // 새로운 스티커 정보 생성
     const newSticker = { no: countList.length, url: stickerImage }
 
@@ -115,8 +113,6 @@ const Card = function () {
     setCountList(updatedStickers)
   }
   const onDeleteCardSticker = (no: number) => {
-    console.log("스티커삭제", countList)
-
     // countList에서 no에 해당하는 원소를 제외한 새로운 배열 생성
     const updatedStickers = countList.filter((sticker) => sticker.no !== no)
 
@@ -125,7 +121,6 @@ const Card = function () {
   }
 
   useEffect(() => {
-    console.log("token", token)
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -136,7 +131,6 @@ const Card = function () {
             },
           }
         )
-        console.log(response)
         setStickerList(response.data.data.decoList)
         setSticker(3)
       } catch (error) {
@@ -165,7 +159,6 @@ const Card = function () {
 
   useEffect(() => {
     // countList가 변경되면 호출됨
-    console.log(countList)
   }, [countList])
 
   const bgColorList = [
@@ -209,7 +202,6 @@ const Card = function () {
         }
       )
 
-      console.log(response.data.code)
       if (response.data.code === 200) {
         alert("정상적으로 저장되었습니다.")
         navigate(-1)

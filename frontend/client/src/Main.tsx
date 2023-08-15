@@ -192,6 +192,23 @@ function Main() {
     }
   }
 
+  useEffect(() => {
+    // 이미지 우클릭 방지를 위한 이벤트 핸들러 함수
+    const preventContextMenu = (event: MouseEvent) => {
+      event.preventDefault()
+    }
+
+    // 이미지 우클릭 이벤트 리스너 추가
+    window.addEventListener("contextmenu", preventContextMenu)
+
+    return () => {
+      // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      window.removeEventListener("contextmenu", preventContextMenu)
+    }
+
+    // ... (이하 생략)
+  }, [token, isOnline])
+
   return (
     <ThemeProvider theme={themeState}>
       <div className="Main">
