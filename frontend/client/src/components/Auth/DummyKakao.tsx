@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { SET_USER, SET_TOKEN } from "../../store/Auth"
 import { SET_THEME } from "../../store/Theme"
+import toast, { Toaster } from "react-hot-toast"
 
 export const DummyKakao = () => {
   const navigate = useNavigate()
@@ -26,7 +27,7 @@ export const DummyKakao = () => {
         data: { code: code },
       })
         .then((response) => {
-          alert(response.data.message)
+          toast(response.data.message)
           if (response.data.code === 200) {
             const { accessToken, refreshToken, ...userInfo } =
               response.data.data
@@ -41,5 +42,9 @@ export const DummyKakao = () => {
     }
   }, [code])
 
-  return <div></div>
+  return (
+    <div>
+      <Toaster toastOptions={{ duration: 1000 }} />
+    </div>
+  )
 }

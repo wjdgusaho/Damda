@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react"
 import tw from "tailwind-styled-components"
 import { useNavigate } from "react-router"
 import { Link } from "react-router-dom"
+import toast, { Toaster } from "react-hot-toast"
 
 // 비밀번호 정규식
 const passwordRegex = /^(?=.*[a-zA-Z])[!@#$%^*+=-]?(?=.*[0-9]).{5,25}$/
@@ -89,7 +90,7 @@ export const FindPassword = function () {
           seconds = 600
           startCountdown()
         } else {
-          alert(response.data.message)
+          toast(response.data.message)
         }
       })
       .catch((error) => {
@@ -142,7 +143,7 @@ export const FindPassword = function () {
           clearInterval(intervalRef.current)
           setChange(true)
         } else {
-          alert(response.data.message)
+          toast(response.data.message)
         }
         setUserCode("")
       })
@@ -154,7 +155,7 @@ export const FindPassword = function () {
   function handleSubmitPassword(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (password !== checkPassword) {
-      alert("비밀번호가 일치하지 않습니다.")
+      toast("비밀번호가 일치하지 않습니다.")
       setCheckPassword("")
     } else {
       axios({
@@ -169,7 +170,7 @@ export const FindPassword = function () {
         },
       })
         .then((response) => {
-          alert(response.data.message)
+          toast(response.data.message)
           if (response.data.code === 200) {
             navigate("/login")
           }
@@ -180,6 +181,7 @@ export const FindPassword = function () {
 
   return (
     <Box style={{ color: "#CFD4EE" }}>
+      <Toaster toastOptions={{ duration: 1000 }} />
       <div className="w-full flex justify-center">
         <Link
           to={"/login"}

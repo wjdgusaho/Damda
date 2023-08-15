@@ -4,6 +4,7 @@ import styled from "styled-components"
 import { RootState } from "../store/Store"
 import axios from "axios"
 import { useParams } from "react-router-dom"
+import toast, { Toaster } from "react-hot-toast"
 
 interface DataType {
   timecapsuleNo: number
@@ -110,19 +111,20 @@ const TimecapsuleResultMembers = function () {
           link.remove()
         } else {
           console.error("파일 다운로드 에러")
-          alert("다운로드할 파일이 없어요!")
+          toast("다운로드할 파일이 없어요!")
         }
       } catch (error) {
         console.error(error)
       }
     }
 
-    alert("다운로드 하는데 10초정도 소요됩니다! 조금만 기다려주세요")
+    toast(`다운로드 하는데 시간이 소요됩니다! ${"\n"}조금만 기다려주세요`)
     fetchData()
   }
 
   return (
     <div className="mt-4">
+      <Toaster toastOptions={{ duration: 1000 }} />
       <div className="text-sm text-center w-10/12 m-auto">
         {capsuleInfo?.description}
       </div>

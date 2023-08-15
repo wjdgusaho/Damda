@@ -8,6 +8,7 @@ import axios from "axios"
 import { RootState } from "../store/Store"
 import { useSelector } from "react-redux"
 import Modal from "react-modal"
+import toast, { Toaster } from "react-hot-toast"
 
 interface CapsuleDataType {
   timecapsuleNo: number
@@ -173,9 +174,9 @@ const SavedTimecapsule = function () {
         window.location.reload()
         // 새로고침 추가하기
       } else if (response.data.code === 404) {
-        alert("타임캡슐이 존재하지 않습니다.")
+        toast("타임캡슐이 존재하지 않습니다.")
       } else if (response.data.code === 401) {
-        alert("토큰 만료")
+        toast("토큰 만료")
       }
     } catch (error) {
       console.log(error)
@@ -202,6 +203,7 @@ const SavedTimecapsule = function () {
 
   return (
     <>
+      <Toaster toastOptions={{ duration: 1000 }} />
       <SubHeader />
       <Box>
         <Title>저장된 타임캡슐</Title>

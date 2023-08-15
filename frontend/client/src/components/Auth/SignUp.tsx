@@ -6,6 +6,7 @@ import { Link } from "react-router-dom"
 import tw from "tailwind-styled-components"
 import Modal from "react-modal"
 import * as EmailValidator from "email-validator"
+import toast, { Toaster } from "react-hot-toast"
 
 const FILE_SIZE_LIMIT_MB = 1 // 1MB 미만의 사진만 가능합니다.
 const FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_MB * 1024 * 1024 // 바이트 변환
@@ -131,12 +132,12 @@ export const SignUp = function () {
     const file = event.target.files?.[0] || null
     if (file) {
       if (!isFileSizeValid(file)) {
-        alert(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
+        toast(`파일 크기는 최대 ${FILE_SIZE_LIMIT_MB}MB만 가능합니다.`)
         if (imageRef.current) {
           imageRef.current.value = ""
         }
       } else if (!isAllowFiles(file)) {
-        alert("파일 확장자는 .jpg, .jpeg, .png만 가능합니다.")
+        toast("파일 확장자는 .jpg, .jpeg, .png만 가능합니다.")
         if (imageRef.current) {
           imageRef.current.value = ""
         }
@@ -239,9 +240,9 @@ export const SignUp = function () {
   function handleSubmitCode(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!userCode) {
-      alert("인증번호를 입력해주세요.")
+      toast("인증번호를 입력해주세요.")
     } else if (!EmailValidator.validate(userdata.email)) {
-      alert("올바르지 않은 이메일 형식입니다.")
+      toast("올바르지 않은 이메일 형식입니다.")
     } else {
       axios({
         method: "POST",
@@ -256,7 +257,7 @@ export const SignUp = function () {
       })
         .then((response) => {
           const code = response.data.code
-          alert(response.data.message)
+          toast(response.data.message)
           if (code === 200) {
             setGetCode(false)
             setuserEmailMatch(4)
@@ -291,11 +292,11 @@ export const SignUp = function () {
             startCountdown()
           } else {
             setuserEmailMatch(1)
-            alert(response.data.message)
+            toast(response.data.message)
           }
         })
         .catch((error) => {
-          alert("중복확인에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
+          toast("중복확인에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
         })
     }
   }
@@ -319,25 +320,25 @@ export const SignUp = function () {
     }
 
     if (!userdata.email) {
-      alert("이메일을 입력해주세요.")
+      toast("이메일을 입력해주세요.")
     } else if (userdata.email && userEmailMatch < 2) {
-      alert("이메일 중복확인을 해주세요.")
+      toast("이메일 중복확인을 해주세요.")
     } else if (
       userdata.email &&
       userEmailMatch !== 4 &&
       userCode !== "success" + successCode.toString()
     ) {
-      alert("이메일 인증이 되지 않았습니다.")
+      toast("이메일 인증이 되지 않았습니다.")
     } else if (!userdata.nickname) {
-      alert("닉네임을 입력해주세요.")
+      toast("닉네임을 입력해주세요.")
     } else if (userdata.nickname && userNicknameCondition !== 1) {
-      alert("닉네임이 유효하지 않습니다.")
+      toast("닉네임이 유효하지 않습니다.")
     } else if (!userdata.userPw) {
-      alert("비밀번호를 입력해주세요.")
+      toast("비밀번호를 입력해주세요.")
     } else if (userdata.userPw && userPwCondition !== 1) {
-      alert("비밀번호가 유효하지 않습니다.")
+      toast("비밀번호가 유효하지 않습니다.")
     } else if (userdata.userPw !== userdata.userPwCheck) {
-      alert("비밀번호가 일치하지 않습니다.")
+      toast("비밀번호가 일치하지 않습니다.")
     } else {
       axios({
         method: "POST",
@@ -352,13 +353,14 @@ export const SignUp = function () {
           navigate("/login")
         })
         .catch(() => {
-          alert("회원가입에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
+          toast("회원가입에 실패하셨습니다. 잠시 후 다시 시도해주세요.")
         })
     }
   }
 
   return (
     <div className="grid grid-cols-1 w-72 mx-auto mt-5 text-white font-pretendard font-thin">
+      <Toaster toastOptions={{ duration: 1000 }} />
       <Link
         className="mt-10"
         to={"/login"}
