@@ -38,6 +38,30 @@ const AlermIcon = styled.div`
   background-size: cover;
   width: 25px;
   height: 25px;
+
+  &:hover {
+    animation: 1s ease-in-out infinite shake;
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: translateX(-3px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+      transform: translateX(3px);
+    }
+  }
 `
 const MenuIcon = styled.div`
   background-image: url(${(props) =>
@@ -63,6 +87,7 @@ const RefreshIcon = styled.div`
 const AlertImg = styled.img`
   width: 60px;
   height: 60px;
+  border-radius: 9999px;
 `
 
 const customStyles = {
@@ -82,13 +107,20 @@ const customStyles = {
 }
 
 const ModalCard = tw.div`
-  mt-5 p-3 text-lilac-900 bg-white opacity-80 rounded-3xl shadow-2xl
-  inline-flex items-center flex-wrap
+  mt-5 p-3 text-black bg-white opacity-90 rounded-3xl shadow-2xl
+  inline-flex items-center flex-wrap justify-center
   w-72
 `
 
-const ModalBtn = tw.button`
-  mx-auto shadow-xl
+const ModalBtn = styled.button`
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #0000005c;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 200;
 `
 
 const AlarmFriendComponent = function ({
@@ -106,15 +138,15 @@ const AlarmFriendComponent = function ({
       <div>
         <AlertImg src={friend.fromProfileImage} alt="defalut" />
       </div>
-      <div className="ml-2" style={{ width: "150px" }}>
+      <div className="ml-2" style={{ width: "190px" }}>
         <p>
           <span className="text-lilac-600 font-bold">{friend.fromName}</span>
-          <span className="text-gray-400">#{friend.fromUser}</span>
+          {/* <span className="text-gray-400">#{friend.fromUser}</span> */}
           {friend.content}
         </p>
       </div>
       <div>
-        <ModalBtn onClick={handleMove}>친구 페이지로 이동하기</ModalBtn>
+        <ModalBtn onClick={handleMove}>바로가기</ModalBtn>
       </div>
     </ModalCard>
   )
@@ -140,14 +172,14 @@ const AlarmTimecapsuleComponent = function ({
           alt="defalut"
         />
       </div>
-      <div className="ml-2" style={{ width: "150px" }}>
+      <div className="ml-2" style={{ width: "190px" }}>
         <p>
           {timecapsule.content}
           <span>{timecapsule.code}</span>
         </p>
       </div>
       <div>
-        <ModalBtn onClick={handleMove}>타임캡슐 확인하기</ModalBtn>
+        <ModalBtn onClick={handleMove}>바로가기</ModalBtn>
       </div>
     </ModalCard>
   )
@@ -187,7 +219,7 @@ export const MainHeader = function () {
                 <div>
                   <AlertImg src="assets/icons/popup.png" alt="defalut" />
                 </div>
-                <div className="ml-2" style={{ width: "150px" }}>
+                <div className="ml-2" style={{ width: "190px" }}>
                   <p>받은 알람이 없습니다.</p>
                 </div>
               </ModalCard>
