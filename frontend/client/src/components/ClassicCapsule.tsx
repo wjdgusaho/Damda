@@ -198,6 +198,7 @@ const ClassicCapsule = function () {
 
   return (
     <>
+      <Toaster toastOptions={{ duration: 1000 }} />
       <SubHeader />
       <Box className="w-80 m-auto">
         <Title>클래식 타임캡슐을 만들어요</Title>
