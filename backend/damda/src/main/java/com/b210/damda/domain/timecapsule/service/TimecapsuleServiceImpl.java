@@ -1054,6 +1054,23 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     }
 
+    /*
+        해당 유저의 타임캡슐 정보값
+     */
+    @Override
+    public Map<String, Object> userTimecapsuleInfo() {
+
+        Long userNo = getUserNo();
+        User user = getUser(userNo);
+
+        Map<String,Object> result = new HashMap<>();
+
+        result.put("nowCapsuleCount", timecapsuleMappingRepository.countWorkTimecapsules(user.getUserNo()));
+        result.put("savedCapsuleCount",timecapsuleMappingRepository.countSaveTimecapsules(user.getUserNo()));
+
+        return result;
+    }
+
 
     /*
         타임캡슐 나가기
