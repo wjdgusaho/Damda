@@ -11,6 +11,7 @@ import { RootState } from "../store/Store"
 import { useDispatch, useSelector } from "react-redux"
 import { SET_TIMECAPSULE } from "../store/Timecapsule"
 import { getLocation } from "./getLocation"
+import { motion } from "framer-motion"
 
 /*
 1. 모든 타임캡슐의 조건 만족 여부와 밑의 3가지 경우로 나뉨.
@@ -71,8 +72,6 @@ export const MainPage = function () {
             lan: lan,
           }
 
-          console.log("--------------------", body)
-
           const response = await axios.post(
             process.env.REACT_APP_SERVER_URL + "timecapsule/view",
             body,
@@ -82,10 +81,9 @@ export const MainPage = function () {
               },
             }
           )
-
+          console.log("timecapsule List", response.data.data.timecapsuleList)
           setCapsuleList(response.data.data.timecapsuleList)
           dispatch(SET_TIMECAPSULE(response.data.data.timecapsuleList))
-          console.log("capsuleList", response.data.data.timecapsuleList)
         } else {
           console.error("Invalid location object:", location)
         }
@@ -98,7 +96,12 @@ export const MainPage = function () {
   }, [])
 
   return (
-    <div className="h-screen overflow-hidden">
+    <motion.div
+      className="h-screen overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <MainHeader></MainHeader>
       <div className="flex flex-col h-screen justify-center">
         <div className="-mt-60"></div>
@@ -224,7 +227,7 @@ export const MainPage = function () {
           </MakeCapsuleCode>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

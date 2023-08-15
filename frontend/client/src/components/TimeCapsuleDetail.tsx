@@ -9,6 +9,8 @@ import { RootState } from "../store/Store"
 import "./datePicker.css"
 import Modal from "react-modal"
 import { DELETE_DETAIL, SET_DETAIL } from "../store/Timecapsule"
+import toast, { Toaster } from "react-hot-toast"
+import { motion } from "framer-motion"
 
 export interface DataType {
   timecapsuleNo: number
@@ -361,8 +363,6 @@ const TimeCapsuleDetail = function () {
     }
   }, [capsuleId, token])
 
-  console.log(capsuleData)
-
   const currentDate = new Date()
   const oneDayLater = new Date(capsuleData.registDate)
   oneDayLater.setHours(oneDayLater.getHours() + 24).toString()
@@ -370,7 +370,12 @@ const TimeCapsuleDetail = function () {
   const isRegistered = currentDate < oneDayLater
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Toaster toastOptions={{ duration: 1000 }} />
       {isRegistered ? (
         // 24시간이 안 지났을 때 (미등록 타임캡슐)
         <Unregistered capsuleData={capsuleData} />
@@ -378,7 +383,7 @@ const TimeCapsuleDetail = function () {
         // 24시간이 지났을 때 (등록 완료된 타임캡슐)
         <Proceeding capsuleData={capsuleData} />
       )}
-    </>
+    </motion.div>
   )
 }
 
@@ -391,6 +396,7 @@ interface FileDataType {
   nowFilesize: number
 }
 
+// 미등록 타임캡슐
 export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const endDateString = capsuleData.openDate
     ? capsuleData.openDate.toString().slice(0, 10)
@@ -443,7 +449,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       if (response.data.code === 200) {
         closeKickOutModal()
         window.location.reload()
-        console.log(response.data)
       } // 나중에 추가할거임
     } catch (error) {
       console.log(error)
@@ -467,15 +472,15 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       if (response.data.code === 200) {
         getFriendList()
       } else if (response.data.code === -6006) {
-        alert("없는 유저 입니다.")
+        toast("없는 유저 입니다.")
       } else if (response.data.code === -6002) {
-        alert("존재하지 않는 타임캡슐 입니다.")
+        toast("존재하지 않는 타임캡슐 입니다.")
       } else if (response.data.code === -3010) {
-        alert("이미 초대된 회원입니다.")
+        toast("이미 초대된 회원입니다.")
       } else if (response.data.code === -3014) {
-        alert("해당 유저는 이미 참여 중입니다.")
+        toast("해당 유저는 이미 참여 중입니다.")
       } else if (response.data.code === -3015) {
-        alert("이미 강퇴 당했거나 나간 유저입니다.")
+        toast("이미 강퇴 당했거나 나간 유저입니다.")
       }
     } catch (error) {
       console.log(error)
@@ -498,17 +503,17 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       if (response.data.code === 200) {
         navigate("/main")
       } else if (response.data.code === -6006) {
-        alert("존재하지 않는 유저입니다.")
+        toast("존재하지 않는 유저입니다.")
       } else if (response.data.code === -6002) {
-        alert("존재하지 않는 타임캡슐 입니다.")
+        toast("존재하지 않는 타임캡슐 입니다.")
       } else if (response.data.code === -6008) {
-        alert("이미 삭제된 타임캡슐 입니다.")
+        toast("이미 삭제된 타임캡슐 입니다.")
       } else if (response.data.code === -5008) {
-        alert("해당 유저의 타임캡슐이 아닙니다.")
+        toast("해당 유저의 타임캡슐이 아닙니다.")
       } else if (response.data.code === -3007) {
-        alert("해당 타임캡슐의 방장이 아닙니다.")
+        toast("해당 타임캡슐의 방장이 아닙니다.")
       } else if (response.data.code === -3009) {
-        alert("생성 후 24시간 이내에만 삭제할 수 있습니다.")
+        toast("생성 후 24시간 이내에만 삭제할 수 있습니다.")
       }
     } catch (error) {
       console.log(error)
@@ -531,13 +536,13 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       if (response.data.code === 200) {
         navigate("/main")
       } else if (response.data.code === -6006) {
-        alert("존재하지 않는 유저입니다.")
+        toast("존재하지 않는 유저입니다.")
       } else if (response.data.code === -6002) {
-        alert("존재하지 않는 타임캡슐 입니다.")
+        toast("존재하지 않는 타임캡슐 입니다.")
       } else if (response.data.code === -6008) {
-        alert("이미 삭제된 타임캡슐 입니다.")
+        toast("이미 삭제된 타임캡슐 입니다.")
       } else if (response.data.code === -5008) {
-        alert("해당 유저의 타임캡슐이 아닙니다.")
+        toast("해당 유저의 타임캡슐이 아닙니다.")
       }
     } catch (error) {
       console.log(error)
@@ -574,7 +579,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         setSelectedFile(file.name)
         setUploadedFile(file)
       } else {
-        alert("파일 크기가 사용 가능한 공간을 초과합니다.")
+        toast("파일 크기가 사용 가능한 공간을 초과합니다.")
       }
     } else {
       setSelectedFile(null)
@@ -597,7 +602,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
           },
           data: formData,
         })
-        console.log(response.data)
         setIsFileAble(false)
         closeModal()
       } catch (error) {
@@ -619,7 +623,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
         },
       })
       setFriendList(response.data)
-      console.log(response.data)
     } catch (error) {
       console.log("Error fetching data:", error)
     }
@@ -666,7 +669,7 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
       const timeDiffer = oneDayLater.getTime() - currentTime.getTime()
       if (timeDiffer <= 0) {
         clearInterval(interval)
-        alert("타임캡슐 등록완료") // 이거 나중에 바꾸기
+        toast("타임캡슐 등록완료") // 이거 나중에 바꾸기
       } else {
         const hours = Math.floor(timeDiffer / (1000 * 60 * 60))
         const minutes = Math.floor(
@@ -691,7 +694,6 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   }
 
   function kakaoShare() {
-    console.log("Kakao : ", window.Kakao)
     if (window.Kakao) {
       const kakao = window.Kakao
 
@@ -848,8 +850,8 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
               {capsuleData.criteriaInfo.cirteriaDays ? (
                 <div className="text-center mt-3">
                   매주{" "}
-                  {capsuleData.criteriaInfo.cirteriaDays?.map((day) => (
-                    <span key={day.dayEn} className="font-bold">
+                  {capsuleData.criteriaInfo.cirteriaDays?.map((day, idx) => (
+                    <span key={idx} className="font-bold">
                       {day.dayKr}{" "}
                     </span>
                   ))}{" "}
@@ -1340,9 +1342,6 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   const [fileSizeData, setFileSizeData] = useState<FileDataType | null>(null)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
 
-  console.log(capsuleData.myInfo.fileAble)
-  console.log(isFileAble)
-
   const getFileSize = async () => {
     try {
       const response = await axios({
@@ -1373,7 +1372,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
         setSelectedFile(file.name)
         setUploadedFile(file)
       } else {
-        alert("파일 크기가 사용 가능한 공간을 초과합니다.")
+        toast("파일 크기가 사용 가능한 공간을 초과합니다.")
       }
     } else {
       setSelectedFile(null)
@@ -1396,7 +1395,6 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           },
           data: formData,
         })
-        console.log(response.data)
         setIsFileAble(false)
         closeModal()
       } catch (error) {
@@ -1447,8 +1445,8 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           {capsuleData.criteriaInfo.cirteriaDays ? (
             <div className="text-center mt-3">
               매주{" "}
-              {capsuleData.criteriaInfo.cirteriaDays?.map((day) => (
-                <span key={day.dayEn} className="font-bold">
+              {capsuleData.criteriaInfo.cirteriaDays?.map((day, idx) => (
+                <span key={idx} className="font-bold">
                   {day.dayKr}{" "}
                 </span>
               ))}{" "}

@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick-theme.css"
 import { styled } from "styled-components"
 import "../index.css"
 import { useNavigate } from "react-router-dom"
+import { motion } from "framer-motion"
 
 const Container = styled.div`
   .slick-dots {
@@ -100,67 +101,73 @@ export default function Tutorial() {
   const showButtonForThirdSlide = currentSlide === 2
 
   return (
-    <Box>
-      <SkipBtn
-        onClick={() => {
-          navigate("/main")
-        }}
-      >
-        SKIP
-      </SkipBtn>
-      <Container className="mt-9">
-        <Slider {...settings}>
-          <div>
-            <img
-              src="assets/universe/Planet-pretty.png"
-              alt=""
-              style={{
-                width: "288.66px",
-                margin: "auto",
-                filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Box>
+        <SkipBtn
+          onClick={() => {
+            navigate("/main")
+          }}
+        >
+          SKIP
+        </SkipBtn>
+        <Container className="mt-9">
+          <Slider {...settings}>
+            <div>
+              <img
+                src="assets/universe/Planet-pretty.png"
+                alt=""
+                style={{
+                  width: "288.66px",
+                  margin: "auto",
+                  filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
+                }}
+              />
+              <Title>타임캡슐에 추억을 담아보세요</Title>
+            </div>
+            <div>
+              <img
+                src="assets/universe/Shake.png"
+                alt=""
+                style={{
+                  width: "310px",
+                  marginTop: "70px",
+                  filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
+                  marginBottom: "37px",
+                }}
+              />
+              <Title>묻혀있던 타임캡슐을 흔들어 여세요</Title>
+            </div>
+            <div>
+              <img
+                src="assets/universe/Solar System.png"
+                alt=""
+                style={{
+                  width: "300px",
+                  marginTop: "50px",
+                  filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
+                  marginBottom: "14px",
+                }}
+              />
+              <Title>친구들과 함께 할 수도 있어요</Title>
+            </div>
+          </Slider>
+        </Container>
+        <div style={{ textAlign: "center" }}>
+          {showButtonForThirdSlide && (
+            <StartBtn
+              onClick={() => {
+                navigate("/main")
               }}
-            />
-            <Title>타임캡슐에 추억을 담아보세요</Title>
-          </div>
-          <div>
-            <img
-              src="assets/universe/Shake.png"
-              alt=""
-              style={{
-                width: "310px",
-                marginTop: "70px",
-                filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
-                marginBottom: "37px",
-              }}
-            />
-            <Title>묻혀있던 타임캡슐을 흔들어 여세요</Title>
-          </div>
-          <div>
-            <img
-              src="assets/universe/Solar System.png"
-              alt=""
-              style={{
-                width: "300px",
-                marginTop: "50px",
-                filter: "drop-shadow(2px 2px 2px #fbf8fca6)",
-                marginBottom: "14px",
-              }}
-            />
-            <Title>친구들과 함께 할 수도 있어요</Title>
-          </div>
-        </Slider>
-      </Container>
-      <div style={{ textAlign: "center" }}>
-        {showButtonForThirdSlide && (
-          <StartBtn
-            onClick={() => {
-              navigate("/main")
-            }}
-          >
-            시작하기
-          </StartBtn>
-        )}
-      </div>
-    </Box>
+            >
+              시작하기
+            </StartBtn>
+          )}
+        </div>
+      </Box>
+    </motion.div>
   )
 }

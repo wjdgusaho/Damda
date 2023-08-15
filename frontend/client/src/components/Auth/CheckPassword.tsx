@@ -8,6 +8,8 @@ import { getCookieToken } from "../../store/Cookie"
 import { GetNewTokens } from "./RefreshTokenApi"
 import { styled } from "styled-components"
 import { SubHeader } from "../inc/SubHeader"
+import toast, { Toaster } from "react-hot-toast"
+import { motion } from "framer-motion"
 
 const Box = styled.div`
   display: flex;
@@ -115,7 +117,7 @@ export const CheckPassword = function () {
       })
         .then((response) => {
           if (response.data.code === -9004) {
-            alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.")
+            toast("비밀번호가 일치하지 않습니다. 다시 입력해주세요.")
           } else {
             navigate("/user-info")
           }
@@ -134,12 +136,17 @@ export const CheckPassword = function () {
           }
         })
     } else {
-      alert("비밀번호를 입력하세요.")
+      toast("비밀번호를 입력하세요.")
     }
   }
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Toaster toastOptions={{ duration: 1000 }} />
       <SubHeader />
       <Box className="w-80 m-auto">
         <InfoImage />
@@ -164,6 +171,6 @@ export const CheckPassword = function () {
           </Button>
         </form>
       </Box>
-    </>
+    </motion.div>
   )
 }

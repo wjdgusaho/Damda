@@ -5,6 +5,7 @@ import { styled } from "styled-components"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/Store"
+import { motion } from "framer-motion"
 
 interface CapsuleInfoType {
   timecapsuleNo: number
@@ -39,6 +40,34 @@ export const TimecapsuleOpen = function () {
           }
         )
         setCapsuleInfo(response.data.data.timecapsuleSimpleInfo)
+        // 타임캡슐의 정보를 받은 후에 해당 타임캡슐을 열람한 타임캡슐로 처리함
+        try {
+          const fetchData2 = async () => {
+            try {
+              const response = await axios.patch(
+                process.env.REACT_APP_SERVER_URL + `timecapsule/open/save`,
+                {
+                  timecapsuleNo: capsuleId,
+                },
+                {
+                  headers: {
+                    Authorization: "Bearer " + token,
+                  },
+                }
+              )
+              if (response.data.code === 200) {
+                console.log("타임캡슐 열람 성공", response.data.message)
+              } else {
+                console.log(response.data.message)
+              }
+            } catch (error) {
+              console.error(error)
+            }
+          }
+          fetchData2()
+        } catch (error) {
+          console.error(error)
+        }
       } catch (error) {
         console.error(error)
       }
@@ -95,7 +124,11 @@ export const TimecapsuleOpen = function () {
   console.log(capsuleInfo)
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       {/* 여기에 타임캡슐 이미지 만들고 흔들리는 모션 만들어 주세요. */}
       <InfoText className="absolute mt-28 ml-6 font-pretendard font-semibold text-xl">
         원이 차오를 때 까지
@@ -120,7 +153,7 @@ export const TimecapsuleOpen = function () {
           animate
         />
       </div>
-    </div>
+    </motion.div>
   )
 }
 

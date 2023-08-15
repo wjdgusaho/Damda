@@ -30,14 +30,26 @@ const Card = styled.div`
   border-radius: 30px;
   margin-top: 30px;
   align-items: center;
+  &:hover {
+    transition: 0.2s;
+    transform: scale(1.05);
+  }
 `
 
 const OpenableCard = styled(Card)`
   box-shadow: 0px 0px 8px 8px rgb(255, 245, 224, 0.5);
+  &:hover {
+    transition: 0.2s;
+    transform: scale(1.05);
+  }
 `
 
 const UnregisteredCard = styled(Card)`
   background-color: rgb(0, 0, 0, 0.3);
+  &:hover {
+    transition: 0.2s;
+    transform: scale(1.05);
+  }
 `
 
 const CapsuleState = styled.div`
@@ -75,8 +87,6 @@ const TimecapsulePage = function () {
   const capsuleList = useSelector(
     (state: RootState) => state.timecapsule.timecapsules
   )
-
-  console.log(capsuleList)
 
   return (
     <>
