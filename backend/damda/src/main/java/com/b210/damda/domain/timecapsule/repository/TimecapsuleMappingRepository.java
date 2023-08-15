@@ -46,6 +46,21 @@ public interface TimecapsuleMappingRepository extends JpaRepository<TimecapsuleM
             "AND ((tm.isSave = true) OR (tm.isSave = false AND tm.deleteDate IS NULL))")
     Optional<TimecapsuleMapping> findByUserUserNoAndTimecapsuleTimecapsuleNo(@Param("userNo") Long userNo, @Param("timecapsuleNo")Long timecapsuleNo);
 
+
+    @Query("SELECT COUNT(t) FROM TimecapsuleMapping t " +
+            "WHERE t.user.userNo = :userNo " +
+            "AND t.timecapsule.removeDate IS NULL " +
+            "AND t.deleteDate IS NULL " +
+            "AND t.isSave = false")
+    Long countWorkTimecapsules(@Param("userNo") Long userNo);
+
+    @Query("SELECT COUNT(t) FROM TimecapsuleMapping t " +
+            "WHERE t.user.userNo = :userNo " +
+            "AND t.timecapsule.removeDate IS NULL " +
+            "AND t.deleteDate IS NULL " +
+            "AND t.isSave = true")
+    Long countSaveTimecapsules(@Param("userNo") Long userNo);
+
     @Query("SELECT tm FROM TimecapsuleMapping tm " +
             "WHERE tm.timecapsule.timecapsuleNo = :timecapsuleNo " +
             "AND ((tm.isSave = true) OR (tm.isSave = false AND tm.deleteDate IS NULL))")

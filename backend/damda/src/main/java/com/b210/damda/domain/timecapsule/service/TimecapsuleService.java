@@ -50,4 +50,6 @@ public interface TimecapsuleService {
     Map<String, Object> timecapsuleOpenRank(Long timecapsuleNo);
 
     void timecapsuleOpenSave(Long timecapsuleNo);
+
+    Map<String, Object> userTimecapsuleInfo();
 }
