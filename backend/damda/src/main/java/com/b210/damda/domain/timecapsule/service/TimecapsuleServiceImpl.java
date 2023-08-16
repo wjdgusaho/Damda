@@ -165,7 +165,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 24시간 내 외이냐? 등록이 안되거는 FALSE
              */
             LocalDateTime registTime = timecapsule.getTimecapsule().getRegistDate().toLocalDateTime();
-            LocalDateTime nowTime = LocalDateTime.now();
+            LocalDateTime nowTime = LocalDateTime.now().plusHours(9);
             boolean isRegisted = false;
             //지났다면 등록됬다고 변경
             if(nowTime.isAfter(registTime.plusHours(24))) isRegisted = true;
@@ -210,7 +210,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                             userLocation = new UserLocation();
                             userLocation.CreateUserLocation(
                                     user, timecapsuleCriteria.getLocalBig(), timecapsuleCriteria.getLocalMedium(),
-                                    Timestamp.valueOf(LocalDateTime.now())
+                                    Timestamp.valueOf(LocalDateTime.now().plusHours(9))
                             );
                             //날씨 조회 하면서 저장
                             userLocation = renewWeather(weatherLocationDto, userLocation);
@@ -221,9 +221,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                                     userLocation.getLocalMedium().equals(location.getLocalMedium())) {
                                 //날씨 갱신이 필요한가 - 현재 시간과 userLocationTime의 시간값의 차이를 계산
                                 LocalDateTime userLocationTime = userLocation.getWeatherTime().toLocalDateTime();
-                                long hourDifference = LocalDateTime.now().getHour() - userLocationTime.getHour();
+                                long hourDifference = LocalDateTime.now().plusHours(9).getHour() - userLocationTime.getHour();
                                 // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상이거나 , 날씨 정보값이 null인경
-                                if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1
+                                if (userLocationTime.isBefore(LocalDateTime.now().plusHours(9).minusDays(1)) || Math.abs(hourDifference) >= 1
                                         || userLocation.getWeather() == null || userLocation.getWeather().trim().equals("")) {
                                     //날씨 갱신
                                     userLocation = renewWeather(weatherLocationDto, userLocation);
@@ -241,10 +241,10 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                     }
                 }
                 //시간 조건 확인 (한국)
-                ZonedDateTime seoulTime = LocalDateTime.now().atZone(SEOUL_ZONE_ID);
+                LocalDateTime seoulTime = LocalDateTime.now().plusHours(9);
                 //캡슐 오픈 날짜
-                ZonedDateTime openDate = timecapsule.getTimecapsule().getOpenDate()
-                        .toLocalDateTime().atZone(SEOUL_ZONE_ID);
+                LocalDateTime openDate = timecapsule.getTimecapsule().getOpenDate()
+                        .toLocalDateTime().plusHours(9);
                 LocalDate seoulTimeDate = seoulTime.toLocalDate();
                 LocalDate openTimeDate = openDate.toLocalDate();
 
@@ -307,7 +307,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
          //타임캡슐 추가 기본값 세팅
         createTimecapsule.timecapsuleDefaultSetting(
-                Timestamp.valueOf(LocalDateTime.now().withSecond(0).withNano(0)),
+                Timestamp.valueOf(LocalDateTime.now().plusHours(9).withSecond(0).withNano(0)),
                 MAX_FILESIZE, MAX_PARTICIOPANT, createKey(), NOW_PARTICIOPANT,
                 new Random().nextInt(10)+1
                 );
@@ -482,7 +482,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         //카드 세팅
         TimecapsuleCard card = new TimecapsuleCard();
         card.createCard(timecapsule, user, fileUri,
-                Timestamp.valueOf(LocalDateTime.now()));
+                Timestamp.valueOf(LocalDateTime.now().plusHours(9)));
 
         TimecapsuleCard saveCard = timecapsuleCardRepository.save(card);
 
@@ -1047,7 +1047,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
         //보관함으로 저장
         timecapsuleMapping.updateIsSave(true);
-        timecapsuleMapping.updateSaveDate(Timestamp.valueOf(LocalDateTime.now()));
+        timecapsuleMapping.updateSaveDate(Timestamp.valueOf(LocalDateTime.now().plusHours(9)));
 
     }
 
@@ -1091,7 +1091,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 ti.updateStatus("REJECTED");
             }
             timecapsuleInviteRepository.saveAll(timecapsuleInvites);
-            timecapsule.updateRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
+            timecapsule.updateRemoveDate(Timestamp.valueOf(LocalDateTime.now().plusHours(9)));
 
             // 타임 캡슐 참가자들의 매핑 테이블 삭제시간 추가
             List<TimecapsuleMapping> tmList = timecapsuleMappingRepository.findByIdNo(timecapsule.getTimecapsuleNo());
@@ -1099,7 +1099,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             for(TimecapsuleMapping tm : tmList){
                 User findUser = userRepository.findById(tm.getUser().getUserNo()).get();
                 findUser.updateMinusTimecapsuleCount();
-                tm.updateDeleteDate(Timestamp.from(Instant.now()));
+                tm.updateDeleteDate(Timestamp.valueOf(LocalDateTime.now().plusHours(9)));
                 userRepository.save(findUser);
             }
 
@@ -1120,7 +1120,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         timecapsule.updateNowParticipant(timecapsule.getNowParticipant() - 1);
         timecapsuleRepository.save(timecapsule);
 
-        timecapsuleMapping.updateDeleteDate(Timestamp.valueOf(LocalDateTime.now()));
+        timecapsuleMapping.updateDeleteDate(Timestamp.valueOf(LocalDateTime.now().plusHours(9)));
         timecapsuleMappingRepository.save(timecapsuleMapping);
     }
     
@@ -1170,7 +1170,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         timecapsuleRepository.save(timecapsule);
 
         //강퇴한 사람의 맵핑 삭제값 추가
-        kickUserMapping.updateDeleteDate(Timestamp.valueOf(LocalDateTime.now()));
+        kickUserMapping.updateDeleteDate(Timestamp.valueOf(LocalDateTime.now().plusHours(9)));
         timecapsuleMappingRepository.save(kickUserMapping);
 
     }
@@ -1197,7 +1197,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //24시간 이내인가
         LocalDateTime registDate = timecapsule.getRegistDate().toLocalDateTime();
-        LocalDateTime nowTime = LocalDateTime.now();
+        LocalDateTime nowTime = LocalDateTime.now().plusHours(9);
 
         //현재시간이 생성된지 24이후라면
         if(nowTime.isAfter(registDate.plusHours(24))){
@@ -1217,12 +1217,12 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         for(TimecapsuleMapping tm : tmList){
             User findUser = userRepository.findById(tm.getUser().getUserNo()).get();
             findUser.updateMinusTimecapsuleCount();
-            tm.updateDeleteDate(Timestamp.from(Instant.now()));
+            tm.updateDeleteDate(Timestamp.valueOf(LocalDateTime.now().plusHours(9)));
             userRepository.save(findUser);
             timecapsuleMappingRepository.save(tm);
         }
 
-        timecapsule.updateRemoveDate(Timestamp.valueOf(LocalDateTime.now()));
+        timecapsule.updateRemoveDate(Timestamp.valueOf(LocalDateTime.now().plusHours(9)));
         timecapsuleRepository.save(timecapsule);
 
     }
@@ -1235,7 +1235,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
             throw new CommonException(CustomExceptionStatus.NOT_LOCATION_FIND);
         }
         //시간값 세팅
-        userLocation.UpdateWeatherTime(Timestamp.valueOf(LocalDateTime.now()));
+        userLocation.UpdateWeatherTime(Timestamp.valueOf(LocalDateTime.now().plusHours(9)));
         //날씨 세팅
         userLocation.UpdateWeather(weather);
         UserLocation saveUserLocation = userLocationRepository.save(userLocation);
