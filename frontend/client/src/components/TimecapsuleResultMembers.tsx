@@ -48,7 +48,6 @@ const TimecapsuleResultMembers = function () {
   const { capsuleId } = useParams()
 
   useEffect(() => {
-    console.log("token", token)
     const fetchData = async () => {
       try {
         const timecapsuleNo = capsuleId

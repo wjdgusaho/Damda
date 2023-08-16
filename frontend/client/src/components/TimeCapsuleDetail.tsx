@@ -369,8 +369,6 @@ const TimeCapsuleDetail = function () {
 
   const isRegistered = currentDate < oneDayLater
 
-  console.log(capsuleData)
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
