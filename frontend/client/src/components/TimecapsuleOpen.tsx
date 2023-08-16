@@ -104,7 +104,7 @@ export const TimecapsuleOpen = function () {
       if (betaDiff > 50 || gammaDiff > 50 || alphaDiff > 90) {
         // 휴대전화가 흔들렸을 때 실행할 코드를 여기에 작성합니다.
         navigator.vibrate([100, 100, 100, 100])
-        setShakeCnt(shakeCnt + 3)
+        setShakeCnt((shakeCnt) => shakeCnt + 3)
       }
     }
 
