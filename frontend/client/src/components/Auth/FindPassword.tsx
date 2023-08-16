@@ -5,15 +5,97 @@ import { useNavigate } from "react-router"
 import { Link } from "react-router-dom"
 import toast, { Toaster } from "react-hot-toast"
 import { motion } from "framer-motion"
+import { styled } from "styled-components"
+import { SubHeader } from "../inc/SubHeader"
 
 // 비밀번호 정규식
 const passwordRegex = /^(?=.*[a-zA-Z])[!@#$%^*+=-]?(?=.*[0-9]).{5,25}$/
 
-const Box = tw.div`
-  flex
-  justify-center
-  mt-10
-  flex-col
+const Box = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-family: "Pretendard";
+  color: ${(props) => props.theme.colorCommon};
+  align-items: center;
+`
+
+const InfoImage = styled.div`
+  position: relative;
+  background-image: url(${(props) => props.theme.InfoImg_sm});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 145px;
+  height: 145px;
+  margin-top: 40px;
+  @keyframes floatingAnimation {
+    0% {
+      transform: translateY(0); /* 시작 위치 (위치 이동 없음) */
+    }
+    50% {
+      transform: translateY(-10px); /* 위로 10px 이동 */
+    }
+    100% {
+      transform: translateY(0); /* 다시 원래 위치로 이동 */
+    }
+  }
+  animation: floatingAnimation 2s ease-in-out infinite;
+`
+
+const AmphText = styled.span`
+  color: ${(props) => props.theme.colorEtc};
+`
+
+const InputText = styled.input`
+  background-color: rgb(255, 255, 255, 0);
+  border-bottom: 2px solid ${(props) => props.theme.colorCommon};
+  height: 50px;
+  outline: none;
+  font-weight: 200;
+`
+
+const Button = styled.button`
+  border-radius: 30px;
+  font-family: "pretendard";
+  font-size: 24px;
+  font-weight: 400;
+  box-shadow: 0px 4px 4px ${(props) => props.theme.colorShadow};
+  color: ${(props) => props.theme.color900};
+  background-color: ${(props) => props.theme.color100};
+  &:hover {
+    transition: 0.2s;
+    transform: scale(0.95);
+    color: ${(props) => props.theme.color100};
+    background-color: ${(props) => props.theme.color600};
+  }
+`
+
+const ContentWrap = tw.div`
+    flex
+    justify-start
+    w-full
+`
+
+const Content = styled.div`
+  margin-top: 2.25rem;
+  font-size: 1.25rem;
+  font-weight: 300;
+  span {
+    opacity: 0.47;
+    font-size: 14px;
+    color: ${(props) => props.theme.colorCommon};
+    margin-left: 15px;
+  }
+`
+
+const BackIcon = styled.div`
+  background-image: url(${(props) =>
+    props.theme.colorCommon === "black"
+      ? "..//assets/icons/arrow_lD.png"
+      : "..//assets/icons/arrow_l.png"});
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 15px;
+  height: 25px;
 `
 
 const Form = tw.form`
@@ -21,12 +103,6 @@ const Form = tw.form`
   grid-cols-1
   mt-10
   mx-auto
-`
-
-const InputText = tw.input`
-  bg-transparent
-  focus:outline-none
-  border-b-2
 `
 
 export const FindPassword = function () {
@@ -41,6 +117,10 @@ export const FindPassword = function () {
   const [sendCode, setSendCode] = useState(false)
   const navigate = useNavigate()
   const intervalRef = useRef<NodeJS.Timeout>()
+
+  const goBack = () => {
+    navigate(-1) // 뒤로가기
+  }
 
   useEffect(() => {
     if (!checkPassword && passwordRegex.test(checkPassword)) {
@@ -64,7 +144,7 @@ export const FindPassword = function () {
     } else {
       setUserPwCondition(0)
     }
-  }, [userPwCondition])
+  }, [password])
 
   useEffect(() => {
     return () => clearInterval(intervalRef.current)
@@ -199,72 +279,55 @@ export const FindPassword = function () {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <Box>
+      <div className="w-10/12 m-auto mt-12 flex justify-between">
+        <BackIcon onClick={goBack} />
+      </div>
+      <Box className="w-80 m-auto">
         <Toaster toastOptions={{ duration: 1000 }} />
-        <div className="w-full flex justify-center">
-          <Link
-            to={"/login"}
-            style={{ fontSize: "30px", color: "white" }}
-            className="w-6 mr-72"
-          >
-            <svg
-              className="w-6 h-6 text-black-800 dark:text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 8 14"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
-              />
-            </svg>
-          </Link>
-        </div>
-        <img
-          src="assets/universe/Planet-3.png"
-          alt="planet"
-          width={200}
-          style={{ marginLeft: "auto", marginRight: "auto" }}
-        />
+        <InfoImage />
         {!change && (
-          <div style={{ marginLeft: "auto", marginRight: "auto" }}>
-            <p>
-              <span className="text-lilac-500">가입시 등록하신 이메일</span>로{" "}
-              <br /> 비밀번호를 재설정합니다.
-            </p>
-            <Form onSubmit={handleSubmitEmail}>
-              <p>이메일</p>
-              <InputText type="email" onChange={handleEmailChange} />
+          <>
+            <div className="font-light text-center">
+              <AmphText className="font-normal">가입시 등록한 이메일</AmphText>
+              로
+            </div>
+            <div className="font-light text-center">
+              비밀번호를 재설정합니다.
+            </div>
+            <form onSubmit={handleSubmitEmail}>
+              <ContentWrap className="mt-3">
+                <Content>이메일</Content>
+              </ContentWrap>
+              <InputText
+                className="w-80"
+                type="email"
+                onChange={handleEmailChange}
+              />
+
               {!getCode && (
-                <button
-                  className="p-2 px-4 text-sm mt-20 rounded-full shadow-md w-48 mx-auto"
-                  style={{ backgroundColor: "#EFE0F4", color: "black" }}
-                >
+                <Button className="fixed bottom-12 left-0 right-0 w-64 h-16 flex items-center justify-center m-auto">
                   확인
-                </button>
+                </Button>
               )}
-            </Form>
+            </form>
             {getCode ? (
               <div>
-                <Form onSubmit={handleSubmitCode}>
-                  <p className="grid grid-cols-2 justify-between">
-                    인증번호
-                    <span id="countdown" className="text-end">
-                      10:00
-                    </span>
-                  </p>
-                  <InputText type="text" onChange={handleCodeChange} />
-                  <button
-                    className="p-2 px-4 text-sm mt-20 rounded-full shadow-md w-48 mx-auto"
-                    style={{ backgroundColor: "#EFE0F4", color: "black" }}
-                  >
+                <form onSubmit={handleSubmitCode}>
+                  <ContentWrap className="mt-3">
+                    <Content>
+                      인증번호 <span id="countdown">10:00</span>
+                    </Content>
+                  </ContentWrap>
+
+                  <InputText
+                    className="w-80"
+                    type="text"
+                    onChange={handleCodeChange}
+                  />
+                  <Button className="fixed bottom-12 left-0 right-0 w-64 h-16 flex items-center justify-center m-auto">
                     확인
-                  </button>
-                </Form>
+                  </Button>
+                </form>
               </div>
             ) : (
               sendCode && (
@@ -275,14 +338,16 @@ export const FindPassword = function () {
                 </div>
               )
             )}
-          </div>
+          </>
         )}
         {change && (
           <div style={{ marginLeft: "auto", marginRight: "auto" }}>
-            <Form onSubmit={handleSubmitPassword}>
-              <p>새로운 비밀번호 입력</p>
+            <form onSubmit={handleSubmitPassword}>
+              <ContentWrap className="mt-3">
+                <Content>새 비밀번호</Content>
+              </ContentWrap>
               <InputText
-                className="mb-5"
+                className="w-80"
                 type="password"
                 onChange={handlePasswordChange}
               />
@@ -295,22 +360,28 @@ export const FindPassword = function () {
               ) : (
                 <div className="h-7"></div>
               )}
-              <p>비밀번호 확인</p>
-              <InputText type="password" onChange={handleCheckPasswordChange} />
+              <ContentWrap className="mt-3">
+                <Content>비밀번호 확인</Content>
+              </ContentWrap>
+              <InputText
+                className="w-80"
+                type="password"
+                onChange={handleCheckPasswordChange}
+              />
               {userPwMatch === 1 ? (
-                <p className="text-red-500">비밀번호 불일치</p>
+                <p className="text-red-300 mt-1">비밀번호 불일치</p>
               ) : userPwMatch === 2 ? (
-                <p className="text-green-500">비밀번호 일치</p>
+                <p className="text-emerald-300 mt-1">비밀번호 일치</p>
               ) : (
-                <p></p>
+                <div className="h-7"></div>
               )}
-              <button
-                className="p-2 px-4 text-sm mt-20 rounded-full shadow-md w-48 mx-auto"
+              <Button
+                className="fixed bottom-12 left-0 right-0 w-64 h-16 flex items-center justify-center m-auto"
                 style={{ backgroundColor: "#EFE0F4", color: "black" }}
               >
                 확인
-              </button>
-            </Form>
+              </Button>
+            </form>
           </div>
         )}
       </Box>
