@@ -2,15 +2,19 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { CapsuleType } from "../components/MainPage"
 import { DataType } from "../components/TimeCapsuleDetail"
 
-interface timecapsuleState {
-  timecapsules: CapsuleType[]
-  timecapsuleDetail: DataType
-  nowCapsuleCount: number
+interface countType {
   savedCapsuleCount: number
+  nowCapsuleCount: number
+}
+
+interface timecapsuleState {
+  timecapsuleList: CapsuleType[]
+  timecapsuleDetail: DataType
+  userTimecapsuleInfo: countType
 }
 
 const initialState: timecapsuleState = {
-  timecapsules: [],
+  timecapsuleList: [],
   timecapsuleDetail: {
     timecapsuleNo: 0,
     capsuleType: "",
@@ -60,8 +64,10 @@ const initialState: timecapsuleState = {
       },
     ],
   },
-  nowCapsuleCount: 0,
-  savedCapsuleCount: 0,
+  userTimecapsuleInfo: {
+    nowCapsuleCount: 0,
+    savedCapsuleCount: 0,
+  },
 }
 
 export const timecapsuleSlice = createSlice({
@@ -70,10 +76,10 @@ export const timecapsuleSlice = createSlice({
   reducers: {
     SET_TIMECAPSULE: (
       state: timecapsuleState,
-      action: PayloadAction<CapsuleType[]>
+      action: PayloadAction<timecapsuleState>
     ) => {
-      state.timecapsules = action.payload
-      state.nowCapsuleCount = action.payload.length
+      state.timecapsuleList = action.payload.timecapsuleList
+      state.userTimecapsuleInfo = action.payload.userTimecapsuleInfo
     },
     SET_DETAIL: (state: timecapsuleState, action: PayloadAction<DataType>) => {
       state.timecapsuleDetail = action.payload
@@ -82,8 +88,11 @@ export const timecapsuleSlice = createSlice({
       state.timecapsuleDetail = initialState.timecapsuleDetail
     },
     DELETE_TIMECAPSULE: (state) => {
-      state.timecapsules = []
-      state.nowCapsuleCount = 0
+      state.timecapsuleList = []
+      state.userTimecapsuleInfo = {
+        nowCapsuleCount: 0,
+        savedCapsuleCount: 0,
+      }
     },
   },
 })

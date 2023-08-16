@@ -19,7 +19,8 @@ export const TimecapsuleOpen = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [capsuleInfo, setCapsuleInfo] = useState<CapsuleInfoType | null>(null)
-  const [shakeCnt, setShakeCnt] = useState(1)
+  // const [shakeCnt, setShakeCnt] = useState(1)
+  let shakeCnt = 1
 
   let lastAlpha: number | null = null
   let lastBeta: number | null = null
@@ -40,39 +41,35 @@ export const TimecapsuleOpen = function () {
         )
         setCapsuleInfo(response.data.data.timecapsuleSimpleInfo)
         // 타임캡슐의 정보를 받은 후에 해당 타임캡슐을 열람한 타임캡슐로 처리함
-        try {
-          const fetchData2 = async () => {
-            try {
-              const response = await axios.patch(
-                process.env.REACT_APP_SERVER_URL + `timecapsule/open/save`,
-                {
-                  timecapsuleNo: capsuleId,
-                },
-                {
-                  headers: {
-                    Authorization: "Bearer " + token,
-                  },
-                }
-              )
-              if (response.data.code === 200) {
-                console.log("타임캡슐 열람 성공", response.data.message)
-              } else {
-                console.log(response.data.message)
-              }
-            } catch (error) {
-              console.error(error)
-            }
-          }
-          fetchData2()
-        } catch (error) {
-          console.error(error)
-        }
       } catch (error) {
         console.error(error)
       }
     }
     fetchData()
   }, [])
+
+  const makeSaved = async () => {
+    try {
+      const response = await axios.patch(
+        process.env.REACT_APP_SERVER_URL + `timecapsule/open/save`,
+        {
+          timecapsuleNo: capsuleId,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      if (response.data.code === 200) {
+        console.log("타임캡슐 열람 성공", response.data.message)
+      } else {
+        console.log(response.data.message)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   useEffect(() => {
     window.addEventListener("deviceorientation", handleOrientation)
@@ -85,6 +82,7 @@ export const TimecapsuleOpen = function () {
   useEffect(() => {
     console.log("shakeCnt : ", shakeCnt)
     if (shakeCnt >= 100) {
+      makeSaved()
       navigate(`/timecapsule/result/${capsuleId}`)
     }
   }, [shakeCnt])
@@ -107,7 +105,7 @@ export const TimecapsuleOpen = function () {
       if (betaDiff > 50 || gammaDiff > 50 || alphaDiff > 90) {
         // 휴대전화가 흔들렸을 때 실행할 코드를 여기에 작성합니다.
         navigator.vibrate([100, 100, 100, 100])
-        setShakeCnt(shakeCnt + 3)
+        shakeCnt += 3
       }
     }
 
@@ -131,7 +129,7 @@ export const TimecapsuleOpen = function () {
       <FloatingImage
         capsulenum={capsuleInfo?.capsuleIconNo ?? "capsule1"}
         onClick={() => {
-          setShakeCnt(shakeCnt + 3)
+          shakeCnt += 3
         }}
       ></FloatingImage>
       <div>

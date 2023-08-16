@@ -143,6 +143,7 @@ public class Timecapsule {
                 .openDate(this.openDate)
                 .capsuleType(this.type)
                 .title(this.title)
+                .nowFileSize(this.nowFileSize)
                 .description(this.description)
                 .goalCard(this.goalCard)
                 .penalty(this.timecapsulePenalty.getPenalty() == false ? null : this.timecapsulePenalty.toTimecapsulePenaltyDTO())

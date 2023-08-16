@@ -5,8 +5,6 @@ import tw from "tailwind-styled-components"
 import Modal from "react-modal"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../store/Store"
-// import axios from "axios"
-// import { serverUrl } from "../../urls"
 import {
   DELETE_ALARM_ALL,
   DELETE_FRIENDS,
@@ -16,6 +14,7 @@ import {
   alarmFriendType,
   alarmOpenCapsuleType,
 } from "../../store/Alarm"
+import "./MainHeader.css"
 
 const TextStyle = styled.p`
   font-family: "pretendard";
@@ -96,13 +95,13 @@ const AlertImg = styled.img`
 
 const customStyles = {
   content: {
-    top: "60%",
+    top: "55%",
     left: "50%",
     right: "0px",
     bottom: "0px",
     transform: "translate(-50%, -50%)",
     width: "330px",
-    height: "800px",
+    height: "700px",
     border: "0px",
     backgroundColor: "rgba(255,255,255,0)",
   },
@@ -173,7 +172,7 @@ const AlarmTimecapsuleComponent = function ({
 
   const handleMove = () => {
     handleDelete()
-    navigate("/participate/")
+    navigate("/participate/", { state: { code: timecapsule.code } })
   }
   const handleDelete = () => {
     dispatch(DELETE_TIMECAPSULES(timecapsule.fromUser))
@@ -210,11 +209,11 @@ const AlarmOpenTimecapsuleComponent = function ({
 
   const handleMove = () => {
     handleDelete()
-    // navigate('')
+    navigate(`/timecapsule/open/${timecapsule.timecapsuleNo}`)
   }
 
   const handleDelete = () => {
-    dispatch(DELETE_OPENTIMECAPSULES(timecapsule.timecapsueNo))
+    dispatch(DELETE_OPENTIMECAPSULES(timecapsule.timecapsuleNo))
   }
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
@@ -263,9 +262,11 @@ export const MainHeader = function () {
         style={customStyles}
       >
         <div className="flex justify-between">
-          <button onClick={handleErase} className="flex">
-            <img src="assets/icons/bin.png" alt="erase" />
-            <span className="text-white ml-1">모든 알람 지우기</span>
+          <button onClick={handleErase} className="flex items-center">
+            <img src="assets/icons/bin.png" alt="erase" width="18px" />
+            <span className="text-white ml-1 font-pretendard font-extralight text-sm">
+              전체 삭제
+            </span>
           </button>
           <button onClick={handleClose}>
             <img src="assets/icons/cancel.png" alt="cancel" />
@@ -282,7 +283,7 @@ export const MainHeader = function () {
                   <AlertImg src="assets/icons/popup.png" alt="defalut" />
                 </div>
                 <div className="ml-2" style={{ width: "190px" }}>
-                  <p>받은 알람이 없습니다.</p>
+                  <p>받은 알림이 없습니다.</p>
                 </div>
               </ModalCard>
             )}
@@ -325,6 +326,16 @@ export const MainHeader = function () {
           }}
         />
         <div className="flex items-center">
+          {alarmFriendData.length +
+            alarmOpenTimecapsuleData.length +
+            alarmTimecapsuleData.length !=
+            0 && (
+            <div className="relative w-6 -top-4 left-9 px-1 text-white bg-red-400 rounded-full text-center">
+              {alarmFriendData.length +
+                alarmOpenTimecapsuleData.length +
+                alarmTimecapsuleData.length}
+            </div>
+          )}
           <AlermIcon
             className="mr-6"
             onClick={() => {

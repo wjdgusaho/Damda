@@ -59,6 +59,11 @@ const SelectBox = styled.select`
   }
 `
 
+const DateSelectBox = styled(SelectBox)`
+  height: auto;
+  font-weight: 400;
+`
+
 const ContentWrap = tw.div`
     flex
     justify-start
@@ -143,6 +148,25 @@ const RecordCapsule = function () {
     "",
     "",
   ])
+
+  const years = Array.from(
+    { length: 20 },
+    (_, i) => currentDate.getFullYear() + i
+  )
+  const months = [
+    "1월",
+    "2월",
+    "3월",
+    "4월",
+    "5월",
+    "6월",
+    "7월",
+    "8월",
+    "9월",
+    "10월",
+    "11월",
+    "12월",
+  ]
 
   twoDayAheadDate.setDate(nextDayOfMonth)
   const twoDayAheadDateString = twoDayAheadDate.toISOString().slice(0, 10)
@@ -345,6 +369,41 @@ const RecordCapsule = function () {
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
               onKeyDown={handleDatePickerKeyDown}
+              renderCustomHeader={({ date, changeYear, changeMonth }) => (
+                <div
+                  style={{
+                    margin: 10,
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <DateSelectBox
+                    value={date.getFullYear()}
+                    onChange={({ target: { value } }) =>
+                      changeYear(parseInt(value, 10))
+                    }
+                  >
+                    {years.map((option) => (
+                      <option key={option} value={option}>
+                        {option}년
+                      </option>
+                    ))}
+                  </DateSelectBox>
+
+                  <DateSelectBox
+                    value={months[date.getMonth()]}
+                    onChange={({ target: { value } }) =>
+                      changeMonth(months.indexOf(value))
+                    }
+                  >
+                    {months.map((option, index) => (
+                      <option key={option} value={option}>
+                        {index + 1}월
+                      </option>
+                    ))}
+                  </DateSelectBox>
+                </div>
+              )}
             />
           </DatePickerWrap>
           <ContentWrap>
