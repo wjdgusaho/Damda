@@ -126,13 +126,11 @@ public class UserService {
     // 로그인
     @Transactional
     public UserLoginSuccessDTO login(String email, String password) {
-        System.out.println(123);
 
         Optional<User> findUser = Optional.ofNullable(userRepository.findByOriginEmail(email)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
 
         User user = findUser.get();
-        System.out.println(123);
 
         // 이미 탈퇴한 유저
         if(user.getDeleteDate() != null){
@@ -150,7 +148,6 @@ public class UserService {
         String refreshToken = JwtUtil.createRefreshToken(secretKey); // 리프레시 토큰 발급해서 넘김
 
         Optional<RefreshToken> byUserUserNo = refreshTokenRepository.findByUserUserNo(user.getUserNo());
-        System.out.println(123);
 
         // 리프레시 토큰 있는지 없는지 판단해서 저장
         if (byUserUserNo.isPresent()) {
@@ -364,14 +361,17 @@ public class UserService {
 
             // 현재 유저의 친구 목록을 전부 꺼냄
             List<UserFriend> userFriendByUser = friendRepository.getUserFriendByUser(currentUser);
+            System.out.println(userFriendByUser);
 
             for(User searchUser : byNicknameContaining){
                 boolean isFriend = false;
                 for(UserFriend userFriend : userFriendByUser){
+                    System.out.println(userFriend.toString());
                     if(userFriend.getFriend().getUserNo() == searchUser.getUserNo()){
                         UserSearchResultDTO searchResultDTO = new UserSearchResultDTO(searchUser, userFriend);
                         result.add(searchResultDTO);
                         isFriend = true;
+                        System.out.println(searchResultDTO.toString());
                         break;
                     }
                 }
