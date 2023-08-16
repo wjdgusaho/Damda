@@ -32,10 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -248,19 +245,21 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 //캡슐 오픈 날짜
                 ZonedDateTime openDate = timecapsule.getTimecapsule().getOpenDate()
                         .toLocalDateTime().atZone(SEOUL_ZONE_ID);
+                LocalDate seoulTimeDate = seoulTime.toLocalDate();
+                LocalDate openTimeDate = openDate.toLocalDate();
+
                 //날짜가 지났다면 (날짜만 비교 LocalDate)
-                if(seoulTime.isAfter(openDate)){
+                if(seoulTimeDate.isAfter(openTimeDate)
+                        || seoulTimeDate.isEqual(openTimeDate) ){
                     //시간을 설정했고 그 설정한시간보다 전이라면
-                    if( timecapsule.getTimecapsule().getTimecapsuleCriteria().getStartTime() != null
-                            && seoulTime.getHour() < timecapsule.getTimecapsule()
-                            .getTimecapsuleCriteria().getStartTime()) openAble = false;
+                    if( timecapsuleCriteria.getStartTime() != null
+                            && seoulTime.getHour() < timecapsuleCriteria.getStartTime()) openAble = false;
                 }else openAble = false;
                 //모든 조건이 지나긴후
                 mainTimecapsule.setState(openAble);
             }
             timecapsuleList.add(mainTimecapsule);
         }
-
         return timecapsuleList;
     }
 
