@@ -26,7 +26,6 @@ export const TimecapsuleOpen = function () {
   let lastGamma: number | null = null
 
   useEffect(() => {
-    console.log("token", token)
     const fetchData = async () => {
       try {
         const timecapsuleNo = capsuleId
@@ -105,14 +104,10 @@ export const TimecapsuleOpen = function () {
       const betaDiff = Math.abs(beta - lastBeta)
       const gammaDiff = Math.abs(gamma - lastGamma)
 
-      if (betaDiff > 70 || gammaDiff > 70 || alphaDiff > 110) {
+      if (betaDiff > 50 || gammaDiff > 50 || alphaDiff > 90) {
         // 휴대전화가 흔들렸을 때 실행할 코드를 여기에 작성합니다.
         navigator.vibrate([100, 100, 100, 100])
         setShakeCnt(shakeCnt + 3)
-        if (shakeCnt >= 100) {
-          // 여기에 다음 열린 후에 페이지로 들어가도록 만들어주세요.
-          navigate(`/result/${capsuleId}`)
-        }
       }
     }
 
@@ -120,8 +115,6 @@ export const TimecapsuleOpen = function () {
     lastBeta = beta
     lastGamma = gamma
   }
-
-  console.log(capsuleInfo)
 
   return (
     <motion.div
