@@ -14,6 +14,6 @@ public class TimeCapsuleSSEDTO {
     private String content;
     private String code;
     private String date;
-
+    private Long timecapsuleNo;
 
 }
