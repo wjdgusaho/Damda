@@ -66,7 +66,7 @@ public class UserService {
 
     private final KakaoAPIService kakaoAPIService;
 
-    private static Long acExpiredMs = 1000 * 60 * 30L * (48 * 30); // 액세스 토큰의 만료 시간(30분) * 48 * 30 = 30일
+    private static Long acExpiredMs = 1000 * 60 * 10L; // 액세스 토큰의 만료 시간(30분) * 48 * 30 = 30일
     private final int dailyCheckCoin = 500;
 
     /*
@@ -126,11 +126,13 @@ public class UserService {
     // 로그인
     @Transactional
     public UserLoginSuccessDTO login(String email, String password) {
+        System.out.println(123);
 
         Optional<User> findUser = Optional.ofNullable(userRepository.findByOriginEmail(email)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
 
         User user = findUser.get();
+        System.out.println(123);
 
         // 이미 탈퇴한 유저
         if(user.getDeleteDate() != null){
@@ -148,6 +150,7 @@ public class UserService {
         String refreshToken = JwtUtil.createRefreshToken(secretKey); // 리프레시 토큰 발급해서 넘김
 
         Optional<RefreshToken> byUserUserNo = refreshTokenRepository.findByUserUserNo(user.getUserNo());
+        System.out.println(123);
 
         // 리프레시 토큰 있는지 없는지 판단해서 저장
         if (byUserUserNo.isPresent()) {
