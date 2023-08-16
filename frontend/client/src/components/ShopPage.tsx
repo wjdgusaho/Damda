@@ -435,7 +435,8 @@ export const Card: React.FC<CardProps> = ({
                 }
                 // 캡슐추가 구매 시
                 if (type === "CAPSULE" && price !== undefined) {
-                  buyItem(type, 0, price)
+                  toast("테스트 기간 중에는 작동하지 않습니다.")
+                  // buyItem(type, 0, price)
                 }
                 // 타임캡슐 용량 구매 시
                 if (type !== undefined && CapsuleNo !== -1) {
@@ -471,7 +472,8 @@ export const Card: React.FC<CardProps> = ({
                   CapsuleNo !== undefined &&
                   price !== undefined
                 ) {
-                  buyItem(type, 0, price, CapsuleNo)
+                  toast("테스트 기간 중에는 작동하지 않습니다.")
+                  // buyItem(type, 0, price, CapsuleNo)
                 }
               }}
             >
