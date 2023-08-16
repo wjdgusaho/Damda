@@ -186,7 +186,7 @@ const AlarmTimecapsuleComponent = function ({
     }).then((response) => {
       toast(response.data.message)
       if (response.data.code === 200) {
-        navigate("/participate/", { state: { code: timecapsule.code } })
+        navigate("/timecapsule/detail/" + timecapsule.timecapsuleNo)
       }
       dispatch(DELETE_TIMECAPSULES(timecapsule.fromUser))
     })

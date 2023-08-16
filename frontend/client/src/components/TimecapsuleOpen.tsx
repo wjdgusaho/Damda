@@ -19,8 +19,8 @@ export const TimecapsuleOpen = function () {
   const { capsuleId } = useParams()
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [capsuleInfo, setCapsuleInfo] = useState<CapsuleInfoType | null>(null)
-  // const [shakeCnt, setShakeCnt] = useState(1)
-  let shakeCnt = 1
+  const [shakeCnt, setShakeCnt] = useState(1)
+  // let shakeCnt = 1
 
   let lastAlpha: number | null = null
   let lastBeta: number | null = null
@@ -105,7 +105,8 @@ export const TimecapsuleOpen = function () {
       if (betaDiff > 50 || gammaDiff > 50 || alphaDiff > 90) {
         // 휴대전화가 흔들렸을 때 실행할 코드를 여기에 작성합니다.
         navigator.vibrate([100, 100, 100, 100])
-        shakeCnt += 3
+        // shakeCnt = shakeCnt + 3
+        setShakeCnt(shakeCnt + 3)
       }
     }
 
@@ -129,7 +130,8 @@ export const TimecapsuleOpen = function () {
       <FloatingImage
         capsulenum={capsuleInfo?.capsuleIconNo ?? "capsule1"}
         onClick={() => {
-          shakeCnt += 3
+          // shakeCnt = shakeCnt + 3
+          setShakeCnt(shakeCnt + 3)
         }}
       ></FloatingImage>
       <div>
