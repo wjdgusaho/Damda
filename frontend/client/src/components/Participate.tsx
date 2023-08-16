@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import "../index.css"
 import { styled } from "styled-components"
-import { useNavigate } from "react-router"
+import { useLocation, useNavigate } from "react-router"
 import { SubHeader } from "./inc/SubHeader"
 import axios from "axios"
 import { useSelector } from "react-redux"
@@ -69,9 +69,10 @@ const HeaderWrap = styled.div`
   right: 0;
 `
 
-const Participate = function ({ code = "" }: { code: string }) {
+const Participate = function () {
   const token = useSelector((state: RootState) => state.auth.accessToken)
-  const [inviteCode, setInviteCode] = useState(code)
+  const location = useLocation()
+  const [inviteCode, setInviteCode] = useState(location.state?.code)
   const navigate = useNavigate()
 
   function inputCode(e: React.FormEvent<HTMLInputElement>) {
