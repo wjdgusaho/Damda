@@ -1216,15 +1216,19 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                     </ModalContent>
                   </Modal>
                 </div>
-                {(isCardAble && capsuleData.goalCard === 0) ||
-                (isCardAble && capsuleData.goalCard !== capsuleData.nowCard) ? (
-                  <CardBtn
-                    onClick={() => {
-                      navigate(`/card/${capsuleId}`)
-                    }}
-                  >
-                    카드 작성하기
-                  </CardBtn>
+                {isCardAble ? (
+                  capsuleData.capsuleType === "GOAL" &&
+                  capsuleData.goalCard <= capsuleData.nowCard ? (
+                    <CardCompleteBtn>카드 작성불가</CardCompleteBtn>
+                  ) : (
+                    <CardBtn
+                      onClick={() => {
+                        navigate(`/card/${capsuleId}`)
+                      }}
+                    >
+                      카드 작성하기
+                    </CardBtn>
+                  )
                 ) : (
                   <CardCompleteBtn>카드 작성완료</CardCompleteBtn>
                 )}
