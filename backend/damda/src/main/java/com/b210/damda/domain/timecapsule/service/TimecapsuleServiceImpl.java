@@ -247,9 +247,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         .toLocalDateTime();
                 LocalDate seoulTimeDate = seoulTime.toLocalDate();
                 LocalDate openTimeDate = openDate.toLocalDate();
-                log.info("현재시간 : {}", seoulTime);
-                log.info("타임캡슐 오픈 시간 : {}", openTimeDate);
-                log.info("타임캡슐 시간 설정값 : {}", timecapsuleCriteria.getStartTime());
+                //log.info("현재시간 : {}", seoulTime);
+                //log.info("타임캡슐 오픈 시간 : {}", openTimeDate);
                 //날짜가 지났다면 (날짜만 비교 LocalDate)
                 if(seoulTimeDate.isAfter(openTimeDate)
                         || seoulTimeDate.isEqual(openTimeDate) ){
@@ -461,6 +460,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         //오늘은 이미카드작성을 하였습니다.
         if(myMapping.isCardAble() == false){
             throw new CommonException(CustomExceptionStatus.ALREADY_CARD_UPLOAD);
+        }
+
+        //목표인데 값이 다 차있을 경우
+        if(timecapsule.getType().equals(TYPE_GOAL)){
+            Long cardCnt = timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo());
+            if(timecapsule.getGoalCard() <= cardCnt){
+                throw new CommonException(CustomExceptionStatus.ALREADY_CARD_MAX);
+            }
         }
 
         String fileUri = "";
