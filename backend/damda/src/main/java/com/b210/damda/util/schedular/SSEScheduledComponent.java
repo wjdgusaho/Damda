@@ -46,8 +46,8 @@ public class SSEScheduledComponent {
             String userName = userRepository.findUserNicknameByUserNo(userNo);
             LocalDateTime userLastResponse = entry.getValue(); //유저의 마지막 응답 시간
             Duration duration = Duration.between(userLastResponse, LocalDateTime.now().plusHours(9)); //시간 차이
-            log.info("+ User Info : {}, {} | Connection Time Diff : {} | Last Response : {}", userNo, userName , duration, userLastResponse);
-
+            log.info("+ User Info : {}, {} ", userNo, userName);
+            log.info("+== Time Diff : {} | Last Response : {}", duration, userLastResponse);
             //2분 이상 미접속 시 강제 로그아웃 진행
             if(duration.toMinutes() >= 2) {
                 log.warn("[Disconnect]{} 님이 부재중입니다, 로그아웃을 진행합니다. 시간 차이 : {} 분", userNo, duration.toMinutes());

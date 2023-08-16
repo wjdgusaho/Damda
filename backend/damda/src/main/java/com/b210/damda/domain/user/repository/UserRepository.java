@@ -17,11 +17,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //Optional<User> findByEmail(String email);
 
     @Query("SELECT u FROM User u WHERE u.email = :email AND u.accountType = 'ORIGIN' AND u.deleteDate IS NULL")
-    Optional<User> findByOriginEmail(String email);
+    Optional<User> findByOriginEmail(@Param("email") String email);
 
 
     @Query("SELECT u FROM User u WHERE u.email = :email AND u.accountType = 'KAKAO' AND u.deleteDate IS NULL")
-    Optional<User> findByKakaoEmail(String email);
+    Optional<User> findByKakaoEmail(@Param("email")String email);
 
     Optional<User> findByUserPw(String userPw);
 
