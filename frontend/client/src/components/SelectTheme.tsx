@@ -98,6 +98,8 @@ const SelectTheme = function () {
               onClick={() => {
                 if (themeList[index].userHave) {
                   handleChangeTheme(themeList[index].themeNo)
+                } else {
+                  toast("테마를 보유하고 있지 않아요. 상점에서 구매해주세요.")
                 }
               }}
               className={
