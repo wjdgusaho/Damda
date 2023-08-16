@@ -89,6 +89,7 @@ public enum CustomExceptionStatus {
     NOT_SAVED_TIMECAPSULE(-3019, "저장되지 않은 타임캡슐입니다."),
     NOT_OPEN_TIMECAPSULE(-3020, "아직 열지 않은 타임캡슐입니다."),
     ALREADY_SAVE_TIMECAPSULE(-3021, "이미 저장된 타임캡슐입니다"),
+    ALREADY_CARD_MAX(-3022, "카드 달성도가 가득차 더이상 카드를 작성할수 없습니다"),
 
     // 확장자 문제
     EXTENSION_ERROR_IMAGE(-8000, "사진 확장자만 등록 가능합니다."),

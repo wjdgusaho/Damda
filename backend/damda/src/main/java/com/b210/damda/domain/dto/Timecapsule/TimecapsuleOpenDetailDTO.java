@@ -20,7 +20,7 @@ public class TimecapsuleOpenDetailDTO {
     private String title;
     private String description;
     private Integer goalCard;
-
+    private Long nowFileSize;
     //조건
     private TimecapsuleCriteriaDTO criteriaInfo;
     //참가자 목록
