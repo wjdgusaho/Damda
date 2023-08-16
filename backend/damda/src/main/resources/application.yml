@@ -87,4 +87,4 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
-    org.hibernate.SQL: debug
+    org.hibernate.SQL: error
