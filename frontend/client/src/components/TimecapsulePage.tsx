@@ -85,8 +85,10 @@ const TimecapsulePage = function () {
   const navigate = useNavigate()
 
   const capsuleList = useSelector(
-    (state: RootState) => state.timecapsule.timecapsules
+    (state: RootState) => state.timecapsule.timecapsuleList
   )
+
+  console.log(capsuleList)
 
   return (
     <>

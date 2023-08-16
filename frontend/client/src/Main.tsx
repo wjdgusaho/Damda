@@ -206,7 +206,7 @@ function Main() {
 
   const closeEventSource = () => {
     // sse를 종료할 때, eventSource가 null이라면 에러가 나므로, 미리 체크해본다.
-    if (eventSource !== null) {
+    if (eventSource !== null && eventSource.close !== undefined) {
       // sse 종료 함수.
       eventSource.close()
       dispatch(DELETE_SSE())

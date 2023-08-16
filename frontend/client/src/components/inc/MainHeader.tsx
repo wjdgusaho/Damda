@@ -8,6 +8,8 @@ import { RootState } from "../../store/Store"
 // import axios from "axios"
 // import { serverUrl } from "../../urls"
 import {
+  DELETE_ALARM_ALL,
+  DELETE_FRIENDS,
   DELETE_OPENTIMECAPSULES,
   DELETE_TIMECAPSULES,
   alarmCapsuleType,
@@ -94,12 +96,13 @@ const AlertImg = styled.img`
 
 const customStyles = {
   content: {
-    top: "20%",
+    top: "60%",
     left: "50%",
-    right: "auto",
-    bottom: "auto",
+    right: "0px",
+    bottom: "0px",
     transform: "translate(-50%, -50%)",
     width: "330px",
+    height: "800px",
     border: "0px",
     backgroundColor: "rgba(255,255,255,0)",
   },
@@ -131,9 +134,14 @@ const AlarmFriendComponent = function ({
   friend: alarmFriendType
 }) {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleMove = () => {
+    handleDelete()
     navigate("/friend")
+  }
+  const handleDelete = () => {
+    dispatch(DELETE_FRIENDS(friend.fromUser))
   }
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
@@ -143,12 +151,13 @@ const AlarmFriendComponent = function ({
       <div className="ml-2" style={{ width: "190px" }}>
         <p>
           <span className="text-lilac-600 font-bold">{friend.fromName}</span>
-          {/* <span className="text-gray-400">#{friend.fromUser}</span> */}
+          <span className="text-gray-400">#{friend.fromUser}</span>
           {friend.content}
         </p>
       </div>
-      <div>
+      <div className="w-72 mt-4 flex justify-between">
         <ModalBtn onClick={handleMove}>바로가기</ModalBtn>
+        <ModalBtn onClick={handleDelete}>알람끄기</ModalBtn>
       </div>
     </ModalCard>
   )
@@ -163,8 +172,11 @@ const AlarmTimecapsuleComponent = function ({
   const dispatch = useDispatch()
 
   const handleMove = () => {
-    dispatch(DELETE_TIMECAPSULES(timecapsule.fromUser))
+    handleDelete()
     navigate("/participate/")
+  }
+  const handleDelete = () => {
+    dispatch(DELETE_TIMECAPSULES(timecapsule.fromUser))
   }
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
@@ -180,8 +192,9 @@ const AlarmTimecapsuleComponent = function ({
           <span>{timecapsule.code}</span>
         </p>
       </div>
-      <div>
+      <div className="w-72 mt-4 flex justify-between">
         <ModalBtn onClick={handleMove}>바로가기</ModalBtn>
+        <ModalBtn onClick={handleDelete}>알람끄기</ModalBtn>
       </div>
     </ModalCard>
   )
@@ -196,8 +209,12 @@ const AlarmOpenTimecapsuleComponent = function ({
   const dispatch = useDispatch()
 
   const handleMove = () => {
-    dispatch(DELETE_OPENTIMECAPSULES(timecapsule.timecapsueNo))
+    handleDelete()
     // navigate('')
+  }
+
+  const handleDelete = () => {
+    dispatch(DELETE_OPENTIMECAPSULES(timecapsule.timecapsueNo))
   }
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
@@ -210,8 +227,9 @@ const AlarmOpenTimecapsuleComponent = function ({
           <span>{timecapsule.title}</span>
         </p>
       </div>
-      <div>
+      <div className="w-72 mt-4 flex justify-between">
         <ModalBtn onClick={handleMove}>바로가기</ModalBtn>
+        <ModalBtn onClick={handleDelete}>알람끄기</ModalBtn>
       </div>
     </ModalCard>
   )
@@ -219,6 +237,7 @@ const AlarmOpenTimecapsuleComponent = function ({
 
 export const MainHeader = function () {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [modalOpen, setModalOpen] = useState(false)
   const alarmFriendData = useSelector((state: RootState) => state.alarm.friends)
   const alarmTimecapsuleData = useSelector(
@@ -232,6 +251,10 @@ export const MainHeader = function () {
     setModalOpen(false)
   }
 
+  const handleErase = () => {
+    dispatch(DELETE_ALARM_ALL())
+  }
+
   return (
     <div>
       <Modal
@@ -239,14 +262,21 @@ export const MainHeader = function () {
         onRequestClose={handleClose}
         style={customStyles}
       >
-        <div className="flex justify-end">
+        <div className="flex justify-between">
+          <button onClick={handleErase} className="flex items-center">
+            <img src="assets/icons/bin.png" alt="erase" width="18px" />
+            <span className="text-white ml-1 font-pretendard font-extralight text-sm">
+              전체 삭제
+            </span>
+          </button>
           <button onClick={handleClose}>
             <img src="assets/icons/cancel.png" alt="cancel" />
           </button>
         </div>
         <div>
           {alarmFriendData.length === 0 &&
-            alarmTimecapsuleData.length === 0 && (
+            alarmTimecapsuleData.length === 0 &&
+            alarmOpenTimecapsuleData.length === 0 && (
               <ModalCard
                 style={{ fontFamily: "Pretendard", fontWeight: "600" }}
               >
@@ -254,7 +284,7 @@ export const MainHeader = function () {
                   <AlertImg src="assets/icons/popup.png" alt="defalut" />
                 </div>
                 <div className="ml-2" style={{ width: "190px" }}>
-                  <p>받은 알람이 없습니다.</p>
+                  <p>받은 알림이 없습니다.</p>
                 </div>
               </ModalCard>
             )}
