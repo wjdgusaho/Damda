@@ -15,6 +15,7 @@ interface DataType {
   title: string
   description: string
   goalCard: number
+  nowFileSize: number
   criteriaInfo: {
     criteriaId: number
     criteriaType: string
@@ -39,18 +40,6 @@ interface DataType {
     penalty: boolean
     penaltyDescription: string
   }
-}
-
-const criteriaInfo = {
-  criteriaId: 126,
-  type: "OPEN",
-  weatherStatus: "SNOW",
-  startTime: 0,
-  endTime: 6,
-  localBig: "서울특별시",
-  localMedium: "서대문구",
-  timeKr: "새벽",
-  cirteriaDays: null,
 }
 
 const TimecapsuleResultMembers = function () {
@@ -101,6 +90,7 @@ const TimecapsuleResultMembers = function () {
 
         console.log("파일~!!~!~!~!!!!", response)
         if (response.status === 200) {
+          console.log("status200", response)
           const downloadUrl = window.URL.createObjectURL(
             new Blob([response.data])
           )
@@ -111,8 +101,7 @@ const TimecapsuleResultMembers = function () {
           link.click()
           link.remove()
         } else {
-          console.error("파일 다운로드 에러")
-          toast("다운로드할 파일이 없어요!")
+          toast("파일 다운로드 중 문제가 생겼어요!")
         }
       } catch (error) {
         console.error(error)
@@ -239,10 +228,12 @@ const TimecapsuleResultMembers = function () {
           </div>
         ))}
       </div>
-      <div className="flex justify-center my-8" onClick={fileDownload}>
-        <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
-        <span>첨부파일 내려받기</span>
-      </div>
+      {capsuleInfo?.nowFileSize !== 0 && (
+        <div className="flex justify-center my-8" onClick={fileDownload}>
+          <FileIcon src="../../assets/icons/file.png" alt="fileicon" />
+          <span>첨부파일 내려받기</span>
+        </div>
+      )}
     </motion.div>
   )
 }
