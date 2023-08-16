@@ -88,6 +88,7 @@ const TimecapsuleResultImages = function () {
 
 const ImgConainer = styled.div`
   display: flex;
+  align-content: flex-start;
   flex-wrap: wrap;
   height: 400px;
   overflow: scroll;

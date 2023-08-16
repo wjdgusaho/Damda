@@ -241,7 +241,6 @@ const Card = function () {
         }
       }, "image/jpeg")
     })
-    toast("카드 저장이 완료되었습니다")
     setIsButtonClickable(true)
   }
 
