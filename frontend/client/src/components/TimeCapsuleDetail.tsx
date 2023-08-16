@@ -369,6 +369,8 @@ const TimeCapsuleDetail = function () {
 
   const isRegistered = currentDate < oneDayLater
 
+  console.log(capsuleData)
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -1214,7 +1216,8 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                     </ModalContent>
                   </Modal>
                 </div>
-                {isCardAble ? (
+                {(isCardAble && capsuleData.goalCard === 0) ||
+                (isCardAble && capsuleData.goalCard !== capsuleData.nowCard) ? (
                   <CardBtn
                     onClick={() => {
                       navigate(`/card/${capsuleId}`)
@@ -1280,9 +1283,21 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                           />
                           <div
                             className="flex flex-col"
-                            style={{ fontWeight: "500", marginLeft: "4px" }}
+                            style={{
+                              fontWeight: "500",
+                              marginLeft: "4px",
+                            }}
                           >
-                            {friend.nickname}
+                            <span
+                              style={{
+                                width: "103px",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {friend.nickname}
+                            </span>
                             <span
                               style={{
                                 fontSize: "13px",
@@ -1494,7 +1509,7 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
           ) : null}
 
           {capsuleData.penalty ? (
-            <div className="text-center mt-3">
+            <div className="text-center my-3">
               카드를 가장 적게 작성한 친구는 <br />{" "}
               <span className="font-bold">
                 {capsuleData.penalty.penaltyDescription}
