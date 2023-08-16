@@ -247,7 +247,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         .toLocalDateTime();
                 LocalDate seoulTimeDate = seoulTime.toLocalDate();
                 LocalDate openTimeDate = openDate.toLocalDate();
-
+                log.info("현재시간 : {}", seoulTime);
+                log.info("타임캡슐 오픈 시간 : {}", openTimeDate);
+                log.info("타임캡슐 시간 설정값 : {}", timecapsuleCriteria.getStartTime());
                 //날짜가 지났다면 (날짜만 비교 LocalDate)
                 if(seoulTimeDate.isAfter(openTimeDate)
                         || seoulTimeDate.isEqual(openTimeDate) ){
