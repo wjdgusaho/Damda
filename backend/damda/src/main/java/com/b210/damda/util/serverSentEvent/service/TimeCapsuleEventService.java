@@ -39,21 +39,22 @@ public class TimeCapsuleEventService {
         //fromNo를 통해 해당 유저의 이름과 이미지를 받아온다.
         UserNameAndImageDTO fromInfo = timeCapsuleSEERepository.getUserNameAndImage(userNo);
 
-        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new TimeCapsuleSSEDTO(userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, inviteCode, addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
+        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new TimeCapsuleSSEDTO(userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, inviteCode, addOnEventService.getNowTime(LocalDateTime.now().plusHours(9)), timeCapsuleNo));
         eventStreamService.sendEvent(fromNo, event);
     }
     
     public void TimecapsuleEventAccept(String inviteCode) {
-        Long fromNo = timeCapsuleSEERepository.getUserNoByInviteCode(inviteCode); //inviteCode를 통해 방장 찾아옴
+        List<Long> userNoAndTimecapsuleNo = timeCapsuleSEERepository.getUserNoByInviteCode(inviteCode); //inviteCode를 통해 방장 찾아옴
+        Long fromNo = userNoAndTimecapsuleNo.get(0);
+        Long timecapsuleNo = userNoAndTimecapsuleNo.get(1);
         Long userNo = addOnEventService.getUserNo();
-
         String context = "님이 타임캡슐에 참여했어요!";
         String eventName = "timecapsule-event";
 
         //fromNo를 통해 해당 유저의 이름과 이미지를 받아온다.
         UserNameAndImageDTO fromInfo = timeCapsuleSEERepository.getUserNameAndImage(userNo);
 
-        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new TimeCapsuleSSEDTO(userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, inviteCode, addOnEventService.getNowTime(LocalDateTime.now().plusHours(9))));
+        ServerSentEvent<JsonNode> event = addOnEventService.buildServerSentEvent(eventName, new TimeCapsuleSSEDTO(userNo, fromInfo.getUserName(), fromInfo.getUserProfileImage(), context, inviteCode, addOnEventService.getNowTime(LocalDateTime.now().plusHours(9)), timecapsuleNo));
         eventStreamService.sendEvent(fromNo, event);
     }
 
