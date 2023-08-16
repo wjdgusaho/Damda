@@ -33,12 +33,11 @@ public class SSEController {
 
     //로그인 파이프라인 구축 후, 사용자 개인의 지난 알림을 확인한다.
     @GetMapping("sse/login/after")
-    public Flux<ServerSentEvent<JsonNode>> loginAfterCheck() {
+    public void loginAfterCheck() {
         //1. 확인하지 못했던 친구 상태 알림 로직
         friendEventService.checkAllFriendEvent();
         //2. 확인하지 못했던 타임 캡슐 알림 로직
         timeCapsuleEventService.checkAllTimeCapsuleService();
-        return Flux.empty();
     }
 
     //Server - Client Connection Check
