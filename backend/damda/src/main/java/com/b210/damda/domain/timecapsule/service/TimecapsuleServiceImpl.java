@@ -534,7 +534,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         // 이미 나갔거나 추방당했다는 기록이 있는 경우
         if(mapping.isPresent() && mapping.get().getDeleteDate() != null){
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
-        }else if (mapping.isPresent() && mapping.get().getUser().getUserNo() == userNo){ // 이미 참가중이라면
+        }else if (mapping.isPresent() && mapping.get().getUser().getUserNo().equals(userNo)){ // 이미 참가중이라면
             throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
         }
 

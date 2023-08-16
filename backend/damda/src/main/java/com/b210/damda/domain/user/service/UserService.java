@@ -385,7 +385,7 @@ public class UserService {
             long targetNo = Long.parseLong(query.replace("#", "")); // #을 빈공백으로 바꾸고 롱으로 전환
             User targetUser = userRepository.findByUserNoAndDeleteDateIsNull(targetNo);
 
-            if(targetUser != null && targetUser.getUserNo() == userNo){ // 검색한 유저의 번호가 나와 같으면 리턴
+            if(targetUser != null && targetUser.getUserNo().equals(userNo)){ // 검색한 유저의 번호가 나와 같으면 리턴
                 return result;
             }
             else if(targetUser != null){ // 유저가 있으면
@@ -427,13 +427,13 @@ public class UserService {
 
             User targetUser = userRepository.findByUserNoAndDeleteDateIsNull(targetNo);// 코드로 검색한 유저의 정보
 
-            if(targetUser != null && targetUser.getUserNo() == userNo){ // 코드로 검색한 유저가 존재하고 그 유저가 나와 같다면
+            if(targetUser != null && targetUser.getUserNo().equals(userNo)){ // 코드로 검색한 유저가 존재하고 그 유저가 나와 같다면
                 return result;
             }else if(targetUser != null){
                 User currentUser = userRepository.findById(userNo).get(); // 현재 로그인 유저의 정보
 
                 // 해당 유저의 닉네임과 검색어로 받은 닉네임과 코드가 일치하면
-                if(targetUser.getNickname().equals(targetNickname) && targetUser.getUserNo() == targetNo){
+                if(targetUser.getNickname().equals(targetNickname) && targetUser.getUserNo().equals(targetNo)){
                     UserFriend friendUser = friendRepository.getUserFriendByUserAndFriend(currentUser, targetUser);// 현재 로그인 유저의 친구 목록 하나 가져옴
                     UserSearchResultDTO resultDTO = null;
 
