@@ -111,6 +111,15 @@ const DatePickerWrap = styled.div`
   border-bottom: 2px solid ${(props) => props.theme.colorCommon};
 `
 
+const SelectBox = styled.select`
+  background-color: rgb(255, 255, 255, 0);
+  outline: none;
+
+  option {
+    color: black;
+  }
+`
+
 const ClassicCapsule = function () {
   const [isHelp, setIsHelp] = useState(false)
   const currentDate = new Date()
@@ -126,6 +135,25 @@ const ClassicCapsule = function () {
     "",
     "",
   ])
+
+  const years = Array.from(
+    { length: 20 },
+    (_, i) => currentDate.getFullYear() + i
+  )
+  const months = [
+    "1월",
+    "2월",
+    "3월",
+    "4월",
+    "5월",
+    "6월",
+    "7월",
+    "8월",
+    "9월",
+    "10월",
+    "11월",
+    "12월",
+  ]
 
   twoDayAheadDate.setDate(nextDayOfMonth)
   const twoDayAheadDateString = twoDayAheadDate.toISOString().slice(0, 10)
@@ -239,6 +267,41 @@ const ClassicCapsule = function () {
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
               onKeyDown={handleDatePickerKeyDown}
+              renderCustomHeader={({ date, changeYear, changeMonth }) => (
+                <div
+                  style={{
+                    margin: 10,
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <SelectBox
+                    value={date.getFullYear()}
+                    onChange={({ target: { value } }) =>
+                      changeYear(parseInt(value, 10))
+                    }
+                  >
+                    {years.map((option) => (
+                      <option key={option} value={option}>
+                        {option}년
+                      </option>
+                    ))}
+                  </SelectBox>
+
+                  <SelectBox
+                    value={months[date.getMonth()]}
+                    onChange={({ target: { value } }) =>
+                      changeMonth(months.indexOf(value))
+                    }
+                  >
+                    {months.map((option, index) => (
+                      <option key={option} value={option}>
+                        {index + 1}월
+                      </option>
+                    ))}
+                  </SelectBox>
+                </div>
+              )}
             />
           </DatePickerWrap>
           <ContentWrap>
