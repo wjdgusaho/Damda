@@ -32,7 +32,7 @@ export interface alarmCapsuleType {
 }
 
 export interface alarmOpenCapsuleType {
-  timecapsueNo: number
+  timecapsuleNo: number
   content: string
   type: string
   title: string
@@ -58,16 +58,26 @@ export const alarmSlice = createSlice({
   initialState,
   reducers: {
     ADD_FRIENDS: (state, action: PayloadAction<alarmFriendType>) => {
-      state.friends = state.friends.concat(action.payload)
+      if (state.friends.every((f) => f.fromUser !== action.payload.fromUser)) {
+        state.friends = state.friends.concat(action.payload)
+      }
     },
     ADD_TIMECAPSULES: (state, action: PayloadAction<alarmCapsuleType>) => {
-      state.timecapsules = state.timecapsules.concat(action.payload)
+      if (state.timecapsules.every((t) => t.code !== action.payload.code)) {
+        state.timecapsules = state.timecapsules.concat(action.payload)
+      }
     },
     ADD_OPENTIMECAPSULES: (
       state,
       action: PayloadAction<alarmOpenCapsuleType>
     ) => {
-      state.openCapsules = state.openCapsules.concat(action.payload)
+      if (
+        state.openCapsules.every(
+          (o) => o.timecapsuleNo !== action.payload.timecapsuleNo
+        )
+      ) {
+        state.openCapsules = state.openCapsules.concat(action.payload)
+      }
     },
     SET_SSE: (state, action: PayloadAction<EventSource>) => {
       state.eventSource = action.payload
@@ -82,7 +92,7 @@ export const alarmSlice = createSlice({
     },
     DELETE_OPENTIMECAPSULES: (state, action: PayloadAction<number>) => {
       state.openCapsules = state.openCapsules.filter(
-        (t) => t.timecapsueNo !== action.payload
+        (t) => t.timecapsuleNo !== action.payload
       )
     },
     DELETE_SSE: (state) => {
