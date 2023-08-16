@@ -263,9 +263,11 @@ export const MainHeader = function () {
         style={customStyles}
       >
         <div className="flex justify-between">
-          <button onClick={handleErase} className="flex">
-            <img src="assets/icons/bin.png" alt="erase" />
-            <span className="text-white ml-1">모든 알람 지우기</span>
+          <button onClick={handleErase} className="flex items-center">
+            <img src="assets/icons/bin.png" alt="erase" width="18px" />
+            <span className="text-white ml-1 font-pretendard font-extralight text-sm">
+              전체 삭제
+            </span>
           </button>
           <button onClick={handleClose}>
             <img src="assets/icons/cancel.png" alt="cancel" />
@@ -282,7 +284,7 @@ export const MainHeader = function () {
                   <AlertImg src="assets/icons/popup.png" alt="defalut" />
                 </div>
                 <div className="ml-2" style={{ width: "190px" }}>
-                  <p>받은 알람이 없습니다.</p>
+                  <p>받은 알림이 없습니다.</p>
                 </div>
               </ModalCard>
             )}
