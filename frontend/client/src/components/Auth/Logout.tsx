@@ -13,18 +13,21 @@ export const Logout = function () {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const token = useSelector((state: RootState) => state.auth.accessToken)
+  const eventSource = useSelector((state: RootState) => state.alarm.eventSource)
 
   useEffect(() => {
-    const logoutEvent = new EventSourcePolyfill(
-      process.env.REACT_APP_SERVER_URL + "sse/logout",
-      {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+    if (eventSource !== null) {
+      const logoutEvent = new EventSourcePolyfill(
+        process.env.REACT_APP_SERVER_URL + "sse/logout",
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      logoutEvent.onerror = (event) => {
+        logoutEvent.close()
       }
-    )
-    logoutEvent.onerror = (event) => {
-      logoutEvent.close()
     }
     axios({
       method: "POST",
