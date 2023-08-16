@@ -165,7 +165,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                 24시간 내 외이냐? 등록이 안되거는 FALSE
              */
             LocalDateTime registTime = timecapsule.getTimecapsule().getRegistDate().toLocalDateTime();
-            LocalDateTime nowTime = LocalDateTime.now();
+            LocalDateTime nowTime = LocalDateTime.now().plusHours(9);
             boolean isRegisted = false;
             //지났다면 등록됬다고 변경
             if(nowTime.isAfter(registTime.plusHours(24))) isRegisted = true;
@@ -221,9 +221,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                                     userLocation.getLocalMedium().equals(location.getLocalMedium())) {
                                 //날씨 갱신이 필요한가 - 현재 시간과 userLocationTime의 시간값의 차이를 계산
                                 LocalDateTime userLocationTime = userLocation.getWeatherTime().toLocalDateTime();
-                                long hourDifference = LocalDateTime.now().getHour() - userLocationTime.getHour();
+                                long hourDifference = LocalDateTime.now().plusHours(9).getHour() - userLocationTime.getHour();
                                 // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상이거나 , 날씨 정보값이 null인경
-                                if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1
+                                if (userLocationTime.isBefore(LocalDateTime.now().plusHours(9).minusDays(1)) || Math.abs(hourDifference) >= 1
                                         || userLocation.getWeather() == null || userLocation.getWeather().trim().equals("")) {
                                     //날씨 갱신
                                     userLocation = renewWeather(weatherLocationDto, userLocation);
@@ -241,13 +241,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                     }
                 }
                 //시간 조건 확인 (한국)
-                ZonedDateTime seoulTime = LocalDateTime.now().atZone(SEOUL_ZONE_ID);
+                LocalDateTime seoulTime = LocalDateTime.now().plusHours(9);
                 //캡슐 오픈 날짜
-                ZonedDateTime openDate = timecapsule.getTimecapsule().getOpenDate()
-                        .toLocalDateTime().atZone(SEOUL_ZONE_ID);
+                LocalDateTime openDate = timecapsule.getTimecapsule().getOpenDate()
+                        .toLocalDateTime();
                 LocalDate seoulTimeDate = seoulTime.toLocalDate();
                 LocalDate openTimeDate = openDate.toLocalDate();
-
+                //log.info("현재시간 : {}", seoulTime);
+                //log.info("타임캡슐 오픈 시간 : {}", openTimeDate);
                 //날짜가 지났다면 (날짜만 비교 LocalDate)
                 if(seoulTimeDate.isAfter(openTimeDate)
                         || seoulTimeDate.isEqual(openTimeDate) ){
@@ -459,6 +460,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         //오늘은 이미카드작성을 하였습니다.
         if(myMapping.isCardAble() == false){
             throw new CommonException(CustomExceptionStatus.ALREADY_CARD_UPLOAD);
+        }
+
+        //목표인데 값이 다 차있을 경우
+        if(timecapsule.getType().equals(TYPE_GOAL)){
+            Long cardCnt = timecapsuleCardRepository.countByTimecapsuleTimecapsuleNo(timecapsule.getTimecapsuleNo());
+            if(timecapsule.getGoalCard() <= cardCnt){
+                throw new CommonException(CustomExceptionStatus.ALREADY_CARD_MAX);
+            }
         }
 
         String fileUri = "";
@@ -1197,7 +1206,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
         //24시간 이내인가
         LocalDateTime registDate = timecapsule.getRegistDate().toLocalDateTime();
-        LocalDateTime nowTime = LocalDateTime.now();
+        LocalDateTime nowTime = LocalDateTime.now().plusHours(9);
 
         //현재시간이 생성된지 24이후라면
         if(nowTime.isAfter(registDate.plusHours(24))){
