@@ -84,7 +84,7 @@ const Menu = function () {
           >
             진행중인 타임캡슐
             <div className="text-xl font-normal">
-              {timecapsuleData.nowCapsuleCount}개
+              {timecapsuleData.userTimecapsuleInfo.nowCapsuleCount}개
             </div>
           </div>
           <div
@@ -95,7 +95,7 @@ const Menu = function () {
           >
             저장된 타임캡슐
             <div className="text-xl font-normal">
-              {timecapsuleData.savedCapsuleCount}개
+              {timecapsuleData.userTimecapsuleInfo.savedCapsuleCount}개
             </div>
           </div>
         </div>

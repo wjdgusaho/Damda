@@ -89,7 +89,9 @@ export const alarmSlice = createSlice({
       state.eventSource = null
     },
     DELETE_ALARM_ALL: (state) => {
-      state = initialState
+      state.friends = []
+      state.openCapsules = []
+      state.timecapsules = []
     },
   },
 })
