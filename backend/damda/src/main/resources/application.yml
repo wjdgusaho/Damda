@@ -7,11 +7,6 @@ spring:
     username: root
     password: b210shinchanghak
 
-  #    driver-class-name: com.mysql.cj.jdbc.Driver
-  #    url: jdbc:mysql://localhost:3306/damda?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-  #    username: ssafy
-  #    password: ssafy
-
   main:
     allow-bean-definition-overriding: true
 
