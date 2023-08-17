@@ -66,7 +66,7 @@ public class UserService {
 
     private final KakaoAPIService kakaoAPIService;
 
-    private static Long acExpiredMs = 1000 * 60 * 10L; // 액세스 토큰의 만료 시간(30분) * 48 * 30 = 30일
+    private static Long acExpiredMs = 1000 * 60 * 60L; // 액세스 토큰의 만료 시간(30분) * 48 * 30 = 30일
     private final int dailyCheckCoin = 500;
 
     /*
