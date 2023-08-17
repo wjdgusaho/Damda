@@ -54,6 +54,10 @@ public class S3Controller {
     @GetMapping("/download/timecapsule/{timecapsuleNo}/timecapsule-card/{timecapsuleCardNo}")
     public ResponseEntity<byte[]> downloadImage(@PathVariable("timecapsuleCardNo") Long timecapsuleCardNo, @PathVariable("timecapsuleNo")
                                                 Long timecapsuleNo) throws IOException {
+
+        System.out.println(timecapsuleCardNo);
+        System.out.println(timecapsuleNo);
+        System.out.println(fileStoreService.getObject(timecapsuleCardNo, timecapsuleNo));
         return fileStoreService.getObject(timecapsuleCardNo, timecapsuleNo);
     }
 
