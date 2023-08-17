@@ -217,7 +217,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         }
                         else{
                             //현재 위치랑 같다면
-                            if (userLocation.getLocalBig().equals(location.getLocalBig()) &&
+                            if (userLocation.getLocalBig() != null && userLocation.getLocalMedium() != null &&
+                                    userLocation.getLocalBig().equals(location.getLocalBig()) &&
                                     userLocation.getLocalMedium().equals(location.getLocalMedium())) {
                                 //날씨 갱신이 필요한가 - 현재 시간과 userLocationTime의 시간값의 차이를 계산
                                 LocalDateTime userLocationTime = userLocation.getWeatherTime().toLocalDateTime();
