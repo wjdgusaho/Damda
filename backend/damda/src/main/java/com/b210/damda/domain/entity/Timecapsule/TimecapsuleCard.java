@@ -33,6 +33,7 @@ public class TimecapsuleCard {
 
     public TimecapsuleOpenCardDTO toTimecapsuleOpenCardDTO(){
         return TimecapsuleOpenCardDTO.builder()
+                .timecapsuleCardNo(this.timecapsuleCardNo)
                 .imagePath(this.imagePath)
                 .userNo(this.user.getUserNo())
                 .build();
