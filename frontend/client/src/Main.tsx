@@ -78,10 +78,10 @@ function Main() {
       intervalTokenRef.current = setInterval(async () => {
         const newToken = getNewToken(getCookieToken())
         dispatch(SET_TOKEN(await newToken))
-      }, intervalMs - 5000)
+      }, intervalMs - 60000)
     }
-    return clearInterval(intervalTokenRef.current)
-  })
+    // return clearInterval(intervalTokenRef.current)
+  }, [token])
 
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   // const [eventSource, setEventSource] = useState<EventSource | null>(null)
