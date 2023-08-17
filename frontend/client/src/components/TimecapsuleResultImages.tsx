@@ -30,7 +30,6 @@ const TimecapsuleResultImages = function () {
   }
 
   useEffect(() => {
-    console.log("token", token)
     const fetchData = async () => {
       try {
         const timecapsuleNo = capsuleId
@@ -42,10 +41,6 @@ const TimecapsuleResultImages = function () {
               Authorization: "Bearer " + token,
             },
           }
-        )
-        console.log(
-          "카드카듴다ㅡㅋ닼듴다ㅡㅋ다ㅡㅋ다ㅡ",
-          response.data.data.cardList
         )
         setCardList(response.data.data.cardList)
       } catch (error) {
