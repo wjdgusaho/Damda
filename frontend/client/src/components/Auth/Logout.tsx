@@ -8,6 +8,7 @@ import { SET_THEME } from "../../store/Theme"
 import { DELETE_TIMECAPSULE } from "../../store/Timecapsule"
 import { EventSourcePolyfill } from "event-source-polyfill"
 import { RootState } from "../../store/Store"
+import { DELETE_SSE } from "../../store/Alarm"
 
 export const Logout = function ({
   intervalTokenRef,
@@ -47,6 +48,7 @@ export const Logout = function ({
         if (intervalTokenRef.current !== null) {
           clearInterval(intervalTokenRef.current)
         }
+        dispatch(DELETE_SSE())
         dispatch(DELETE_TOKEN())
         dispatch(DELETE_USER())
         dispatch(SET_THEME(1))
