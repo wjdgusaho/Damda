@@ -87,9 +87,8 @@ const TimecapsuleResultMembers = function () {
           }
         )
 
-        console.log("파일~!!~!~!~!!!!", response)
+        // console.log("파일~!!~!~!~!!!!", response)
         if (response.status === 200) {
-          console.log("status200", response)
           const downloadUrl = window.URL.createObjectURL(
             new Blob([response.data])
           )
