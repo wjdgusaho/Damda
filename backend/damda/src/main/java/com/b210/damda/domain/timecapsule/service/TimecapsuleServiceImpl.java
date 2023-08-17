@@ -202,7 +202,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         else openAble = false;
                     }
                     //날씨가 있는 경우
-                    if(timecapsuleCriteria.getWeatherStatus() != null){
+                    if(timecapsuleCriteria.getWeatherStatus() != null && !timecapsuleCriteria.getWeatherStatus().trim().equals("")){
                         // 날씨를 갱신 해야하는 가?
                         UserLocation userLocation = userLocationRepository.findByUserUserNo(userNo);
                         // 위치 저장된 곳이 없다면 -> 새로 생성
@@ -264,7 +264,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
         return timecapsuleList;
     }
-
     /*
         저장된 타임캡슐 리스트 불러오기
      */
