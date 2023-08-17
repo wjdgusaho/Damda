@@ -68,6 +68,7 @@ public class TimeCapsuleEventService {
         String context = "개봉할 수 있는 타임캡슐이 있어요! : ";
         String eventName = "timecapsule-event-selfcheck";
         for (Timecapsule t : getExpiredList) {
+            log.warn("[TEST LOG] : servertime : {} , openDate : {}, 이름 : {}", serverTime, t.getOpenDate(), t.getTitle());
             ServerSentEvent<JsonNode> event =
                     addOnEventService.buildServerSentEvent(eventName, new CheckMyExpiredTimecapsuleDTO(context, t.getTimecapsuleNo(), t.getType() ,t.getTitle(), addOnEventService.getNowTime(t.getOpenDate().toLocalDateTime())));
             eventStreamService.sendEvent(userNo, event);
