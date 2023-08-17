@@ -35,7 +35,14 @@ public class TimecapsuleController {
         진행중인 타임캡슐 리스트 (메인 및 보관함)
      */
     @PostMapping("view")
-    public DataResponse<Map<String, Object>> workTimecapsuleList(@RequestBody WeatherLocationDTO weatherLocationDto) {
+    public DataResponse<Map<String, Object>> workTimecapsuleList(@RequestBody Map<String, Object> data) {
+        double lat = Double.valueOf((String)data.get("lat"));
+        double lan =  Double.valueOf((String)data.get("lan"));
+
+        WeatherLocationDTO weatherLocationDto = new WeatherLocationDTO();
+        weatherLocationDto.setLan(lan);
+        weatherLocationDto.setLat(lat);
+
         List<MainTimecapsuleListDTO> workTimecapsuleList = timecapsuleService.workTimecapsule(weatherLocationDto);
         Map<String, Object> userTimecapsuleInfo = timecapsuleService.userTimecapsuleInfo();
         Map<String, Object> result = new HashMap<>();

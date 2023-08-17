@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class TimecapsuleOpenCardDTO {
 
+    private Long timecapsuleCardNo;
     private Long userNo;
     private String imagePath;
 
