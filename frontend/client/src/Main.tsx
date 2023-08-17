@@ -74,18 +74,16 @@ function Main() {
   ReactTracker()
 
   useEffect(() => {
-    if (
-      token &&
-      !intervalTokenRef.current &&
-      intervalMs &&
-      intervalMs > 61000
-    ) {
+    if (token && !intervalTokenRef.current) {
       intervalTokenRef.current = setInterval(async () => {
         const newToken = getNewToken(getCookieToken())
         dispatch(SET_TOKEN(await newToken))
       }, intervalMs - 60000)
-    } else if (!token && intervalTokenRef.current) {
-      clearInterval(intervalTokenRef.current)
+    }
+    return () => {
+      if (intervalTokenRef.current !== null) {
+        clearInterval(intervalTokenRef.current)
+      }
     }
   }, [token])
 
@@ -270,7 +268,10 @@ function Main() {
                 <Route path="/friend/search" element={<UserSearch />}></Route>
                 <Route path="/login/" element={<Login />}></Route>
                 <Route path="/signup/" element={<SignUp />}></Route>
-                <Route path="/logout/" element={<Logout />}></Route>
+                <Route
+                  path="/logout/"
+                  element={<Logout intervalTokenRef={intervalTokenRef} />}
+                ></Route>
                 <Route path="/main/" element={<MainPage />}></Route>
                 <Route path="/tutorial/" element={<Tutorial />}></Route>
                 <Route path="/dummykakao/" element={<DummyKakao />}></Route>
