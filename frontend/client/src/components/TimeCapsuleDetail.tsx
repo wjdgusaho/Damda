@@ -629,9 +629,9 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   }
 
   function openModal() {
-    toast("테스트 기간 중에는 파일첨부를 할 수 없어요...")
-    // setIsOpen(true)
-    // getFileSize()
+    // toast("테스트 기간 중에는 파일첨부를 할 수 없어요...")
+    setIsOpen(true)
+    getFileSize()
   }
 
   function closeModal() {
