@@ -237,7 +237,6 @@ public class UserService {
             KakaoLog kakaoLog = kakaoLogRepository.findByUserUserNo(user.getUserNo());
             kakaoAPIService.kakaoUnlinkLogout(kakaoLog, "logout");
         }
-
     }
 
     // 회원가입 인증번호 확인
