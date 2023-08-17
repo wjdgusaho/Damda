@@ -213,7 +213,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                                     Timestamp.valueOf(LocalDateTime.now())
                             );
                             //날씨 조회 하면서 저장
-                            userLocation = renewWeather(weatherLocationDto, userLocation);
+                            userLocation = renewWeather(weatherLocationDto, userLocation, location);
                         }
                         else{
                             //현재 위치랑 같다면
@@ -222,17 +222,20 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                                 //날씨 갱신이 필요한가 - 현재 시간과 userLocationTime의 시간값의 차이를 계산
                                 LocalDateTime userLocationTime = userLocation.getWeatherTime().toLocalDateTime();
                                 long hourDifference = LocalDateTime.now().plusHours(9).getHour() - userLocationTime.getHour();
+
+                                log.info("날씨 조건 - 하루가 지나거나, 시간차이가 1시간 날경우 {}", userLocationTime.isBefore(LocalDateTime.now().plusHours(9).minusDays(1)) || Math.abs(hourDifference) >= 1
+                                        || userLocation.getWeather() == null || userLocation.getWeather().trim().equals(""));
                                 // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상이거나 , 날씨 정보값이 null인경
                                 if (userLocationTime.isBefore(LocalDateTime.now().plusHours(9).minusDays(1)) || Math.abs(hourDifference) >= 1
                                         || userLocation.getWeather() == null || userLocation.getWeather().trim().equals("")) {
                                     //날씨 갱신
-                                    userLocation = renewWeather(weatherLocationDto, userLocation);
+                                    userLocation = renewWeather(weatherLocationDto, userLocation, location);
                                 }
                             }
                             //현재 위치가 다르다면
                             else{
                                 //날씨 갱신
-                                userLocation = renewWeather(weatherLocationDto, userLocation);
+                                userLocation = renewWeather(weatherLocationDto, userLocation, location);
                             }
                         }//날씨가 갱신이 완료됨
                         if(userLocation.getWeather().indexOf(timecapsuleCriteria.getWeatherStatus()) == -1 ){
@@ -1236,7 +1239,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     }
 
-    public UserLocation renewWeather(WeatherLocationDTO weatherLocationDto, UserLocation userLocation){
+    public UserLocation renewWeather(WeatherLocationDTO weatherLocationDto, UserLocation userLocation, WeatherLocationNameDTO location){
         String weather = null;
         try {
             weather = weatherAPIService.getNowWeatherInfos(weatherLocationDto);
@@ -1247,6 +1250,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         userLocation.UpdateWeatherTime(Timestamp.valueOf(LocalDateTime.now()));
         //날씨 세팅
         userLocation.UpdateWeather(weather);
+        //위치 세팅
+        userLocation.UpdateLocalMedium(location.getLocalMedium());
+        userLocation.UpdateLoclaBig(location.getLocalBig());
         UserLocation saveUserLocation = userLocationRepository.save(userLocation);
 
         return saveUserLocation;
