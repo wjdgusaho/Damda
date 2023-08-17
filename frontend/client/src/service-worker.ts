@@ -78,36 +78,51 @@ self.addEventListener("message", (event) => {
   }
 })
 
-// Any other custom service worker logic can go here.
-// self.addEventListener("activate", (event) => {
-//   event.waitUntil(
-//     caches.keys().then((cacheNames) => {
-//       return Promise.all(
-//         cacheNames
-//           .filter((cacheName) => {
-//             // Update your cache names if needed
-//             return cacheName.startsWith("workbox-precache-v2")
-//           })
-//           .map((cacheName) => {
-//             return caches.delete(cacheName)
-//           })
-//       )
-//     })
-//   )
-// })
+self.addEventListener("install", (e) => {
+  // console.log("[Service Worker] installed");
+  self.skipWaiting()
+})
 
-// Handle service worker update and page refresh
-// self.addEventListener("controllerchange", () => {
-//   if (self.skipWaiting) {
-//     self.skipWaiting()
-//     if (self.clients && self.clients.claim) {
-//       self.clients.claim()
-//     }
-//     // Send a refresh message to inform the user to refresh the page
-//     self.clients.matchAll().then((clients) => {
-//       clients.forEach((client) => {
-//         client.postMessage({ type: "REFRESH_PAGE" })
-//       })
-//     })
-//   }
-// })
+// activate event
+self.addEventListener("activate", (e) => {
+  // console.log("[Service Worker] actived", e);
+  e.waitUntil(self.clients.claim())
+})
+
+self.addEventListener("notificationclick", function (event) {
+  //알림 팝업의 버튼 액션
+  // console.log(event);
+  switch (event.action) {
+    case "goTab":
+      event.notification.close() // Notification을 닫습니다.
+
+      event.waitUntil(
+        self.clients
+          .matchAll({
+            //같은 주소의 페이지가 열려있는 경우 focus
+
+            type: "window",
+          })
+          .then(function (clientList) {
+            // console.log(clientList);
+            // for (var i = 0; i < clientList.length; i++) {
+            //   var client = clientList[i];
+
+            //   if (client.url === "/" && "focus" in client) {
+            //     return client.focus();
+            //   }
+            // }
+
+            // if (clients.openWindow) {
+            //같은 주소가 아닌 경우 새창으로
+            var client = clientList[0]
+            return client.navigate(event.notification.data)
+            // }
+          })
+      )
+      break
+    default:
+      // console.log(`Unknown action clicked: '${event.action}'`);
+      break
+  }
+})
