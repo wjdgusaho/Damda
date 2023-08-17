@@ -33,7 +33,7 @@ public interface TimeCapsuleSEERepository extends JpaRepository<Timecapsule, Lon
     @Query("SELECT t " +
             "FROM Timecapsule t " +
             "WHERE t.timecapsuleNo IN (SELECT tm.timecapsule.timecapsuleNo FROM TimecapsuleMapping tm WHERE tm.user.userNo = :userNo) " +
-            "AND t.openDate >= :serverTime ")
+            "AND t.openDate <= :serverTime ")
     List<Timecapsule> getExpiredTimecapsuleByUserNoAndNowTimeStamp(@Param("userNo") Long userNo,@Param("serverTime") Timestamp serverTime);
 
 }
