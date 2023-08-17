@@ -80,7 +80,6 @@ export const TimecapsuleOpen = function () {
   }, [])
 
   useEffect(() => {
-    console.log("shakeCnt : ", shakeCnt)
     if (shakeCnt >= 100) {
       makeSaved()
       navigate(`/timecapsule/result/${capsuleId}`)

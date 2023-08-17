@@ -60,10 +60,6 @@ const TimecapsuleResultMembers = function () {
             },
           }
         )
-        console.log(
-          "멤버!~!~!~~!!~!~!~~!!~~!!!!!",
-          response.data.data.timecapsuleOpenDetail
-        )
         setCapsuleInfo(response.data.data.timecapsuleOpenDetail)
       } catch (error) {
         console.error(error)
