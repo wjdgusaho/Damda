@@ -78,6 +78,7 @@ function Main() {
       intervalTokenRef.current = setInterval(async () => {
         const newToken = getNewToken(getCookieToken())
         dispatch(SET_TOKEN(await newToken))
+        dispatch(DELETE_SSE())
         initializeEventSource()
       }, intervalMs - 60000)
     }
