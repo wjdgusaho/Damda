@@ -85,7 +85,6 @@ const TimecapsuleResult = function () {
   }
 
   useEffect(() => {
-    console.log("token", token)
     const fetchData = async () => {
       try {
         const timecapsuleNo = capsuleId
@@ -98,7 +97,6 @@ const TimecapsuleResult = function () {
             },
           }
         )
-        console.log("---------", response.data.data.timecapsuleSimpleInfo)
         setCapsuleInfo(response.data.data.timecapsuleSimpleInfo)
       } catch (error) {
         console.error(error)

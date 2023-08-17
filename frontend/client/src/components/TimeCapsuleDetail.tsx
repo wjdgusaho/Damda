@@ -369,8 +369,6 @@ const TimeCapsuleDetail = function () {
 
   const isRegistered = currentDate < oneDayLater
 
-  console.log(capsuleData)
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -575,9 +573,8 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     if (fileSizeData && file) {
       const remainingSpace =
         (fileSizeData.maxFileSize || 0) - (fileSizeData.nowFilesize || 0)
-      const fileSize = file.size / (1024 * 1024) // MB 단위로 변환
 
-      if (fileSize <= remainingSpace) {
+      if (file.size <= remainingSpace) {
         setSelectedFile(file.name)
         setUploadedFile(file)
       } else {
@@ -631,9 +628,9 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
   }
 
   function openModal() {
-    toast("테스트 기간 중에는 파일첨부를 할 수 없어요...")
-    // setIsOpen(true)
-    // getFileSize()
+    // toast("테스트 기간 중에는 파일첨부를 할 수 없어요...")
+    setIsOpen(true)
+    getFileSize()
   }
 
   function closeModal() {
@@ -1216,15 +1213,19 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
                     </ModalContent>
                   </Modal>
                 </div>
-                {(isCardAble && capsuleData.goalCard === 0) ||
-                (isCardAble && capsuleData.goalCard !== capsuleData.nowCard) ? (
-                  <CardBtn
-                    onClick={() => {
-                      navigate(`/card/${capsuleId}`)
-                    }}
-                  >
-                    카드 작성하기
-                  </CardBtn>
+                {isCardAble ? (
+                  capsuleData.capsuleType === "GOAL" &&
+                  capsuleData.goalCard <= capsuleData.nowCard ? (
+                    <CardCompleteBtn>카드 작성불가</CardCompleteBtn>
+                  ) : (
+                    <CardBtn
+                      onClick={() => {
+                        navigate(`/card/${capsuleId}`)
+                      }}
+                    >
+                      카드 작성하기
+                    </CardBtn>
+                  )
                 ) : (
                   <CardCompleteBtn>카드 작성완료</CardCompleteBtn>
                 )}
@@ -1382,9 +1383,8 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
     if (fileSizeData && file) {
       const remainingSpace =
         (fileSizeData.maxFileSize || 0) - (fileSizeData.nowFilesize || 0)
-      const fileSize = file.size / (1024 * 1024) // MB 단위로 변환
 
-      if (fileSize <= remainingSpace) {
+      if (file.size <= remainingSpace) {
         setSelectedFile(file.name)
         setUploadedFile(file)
       } else {
@@ -1420,9 +1420,9 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
   }
 
   function openModal() {
-    toast("테스트 기간 중에는 파일첨부를 할 수 없어요...")
-    // setIsOpen(true)
-    // getFileSize()
+    // toast("테스트 기간 중에는 파일첨부를 할 수 없어요...")
+    setIsOpen(true)
+    getFileSize()
   }
 
   function closeModal() {

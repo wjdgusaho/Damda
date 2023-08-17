@@ -13,6 +13,7 @@ export const Logout = function () {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const token = useSelector((state: RootState) => state.auth.accessToken)
+  const userData = useSelector((state: RootState) => state.auth.userInfo)
   const eventSource = useSelector((state: RootState) => state.alarm.eventSource)
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export const Logout = function () {
         "Content-Type": "application/json",
         Authorization: "Bearer " + getCookieToken(),
       },
-      data: {},
+      data: { userNo: userData.userNo },
     })
       .then(() => {
         dispatch(DELETE_TOKEN())

@@ -48,7 +48,6 @@ const TimecapsuleResultMembers = function () {
   const { capsuleId } = useParams()
 
   useEffect(() => {
-    console.log("token", token)
     const fetchData = async () => {
       try {
         const timecapsuleNo = capsuleId
@@ -60,10 +59,6 @@ const TimecapsuleResultMembers = function () {
               Authorization: "Bearer " + token,
             },
           }
-        )
-        console.log(
-          "멤버!~!~!~~!!~!~!~~!!~~!!!!!",
-          response.data.data.timecapsuleOpenDetail
         )
         setCapsuleInfo(response.data.data.timecapsuleOpenDetail)
       } catch (error) {
@@ -88,9 +83,8 @@ const TimecapsuleResultMembers = function () {
           }
         )
 
-        console.log("파일~!!~!~!~!!!!", response)
+        // console.log("파일~!!~!~!~!!!!", response)
         if (response.status === 200) {
-          console.log("status200", response)
           const downloadUrl = window.URL.createObjectURL(
             new Blob([response.data])
           )

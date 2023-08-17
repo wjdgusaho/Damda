@@ -52,8 +52,6 @@ const Menu = function () {
   const UserData = useSelector((state: RootState) => state.auth.userInfo)
   const timecapsuleData = useSelector((state: RootState) => state.timecapsule)
 
-  console.log(timecapsuleData)
-
   return (
     <Background>
       <Box>

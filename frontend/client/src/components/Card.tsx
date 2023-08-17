@@ -65,6 +65,7 @@ const Card = function () {
   const navigate = useNavigate()
   const timecapsuleNo = useParams()
   const profileImg = useRef<HTMLImageElement | null>(null)
+  const [isButtonClickable, setIsButtonClickable] = useState(true)
 
   const goBack = () => {
     navigate(-1) // 뒤로가기
@@ -213,6 +214,12 @@ const Card = function () {
   }
 
   const saveAsImageHandler = () => {
+    if (!isButtonClickable) {
+      return
+    }
+
+    setIsButtonClickable(false)
+
     const target = document.getElementById("saveImgContainer")
     if (!target) {
       toast("결과 저장에 실패했습니다.")
@@ -234,6 +241,7 @@ const Card = function () {
         }
       }, "image/jpeg")
     })
+    setIsButtonClickable(true)
   }
 
   const StickerContainerArea = useRef<HTMLDivElement>(null)
@@ -326,7 +334,8 @@ const Card = function () {
           </ModalButton>
           <ModalButton
             className="bg-black bg-opacity-10"
-            onClick={saveAsImageHandler}
+            onClick={isButtonClickable ? saveAsImageHandler : undefined}
+            // onClick={saveAsImageHandler}
           >
             <span className="font-bold text-gray-900">등록</span>
           </ModalButton>
