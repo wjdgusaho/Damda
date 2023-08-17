@@ -209,14 +209,14 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         if(userLocation == null){
                             userLocation = new UserLocation();
                             userLocation.CreateUserLocation(
-                                    user, timecapsuleCriteria.getLocalBig(), timecapsuleCriteria.getLocalMedium(),
+                                    user, location.getLocalBig(), location.getLocalMedium(),
                                     Timestamp.valueOf(LocalDateTime.now())
                             );
                             //날씨 조회 하면서 저장
                             userLocation = renewWeather(weatherLocationDto, userLocation, location);
                         }
                         else{
-                            //현재 위치랑 같다면
+                            //위치값이 null이 아닌상태이면서 위치가 같으면
                             if (userLocation.getLocalBig() != null && userLocation.getLocalMedium() != null &&
                                     userLocation.getLocalBig().equals(location.getLocalBig()) &&
                                     userLocation.getLocalMedium().equals(location.getLocalMedium())) {
