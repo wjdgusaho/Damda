@@ -220,7 +220,7 @@ public class UserService {
 
     // 로그아웃 처리
     @Transactional
-    public void logout(String token) {
+    public void logout(String token, Long userNo) {
         String parsingToken = token.split(" ")[1];
 
         Optional<RefreshToken> byRefreshToken = refreshTokenRepository.findByRefreshToken(parsingToken);
@@ -229,7 +229,6 @@ public class UserService {
         refreshToken.setRefreshToken("");
         RefreshToken save = refreshTokenRepository.save(refreshToken);
 
-        Long userNo = getUserNo();
         Optional<User> byId = Optional.ofNullable(userRepository.findById(userNo)
                 .orElseThrow(() -> new CommonException(CustomExceptionStatus.USER_NOT_FOUND)));
         User user = byId.get();
