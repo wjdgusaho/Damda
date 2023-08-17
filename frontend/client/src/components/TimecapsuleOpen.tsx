@@ -87,10 +87,6 @@ export const TimecapsuleOpen = function () {
       shakeCnt = 1
       // setShakeCnt(1)
     }
-    return () => {
-      shakeCnt = 1
-      // setShakeCnt(1)
-    }
   }, [shakeCnt])
 
   function handleOrientation(event: DeviceOrientationEvent) {
