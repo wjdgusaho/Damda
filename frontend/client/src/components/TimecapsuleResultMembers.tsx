@@ -145,6 +145,16 @@ const TimecapsuleResultMembers = function () {
             열 수 있어요
           </>
         ) : null}
+        {capsuleInfo?.capsuleType === "GOAL" &&
+        capsuleInfo?.penalty.penaltyNo !== null ? (
+          <div className="text-center mt-3">
+            카드를 가장 적게 작성한 친구는 <br />{" "}
+            <span className="font-bold">
+              {capsuleInfo?.penalty.penaltyDescription}
+            </span>{" "}
+            벌칙을 받아요
+          </div>
+        ) : null}
       </div>
       <div className="flex justify-center flex-wrap w-80 mt-4 ">
         {capsuleInfo?.partInfo.map((part, idx) => (
