@@ -165,9 +165,9 @@ public class UserController {
 
     // 로그아웃
     @PostMapping("logout")
-    public DataResponse<Map<String, Object>> logout(@RequestHeader(value="Authorization") String token){
+    public DataResponse<Map<String, Object>> logout(@RequestHeader(value="Authorization") String token, @RequestBody UserLogoutDTO userLogoutDTO){
         try{
-            userService.logout(token);
+            userService.logout(token, userLogoutDTO.getUserNo());
             return new DataResponse<>(200, "로그아웃 성공");
         }catch (CommonException e){
             return new DataResponse<>(e.getCustomExceptionStatus().getCode(), e.getCustomExceptionStatus().getMessage());
@@ -181,7 +181,7 @@ public class UserController {
     @PostMapping("info")
     public DataResponse<Map<String, Object>> passwordCheck(@RequestBody UserLoginDTO userLoginDTO){
         try {
-            User user = userService.passwordCheck(userLoginDTO.getUserPw());
+            userService.passwordCheck(userLoginDTO.getUserPw());
 
             return new DataResponse<>(200, "비밀번호가 일치합니다.");
         }catch (CommonException e){

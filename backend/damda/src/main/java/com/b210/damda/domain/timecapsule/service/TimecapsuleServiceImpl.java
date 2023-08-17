@@ -202,37 +202,38 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                         else openAble = false;
                     }
                     //날씨가 있는 경우
-                    if(timecapsuleCriteria.getWeatherStatus() != null){
+                    if(timecapsuleCriteria.getWeatherStatus() != null && !timecapsuleCriteria.getWeatherStatus().trim().equals("")){
                         // 날씨를 갱신 해야하는 가?
                         UserLocation userLocation = userLocationRepository.findByUserUserNo(userNo);
                         // 위치 저장된 곳이 없다면 -> 새로 생성
                         if(userLocation == null){
                             userLocation = new UserLocation();
                             userLocation.CreateUserLocation(
-                                    user, timecapsuleCriteria.getLocalBig(), timecapsuleCriteria.getLocalMedium(),
+                                    user, location.getLocalBig(), location.getLocalMedium(),
                                     Timestamp.valueOf(LocalDateTime.now())
                             );
                             //날씨 조회 하면서 저장
-                            userLocation = renewWeather(weatherLocationDto, userLocation);
+                            userLocation = renewWeather(weatherLocationDto, userLocation, location);
                         }
                         else{
-                            //현재 위치랑 같다면
-                            if (userLocation.getLocalBig().equals(location.getLocalBig()) &&
+                            //위치값이 null이 아닌상태이면서 위치가 같으면
+                            if (userLocation.getLocalBig() != null && userLocation.getLocalMedium() != null &&
+                                    userLocation.getLocalBig().equals(location.getLocalBig()) &&
                                     userLocation.getLocalMedium().equals(location.getLocalMedium())) {
                                 //날씨 갱신이 필요한가 - 현재 시간과 userLocationTime의 시간값의 차이를 계산
                                 LocalDateTime userLocationTime = userLocation.getWeatherTime().toLocalDateTime();
-                                long hourDifference = LocalDateTime.now().plusHours(9).getHour() - userLocationTime.getHour();
+                                long hourDifference = LocalDateTime.now().getHour() - userLocationTime.getHour();
                                 // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상이거나 , 날씨 정보값이 null인경
-                                if (userLocationTime.isBefore(LocalDateTime.now().plusHours(9).minusDays(1)) || Math.abs(hourDifference) >= 1
+                                if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1
                                         || userLocation.getWeather() == null || userLocation.getWeather().trim().equals("")) {
                                     //날씨 갱신
-                                    userLocation = renewWeather(weatherLocationDto, userLocation);
+                                    userLocation = renewWeather(weatherLocationDto, userLocation, location);
                                 }
                             }
                             //현재 위치가 다르다면
                             else{
                                 //날씨 갱신
-                                userLocation = renewWeather(weatherLocationDto, userLocation);
+                                userLocation = renewWeather(weatherLocationDto, userLocation, location);
                             }
                         }//날씨가 갱신이 완료됨
                         if(userLocation.getWeather().indexOf(timecapsuleCriteria.getWeatherStatus()) == -1 ){
@@ -263,7 +264,6 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         }
         return timecapsuleList;
     }
-
     /*
         저장된 타임캡슐 리스트 불러오기
      */
@@ -534,7 +534,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         // 이미 나갔거나 추방당했다는 기록이 있는 경우
         if(mapping.isPresent() && mapping.get().getDeleteDate() != null){
             throw new CommonException(CustomExceptionStatus.NOT_ALLOW_PARTICIPATE);
-        }else if (mapping.isPresent() && mapping.get().getUser().getUserNo() == userNo){ // 이미 참가중이라면
+        }else if (mapping.isPresent() && mapping.get().getUser().getUserNo().equals(userNo)){ // 이미 참가중이라면
             throw new CommonException(CustomExceptionStatus.ALREADY_PARTICIPATING);
         }
 
@@ -1236,7 +1236,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
 
     }
 
-    public UserLocation renewWeather(WeatherLocationDTO weatherLocationDto, UserLocation userLocation){
+    public UserLocation renewWeather(WeatherLocationDTO weatherLocationDto, UserLocation userLocation, WeatherLocationNameDTO location){
         String weather = null;
         try {
             weather = weatherAPIService.getNowWeatherInfos(weatherLocationDto);
@@ -1247,6 +1247,9 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         userLocation.UpdateWeatherTime(Timestamp.valueOf(LocalDateTime.now()));
         //날씨 세팅
         userLocation.UpdateWeather(weather);
+        //위치 세팅
+        userLocation.UpdateLocalMedium(location.getLocalMedium());
+        userLocation.UpdateLoclaBig(location.getLocalBig());
         UserLocation saveUserLocation = userLocationRepository.save(userLocation);
 
         return saveUserLocation;

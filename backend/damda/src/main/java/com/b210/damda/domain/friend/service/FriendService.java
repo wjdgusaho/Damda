@@ -60,7 +60,7 @@ public class FriendService {
         boolean friendExist = false; // 친구목록에 존재하는지 판단
         if(currentUserList.size() != 0){ // 친구목록이 있으면
             for(UserFriend uf : currentUserList){
-                if(uf.getFriend().getUserNo() == FriendNo){
+                if(uf.getFriend().getUserNo().equals(FriendNo)){
                     uf.updateRequest(currentUser, friendUser); // 친구 컬럽 업데이트
                     friendRepository.save(uf); // 저장
                     friendExist = true;
@@ -76,7 +76,7 @@ public class FriendService {
 
         friendExist = false;
         for(UserFriend uf : friendUserList){
-            if(uf.getFriend().getUserNo() == userNo){
+            if(uf.getFriend().getUserNo().equals(userNo)){
                 uf.updateReceive(friendUser, currentUser); // 친구 컬럼 업데이트
                 friendRepository.save(uf); // 저장
                 friendExist = true;
