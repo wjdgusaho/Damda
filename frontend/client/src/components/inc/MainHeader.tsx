@@ -238,7 +238,7 @@ const AlarmOpenTimecapsuleComponent = function ({
 
   const handleMove = () => {
     handleDelete()
-    navigate(`/timecapsule/open/${timecapsule.timecapsuleNo}`)
+    navigate(`/timecapsule/detail/${timecapsule.timecapsuleNo}`)
   }
 
   const handleDelete = () => {
