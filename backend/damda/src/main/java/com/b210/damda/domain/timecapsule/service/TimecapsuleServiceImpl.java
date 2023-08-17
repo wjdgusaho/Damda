@@ -166,6 +166,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
              */
             LocalDateTime registTime = timecapsule.getTimecapsule().getRegistDate().toLocalDateTime();
             LocalDateTime nowTime = LocalDateTime.now().plusHours(9);
+            log.info("DB에 생성된 시간 {}", registTime);
+            log.info("현재 서버 시간 {}", nowTime);
             boolean isRegisted = false;
             //지났다면 등록됬다고 변경
             if(nowTime.isAfter(registTime.plusHours(24))) isRegisted = true;
@@ -221,12 +223,13 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                                     userLocation.getLocalMedium().equals(location.getLocalMedium())) {
                                 //날씨 갱신이 필요한가 - 현재 시간과 userLocationTime의 시간값의 차이를 계산
                                 LocalDateTime userLocationTime = userLocation.getWeatherTime().toLocalDateTime();
-                                long hourDifference = LocalDateTime.now().plusHours(9).getHour() - userLocationTime.getHour();
-
+                                long hourDifference = LocalDateTime.now().getHour() - userLocationTime.getHour();
+                                log.info("계산된 시간 {}", hourDifference);
+                                log.info("하루가 지났는가 {}", userLocationTime.isBefore(LocalDateTime.now().minusDays(1)));
                                 log.info("날씨 조건 - 하루가 지나거나, 시간차이가 1시간 날경우 {}", userLocationTime.isBefore(LocalDateTime.now().plusHours(9).minusDays(1)) || Math.abs(hourDifference) >= 1
                                         || userLocation.getWeather() == null || userLocation.getWeather().trim().equals(""));
                                 // userLocationTime 이 하루 이상 지났거나, 시간 차이가 1 이상이거나 , 날씨 정보값이 null인경
-                                if (userLocationTime.isBefore(LocalDateTime.now().plusHours(9).minusDays(1)) || Math.abs(hourDifference) >= 1
+                                if (userLocationTime.isBefore(LocalDateTime.now().minusDays(1)) || Math.abs(hourDifference) >= 1
                                         || userLocation.getWeather() == null || userLocation.getWeather().trim().equals("")) {
                                     //날씨 갱신
                                     userLocation = renewWeather(weatherLocationDto, userLocation, location);
