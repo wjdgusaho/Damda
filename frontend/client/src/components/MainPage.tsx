@@ -41,6 +41,7 @@ export const MainPage = function () {
   const next = useCallback(() => slickRef.current?.slickNext(), [])
   const [capsuleList, setCapsuleList] = useState<CapsuleType[]>([])
   const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState<boolean>(true) // 로딩 상태 추가
 
   const settings = {
     centerMode: false,
@@ -56,6 +57,8 @@ export const MainPage = function () {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true) // 데이터 가져오기 시작
+
       try {
         const location = await getLocation()
 
@@ -88,6 +91,8 @@ export const MainPage = function () {
         }
       } catch (error) {
         console.error(error)
+      } finally {
+        setIsLoading(false) // 데이터 가져오기 완료 또는 오류 발생
       }
     }
 
@@ -105,7 +110,17 @@ export const MainPage = function () {
       <div className="flex flex-col h-screen justify-center">
         <div className="-mt-60"></div>
         <div className="mt-14">
-          {capsuleList.length === 0 ? (
+          {isLoading ? (
+            <LoadingMsg>
+              <img
+                src="../../assets/icons/loading.gif"
+                alt="loading"
+                width="25px"
+              />
+              <span className="mt-2">로딩 중...</span>
+              <p className="mt-2">위치사용을 허용해주세요!</p>
+            </LoadingMsg>
+          ) : capsuleList.length === 0 ? (
             // 타임캡슐이 하나도 없을 때
             <div className="text-center mt-6">
               <TextStyle>타임캡슐이 없어요... 아직은요! </TextStyle>
@@ -237,6 +252,18 @@ const ProgressBar = ({ percentage }: ProgressBarProps) => {
     </ProgressContainer>
   )
 }
+
+const LoadingMsg = styled.div`
+  font-family: "pretendard";
+  color: ${(props) => props.theme.colorCommon};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  p {
+    opacity: 50%;
+  }
+`
 
 const TextStyle = styled.div`
   font-family: "pretendard";
