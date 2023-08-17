@@ -85,7 +85,7 @@ const UserSearch = function () {
           <SearchInput
             className="focus:outline-none"
             type="text"
-            placeholder="nickname | nickname#123 | #123"
+            placeholder="닉네임이나 유저코드를 입력하세요"
             onChange={handleSearch}
             onKeyDown={handlekeydown}
           />
@@ -93,11 +93,11 @@ const UserSearch = function () {
             <SearchImg src="/assets/icons/search.png" alt="search" />
           </button>
           <div
-            className="mt-3"
+            className="mt-3 ml-1"
             style={{ fontSize: "12px", opacity: "60%", fontWeight: "300" }}
           >
-            닉네임 | 닉네임#코드 | #코드 형식으로 검색해주세요. (코드는 숫자만
-            가능)
+            검색은 다음 형태여야 해요. <br />
+            <span className="font-thin">담다 | 담다#123 | #123</span>
           </div>
         </div>
         <div>
