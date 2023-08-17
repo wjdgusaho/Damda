@@ -62,12 +62,13 @@ public class TimeCapsuleEventService {
     public void checkAllTimeCapsuleService() {
         long userNo = addOnEventService.getUserNo();
         // 서버 시스템 시간 가져오기, 만료된 캡슐 가져오기
-        LocalDateTime serverTime = LocalDateTime.now().plusHours(9);
+        LocalDateTime serverTime = LocalDateTime.now().plusHours(9).minusDays(1); // GMT + 9:00 H , 조건에 따라 최대 -1 Days
         List<Timecapsule> getExpiredList = timeCapsuleSEERepository.getExpiredTimecapsuleByUserNoAndNowTimeStamp(userNo, Timestamp.valueOf(serverTime));
 
         String context = "개봉할 수 있는 타임캡슐이 있어요! : ";
         String eventName = "timecapsule-event-selfcheck";
         for (Timecapsule t : getExpiredList) {
+            if(!timeCapsuleSEERepository.checkTimecapsuleIsNotOpened(t.getTimecapsuleNo(), userNo)) continue; //이미 저장소에 보관된 캡슐이라면 스킵
             log.warn("[TEST LOG] : servertime : {} , openDate : {}, 이름 : {}", serverTime, t.getOpenDate(), t.getTitle());
             ServerSentEvent<JsonNode> event =
                     addOnEventService.buildServerSentEvent(eventName, new CheckMyExpiredTimecapsuleDTO(context, t.getTimecapsuleNo(), t.getType() ,t.getTitle(), addOnEventService.getNowTime(t.getOpenDate().toLocalDateTime())));
