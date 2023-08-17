@@ -573,9 +573,8 @@ export const Unregistered: React.FC<CapsuleProps> = ({ capsuleData }) => {
     if (fileSizeData && file) {
       const remainingSpace =
         (fileSizeData.maxFileSize || 0) - (fileSizeData.nowFilesize || 0)
-      const fileSize = file.size / (1024 * 1024) // MB 단위로 변환
 
-      if (fileSize <= remainingSpace) {
+      if (file.size <= remainingSpace) {
         setSelectedFile(file.name)
         setUploadedFile(file)
       } else {
@@ -1383,11 +1382,9 @@ export const Proceeding: React.FC<CapsuleProps> = ({ capsuleData }) => {
 
     if (fileSizeData && file) {
       const remainingSpace =
-        (fileSizeData.maxFileSize * (1024 * 1024) || 0) -
-        (fileSizeData.nowFilesize * (1024 * 1024) || 0)
-      const fileSize = file.size // MB 단위로 변환 <- 하지마
+        (fileSizeData.maxFileSize || 0) - (fileSizeData.nowFilesize || 0)
 
-      if (fileSize <= remainingSpace) {
+      if (file.size <= remainingSpace) {
         setSelectedFile(file.name)
         setUploadedFile(file)
       } else {
