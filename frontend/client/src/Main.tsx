@@ -74,7 +74,12 @@ function Main() {
   ReactTracker()
 
   useEffect(() => {
-    if (token && !intervalTokenRef.current) {
+    if (
+      token &&
+      !intervalTokenRef.current &&
+      intervalMs &&
+      intervalMs > 61000
+    ) {
       intervalTokenRef.current = setInterval(async () => {
         const newToken = getNewToken(getCookieToken())
         dispatch(SET_TOKEN(await newToken))
