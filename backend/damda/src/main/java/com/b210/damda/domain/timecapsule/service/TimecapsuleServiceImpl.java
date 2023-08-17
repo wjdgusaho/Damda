@@ -224,6 +224,8 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
                                 //날씨 갱신이 필요한가 - 현재 시간과 userLocationTime의 시간값의 차이를 계산
                                 LocalDateTime userLocationTime = userLocation.getWeatherTime().toLocalDateTime();
                                 long hourDifference = LocalDateTime.now().getHour() - userLocationTime.getHour();
+                                log.info("계산전 현재시간 {}, {}", LocalDateTime.now() , LocalDateTime.now().getHour());
+                                log.info("계산전 유저저장시간 {}, {}", userLocationTime , userLocationTime.getHour());
                                 log.info("계산된 시간 {}", hourDifference);
                                 log.info("하루가 지났는가 {}", userLocationTime.isBefore(LocalDateTime.now().minusDays(1)));
                                 log.info("날씨 조건 - 하루가 지나거나, 시간차이가 1시간 날경우 {}", userLocationTime.isBefore(LocalDateTime.now().plusHours(9).minusDays(1)) || Math.abs(hourDifference) >= 1
