@@ -92,8 +92,8 @@ const TimecapsuleResultRank = function () {
     fetchData()
   }, [capsuleId, token])
 
-  console.log(rankData)
-  console.log(rankData.userRank.length)
+  // console.log(rankData)
+  // console.log(rankData.userRank.length)
 
   return (
     <motion.div

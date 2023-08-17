@@ -62,7 +62,7 @@ export const TimecapsuleOpen = function () {
         }
       )
       if (response.data.code === 200) {
-        console.log("타임캡슐 열람 성공", response.data.message)
+        console.log("타임캡슐 열람 성공")
       } else {
         console.log(response.data.message)
       }
