@@ -79,8 +79,9 @@ function Main() {
         const newToken = getNewToken(getCookieToken())
         dispatch(SET_TOKEN(await newToken))
       }, intervalMs - 60000)
+    } else if (!token && intervalTokenRef.current) {
+      clearInterval(intervalTokenRef.current)
     }
-    // return clearInterval(intervalTokenRef.current)
   }, [token])
 
   const [isOnline, setIsOnline] = useState(navigator.onLine)
