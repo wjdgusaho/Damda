@@ -15,13 +15,15 @@ import {
   alarmOpenCapsuleType,
 } from "../../store/Alarm"
 import "./MainHeader.css"
+import axios from "axios"
+import { toast } from "react-toastify"
 
-const TextStyle = styled.p`
-  font-family: "pretendard";
-  font-weight: 300;
-  color: ${(props) => props.theme.colorCommon};
-  opacity: 80%;
-`
+// const TextStyle = styled.p`
+//   font-family: "pretendard";
+//   font-weight: 300;
+//   color: ${(props) => props.theme.colorCommon};
+//   opacity: 80%;
+// `
 const ThemeBtn = styled.div`
   background-image: url(${(props) =>
     props.theme.colorCommon === "black"
@@ -76,16 +78,16 @@ const MenuIcon = styled.div`
   width: 25px;
   height: 25px;
 `
-const RefreshIcon = styled.div`
-  background-image: url(${(props) =>
-    props.theme.colorCommon === "black"
-      ? "assets/icons/refreshD.png"
-      : "assets/icons/refreshL.png"});
-  background-repeat: no-repeat;
-  background-size: cover;
-  width: 25px;
-  height: 25px;
-`
+// const RefreshIcon = styled.div`
+//   background-image: url(${(props) =>
+//     props.theme.colorCommon === "black"
+//       ? "assets/icons/refreshD.png"
+//       : "assets/icons/refreshL.png"});
+//   background-repeat: no-repeat;
+//   background-size: cover;
+//   width: 25px;
+//   height: 25px;
+// `
 
 const AlertImg = styled.img`
   width: 60px;
@@ -156,7 +158,7 @@ const AlarmFriendComponent = function ({
       </div>
       <div className="w-72 mt-4 flex justify-between">
         <ModalBtn onClick={handleMove}>바로가기</ModalBtn>
-        <ModalBtn onClick={handleDelete}>알람끄기</ModalBtn>
+        <ModalBtn onClick={handleDelete}>알람확인</ModalBtn>
       </div>
     </ModalCard>
   )
@@ -169,13 +171,40 @@ const AlarmTimecapsuleComponent = function ({
 }) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const token = useSelector((state: RootState) => state.auth.accessToken)
 
-  const handleMove = () => {
-    handleDelete()
-    navigate("/participate/", { state: { code: timecapsule.code } })
+  const handleAccept = () => {
+    axios({
+      method: "PATCH",
+      url: process.env.REACT_APP_SERVER_URL + "timecapsule/invite-accept/",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        timecapsuleNo: timecapsule.timecapsuleNo,
+      },
+    }).then((response) => {
+      toast(response.data.message)
+      if (response.data.code === 200) {
+        navigate("/timecapsule/detail/" + timecapsule.timecapsuleNo)
+      }
+      dispatch(DELETE_TIMECAPSULES(timecapsule.fromUser))
+    })
   }
-  const handleDelete = () => {
-    dispatch(DELETE_TIMECAPSULES(timecapsule.fromUser))
+  const handleReject = () => {
+    axios({
+      method: "PATCH",
+      url: process.env.REACT_APP_SERVER_URL + "timecapsule/invite-reject/",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      data: {
+        timecapsuleNo: timecapsule.timecapsuleNo,
+      },
+    }).then((response) => {
+      toast(response.data.message)
+      dispatch(DELETE_TIMECAPSULES(timecapsule.fromUser))
+    })
   }
   return (
     <ModalCard style={{ fontFamily: "Pretendard", fontWeight: "600" }}>
@@ -192,8 +221,8 @@ const AlarmTimecapsuleComponent = function ({
         </p>
       </div>
       <div className="w-72 mt-4 flex justify-between">
-        <ModalBtn onClick={handleMove}>바로가기</ModalBtn>
-        <ModalBtn onClick={handleDelete}>알람끄기</ModalBtn>
+        <ModalBtn onClick={handleAccept}>수락하기</ModalBtn>
+        <ModalBtn onClick={handleReject}>거절하기</ModalBtn>
       </div>
     </ModalCard>
   )
@@ -209,7 +238,7 @@ const AlarmOpenTimecapsuleComponent = function ({
 
   const handleMove = () => {
     handleDelete()
-    navigate(`/timecapsule/open/${timecapsule.timecapsuleNo}`)
+    navigate(`/timecapsule/detail/${timecapsule.timecapsuleNo}`)
   }
 
   const handleDelete = () => {
@@ -228,7 +257,7 @@ const AlarmOpenTimecapsuleComponent = function ({
       </div>
       <div className="w-72 mt-4 flex justify-between">
         <ModalBtn onClick={handleMove}>바로가기</ModalBtn>
-        <ModalBtn onClick={handleDelete}>알람끄기</ModalBtn>
+        <ModalBtn onClick={handleDelete}>알람확인</ModalBtn>
       </div>
     </ModalCard>
   )
@@ -328,7 +357,7 @@ export const MainHeader = function () {
         <div className="flex items-center">
           {alarmFriendData.length +
             alarmOpenTimecapsuleData.length +
-            alarmTimecapsuleData.length !=
+            alarmTimecapsuleData.length !==
             0 && (
             <div className="relative w-6 -top-4 left-9 px-1 text-white bg-red-400 rounded-full text-center">
               {alarmFriendData.length +

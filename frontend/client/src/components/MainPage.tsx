@@ -68,8 +68,8 @@ export const MainPage = function () {
           const { lat, lan } = location
 
           const body = {
-            lat: lat,
-            lan: lan,
+            lat: String(lat),
+            lan: String(lan),
           }
 
           const response = await axios.post(
@@ -81,7 +81,6 @@ export const MainPage = function () {
               },
             }
           )
-          console.log("timecapsule List", response.data.data)
           setCapsuleList(response.data.data.timecapsuleList)
           dispatch(SET_TIMECAPSULE(response.data.data))
         } else {
@@ -94,8 +93,6 @@ export const MainPage = function () {
 
     fetchData()
   }, [])
-
-  console.log(capsuleList)
 
   return (
     <motion.div

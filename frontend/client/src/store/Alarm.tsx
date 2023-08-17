@@ -23,6 +23,7 @@ export interface alarmFriendType {
 }
 
 export interface alarmCapsuleType {
+  timecapsuleNo: number
   fromUser: number
   fromName: string
   fromProfileImage: string

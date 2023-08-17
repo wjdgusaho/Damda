@@ -88,8 +88,6 @@ const TimecapsulePage = function () {
     (state: RootState) => state.timecapsule.timecapsuleList
   )
 
-  console.log(capsuleList)
-
   return (
     <>
       <SubHeader />

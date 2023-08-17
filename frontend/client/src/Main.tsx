@@ -78,10 +78,14 @@ function Main() {
       intervalTokenRef.current = setInterval(async () => {
         const newToken = getNewToken(getCookieToken())
         dispatch(SET_TOKEN(await newToken))
-      }, intervalMs - 5000)
+      }, intervalMs - 60000)
     }
-    return clearInterval(intervalTokenRef.current)
-  })
+    return () => {
+      if (intervalTokenRef.current !== null) {
+        clearInterval(intervalTokenRef.current)
+      }
+    }
+  }, [token])
 
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   // const [eventSource, setEventSource] = useState<EventSource | null>(null)
@@ -264,7 +268,10 @@ function Main() {
                 <Route path="/friend/search" element={<UserSearch />}></Route>
                 <Route path="/login/" element={<Login />}></Route>
                 <Route path="/signup/" element={<SignUp />}></Route>
-                <Route path="/logout/" element={<Logout />}></Route>
+                <Route
+                  path="/logout/"
+                  element={<Logout intervalTokenRef={intervalTokenRef} />}
+                ></Route>
                 <Route path="/main/" element={<MainPage />}></Route>
                 <Route path="/tutorial/" element={<Tutorial />}></Route>
                 <Route path="/dummykakao/" element={<DummyKakao />}></Route>

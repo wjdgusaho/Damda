@@ -20,6 +20,7 @@ export const TimecapsuleOpen = function () {
   const token = useSelector((state: RootState) => state.auth.accessToken)
   const [capsuleInfo, setCapsuleInfo] = useState<CapsuleInfoType | null>(null)
   const [shakeCnt, setShakeCnt] = useState(1)
+  // let shakeCnt = 1
 
   let lastAlpha: number | null = null
   let lastBeta: number | null = null
@@ -61,7 +62,7 @@ export const TimecapsuleOpen = function () {
         }
       )
       if (response.data.code === 200) {
-        console.log("타임캡슐 열람 성공", response.data.message)
+        console.log("타임캡슐 열람 성공")
       } else {
         console.log(response.data.message)
       }
@@ -79,7 +80,6 @@ export const TimecapsuleOpen = function () {
   }, [])
 
   useEffect(() => {
-    console.log("shakeCnt : ", shakeCnt)
     if (shakeCnt >= 100) {
       makeSaved()
       navigate(`/timecapsule/result/${capsuleId}`)
@@ -104,7 +104,8 @@ export const TimecapsuleOpen = function () {
       if (betaDiff > 50 || gammaDiff > 50 || alphaDiff > 90) {
         // 휴대전화가 흔들렸을 때 실행할 코드를 여기에 작성합니다.
         navigator.vibrate([100, 100, 100, 100])
-        setShakeCnt((shakeCnt) => shakeCnt + 3)
+        // shakeCnt = shakeCnt + 3
+        setShakeCnt(shakeCnt + 3)
       }
     }
 
@@ -128,6 +129,7 @@ export const TimecapsuleOpen = function () {
       <FloatingImage
         capsulenum={capsuleInfo?.capsuleIconNo ?? "capsule1"}
         onClick={() => {
+          // shakeCnt = shakeCnt + 3
           setShakeCnt(shakeCnt + 3)
         }}
       ></FloatingImage>

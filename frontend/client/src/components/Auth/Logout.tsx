@@ -9,10 +9,15 @@ import { DELETE_TIMECAPSULE } from "../../store/Timecapsule"
 import { EventSourcePolyfill } from "event-source-polyfill"
 import { RootState } from "../../store/Store"
 
-export const Logout = function () {
+export const Logout = function ({
+  intervalTokenRef,
+}: {
+  intervalTokenRef: React.MutableRefObject<NodeJS.Timeout | undefined>
+}) {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const token = useSelector((state: RootState) => state.auth.accessToken)
+  const userData = useSelector((state: RootState) => state.auth.userInfo)
   const eventSource = useSelector((state: RootState) => state.alarm.eventSource)
 
   useEffect(() => {
@@ -36,9 +41,12 @@ export const Logout = function () {
         "Content-Type": "application/json",
         Authorization: "Bearer " + getCookieToken(),
       },
-      data: {},
+      data: { userNo: userData.userNo },
     })
       .then(() => {
+        if (intervalTokenRef.current !== null) {
+          clearInterval(intervalTokenRef.current)
+        }
         dispatch(DELETE_TOKEN())
         dispatch(DELETE_USER())
         dispatch(SET_THEME(1))
