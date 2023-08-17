@@ -46,4 +46,9 @@ public class UserLocation {
     public void UpdateWeather(String weather){
         this.weather = weather;
     }
+
+    public void UpdateLocalMedium(String localMedium) {this.localMedium = localMedium; }
+
+    public void UpdateLoclaBig(String localBig) { this.localBig = localBig; }
+
 }
