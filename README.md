@@ -15,12 +15,13 @@
 | <img src="https://avatars.githubusercontent.com/u/93763809?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/56811267?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/121294224?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/28944196?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/122436557?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/122436538?v=4" width="800"> |
 |Backend|Backend|Backend|Frontend|Frontend|Frontend|
 
-### 🧡**역할 분담🧡
+### 🧡역할 분담🧡
+
 **Frontend**
 
-- 권소정 : 
-- 이지영 : 
-- 차영범 : 
+- 권소정 : UI/UX, 타임캡슐 만들기, 타임캡슐 상세 보기, 메뉴페이지, 타임캡슐 결과화면 통계, 첨부파일
+- 이지영 : UI/UX, 메인페이지, 카드작성, 상점 로직 구현, 타임캡슐 결과 화면 카드 화면 및 상세 화면
+- 차영범 : 유저 및 친구 정보 관리, SSE 로직, JWT, Redux 관리, 휴대폰 흔들기(DeviceOrientation), pwa(서비스워커)
 
 
 **Backend**
@@ -215,6 +216,30 @@
 
 
 # 4️⃣**주요 기술**
+
+- 웹 기반 애플리케이션(PWA)
+  - serviceworker를 등록하여 웹페이지를 애플리케이션으로 등록
+
+- React
+  - 사용자의 입력에 대해 빠른 반응을 보이도록 함
+  - 여러 라이브러리를 활용하여 개발 속도 증대
+  - TypeScript로 프로그램의 오류 감소
+  - redux및 redux-persist로 컴포넌트 간의 데이터 공유
+
+- Server Sent-Event
+  - 서버에서 클라이언트로의 단방향 통신 구현
+  - 클라이언트가 서버로 연결 요청을 보내고, 서버에서 알림을 보내는 형식
+
+- 카카오 로그인
+  - ㅇ
+
+- DeviceOrientation
+  - 모바일 환경에서 접속할 경우, 휴대폰 움직임 감지
+
+- JWT
+  - 토큰 인증 방식을 이용하여 사용자가 로그인 상태임을 알림.
+  - 토큰 만료 되었을 시, refreshToken을 사용하여 새롭게 인증 토큰을 받음.
+
 
 <hr>
 
