@@ -246,9 +246,9 @@
 # 5️⃣**설계 문서**
 
 ## 🎨 와이어프레임
-[Figma](https://www.figma.com/file/KfTJUuphqmJRK5it8h6aMr/Untitled?type=design&node-id=0-1&mode=design&t=z88hDAL0fIBs31uK-0)
+[Figma](https://www.figma.com/file/WZnvHzNatr4fvfychvsQyr/DAMDA(Public)?type=design&node-id=0-1&mode=design)
 <br>
-<img src="exec/img/와이어프레임.PNG">
+<img src="exec/img/와이어프레임_공유_.PNG">
 
 <br><br>
 
