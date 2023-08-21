@@ -15,12 +15,13 @@
 | <img src="https://avatars.githubusercontent.com/u/93763809?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/56811267?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/121294224?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/28944196?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/122436557?v=4" width="800"> | <img src="https://avatars.githubusercontent.com/u/122436538?v=4" width="800"> |
 |Backend|Backend|Backend|Frontend|Frontend|Frontend|
 
-### 🧡**역할 분담🧡
+### 🧡역할 분담🧡
+
 **Frontend**
 
-- 권소정 : 
-- 이지영 : 
-- 차영범 : 
+- 권소정 : UI/UX, 타임캡슐 만들기, 타임캡슐 상세 보기, 메뉴페이지, 타임캡슐 결과화면 통계, 첨부파일
+- 이지영 : UI/UX, 메인페이지, 카드작성, 상점 로직 구현, 타임캡슐 결과 화면 카드 화면 및 상세 화면
+- 차영범 : 유저 및 친구 정보 관리, SSE 로직, JWT, Redux 관리, 휴대폰 흔들기(DeviceOrientation), pwa(서비스워커)
 
 
 **Backend**
