@@ -13,6 +13,7 @@ interface CapsuleInfoType {
   type: string
   capsuleIconNo: string
 }
+// let shakeCnt = 1
 
 export const TimecapsuleOpen = function () {
   const navigate = useNavigate()
@@ -80,9 +81,13 @@ export const TimecapsuleOpen = function () {
   }, [])
 
   useEffect(() => {
+    console.log(shakeCnt)
+
     if (shakeCnt >= 100) {
       makeSaved()
       navigate(`/timecapsule/result/${capsuleId}`)
+      // shakeCnt = 1
+      // setShakeCnt(1)
     }
   }, [shakeCnt])
 
@@ -124,7 +129,7 @@ export const TimecapsuleOpen = function () {
       <InfoText className="absolute mt-28 ml-6 font-pretendard font-semibold text-xl">
         원이 차오를 때 까지
         <br />
-        타임캡슐을 흔들거나 터치해주세요!
+        타임캡슐을 터치해주세요!
       </InfoText>
       <FloatingImage
         capsulenum={capsuleInfo?.capsuleIconNo ?? "capsule1"}
