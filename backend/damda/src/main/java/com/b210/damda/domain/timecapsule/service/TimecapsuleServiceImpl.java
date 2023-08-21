@@ -608,9 +608,7 @@ public class TimecapsuleServiceImpl implements TimecapsuleService{
         if(cirteriaDays.isEmpty()) timecapsuleDetail.getCriteriaInfo().setCirteriaDays(null);
         else timecapsuleDetail.getCriteriaInfo().setCirteriaDays(cirteriaDays);
 
-
         return timecapsuleDetail;
-
     }
 
     // 타임캡슐 초대목록 가져오기
