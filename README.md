@@ -85,31 +85,31 @@
 
 ## 서비스 화면
 
-> **회원가입** > <img src="exec/gif/회원가입.gif"> > <br>
+> **회원가입** > <br> <img src="exec/gif/회원가입.gif"> <br>
 
-> **로그인** > <img src="exec/gif/로그인.gif"> > <br>
+> **로그인** > <br> <img src="exec/gif/로그인.gif"> <br>
 
-> **친구 요청 알람** > <img src="exec/gif/친구요청받음.gif"> > <br>
+> **친구 요청 알람** > <br> <img src="exec/gif/친구요청받음.gif"> <br>
 
-> **테마, 스티커 구매** > <img src="exec/gif/테마스티커구매.gif"> > <br>
+> **테마, 스티커 구매** > <br> <img src="exec/gif/테마스티커구매.gif"> <br>
 
-> **클래식 타임캡슐 만들기** > <img src="exec/gif/클래식만들기.gif"> > <br>
+> **클래식 타임캡슐 만들기** > <br> <img src="exec/gif/클래식만들기.gif"> <br>
 
-> **기록 타임캡슐 만들기** > <img src="exec/gif/기록만들기.gif"> > <br>
+> **기록 타임캡슐 만들기** > <br> <img src="exec/gif/기록만들기.gif"> <br>
 
-> **목표 타임캡슐 만들기** > <img src="exec/gif/목표만들기.gif"> > <br>
+> **목표 타임캡슐 만들기** > <br> <img src="exec/gif/목표만들기.gif"> <br>
 
-> **타임캡슐 초대하기** > <img src="exec/gif/타임캡슐초대.gif"> > <br>
+> **타임캡슐 초대하기** > <br> <img src="exec/gif/타임캡슐초대.gif"> <br>
 
-> **타임캡슐 초대받기 알람** > <img src="exec/gif/타임캡슐초대참석.gif"> > <br>
+> **타임캡슐 초대받기 알람** > <br><img src="exec/gif/타임캡슐초대참석.gif"> <br>
 
-> **타임캡슐 카카오톡 공유하기** > <img src="exec/img/타임캡슐_카카오톡_공유.jpg"> > <br>
+> **타임캡슐 카카오톡 공유하기** > <br> <img src="exec/img/타임캡슐_카카오톡_공유.jpg"> <br>
 
-> **카드 작성** > <img src="exec/gif/카드작성.gif"> > <br>
+> **카드 작성** > <br><img src="exec/gif/카드작성.gif"> <br>
 
-> **타임캡슐 열기** > <img src="exec/gif/타임캡슐열기.gif"> > <br>
+> **타임캡슐 열기** > <br> <img src="exec/gif/타임캡슐열기.gif"> <br>
 
-> **테마 변경** > <img src="exec/gif/테마변경.gif"> > <br>
+> **테마 변경** > <br> <img src="exec/gif/테마변경.gif"> <br>
 
 <hr>
 
